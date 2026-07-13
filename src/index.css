@@ -193,6 +193,96 @@ body,
   background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
+/* Guided tour. */
+.tour-start {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 24%, rgba(12, 10, 7, 0.6));
+  color: var(--ink);
+  font: 700 14px system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.tour-start:hover {
+  background: color-mix(in srgb, var(--accent) 36%, rgba(12, 10, 7, 0.6));
+}
+
+.poi-panel.touring {
+  border-top-color: color-mix(in srgb, var(--accent) 75%, transparent);
+}
+
+.tour-badge {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #10140b;
+  font: 700 0.62rem system-ui, sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.tour-progress {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.tour-progress .dot {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(244, 236, 224, 0.18);
+}
+
+.tour-progress .dot.done {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.tour-progress .dot.on {
+  background: var(--accent);
+  animation: tour-fill 8s linear forwards;
+  transform-origin: left;
+}
+
+.tour-progress .dot.on.paused {
+  animation-play-state: paused;
+}
+
+@keyframes tour-fill {
+  from {
+    transform: scaleX(0.04);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.poi-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-pause {
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.tour-pause:hover {
+  background: color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
 /* Walk / orbit mode toggle, bottom-centre. */
 .walk-toggle {
   position: fixed;
