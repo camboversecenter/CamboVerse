@@ -1,13 +1,15 @@
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
-import { Suspense, useRef, useState, type ReactNode } from "react";
-import type { Group } from "three";
+import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Group, Vector3 } from "three";
 import { HeritageModel } from "./HeritageModel";
 import { HeritagePlaceholder } from "./HeritagePlaceholder";
 import { ModelErrorBoundary } from "./ModelErrorBoundary";
 import { Loader } from "./Loader";
 import { Scenery } from "./Scenery";
 import { SplatModel } from "./SplatModel";
+import { PoiMarker } from "./PoiMarker";
+import type { Poi } from "../spots";
 
 /**
  * The 3D viewer surface.
@@ -23,12 +25,18 @@ export function Viewer({
   water = false,
   splatUrl,
   splat = false,
+  pois,
+  activePoi = null,
+  onSelectPoi,
 }: {
   modelUrl: string;
   blurb: string;
   water?: boolean;
   splatUrl?: string;
   splat?: boolean;
+  pois?: Poi[];
+  activePoi?: Poi | null;
+  onSelectPoi?: (id: string) => void;
 }) {
   return (
     <div className="viewer">
@@ -57,11 +65,21 @@ export function Viewer({
             </ModelErrorBoundary>
           )}
         </Materialize>
-        <Hotspot blurb={blurb} />
+
+        {/* Points of interest to walk between — or a single info hotspot. */}
+        {pois && pois.length && onSelectPoi ? (
+          pois.map((p) => (
+            <PoiMarker key={p.id} poi={p} active={activePoi?.id === p.id} onSelect={onSelectPoi} />
+          ))
+        ) : (
+          <Hotspot blurb={blurb} />
+        )}
+        <CameraRig poi={activePoi} />
 
         <OrbitControls
+          makeDefault
           enablePan={false}
-          minDistance={5}
+          minDistance={1.2}
           maxDistance={20}
           maxPolarAngle={Math.PI / 2.15}
           enableDamping
@@ -71,6 +89,40 @@ export function Viewer({
       </Canvas>
     </div>
   );
+}
+
+/**
+ * Eases the camera + orbit target to the active point of interest, then hands
+ * control back so the visitor can look around from there. With no active POI,
+ * free orbit is unchanged.
+ */
+function CameraRig({ poi }: { poi: Poi | null }) {
+  const camera = useThree((s) => s.camera);
+  // OrbitControls registers itself here via makeDefault.
+  const controls = useThree((s) => s.controls) as
+    | { target: Vector3; update: () => void; enabled: boolean }
+    | null;
+  const done = useRef(false);
+
+  const camVec = useMemo(() => (poi ? new Vector3(...poi.camera) : null), [poi]);
+  const tgtVec = useMemo(() => (poi ? new Vector3(...poi.target) : null), [poi]);
+
+  useEffect(() => {
+    done.current = false;
+    if (controls) controls.enabled = !poi; // take over while travelling to a POI
+  }, [poi, controls]);
+
+  useFrame(() => {
+    if (!poi || !controls || done.current || !camVec || !tgtVec) return;
+    camera.position.lerp(camVec, 0.09);
+    controls.target.lerp(tgtVec, 0.09);
+    controls.update();
+    if (camera.position.distanceTo(camVec) < 0.06) {
+      done.current = true;
+      controls.enabled = true; // free look around the POI
+    }
+  });
+  return null;
 }
 
 /** Entrance animation: the site scales up and rises into place on teleport-in. */
