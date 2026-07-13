@@ -45,9 +45,12 @@ talent.
 
 ## Project status
 
-🌱 **Early / greenfield.** We are in **Phase 0 (Foundation)**. Product code does
-not exist yet. The current focus is the founding strategy, governance, and
-standing up this repository in the open.
+🌱 **Phase 0 (Foundation).** The founding strategy and governance are in place,
+and the repository now hosts the **first product code**: a deployable
+rendering-stack prototype (see [Getting started](#getting-started)). It is a
+mobile-first Vite + React + Three.js viewer on Cloudflare Workers, currently
+rendering a placeholder model — the next step is loading a real glTF /
+Gaussian-splat capture and validating performance on low-end Android.
 
 **First milestone (north star):** one Khmer temple or courtyard, photoreal, that
 opens in a mobile browser from a link, runs smoothly on low-end Android, with an
@@ -66,12 +69,71 @@ first entry in the Open Khmer Heritage Archive.
 
 See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 
-## Technology (planned)
+## Technology
 
-- **Rendering:** Three.js / Babylon.js (open, standards-based) + Gaussian
-  Splatting viewers; **glTF** for authored geometry.
-- **Backend (v1):** static hosting + CDN. No game server.
-- **Payments (later):** Bakong / KHQR (National Bank of Cambodia).
+The v1 stack, chosen to honor the "low-end Android over 4G" constraint:
+
+| Layer | Choice |
+|---|---|
+| Client | Mobile **web** (SPA), zero install |
+| Build / dev | **Vite** + official `@cloudflare/vite-plugin` (runs against the real Workers runtime locally) |
+| UI | **React** 18 |
+| 3D | **Three.js** via `@react-three/fiber` + `drei` |
+| Hosting | **Cloudflare Workers** + static assets — no game server for v1 |
+
+Planned: **Gaussian Splatting** viewers and **glTF** authored geometry for the
+photoreal captures; **Bakong / KHQR** (National Bank of Cambodia) for the later
+optional payments layer.
+
+## Getting started
+
+Requires **Node.js 20+** (22 recommended) and npm.
+
+```bash
+npm install        # install dependencies
+npm run dev        # Vite + workerd dev server at http://localhost:5173
+```
+
+Open the URL on your machine — or, to test the hard requirement, on a phone.
+
+### Scripts
+
+| Script | What it does |
+|---|---|
+| `npm run dev` | Local dev server on the Workers runtime |
+| `npm run build` | Type-check (`tsc -b`) and build the app + Worker to `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run deploy` | Build and deploy to Cloudflare Workers |
+| `npm run typecheck` | Type-check without building |
+| `npm run cf-typegen` | Regenerate Worker binding types from `wrangler.jsonc` |
+
+### Deploying
+
+```bash
+npx wrangler login   # one-time
+npm run deploy       # builds, then publishes to <name>.workers.dev
+```
+
+Worker/asset configuration lives in [`wrangler.jsonc`](./wrangler.jsonc). A
+successful deploy prints a live `*.workers.dev` URL — a shareable link is the
+Phase 1 success metric.
+
+### Project layout
+
+```
+index.html                 # SPA entry
+src/
+  main.tsx                 # React root
+  App.tsx                  # HUD + viewer composition
+  index.css                # full-viewport, mobile-first styles
+  components/
+    Viewer.tsx             # r3f canvas, camera, controls, lighting, hotspot
+    HeritagePlaceholder.tsx# primitive stand-in for a real capture
+  worker/
+    index.ts               # Cloudflare Worker (static assets + /api/health)
+vite.config.ts             # Vite + React + Cloudflare plugin
+wrangler.jsonc             # Worker / assets configuration
+```
 
 ## Contributing
 

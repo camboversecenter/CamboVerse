@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "camboverse",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2025-04-01",
+  // Static assets (the built SPA) are served directly by the edge. Requests
+  // that don't match an asset fall through to the Worker in src/worker.
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
