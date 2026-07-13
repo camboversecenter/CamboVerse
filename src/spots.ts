@@ -33,7 +33,7 @@ export const SPOTS: Spot[] = [
       "The largest religious monument on Earth, built in the early 12th century — the soul of the Khmer Empire and Cambodia's national symbol.",
     lat: 13.4125,
     lng: 103.867,
-    model: SAMPLE,
+    model: "/models/angkor-wat.glb",
     live: true,
   },
   {
