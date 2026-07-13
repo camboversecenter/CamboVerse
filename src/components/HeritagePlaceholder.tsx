@@ -42,7 +42,7 @@ export function HeritagePlaceholder() {
       {/* Finial */}
       <mesh position={[0, 3.75, 0]} castShadow>
         <coneGeometry args={[0.35, 0.7, 6]} />
-        <meshStandardMaterial color="#d9a441" roughness={0.5} metalness={0.2} />
+        <meshStandardMaterial color="#4c8a3f" roughness={0.5} metalness={0.2} />
       </mesh>
     </group>
   );
