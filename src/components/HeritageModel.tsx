@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
+import type { Mesh } from "three";
 
 const MODEL_URL = "/models/heritage-sample.glb";
 
@@ -15,6 +17,16 @@ const MODEL_URL = "/models/heritage-sample.glb";
  */
 export function HeritageModel({ url = MODEL_URL }: { url?: string }) {
   const { scene } = useGLTF(url, false, false);
+  // Enable shadows on the model's meshes (once per loaded scene).
+  useMemo(() => {
+    scene.traverse((o) => {
+      const m = o as Mesh;
+      if (m.isMesh) {
+        m.castShadow = true;
+        m.receiveShadow = true;
+      }
+    });
+  }, [scene]);
   return <primitive object={scene} />;
 }
 

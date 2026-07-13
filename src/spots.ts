@@ -59,8 +59,8 @@ export const SPOTS: Spot[] = [
     lat: 13.4348,
     lng: 103.8891,
     nudge: [0.9, 0.5],
-    model: SAMPLE,
-    live: false,
+    model: "/models/ta-prohm.glb",
+    live: true,
   },
   {
     id: "banteay-srei",
