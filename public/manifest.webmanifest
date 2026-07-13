@@ -1,0 +1,20 @@
+{
+  "name": "CamboVerse — Explore Khmer Heritage",
+  "short_name": "CamboVerse",
+  "description": "Explore Cambodia's cultural heritage from any phone or VR headset — an open, mobile-first 3D archive of Khmer heritage.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1410",
+  "theme_color": "#1a1410",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "travel", "entertainment"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

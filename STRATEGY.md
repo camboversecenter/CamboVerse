@@ -23,12 +23,12 @@
 
 CamboVerse is a government-sanctioned, university-stewarded, open-source platform that makes Cambodia's cultural heritage explorable by anyone with a phone and a web link — and, in doing so, trains a generation of Cambodian students to build the immersive, spatial technologies of the digital economy.
 
-The first product is deliberately narrow: **one photoreal Khmer heritage site that opens in a mobile web browser, with no app install, no login, and no VR headset required.** From that wedge, CamboVerse grows into two connected public goods:
+The first product is deliberately narrow: **one photoreal Khmer heritage site that opens in a mobile web browser, with no app install and no login — playable on an ordinary phone and enhanced on a VR headset through open WebXR.** From that wedge, CamboVerse grows into two connected public goods:
 
 1. **An open 3D archive of Khmer heritage** — openly-licensed scans (Gaussian splats and glTF meshes) that anyone can build on: schools, researchers, game developers, the diaspora, and other ministries.
 2. **The CamboVerse viewer/platform** — the open-source experience layer that renders that archive as immersive, educational, tourism-ready environments.
 
-CamboVerse is **not** a copy of the 2021 "VR metaverse" vision, which failed commercially even for the companies that spent tens of billions on it and which fits Cambodia's device reality poorly. It is a mobile-first, web-first, low-bandwidth *spatial platform built on Cambodia's real digital rails* — and, uniquely, one built as a **Digital Public Good** so that grant capital, international partnerships, and a national student workforce power it rather than venture burn.
+CamboVerse is **not** a copy of the 2021 "VR metaverse" vision — a walled, headset-only world that failed commercially even for the companies that spent tens of billions on it and that fits Cambodia's device reality poorly. It is a mobile-first, web-first, low-bandwidth *spatial platform built on Cambodia's real digital rails* that **supports both VR and non-VR through open WebXR**: fully usable on an ordinary phone, and immersive on a headset for those who have one — with the non-VR mobile experience always the accessible baseline. Uniquely, it is built as a **Digital Public Good** so that grant capital, international partnerships, and a national student workforce power it rather than venture burn.
 
 **What makes this the right thing at the right time:**
 - The collapse of metaverse hype means realistic expectations, cheap tooling, and available talent.
@@ -66,7 +66,7 @@ Registering CamboVerse as a DPG delivers concrete national benefits:
 ### 1.4 Guiding principles
 
 1. **Public good first.** Everything ships in the open under clear licenses; the value is national and shared, not captured.
-2. **Cambodian reality, not Silicon Valley fantasy.** Design for a mid-range Android phone on a 4G connection, not a VR headset on fiber.
+2. **Cambodian reality, not Silicon Valley fantasy.** Design for a mid-range Android phone on a 4G connection as the baseline; support VR headsets via open WebXR as an enhancement, never a requirement for access.
 3. **Education is the engine.** Building CamboVerse *is* the curriculum; the Center's output is both a platform and a trained workforce.
 4. **Under-promise, over-deliver.** Ship one excellent site before promising a national platform. Report concrete progress every quarter.
 5. **Cultural respect and consent.** Heritage is captured and represented in partnership with the institutions and communities that steward it.
@@ -109,7 +109,7 @@ Every technical choice is driven by Cambodian user reality:
 
 | Reality | Consequence for architecture |
 |---|---|
-| Mid/low-end Android dominates; VR headsets are effectively absent | Target the phone browser. No headset dependency. |
+| Mid/low-end Android dominates; VR headsets are a minority | Target the phone browser as the baseline; support VR via **WebXR** as a progressive enhancement — the same open stack, never a dependency for access. |
 | Mobile data cost and variable bandwidth | Aggressive compression, streamed/level-of-detail assets, "works on 4G" as an acceptance criterion |
 | Users live inside Facebook, Messenger, Telegram, TikTok | Zero-install web link that opens from a shared message; no app-store fight for v1 |
 | National, long-lived infrastructure | Open standards, no vendor lock-in, in-country hosting where feasible, data sovereignty |
@@ -140,7 +140,9 @@ As national infrastructure, CamboVerse commits to open, interoperable standards 
 
 ### 3.4 Explicitly out of scope for v1
 
-To protect focus and deliverability: full real-time multiplayer, VR-headset support, user-generated-content tooling, avatars/social systems, in-world economy/payments, and native mobile apps. Each is a *later phase* with its own justification, not part of the founding milestone.
+To protect focus and deliverability: full real-time multiplayer, user-generated-content tooling, avatars/social systems, in-world economy/payments, and native mobile apps. Each is a *later phase* with its own justification, not part of the founding milestone.
+
+**A note on VR:** VR is a supported target — CamboVerse is built on **WebXR**, so the same open stack drives both the non-VR mobile-web experience and immersive VR on a headset. What is out of scope for the *founding milestone* is deep headset-specific polish (VR-native controls, room-scale locomotion, hand tracking); the non-VR mobile-web path remains the v1 baseline and hard requirement, and VR support deepens as the stack matures.
 
 ---
 
@@ -254,6 +256,8 @@ The roadmap is phased to under-promise and over-deliver, and to map cleanly onto
 
 ### Phase 3 — Platform Features
 - Add lightweight presence (see others explore) *if* validated by demand.
+- Deepen **immersive VR** via WebXR: VR-native controls, comfortable locomotion,
+  and headset-tuned performance (the mobile-web baseline continues unchanged).
 - Guided/narrated tours; multi-language (Khmer/English) and diaspora features.
 - Explore Bakong-enabled donations toward real restoration.
 
@@ -274,7 +278,7 @@ The roadmap is phased to under-promise and over-deliver, and to map cleanly onto
 | **"Open" in name only** | Develop in public from commit #1; clear licenses; real `CONTRIBUTING` and issue pipeline |
 | **Heritage licensing / cultural sensitivity** | Secure APSARA/Ministry of Culture partnership early; capture with consent and provenance |
 | **Device/bandwidth performance** | "Runs on a ~$150 Android over 4G" as a hard acceptance criterion; aggressive optimization |
-| **Chasing the discredited "VR metaverse" framing** | Lead with "explore Khmer heritage from anywhere" and "digital preservation"; keep VR out of scope |
+| **Chasing the discredited "VR metaverse" hype** | Lead with "explore Khmer heritage from anywhere" and "digital preservation"; support VR via open WebXR as an enhancement (never a requirement), and avoid the walled, headset-only 2021 framing |
 | **Student-workforce variability** (skill, turnover) | Scoped good-first-issues, faculty review, small core stewardship team for continuity/quality |
 | **Data sovereignty** | Open standards; in-country hosting where feasible; Cambodia owns its heritage data |
 
@@ -287,6 +291,7 @@ The roadmap is phased to under-promise and over-deliver, and to map cleanly onto
 | Primary client platform | Mobile **web** (zero install) | Decided |
 | Rendering engine | **Three.js** or **Babylon.js** (open, standards-based) | To confirm via prototype |
 | Photoreal capture | **Gaussian Splatting** + photogrammetry; **glTF** for authored geometry | To validate on mobile |
+| Immersive mode | **Both VR and non-VR** via open **WebXR**; non-VR mobile web is the baseline | Decided |
 | Multiplayer in v1 | **None** (single-user exploration) | Decided |
 | Backend in v1 | Static hosting + CDN, **no game server** | Decided |
 | Payments | **Bakong / KHQR**, later phase only | Deferred |

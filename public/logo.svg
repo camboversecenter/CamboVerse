@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 120" role="img" aria-label="CamboVerse logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241a12"/>
+      <stop offset="1" stop-color="#140f0a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eec368"/>
+      <stop offset="1" stop-color="#cf9a34"/>
+    </linearGradient>
+  </defs>
+
+  <!-- mark -->
+  <g transform="translate(10 10)">
+    <rect width="100" height="100" rx="22" fill="url(#bg)"/>
+    <g transform="translate(50 52) scale(0.9) translate(-50 -52)" fill="url(#gold)">
+      <circle cx="50" cy="13.8" r="2.8"/>
+      <path d="M50 16 L57 41 L43 41 Z"/>
+      <rect x="37" y="42"   width="26" height="9"  rx="1"/>
+      <rect x="30" y="52"   width="40" height="10" rx="1"/>
+      <rect x="23" y="63"   width="54" height="10" rx="1"/>
+      <rect x="16" y="74.5" width="68" height="10.5" rx="1.5"/>
+    </g>
+    <rect x="46.5" y="78" width="7" height="7" rx="1" fill="#17120c"/>
+  </g>
+
+  <!-- wordmark -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+    <text x="132" y="58" font-size="40" font-weight="700" letter-spacing="0.5" fill="#f4ece0">Cambo<tspan fill="url(#gold)">Verse</tspan></text>
+    <text x="134" y="84" font-size="15.5" font-weight="500" letter-spacing="1.5" fill="#b9a184">EXPLORE KHMER HERITAGE</text>
+  </g>
+</svg>

@@ -1,10 +1,12 @@
 <div align="center">
 
+<img src="public/logo.svg" alt="CamboVerse" width="420" />
+
 # CamboVerse
 
 **An open-source Digital Public Good for immersive Khmer heritage and Cambodia's digital economy.**
 
-*Explore Cambodia's cultural heritage from any phone — no app, no headset, just a link.*
+*Explore Cambodia's cultural heritage from any phone or VR headset — no install, just a link.*
 
 Stewarded by the **CamboVerse Center** (មជ្ឈមណ្ឌលខេមបូវើស) at the
 **National University of Management (NUM)**, established by MoEYS Prakas, 11 July 2024.
@@ -15,10 +17,13 @@ Stewarded by the **CamboVerse Center** (មជ្ឈមណ្ឌលខេមប�
 
 ## What is CamboVerse?
 
-CamboVerse is **not** a VR metaverse. It is a **mobile-first, web-first,
-low-bandwidth platform** that renders an **open 3D archive of Khmer heritage**
-as explorable, educational environments — designed to run in the browser of an
-ordinary Android phone over a 4G connection, opened from a shared link.
+CamboVerse is a **mobile-first, web-first, low-bandwidth platform** that renders
+an **open 3D archive of Khmer heritage** as explorable, educational
+environments — designed to run in the browser of an ordinary Android phone over
+a 4G connection, opened from a shared link. It **supports both VR and non-VR**:
+immersive on a headset through open **WebXR**, and fully usable without one. A
+headset is never *required* — we embrace open-standard VR as an enhancement, not
+the discredited walled "VR metaverse" of 2021.
 
 It is built as a **Digital Public Good**: open source, open data, open
 standards — and built by NUM students as part of their curriculum, so that
@@ -36,7 +41,8 @@ talent.
 
 - 📱 **Runs on a ~$150 Android phone over 4G** — a hard requirement, not a goal.
 - 🔗 **Zero install** — opens from a web link (Facebook / Telegram / anywhere).
-- 🕳️ **No VR headset required**, ever, for the core experience.
+- 🥽 **Both VR and non-VR** — immersive on a WebXR headset, fully usable on an
+  ordinary phone; a headset is never *required* to access content.
 - 🧩 **Open standards only** — glTF, WebGL/WebGPU/WebXR. No vendor lock-in.
 - 🌐 **Public good first** — everything ships in the open under clear licenses.
 - 🎓 **Education is the engine** — building CamboVerse *is* the curriculum.
@@ -95,6 +101,15 @@ npm run dev        # Vite + workerd dev server at http://localhost:5173
 ```
 
 Open the URL on your machine — or, to test the hard requirement, on a phone.
+
+### Install as an app (PWA)
+
+CamboVerse is a **Progressive Web App**: it ships a web manifest
+(`public/manifest.webmanifest`), a full icon set (`public/icons/`), and a
+service worker (`public/sw.js`) for installability and basic offline support.
+On a production build, phones and desktops can "Add to Home Screen" / "Install"
+and launch it fullscreen like a native app — no app store. (The service worker
+is registered only in production builds, so `npm run dev` stays hot-reloadable.)
 
 ### Scripts
 
