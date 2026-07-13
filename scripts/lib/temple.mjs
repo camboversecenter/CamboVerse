@@ -15,6 +15,12 @@ export const SAND = [0.4, 0.32, 0.22];
 export const DARK_SAND = [0.3, 0.24, 0.17];
 export const MOSS = [0.26, 0.28, 0.19];
 export const WOOD = [0.33, 0.27, 0.2];
+export const ROCK = [0.34, 0.31, 0.27];
+export const CREAM = [0.74, 0.68, 0.52];
+export const GOLD = [0.82, 0.6, 0.2];
+export const ROOF = [0.66, 0.3, 0.16];
+export const PINK_SAND = [0.58, 0.34, 0.27];
+export const PINK_DARK = [0.46, 0.26, 0.21];
 
 export function createBuilder() {
   const parts = []; // { geom, color:[r,g,b] }
@@ -42,6 +48,7 @@ export function createBuilder() {
     const g = new THREE.ConeGeometry(r, h, seg).toNonIndexed();
     if (rot) {
       if (rot[0]) g.rotateX(rot[0]);
+      if (rot[1]) g.rotateY(rot[1]);
       if (rot[2]) g.rotateZ(rot[2]);
     }
     g.translate(x, y, z);

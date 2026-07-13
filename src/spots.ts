@@ -23,8 +23,6 @@ export interface Spot {
   water?: boolean;
 }
 
-const SAMPLE = "/models/heritage-sample.glb";
-
 export const SPOTS: Spot[] = [
   {
     id: "angkor-wat",
@@ -75,8 +73,8 @@ export const SPOTS: Spot[] = [
     lat: 13.5988,
     lng: 103.9633,
     nudge: [0.4, -0.9],
-    model: SAMPLE,
-    live: false,
+    model: "/models/banteay-srei.glb",
+    live: true,
   },
   {
     id: "preah-vihear",
@@ -87,8 +85,8 @@ export const SPOTS: Spot[] = [
       "A dramatic cliff-top Shaivite temple on the Dângrêk escarpment — a UNESCO World Heritage Site.",
     lat: 14.3907,
     lng: 104.6809,
-    model: SAMPLE,
-    live: false,
+    model: "/models/preah-vihear.glb",
+    live: true,
   },
   {
     id: "royal-palace",
@@ -99,7 +97,7 @@ export const SPOTS: Spot[] = [
       "The royal residence and the Silver Pagoda in the capital, Phnom Penh — living Khmer heritage.",
     lat: 11.5645,
     lng: 104.9284,
-    model: SAMPLE,
-    live: false,
+    model: "/models/royal-palace.glb",
+    live: true,
   },
 ];
