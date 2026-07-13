@@ -39,6 +39,8 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         onSelectPoi={setPoiId}
         mode={mode}
         walkInput={walkInput}
+        aerial={spot.aerial}
+        landscape={spot.landscape}
       />
 
       {walking && <WalkControls input={walkInput} />}
@@ -89,7 +91,11 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
               {spot.province} · {spot.blurb}
             </p>
             {pois && pois.length > 0 && (
-              <p className="poi-hint">◍ Tap a marker to visit, or 🚶 walk in to explore freely.</p>
+              <p className="poi-hint">
+                {spot.aerial
+                  ? "◍ Tap a location to teleport down to it, or 🚶 walk in."
+                  : "◍ Tap a marker to visit, or 🚶 walk in to explore freely."}
+              </p>
             )}
           </div>
         ))}

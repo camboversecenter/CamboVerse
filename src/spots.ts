@@ -40,6 +40,10 @@ export interface Spot {
   splat?: string;
   /** Points of interest to walk between inside the site. */
   pois?: Poi[];
+  /** Arrive high above the site (whole-complex aerial view), then teleport down. */
+  aerial?: boolean;
+  /** Full surrounding landscape to render (e.g. Angkor's moat + forest island). */
+  landscape?: "angkor";
 }
 
 export const SPOTS: Spot[] = [
@@ -54,9 +58,18 @@ export const SPOTS: Spot[] = [
     lng: 103.867,
     model: "/models/angkor-wat.glb",
     live: true,
-    water: true,
+    aerial: true,
+    landscape: "angkor",
     splat: "/models/angkor-wat.splat",
     pois: [
+      {
+        id: "moat-crossing",
+        title: "Moat Crossing",
+        khmer: "កសិន្ធុជុំវិញ",
+        info: "A vast rectangular moat — a canal nearly 200 m wide — surrounds the whole temple island, symbolising the cosmic ocean. The western causeway carries visitors across it.",
+        target: [0, 0.3, 9.6],
+        camera: [2.2, 1.8, 12.8],
+      },
       {
         id: "causeway",
         title: "The Causeway",
@@ -64,6 +77,14 @@ export const SPOTS: Spot[] = [
         info: "The long sandstone causeway is the ceremonial approach from the west, crossing the moat toward the temple's five towers.",
         target: [0, 0.6, 2.8],
         camera: [0, 1.5, 6.8],
+      },
+      {
+        id: "twin-ponds",
+        title: "Twin Ponds",
+        khmer: "ស្រះទឹកទាំងពីរ",
+        info: "Two ponds flank the approach lawn — the northern one gives the famous mirror reflection of the five towers at sunrise.",
+        target: [2.7, 0.2, 5.2],
+        camera: [4.2, 1.5, 7.0],
       },
       {
         id: "central-sanctuary",

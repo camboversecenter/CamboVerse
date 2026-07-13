@@ -32,6 +32,8 @@ export function Viewer({
   onSelectPoi,
   mode = "orbit",
   walkInput,
+  aerial = false,
+  landscape,
 }: {
   modelUrl: string;
   blurb: string;
@@ -43,6 +45,8 @@ export function Viewer({
   onSelectPoi?: (id: string) => void;
   mode?: "orbit" | "walk";
   walkInput?: MutableRefObject<WalkInput>;
+  aerial?: boolean;
+  landscape?: "angkor";
 }) {
   return (
     <div className="viewer">
@@ -50,10 +54,12 @@ export function Viewer({
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={[1, 2]}
         shadows
-        camera={{ position: [5, 2.8, 14], fov: 50 }}
+        // Aerial sites arrive high above the whole complex; teleporting to a
+        // location (POI) then brings the visitor down.
+        camera={{ position: aerial ? [11, 21, 25] : [5, 2.8, 14], fov: 50 }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
-        <Scenery water={water} />
+        <Scenery water={water} landscape={landscape} />
 
         {/* Load the real glTF model; fall back to the placeholder on error,
             show a spinner while it streams. Materialize scales/rises it into
@@ -89,11 +95,11 @@ export function Viewer({
             makeDefault
             enablePan={false}
             minDistance={1.2}
-            maxDistance={20}
+            maxDistance={aerial ? 45 : 20}
             maxPolarAngle={Math.PI / 2.15}
             enableDamping
             dampingFactor={0.08}
-            target={[0, 1.2, 0]}
+            target={[0, aerial ? 0.4 : 1.2, 0]}
           />
         )}
       </Canvas>

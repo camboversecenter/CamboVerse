@@ -1,14 +1,15 @@
 import { Sky, MeshReflectorMaterial } from "@react-three/drei";
 import { Palm } from "./Palm";
+import { AngkorLandscape } from "./AngkorLandscape";
 
 /**
  * Outdoor daytime environment for a heritage site: a procedural sky, warm
- * late-afternoon sun casting long shadows, grass, scattered sugar palms, and —
- * for sites with `water` — a reflecting pool (the iconic Angkor Wat view).
- * Fully self-contained: no HDRI, no external textures.
+ * late-afternoon sun casting long shadows, grass, scattered sugar palms, and
+ * either a simple reflecting pool (`water`) or a full site landscape (e.g.
+ * `landscape="angkor"`: moat canal, forested island, causeway). Fully
+ * self-contained: no HDRI, no external textures.
  */
-// Palms flank and stand behind the temple (never in the camera's foreground,
-// which is the reflecting pool).
+// Palms flank and stand behind the temple (never in the camera's foreground).
 const PALMS: { pos: [number, number, number]; s: number; r: number }[] = [
   { pos: [-7, 0, -6], s: 1.1, r: 0.4 },
   { pos: [7, 0, -7], s: 1.05, r: 1.1 },
@@ -22,11 +23,19 @@ const PALMS: { pos: [number, number, number]; s: number; r: number }[] = [
   { pos: [13, 0, -7], s: 1.1, r: 0.9 },
 ];
 
-export function Scenery({ water = false }: { water?: boolean }) {
+export function Scenery({
+  water = false,
+  landscape,
+}: {
+  water?: boolean;
+  landscape?: "angkor";
+}) {
+  const angkor = landscape === "angkor";
   return (
     <>
       <Sky sunPosition={[16, 5, 10]} turbidity={7} rayleigh={1.4} mieCoefficient={0.007} mieDirectionalG={0.9} />
-      <fog attach="fog" args={["#d7e2ec", 30, 80]} />
+      {/* Longer fog when the site has a large landscape viewed from the air. */}
+      <fog attach="fog" args={["#d7e2ec", angkor ? 45 : 30, angkor ? 150 : 80]} />
 
       {/* Lighting: warm sun + cool sky fill. */}
       <ambientLight intensity={0.28} />
@@ -40,20 +49,21 @@ export function Scenery({ water = false }: { water?: boolean }) {
         shadow-bias={-0.0004}
         shadow-camera-near={0.5}
         shadow-camera-far={70}
-        shadow-camera-left={-18}
-        shadow-camera-right={18}
-        shadow-camera-top={18}
-        shadow-camera-bottom={-18}
+        shadow-camera-left={-22}
+        shadow-camera-right={22}
+        shadow-camera-top={22}
+        shadow-camera-bottom={-22}
       />
 
-      {/* Grass */}
+      {/* Outer land (forest floor tone) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color="#6f8b3d" roughness={1} />
+        <meshStandardMaterial color={angkor ? "#5d7a35" : "#6f8b3d"} roughness={1} />
       </mesh>
 
-      {/* Reflecting pool */}
-      {water && (
+      {/* Site landscape (moat + island + forest + causeway) or a simple pool. */}
+      {angkor && <AngkorLandscape />}
+      {water && !angkor && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 9]}>
           <planeGeometry args={[34, 16]} />
           <MeshReflectorMaterial
