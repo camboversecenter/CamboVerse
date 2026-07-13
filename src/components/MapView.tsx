@@ -11,14 +11,14 @@ export function MapView({ onEnter }: { onEnter: (id: string) => void }) {
       <div className="viewer">
         <Canvas
           dpr={[1, 2]}
-          camera={{ position: [0, 12, 7], fov: 45 }}
+          camera={{ position: [0, 13, 4.2], fov: 45 }}
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <color attach="background" args={["#16232b"]} />
           <fog attach="fog" args={["#16232b", 18, 34]} />
 
           {/* Scale the map to fit a portrait phone viewport. */}
-          <group scale={0.62}>
+          <group scale={0.55}>
             <CambodiaMap />
             {SPOTS.map((s) => (
               <Pin key={s.id} spot={s} onEnter={onEnter} />
