@@ -174,5 +174,85 @@ export function createBuilder() {
     console.log(`wrote ${OUT} — ${vertCount} verts, ${(total / 1024).toFixed(1)} KB`);
   }
 
-  return { box, cyl, cone, sphere, tower, build };
+  /**
+   * Sample the accumulated surfaces into a Gaussian-splat cloud and write the
+   * antimatter15 ".splat" binary (32 bytes/splat: pos f32×3, scale f32×3, color
+   * rgba u8×4, rotation u8×4). Isotropic splats (equal scale) so rotation is
+   * irrelevant. Colours reuse the same weathering, gamma-corrected to sRGB.
+   * A synthetic, license-clean stand-in for a real photoreal capture.
+   */
+  function buildSplat(OUT, { modelScale = 1, splatScale = 0.045, count = 40000, alpha = 220 } = {}) {
+    const toByte = (lin) => Math.max(0, Math.min(255, Math.round(Math.pow(Math.min(1, Math.max(0, lin)), 1 / 2.2) * 255)));
+    const shadeAt = (py, tint) => Math.max(0.62, Math.min(1.12, 0.74 + 0.05 * py * modelScale)) * tint;
+
+    // Collect triangles with per-vertex colour + area.
+    const tris = [];
+    let totalArea = 0;
+    parts.forEach((part, pi) => {
+      const pos = part.geom.attributes.position.array;
+      const [cr, cg, cb] = part.color;
+      const tint = 0.94 + 0.12 * (0.5 + 0.5 * Math.sin(pi * 12.9898));
+      for (let v = 0; v < pos.length; v += 9) {
+        const P = [
+          [pos[v], pos[v + 1], pos[v + 2]],
+          [pos[v + 3], pos[v + 4], pos[v + 5]],
+          [pos[v + 6], pos[v + 7], pos[v + 8]],
+        ];
+        const C = P.map(([, y]) => {
+          const s = shadeAt(y, tint);
+          return [cr * s, cg * s, cb * s];
+        });
+        const ux = P[1][0] - P[0][0], uy = P[1][1] - P[0][1], uz = P[1][2] - P[0][2];
+        const wx = P[2][0] - P[0][0], wy = P[2][1] - P[0][1], wz = P[2][2] - P[0][2];
+        const cxp = uy * wz - uz * wy, cyp = uz * wx - ux * wz, czp = ux * wy - uy * wx;
+        const area = 0.5 * Math.sqrt(cxp * cxp + cyp * cyp + czp * czp);
+        if (area <= 0) continue;
+        tris.push({ P, C, area });
+        totalArea += area;
+      }
+    });
+
+    const rec = [];
+    for (const { P, C, area } of tris) {
+      const n = Math.max(1, Math.round((count * area) / totalArea));
+      for (let k = 0; k < n; k++) {
+        let a = Math.random(), b2 = Math.random();
+        if (a + b2 > 1) { a = 1 - a; b2 = 1 - b2; }
+        const w0 = 1 - a - b2;
+        const px = (P[0][0] * w0 + P[1][0] * a + P[2][0] * b2) * modelScale;
+        const py = (P[0][1] * w0 + P[1][1] * a + P[2][1] * b2) * modelScale;
+        const pz = (P[0][2] * w0 + P[1][2] * a + P[2][2] * b2) * modelScale;
+        const r = C[0][0] * w0 + C[1][0] * a + C[2][0] * b2;
+        const g = C[0][1] * w0 + C[1][1] * a + C[2][1] * b2;
+        const bl = C[0][2] * w0 + C[1][2] * a + C[2][2] * b2;
+        rec.push([px, py, pz, toByte(r), toByte(g), toByte(bl)]);
+      }
+    }
+
+    const buf = Buffer.alloc(rec.length * 32);
+    rec.forEach((s, i) => {
+      const o = i * 32;
+      buf.writeFloatLE(s[0], o);
+      buf.writeFloatLE(s[1], o + 4);
+      buf.writeFloatLE(s[2], o + 8);
+      buf.writeFloatLE(splatScale, o + 12);
+      buf.writeFloatLE(splatScale, o + 16);
+      buf.writeFloatLE(splatScale, o + 20);
+      buf[o + 24] = s[3];
+      buf[o + 25] = s[4];
+      buf[o + 26] = s[5];
+      buf[o + 27] = alpha;
+      // Unit quaternion (0,0,0,1); isotropic so orientation is irrelevant, but
+      // it must be non-degenerate or the covariance is NaN (invisible splats).
+      buf[o + 28] = 128;
+      buf[o + 29] = 128;
+      buf[o + 30] = 128;
+      buf[o + 31] = 255;
+    });
+    mkdirSync(dirname(OUT), { recursive: true });
+    writeFileSync(OUT, buf);
+    console.log(`wrote ${OUT} — ${rec.length} splats, ${(buf.length / 1024).toFixed(1)} KB`);
+  }
+
+  return { box, cyl, cone, sphere, tower, build, buildSplat };
 }

@@ -7,6 +7,7 @@ import { HeritagePlaceholder } from "./HeritagePlaceholder";
 import { ModelErrorBoundary } from "./ModelErrorBoundary";
 import { Loader } from "./Loader";
 import { Scenery } from "./Scenery";
+import { SplatModel } from "./SplatModel";
 
 /**
  * The 3D viewer surface.
@@ -20,10 +21,14 @@ export function Viewer({
   modelUrl,
   blurb,
   water = false,
+  splatUrl,
+  splat = false,
 }: {
   modelUrl: string;
   blurb: string;
   water?: boolean;
+  splatUrl?: string;
+  splat?: boolean;
 }) {
   return (
     <div className="viewer">
@@ -40,11 +45,17 @@ export function Viewer({
             show a spinner while it streams. Materialize scales/rises it into
             place on arrival, completing the teleport. */}
         <Materialize>
-          <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+          {splat && splatUrl ? (
             <Suspense fallback={<Loader />}>
-              <HeritageModel url={modelUrl} />
+              <SplatModel url={splatUrl} />
             </Suspense>
-          </ModelErrorBoundary>
+          ) : (
+            <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+              <Suspense fallback={<Loader />}>
+                <HeritageModel url={modelUrl} />
+              </Suspense>
+            </ModelErrorBoundary>
+          )}
         </Materialize>
         <Hotspot blurb={blurb} />
 
