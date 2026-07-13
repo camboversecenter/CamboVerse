@@ -13,8 +13,8 @@ const MODEL_URL = "/models/heritage-sample.glb";
  *   - Draco:   `useGLTF(MODEL_URL, true)` + `useGLTF.setDecoderPath('/draco/')`
  *     with the decoder files copied into `public/draco/` (avoid the default CDN).
  */
-export function HeritageModel() {
-  const { scene } = useGLTF(MODEL_URL, false, false);
+export function HeritageModel({ url = MODEL_URL }: { url?: string }) {
+  const { scene } = useGLTF(url, false, false);
   return <primitive object={scene} />;
 }
 
