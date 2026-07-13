@@ -23,3 +23,9 @@ npm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Local-only test assets — a place to evaluate external models WITHOUT
+# committing them (e.g. license-restricted models under review). Never commit
+# assets here; only their own models / openly-licensed ones enter the repo.
+public/models/local/*
+!public/models/local/README.md
