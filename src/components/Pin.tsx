@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Html } from "@react-three/drei";
 import type { Spot } from "../spots";
+import { projectLatLng } from "../cambodia-outline";
 
 /** A clickable map marker for a heritage site. Tapping it teleports in. */
 export function Pin({ spot, onEnter }: { spot: Spot; onEnter: (id: string) => void }) {
   const [hovered, setHovered] = useState(false);
-  const [x, z] = spot.map;
+  const [px, pz] = projectLatLng(spot.lat, spot.lng);
+  const [nx, nz] = spot.nudge ?? [0, 0];
+  const x = px + nx;
+  const z = pz + nz;
   const color = spot.live ? "#4c8a3f" : "#8b9099";
 
   const over = () => {

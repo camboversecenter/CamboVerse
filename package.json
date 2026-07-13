@@ -12,7 +12,8 @@
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc -b",
     "cf-typegen": "wrangler types",
-    "gen:model": "node scripts/generate-model.mjs"
+    "gen:model": "node scripts/generate-model.mjs",
+    "gen:map": "node scripts/generate-map-outline.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

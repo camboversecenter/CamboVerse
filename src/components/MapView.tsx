@@ -11,14 +11,14 @@ export function MapView({ onEnter }: { onEnter: (id: string) => void }) {
       <div className="viewer">
         <Canvas
           dpr={[1, 2]}
-          camera={{ position: [-0.6, 12, 7], fov: 45 }}
+          camera={{ position: [0, 12, 7], fov: 45 }}
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <color attach="background" args={["#16232b"]} />
           <fog attach="fog" args={["#16232b", 18, 34]} />
 
-          {/* Scale + center the map on the populated region for portrait phones. */}
-          <group scale={0.5}>
+          {/* Scale the map to fit a portrait phone viewport. */}
+          <group scale={0.62}>
             <CambodiaMap />
             {SPOTS.map((s) => (
               <Pin key={s.id} spot={s} onEnter={onEnter} />
@@ -36,7 +36,7 @@ export function MapView({ onEnter }: { onEnter: (id: string) => void }) {
             maxPolarAngle={Math.PI / 2.3}
             enableDamping
             dampingFactor={0.08}
-            target={[-0.6, 0, -0.4]}
+            target={[0, 0, 0]}
           />
         </Canvas>
       </div>
