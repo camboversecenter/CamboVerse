@@ -1,14 +1,19 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Viewer } from "./Viewer";
 import { WalkControls } from "./WalkControls";
 import type { WalkInput } from "./FirstPersonControls";
 import type { Spot } from "../spots";
+
+/** How long the guided tour lingers at each stop before moving on (ms). */
+const TOUR_DWELL = 8000;
 
 /** An individual heritage site: orbit or walk it, visit its points of interest. */
 export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const [splat, setSplat] = useState(false);
   const [poiId, setPoiId] = useState<string | null>(null);
   const [mode, setMode] = useState<"orbit" | "walk">("orbit");
+  const [touring, setTouring] = useState(false);
+  const [paused, setPaused] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
 
   const pois = spot.pois;
@@ -21,8 +26,36 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   };
   const toggleMode = () => {
     setPoiId(null);
+    setTouring(false);
     setMode((m) => (m === "orbit" ? "walk" : "orbit"));
   };
+
+  const startTour = () => {
+    if (!pois || pois.length === 0) return;
+    setPaused(false);
+    setTouring(true);
+    setPoiId(pois[0].id);
+  };
+  const endTour = () => {
+    setTouring(false);
+    setPaused(false);
+    setPoiId(null);
+  };
+
+  // Guided tour: dwell at each stop, then advance; end after the last one.
+  useEffect(() => {
+    if (!touring || paused || !pois || idx < 0) return;
+    const t = setTimeout(() => {
+      if (idx >= pois.length - 1) {
+        setTouring(false);
+        setPaused(false);
+        setPoiId(null);
+      } else {
+        setPoiId(pois[idx + 1].id);
+      }
+    }, TOUR_DWELL);
+    return () => clearTimeout(t);
+  }, [touring, paused, poiId, idx, pois]);
 
   const walking = mode === "walk";
 
@@ -36,7 +69,10 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         splat={splat && !!spot.splat}
         pois={pois}
         activePoi={activePoi}
-        onSelectPoi={setPoiId}
+        onSelectPoi={(id) => {
+          setTouring(false);
+          setPoiId(id);
+        }}
         mode={mode}
         walkInput={walkInput}
         aerial={spot.aerial}
@@ -61,14 +97,32 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
 
       {!walking &&
         (activePoi && pois ? (
-          <div className="poi-panel">
+          <div className={touring ? "poi-panel touring" : "poi-panel"}>
+            {touring && (
+              <div className="tour-progress" aria-hidden>
+                {pois.map((p, i) => (
+                  <span
+                    key={p.id}
+                    className={i === idx ? `dot on${paused ? " paused" : ""}` : i < idx ? "dot done" : "dot"}
+                  />
+                ))}
+              </div>
+            )}
             <div className="poi-panel-head">
               <span className="poi-count">
+                {touring && <span className="tour-badge">Guided tour</span>}
                 {idx + 1} / {pois.length}
               </span>
-              <button className="poi-close" onClick={() => setPoiId(null)}>
-                ✕ Explore freely
-              </button>
+              <div className="poi-head-actions">
+                {touring && (
+                  <button className="tour-pause" onClick={() => setPaused((p) => !p)}>
+                    {paused ? "▶ Resume" : "⏸ Pause"}
+                  </button>
+                )}
+                <button className="poi-close" onClick={touring ? endTour : () => setPoiId(null)}>
+                  {touring ? "✕ End tour" : "✕ Explore freely"}
+                </button>
+              </div>
             </div>
             <h2>
               {activePoi.title}
@@ -91,11 +145,16 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
               {spot.province} · {spot.blurb}
             </p>
             {pois && pois.length > 0 && (
-              <p className="poi-hint">
-                {spot.aerial
-                  ? "◍ Tap a location to teleport down to it, or 🚶 walk in."
-                  : "◍ Tap a marker to visit, or 🚶 walk in to explore freely."}
-              </p>
+              <>
+                <button className="tour-start" onClick={startTour}>
+                  ▶ Start guided tour
+                </button>
+                <p className="poi-hint">
+                  {spot.aerial
+                    ? "◍ Tap a location to teleport down to it, or 🚶 walk in."
+                    : "◍ Tap a marker to visit, or 🚶 walk in to explore freely."}
+                </p>
+              </>
             )}
           </div>
         ))}
