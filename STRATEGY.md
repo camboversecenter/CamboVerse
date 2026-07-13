@@ -105,6 +105,8 @@ The platform experience CamboVerse grows into is a **living map of Cambodia**. A
 
 This gives the archive a natural, joyful **shell**: the map is the hub, each site is a destination, and "teleport to a temple" is the core verb. It scales gracefully — every new capture added to the Open Khmer Heritage Archive simply appears as another pin on the map, so the experience deepens as the student pipeline produces more sites.
 
+**On arrival — walk the site, visit its spots.** Teleporting lands the visitor *inside* a destination, where they can **move around and explore** — not just orbit a single model. Each destination contains several **points of interest** (a gallery, a bas-relief, a tower, a courtyard), each with its own information. A later phase adds an **AI tour-guide agent** at these spots — a conversational guide that narrates, answers questions, and leads visitors through the site in Khmer or English. (The AI guide is explicitly a *later* phase; the walk-around navigation and points-of-interest come first.)
+
 **Scope note:** the map hub is the *platform shell*; **v1 still ships one real, photoreal temple** (§2.3). The map can debut with a single live site plus clearly-marked "coming soon" pins, preserving the one-temple discipline while making the destination legible to visitors, funders, and MoEYS from day one.
 
 ---
@@ -248,7 +250,7 @@ The roadmap is phased to under-promise and over-deliver, and to map cleanly onto
 - Publish this strategy; agree license and governance charter.
 - Stand up the **public repository** with `LICENSE`, `README`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, and an initial roadmap.
 - Choose the first site and initiate APSARA/Ministry of Culture conversations.
-- Prototype the rendering stack (Three.js/Babylon.js + a Gaussian-splat viewer) on a sample scan to validate mobile performance.
+- Prototype the rendering stack (Three.js/Babylon.js + a Gaussian-splat viewer) on a sample scan to validate mobile performance. **✓ Validated (July 2026):** the Three.js/react-three-fiber stack renders both glTF models and **Gaussian splats** in the mobile web browser, confirmed on a real low-end Android over 4G — de-risking the photoreal capture direction. A synthetic splat proved the path end-to-end; a real capture is the Phase-1 content step (see `docs/CAPTURE.md`).
 
 ### Phase 1 — First Temple (v1)
 - Capture, process, and optimize one scoped site.
