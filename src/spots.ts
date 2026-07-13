@@ -21,6 +21,8 @@ export interface Spot {
   live: boolean;
   /** Show a reflecting pool in front (e.g. Angkor Wat's iconic view). */
   water?: boolean;
+  /** Optional Gaussian-splat capture (.splat) — enables a photoreal toggle. */
+  splat?: string;
 }
 
 export const SPOTS: Spot[] = [
@@ -36,6 +38,7 @@ export const SPOTS: Spot[] = [
     model: "/models/angkor-wat.glb",
     live: true,
     water: true,
+    splat: "/models/angkor-wat.splat",
   },
   {
     id: "bayon",
