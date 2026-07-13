@@ -8,6 +8,21 @@
  * the glTF loaded on teleport; for now every spot shares the sample model.
  * `live` marks whether a real experience exists yet (others show "coming soon").
  */
+/**
+ * A point of interest inside a site — a place the visitor travels to and learns
+ * about. `target` is the look-at point (and the marker position); `camera` is
+ * the eye position when visiting. Coordinates are in the model's world space.
+ * (This is where the future AI tour-guide agent will attach per spot.)
+ */
+export interface Poi {
+  id: string;
+  title: string;
+  khmer?: string;
+  info: string;
+  target: [number, number, number];
+  camera: [number, number, number];
+}
+
 export interface Spot {
   id: string;
   name: string;
@@ -23,6 +38,8 @@ export interface Spot {
   water?: boolean;
   /** Optional Gaussian-splat capture (.splat) — enables a photoreal toggle. */
   splat?: string;
+  /** Points of interest to walk between inside the site. */
+  pois?: Poi[];
 }
 
 export const SPOTS: Spot[] = [
@@ -39,6 +56,40 @@ export const SPOTS: Spot[] = [
     live: true,
     water: true,
     splat: "/models/angkor-wat.splat",
+    pois: [
+      {
+        id: "causeway",
+        title: "The Causeway",
+        khmer: "ស្ពានតម្កល់",
+        info: "The long sandstone causeway is the ceremonial approach from the west, crossing the moat toward the temple's five towers.",
+        target: [0, 0.6, 2.8],
+        camera: [0, 1.5, 6.8],
+      },
+      {
+        id: "central-sanctuary",
+        title: "Central Sanctuary",
+        khmer: "ប្រាសាទកណ្ដាល",
+        info: "The tallest tower crowns the temple-mountain — the symbolic Mount Meru, home of the gods at the heart of the quincunx.",
+        target: [0, 2.0, -0.13],
+        camera: [1.8, 1.7, 2.0],
+      },
+      {
+        id: "west-gallery",
+        title: "Western Gallery",
+        khmer: "វិថីខាងលិច",
+        info: "The outer galleries carry Angkor's famous bas-reliefs — hundreds of metres of carved scenes from myth and history.",
+        target: [-2.0, 0.8, 0],
+        camera: [-3.6, 1.4, 1.7],
+      },
+      {
+        id: "corner-gopura",
+        title: "Corner Gopura",
+        khmer: "គោបុរៈជ្រុង",
+        info: "Gopuras — the towered gateways — mark the corners and entrances of the enclosure walls.",
+        target: [2.1, 0.9, 1.3],
+        camera: [3.4, 1.4, 3.0],
+      },
+    ],
   },
   {
     id: "bayon",
