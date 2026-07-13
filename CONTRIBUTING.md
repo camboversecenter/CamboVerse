@@ -12,8 +12,10 @@ project's direction and hard constraints.
 ## Ground rules
 
 - **Respect the v1 scope.** The v1 north star is **one temple** that opens in a
-  mobile browser and runs on a ~$150 Android over 4G. Real-time multiplayer, VR,
+  mobile browser and runs on a ~$150 Android over 4G. Real-time multiplayer,
   avatars, UGC tooling, payments, and native apps are explicitly *later phases*.
+  VR **is** supported via open WebXR on the same stack, but the non-VR mobile-web
+  experience is the baseline — never require a headset to access content.
 - **Mobile-first, low-bandwidth.** "Runs on a low-end Android over 4G" is a hard
   acceptance criterion. Keep bundles small; prefer streamed, compressed, LOD'd
   assets.

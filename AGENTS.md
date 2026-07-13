@@ -22,9 +22,10 @@ technologies while doing it.
 
 ## The one-sentence mental model
 
-> Not a VR metaverse. A **mobile-first, web-first, low-bandwidth** platform that
-> renders an **open 3D archive of Khmer heritage** as explorable environments,
-> built as a **public good** by students as curriculum.
+> A **mobile-first, web-first, low-bandwidth** platform that renders an **open 3D
+> archive of Khmer heritage** as explorable environments, built as a **public
+> good** by students as curriculum. Supports **both VR and non-VR** via open
+> **WebXR** — but not the discredited walled "VR metaverse" of 2021.
 
 ## Two public goods (don't conflate them)
 
@@ -42,7 +43,9 @@ technologies while doing it.
   low-end Android over 4G" is a hard acceptance criterion.
 - **Zero install for v1:** opens from a shared web link (Facebook/Telegram).
   No app-store dependency.
-- **No VR headset dependency.** Ever, for the core experience.
+- **Both VR and non-VR supported (WebXR).** The non-VR mobile-web experience is
+  the hard baseline (must run on low-end Android over 4G); VR is an additive mode
+  on the same open stack and must never be *required* to access content.
 - **Open standards only:** glTF, WebGL/WebGPU/WebXR, open splat formats. No
   vendor lock-in — this is national infrastructure.
 - **Ship in the open from commit #1:** clear licenses, real `CONTRIBUTING`,
@@ -56,6 +59,7 @@ technologies while doing it.
 | Client | Mobile **web**, zero install |
 | Rendering engine | **Three.js** or **Babylon.js** (open, standards-based) — confirm via prototype |
 | Photoreal capture | **Gaussian Splatting** + photogrammetry; **glTF** for authored geometry |
+| Immersive mode | **Both VR and non-VR** via open **WebXR**; non-VR mobile web is the accessible baseline |
 | Multiplayer (v1) | **None** — single-user exploration |
 | Backend (v1) | Static hosting + CDN, **no game server** |
 | Payments | **Bakong / KHQR**, later phase only — not in v1 |
@@ -64,9 +68,11 @@ technologies while doing it.
 
 ## Explicitly OUT of scope for v1
 
-Real-time multiplayer, VR support, avatars/social systems, user-generated-content
-tooling, in-world economy/payments, native mobile apps. Each is a *later phase*,
-not the foundation.
+Real-time multiplayer, avatars/social systems, user-generated-content tooling,
+in-world economy/payments, native mobile apps. Each is a *later phase*, not the
+foundation. **VR is supported** via open WebXR as an enhancement on the same
+stack — but the non-VR mobile-web experience stays the v1 baseline and hard
+requirement, so immersive-headset polish need not gate v1.
 
 ## The first milestone (north star)
 
@@ -88,7 +94,8 @@ payments. Its capture data becomes the first entry in the Open Khmer Heritage Ar
 ## Positioning & language (important for any external-facing text)
 
 - Lead with **"explore Khmer heritage from anywhere"** and **"digital
-  preservation,"** NOT "VR metaverse" (a discredited, poorly-fitting framing).
+  preservation."** We **support VR** via open WebXR, but avoid the discredited
+  2021 "VR metaverse" hype framing — VR is an enhancement, not the pitch.
 - Frame as a **Digital Public Good** executing national policy, not a startup.
 - Be culturally respectful: heritage is captured with consent and in
   partnership with APSARA / Ministry of Culture.
