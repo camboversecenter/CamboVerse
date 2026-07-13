@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
+import { ContactShadows, Html, OrbitControls } from "@react-three/drei";
 import { Suspense, useRef, useState, type ReactNode } from "react";
 import type { Group } from "three";
 import { HeritageModel } from "./HeritageModel";
@@ -22,11 +22,12 @@ export function Viewer({ modelUrl, blurb }: { modelUrl: string; blurb: string })
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={[1, 2]}
+        shadows
         camera={{ position: [6, 4.5, 9], fov: 50 }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
         <color attach="background" args={["#1a1410"]} />
-        <fog attach="fog" args={["#1a1410", 12, 28]} />
+        <fog attach="fog" args={["#1a1410", 14, 30]} />
 
         <Ground />
 
@@ -40,13 +41,29 @@ export function Viewer({ modelUrl, blurb }: { modelUrl: string; blurb: string })
             </Suspense>
           </ModelErrorBoundary>
         </Materialize>
+        {/* Soft contact shadow grounds the model. */}
+        <ContactShadows position={[0, 0.02, 0]} scale={16} far={9} blur={2.6} opacity={0.55} color="#0a0803" />
         <Hotspot blurb={blurb} />
 
-        {/* Self-contained lighting — no remote HDRI, keeps the prototype
-            fully offline-capable and light on bandwidth. */}
-        <ambientLight intensity={0.5} />
-        <hemisphereLight args={["#c9b48f", "#2b2118", 0.6]} />
-        <directionalLight position={[5, 8, 3]} intensity={1.3} castShadow />
+        {/* Self-contained lighting — no remote HDRI, keeps it offline-capable.
+            A warm key light casts real shadows; sky/fill lift the form. */}
+        <ambientLight intensity={0.28} />
+        <hemisphereLight args={["#bcd0ff", "#2b2118", 0.55]} />
+        <directionalLight
+          position={[6, 9, 4]}
+          intensity={1.7}
+          color="#fff2d8"
+          castShadow
+          shadow-mapSize={[1024, 1024]}
+          shadow-bias={-0.0005}
+          shadow-camera-near={0.5}
+          shadow-camera-far={30}
+          shadow-camera-left={-8}
+          shadow-camera-right={8}
+          shadow-camera-top={8}
+          shadow-camera-bottom={-8}
+        />
+        <directionalLight position={[-5, 3, -4]} intensity={0.3} color="#8fb0ff" />
 
         <OrbitControls
           enablePan={false}
