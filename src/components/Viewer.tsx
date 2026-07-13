@@ -9,7 +9,9 @@ import { Loader } from "./Loader";
 import { Scenery } from "./Scenery";
 import { SplatModel } from "./SplatModel";
 import { PoiMarker } from "./PoiMarker";
+import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import type { Poi } from "../spots";
+import type { MutableRefObject } from "react";
 
 /**
  * The 3D viewer surface.
@@ -28,6 +30,8 @@ export function Viewer({
   pois,
   activePoi = null,
   onSelectPoi,
+  mode = "orbit",
+  walkInput,
 }: {
   modelUrl: string;
   blurb: string;
@@ -37,6 +41,8 @@ export function Viewer({
   pois?: Poi[];
   activePoi?: Poi | null;
   onSelectPoi?: (id: string) => void;
+  mode?: "orbit" | "walk";
+  walkInput?: MutableRefObject<WalkInput>;
 }) {
   return (
     <div className="viewer">
@@ -74,18 +80,22 @@ export function Viewer({
         ) : (
           <Hotspot blurb={blurb} />
         )}
-        <CameraRig poi={activePoi} />
+        <CameraRig poi={mode === "orbit" ? activePoi : null} />
 
-        <OrbitControls
-          makeDefault
-          enablePan={false}
-          minDistance={1.2}
-          maxDistance={20}
-          maxPolarAngle={Math.PI / 2.15}
-          enableDamping
-          dampingFactor={0.08}
-          target={[0, 1.2, 0]}
-        />
+        {mode === "walk" && walkInput ? (
+          <FirstPersonControls input={walkInput} />
+        ) : (
+          <OrbitControls
+            makeDefault
+            enablePan={false}
+            minDistance={1.2}
+            maxDistance={20}
+            maxPolarAngle={Math.PI / 2.15}
+            enableDamping
+            dampingFactor={0.08}
+            target={[0, 1.2, 0]}
+          />
+        )}
       </Canvas>
     </div>
   );
