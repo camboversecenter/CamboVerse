@@ -14,6 +14,7 @@
     "cf-typegen": "wrangler types",
     "gen:model": "node scripts/generate-model.mjs",
     "gen:angkor": "node scripts/generate-angkor.mjs",
+    "gen:bayon": "node scripts/generate-bayon.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs"
   },
   "dependencies": {

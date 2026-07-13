@@ -46,8 +46,8 @@ export const SPOTS: Spot[] = [
     lat: 13.4413,
     lng: 103.8586,
     nudge: [-1.1, -0.5],
-    model: SAMPLE,
-    live: false,
+    model: "/models/bayon.glb",
+    live: true,
   },
   {
     id: "ta-prohm",
