@@ -5,7 +5,7 @@ import type { Spot } from "../spots";
 export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   return (
     <>
-      <Viewer modelUrl={spot.model} blurb={spot.blurb} />
+      <Viewer modelUrl={spot.model} blurb={spot.blurb} water={spot.water} />
 
       <button className="backbtn" onClick={onBack}>
         ← Map

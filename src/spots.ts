@@ -19,6 +19,8 @@ export interface Spot {
   nudge?: [number, number];
   model: string;
   live: boolean;
+  /** Show a reflecting pool in front (e.g. Angkor Wat's iconic view). */
+  water?: boolean;
 }
 
 const SAMPLE = "/models/heritage-sample.glb";
@@ -35,6 +37,7 @@ export const SPOTS: Spot[] = [
     lng: 103.867,
     model: "/models/angkor-wat.glb",
     live: true,
+    water: true,
   },
   {
     id: "bayon",
