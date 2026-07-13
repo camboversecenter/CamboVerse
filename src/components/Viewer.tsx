@@ -15,7 +15,7 @@ import { Loader } from "./Loader";
  * breaks. This exercises the whole render path (React → r3f → Three.js → WebGL
  * → glTF) so we can measure it on a low-end Android before real capture data.
  */
-export function Viewer() {
+export function Viewer({ modelUrl, blurb }: { modelUrl: string; blurb: string }) {
   return (
     <div className="viewer">
       <Canvas
@@ -33,10 +33,10 @@ export function Viewer() {
             show a spinner while it streams. */}
         <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
           <Suspense fallback={<Loader />}>
-            <HeritageModel />
+            <HeritageModel url={modelUrl} />
           </Suspense>
         </ModelErrorBoundary>
-        <Hotspot />
+        <Hotspot blurb={blurb} />
 
         {/* Self-contained lighting — no remote HDRI, keeps the prototype
             fully offline-capable and light on bandwidth. */}
@@ -68,7 +68,7 @@ function Ground() {
 }
 
 /** Example information hotspot — the core v1 interaction ("explore + info"). */
-function Hotspot() {
+function Hotspot({ blurb }: { blurb: string }) {
   const [open, setOpen] = useState(false);
   return (
     <Html position={[0, 3.4, 0]} center distanceFactor={10} occlude>
@@ -77,16 +77,18 @@ function Hotspot() {
         style={{
           all: "unset",
           cursor: "pointer",
-          padding: "6px 12px",
-          borderRadius: 999,
+          padding: open ? "10px 14px" : "6px 12px",
+          maxWidth: open ? 240 : "none",
+          borderRadius: open ? 12 : 999,
           background: open ? "#4c8a3f" : "rgba(76,138,63,0.9)",
           color: "#ffffff",
-          font: "600 12px system-ui, sans-serif",
-          whiteSpace: "nowrap",
+          font: open ? "500 12px/1.4 system-ui, sans-serif" : "600 12px system-ui, sans-serif",
+          whiteSpace: open ? "normal" : "nowrap",
+          textAlign: "center",
           boxShadow: "0 2px 10px rgba(0,0,0,0.4)",
         }}
       >
-        {open ? "A stepped temple tower (prasat)" : "ⓘ Info"}
+        {open ? blurb : "ⓘ Info"}
       </button>
     </Html>
   );

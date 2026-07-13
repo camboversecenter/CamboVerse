@@ -99,6 +99,14 @@ Releasing the **archive as open data** — not only the viewer — is what turns
 
 Shipping this single artifact validates the technology, the content pipeline, the open-data model, *and* the student-contributor workflow at once — and it is exactly the kind of concrete deliverable that opens funding and partnership doors and that reports cleanly to MoEYS.
 
+### 2.4 The intended experience: an explorable Cambodia
+
+The platform experience CamboVerse grows into is a **living map of Cambodia**. A visitor lands on the country, moves around it, and sees the heritage sites and tourist spots marked across it — Angkor Wat, the Bayon, Ta Prohm, Banteay Srei, Preah Vihear, the Royal Palace, and more. Tapping a site **teleports** the visitor into that place: an immersive, photoreal scene they can explore with information hotspots, then return to the map and travel on to the next.
+
+This gives the archive a natural, joyful **shell**: the map is the hub, each site is a destination, and "teleport to a temple" is the core verb. It scales gracefully — every new capture added to the Open Khmer Heritage Archive simply appears as another pin on the map, so the experience deepens as the student pipeline produces more sites.
+
+**Scope note:** the map hub is the *platform shell*; **v1 still ships one real, photoreal temple** (§2.3). The map can debut with a single live site plus clearly-marked "coming soon" pins, preserving the one-temple discipline while making the destination legible to visitors, funders, and MoEYS from day one.
+
 ---
 
 ## Part 3 — Technical Architecture (NUM & Contributors)

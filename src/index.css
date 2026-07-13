@@ -64,3 +64,49 @@ body,
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+.hud .khmer {
+  font-size: 0.85em;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Back-to-map control, top-left, above the safe area. */
+.backbtn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 14px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.72);
+  color: var(--ink);
+  font: 600 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.backbtn:hover {
+  background: color-mix(in srgb, var(--accent) 30%, rgba(20, 16, 10, 0.72));
+}
+
+/* Teleport transition flash. */
+.teleport-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #0c0a07;
+  pointer-events: none;
+  animation: cv-flash 0.5s ease-out forwards;
+}
+
+@keyframes cv-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
