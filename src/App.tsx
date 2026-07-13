@@ -8,9 +8,8 @@ export function App() {
         <span className="tag">Prototype · v0.1</span>
         <h1>CamboVerse</h1>
         <p>
-          Rendering-stack prototype. Drag to orbit, pinch to zoom. This
-          placeholder stands in for a photoreal heritage capture — the next step
-          is loading a real glTF / Gaussian-splat scan.
+          Rendering-stack prototype. Drag to orbit, pinch to zoom. Now streaming
+          an authored glTF model — next up is photoreal Gaussian-splat capture.
         </p>
       </div>
     </>

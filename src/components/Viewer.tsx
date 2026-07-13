@@ -1,15 +1,19 @@
 import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { Suspense, useState } from "react";
+import { HeritageModel } from "./HeritageModel";
 import { HeritagePlaceholder } from "./HeritagePlaceholder";
+import { ModelErrorBoundary } from "./ModelErrorBoundary";
+import { Loader } from "./Loader";
 
 /**
  * The 3D viewer surface.
  *
- * Deliberately minimal: a canvas, orbit controls tuned for touch, soft lighting
- * and a single placeholder model with one information hotspot. This exercises
- * the whole render path (React → r3f → Three.js → WebGL) so we can measure it on
- * a low-end Android before swapping in real capture data.
+ * A canvas with touch-tuned orbit controls and soft, self-contained lighting.
+ * It loads a real glTF heritage model (streamed, with a loading indicator);
+ * if that fails it falls back to a primitive placeholder so the canvas never
+ * breaks. This exercises the whole render path (React → r3f → Three.js → WebGL
+ * → glTF) so we can measure it on a low-end Android before real capture data.
  */
 export function Viewer() {
   return (
@@ -23,10 +27,16 @@ export function Viewer() {
         <color attach="background" args={["#1a1410"]} />
         <fog attach="fog" args={["#1a1410", 12, 28]} />
 
-        <Suspense fallback={null}>
-          <HeritagePlaceholder />
-          <Hotspot />
-        </Suspense>
+        <Ground />
+
+        {/* Load the real glTF model; fall back to the placeholder on error,
+            show a spinner while it streams. */}
+        <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+          <Suspense fallback={<Loader />}>
+            <HeritageModel />
+          </Suspense>
+        </ModelErrorBoundary>
+        <Hotspot />
 
         {/* Self-contained lighting — no remote HDRI, keeps the prototype
             fully offline-capable and light on bandwidth. */}
@@ -44,6 +54,16 @@ export function Viewer() {
         />
       </Canvas>
     </div>
+  );
+}
+
+/** Shared ground plane so both the model and the fallback sit on a surface. */
+function Ground() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+      <circleGeometry args={[9, 48]} />
+      <meshStandardMaterial color="#2b2118" roughness={1} />
+    </mesh>
   );
 }
 

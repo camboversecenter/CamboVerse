@@ -3,10 +3,9 @@ import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
 /**
- * A low-poly stand-in for a real heritage capture — a stepped tower evoking a
- * Khmer prasat, on a ground plane. Built from primitives so the scaffold has no
- * binary asset dependency. Replace this component with a <primitive> loaded from
- * glTF or a Gaussian-splat viewer once we have a real scan.
+ * Fallback stand-in shown if the glTF heritage model fails to load — a low-poly
+ * stepped tower evoking a Khmer prasat, built from primitives so it has no asset
+ * dependency and can always render. The primary path is <HeritageModel>.
  */
 export function HeritagePlaceholder() {
   const group = useRef<Group>(null);
@@ -26,12 +25,6 @@ export function HeritagePlaceholder() {
 
   return (
     <group ref={group}>
-      {/* Ground */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <circleGeometry args={[9, 48]} />
-        <meshStandardMaterial color="#2b2118" roughness={1} />
-      </mesh>
-
       {tiers.map((t, i) => (
         <mesh key={i} position={[0, t.y, 0]} castShadow receiveShadow>
           <boxGeometry args={[t.size, t.h, t.size]} />
