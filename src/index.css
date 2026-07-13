@@ -92,21 +92,33 @@ body,
   background: color-mix(in srgb, var(--accent) 30%, rgba(20, 16, 10, 0.72));
 }
 
-/* Teleport transition flash. */
-.teleport-flash {
+/* Teleport warp: covers the screen, scene swaps underneath, then reveals. */
+.warp {
   position: fixed;
   inset: 0;
-  z-index: 40;
-  background: #0c0a07;
+  z-index: 60;
   pointer-events: none;
-  animation: cv-flash 0.5s ease-out forwards;
+  opacity: 0;
+  transform: scale(1.15);
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.95) 0%,
+    var(--accent) 55%,
+    #14100b 100%
+  );
+  transition:
+    opacity 0.28s ease-in,
+    transform 0.28s ease-in;
 }
 
-@keyframes cv-flash {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
+.warp--on {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warp {
+    transition-duration: 0.12s;
+    transform: none;
   }
 }

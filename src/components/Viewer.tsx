@@ -1,6 +1,7 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState, type ReactNode } from "react";
+import type { Group } from "three";
 import { HeritageModel } from "./HeritageModel";
 import { HeritagePlaceholder } from "./HeritagePlaceholder";
 import { ModelErrorBoundary } from "./ModelErrorBoundary";
@@ -30,12 +31,15 @@ export function Viewer({ modelUrl, blurb }: { modelUrl: string; blurb: string })
         <Ground />
 
         {/* Load the real glTF model; fall back to the placeholder on error,
-            show a spinner while it streams. */}
-        <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
-          <Suspense fallback={<Loader />}>
-            <HeritageModel url={modelUrl} />
-          </Suspense>
-        </ModelErrorBoundary>
+            show a spinner while it streams. Materialize scales/rises it into
+            place on arrival, completing the teleport. */}
+        <Materialize>
+          <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+            <Suspense fallback={<Loader />}>
+              <HeritageModel url={modelUrl} />
+            </Suspense>
+          </ModelErrorBoundary>
+        </Materialize>
         <Hotspot blurb={blurb} />
 
         {/* Self-contained lighting — no remote HDRI, keeps the prototype
@@ -54,6 +58,25 @@ export function Viewer({ modelUrl, blurb }: { modelUrl: string; blurb: string })
         />
       </Canvas>
     </div>
+  );
+}
+
+/** Entrance animation: the site scales up and rises into place on teleport-in. */
+function Materialize({ children }: { children: ReactNode }) {
+  const ref = useRef<Group>(null);
+  const t = useRef(0);
+  useFrame((_, dt) => {
+    const g = ref.current;
+    if (!g || t.current >= 1) return;
+    t.current = Math.min(1, t.current + dt / 0.6);
+    const e = 1 - Math.pow(1 - t.current, 3); // easeOutCubic
+    g.scale.setScalar(0.9 + 0.1 * e);
+    g.position.y = (1 - e) * -0.25;
+  });
+  return (
+    <group ref={ref} scale={0.9} position={[0, -0.25, 0]}>
+      {children}
+    </group>
   );
 }
 
