@@ -225,7 +225,10 @@ export function createBuilder() {
         const r = C[0][0] * w0 + C[1][0] * a + C[2][0] * b2;
         const g = C[0][1] * w0 + C[1][1] * a + C[2][1] * b2;
         const bl = C[0][2] * w0 + C[1][2] * a + C[2][2] * b2;
-        rec.push([px, py, pz, toByte(r), toByte(g), toByte(bl)]);
+        // drei's Splat expects the 3DGS convention (Y-down, Z-flipped) and
+        // un-flips on load; pre-flip Y and Z (180° about X) so our Three-native
+        // Y-up cloud ends up upright, not underground.
+        rec.push([px, -py, -pz, toByte(r), toByte(g), toByte(bl)]);
       }
     }
 
