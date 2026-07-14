@@ -35,7 +35,7 @@ export function Scenery({
     <>
       <Sky sunPosition={[16, 5, 10]} turbidity={7} rayleigh={1.4} mieCoefficient={0.007} mieDirectionalG={0.9} />
       {/* Longer fog when the site has a large landscape viewed from the air. */}
-      <fog attach="fog" args={["#d7e2ec", angkor ? 45 : 30, angkor ? 150 : 80]} />
+      <fog attach="fog" args={["#d7e2ec", angkor ? 55 : 30, angkor ? 185 : 80]} />
 
       {/* Lighting: warm sun + cool sky fill. */}
       <ambientLight intensity={0.28} />
