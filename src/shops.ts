@@ -52,8 +52,8 @@ export const MARKETS: Market[] = [
         tagline: "Global coffee, Khmer soul",
         color: "#1e6b4f",
         accent: "#0f4a35",
-        pos: [-6.5, -3.6],
-        rot: 0.34,
+        pos: [-10, -5.5],
+        rot: 1.07,
         products: [
           { id: "pb-latte", name: "Iced Latte", emoji: "🧋", price: 450, desc: "Espresso over ice with milk." },
           { id: "pb-capp", name: "Cappuccino", emoji: "☕", price: 420, desc: "Espresso with steamed foam." },
@@ -68,8 +68,8 @@ export const MARKETS: Market[] = [
         tagline: "Cambodian café favourites",
         color: "#6b4423",
         accent: "#4a2e17",
-        pos: [-2.2, -4.7],
-        rot: 0.12,
+        pos: [-4.5, -9.5],
+        rot: 0.44,
         products: [
           { id: "sk-tuktuk", name: "Kaffe Tuk-Tuk", emoji: "🧋", price: 300, desc: "Khmer iced coffee with condensed milk." },
           { id: "sk-palm", name: "Palm Sugar Latte", emoji: "☕", price: 350, desc: "Sweetened with Kampong Speu palm sugar." },
@@ -83,8 +83,8 @@ export const MARKETS: Market[] = [
         tagline: "Crispy fried chicken",
         color: "#c0392b",
         accent: "#8e2a20",
-        pos: [2.2, -4.7],
-        rot: -0.12,
+        pos: [4.5, -9.5],
+        rot: -0.44,
         products: [
           { id: "kc-bucket", name: "Crispy Bucket (6)", emoji: "🍗", price: 990, desc: "Six pieces, house spice blend." },
           { id: "kc-sandwich", name: "Chicken Sandwich", emoji: "🥪", price: 550, desc: "Crispy fillet, pickles, sauce." },
@@ -98,8 +98,8 @@ export const MARKETS: Market[] = [
         tagline: "Burgers & fries",
         color: "#e0a91b",
         accent: "#b5851a",
-        pos: [6.5, -3.6],
-        rot: -0.34,
+        pos: [10, -5.5],
+        rot: -1.07,
         products: [
           { id: "mb-classic", name: "Classic Burger", emoji: "🍔", price: 540, desc: "Beef patty, lettuce, tomato." },
           { id: "mb-cheese", name: "Cheeseburger", emoji: "🧀", price: 590, desc: "With a slice of melted cheese." },

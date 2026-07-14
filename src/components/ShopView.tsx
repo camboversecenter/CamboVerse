@@ -102,7 +102,7 @@ export function ShopView({ market, onBack }: { market: Market; onBack: () => voi
 
   return (
     <div className="shop">
-      <Canvas dpr={[1, 2]} shadows camera={{ position: [0, 6.5, 12], fov: 55 }} gl={{ antialias: true }}>
+      <Canvas dpr={[1, 2]} shadows camera={{ position: [0, 11, 24], fov: 55 }} gl={{ antialias: true }}>
         <ShopScene
           market={market}
           activeKiosk={activeKiosk}
