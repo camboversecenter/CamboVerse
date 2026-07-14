@@ -19,7 +19,8 @@
     "gen:preahvihear": "node scripts/generate-preahvihear.mjs",
     "gen:royalpalace": "node scripts/generate-royalpalace.mjs",
     "gen:banteaysrei": "node scripts/generate-banteaysrei.mjs",
-    "gen:map": "node scripts/generate-map-outline.mjs"
+    "gen:map": "node scripts/generate-map-outline.mjs",
+    "gen:provinces": "node scripts/generate-provinces.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
