@@ -4,6 +4,7 @@ import { WalkControls } from "./WalkControls";
 import { TourGuide } from "./TourGuide";
 import { GuideMascot } from "./GuideMascot";
 import { ShopView } from "./ShopView";
+import { TimeTravel } from "./TimeTravel";
 import type { WalkInput } from "./FirstPersonControls";
 import type { Spot } from "../spots";
 import { marketForSpot } from "../shops";
@@ -20,6 +21,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const [paused, setPaused] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const [pastOpen, setPastOpen] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const market = marketForSpot(spot.id);
 
@@ -132,8 +134,12 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         />
       )}
 
+      {/* Back in Time — a journey through Cambodia's ages, over this site. */}
+      {!walking && pastOpen && <TimeTravel spot={spot} onClose={() => setPastOpen(false)} />}
+
       {!walking &&
         !guideOpen &&
+        !pastOpen &&
         (activePoi && pois ? (
           <div className={touring ? "poi-panel touring" : "poi-panel"}>
             {touring && (
@@ -152,6 +158,11 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
                 {idx + 1} / {pois.length}
               </span>
               <div className="poi-head-actions">
+                {!touring && (
+                  <button className="shop-icon" onClick={() => setPastOpen(true)} aria-label="Back in time">
+                    ⏳ Past
+                  </button>
+                )}
                 {market && !touring && (
                   <button className="shop-icon" onClick={() => setShopOpen(true)} aria-label="Open the market">
                     🛍️ Shop
@@ -192,6 +203,9 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
                 <div className="hud-actions">
                   <button className="tour-start" onClick={startTour}>
                     ▶ Start guided tour
+                  </button>
+                  <button className="shop-cta" onClick={() => setPastOpen(true)}>
+                    ⏳ Past
                   </button>
                   {market && (
                     <button className="shop-cta" onClick={() => setShopOpen(true)}>
