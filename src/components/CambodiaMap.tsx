@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Shape } from "three";
 import { Line } from "@react-three/drei";
 import { CAMBODIA_OUTLINE, projectLatLng } from "../cambodia-outline";
+import { CAMBODIA_PROVINCES } from "../cambodia-provinces";
 
 /**
  * A cartographic map of Cambodia in the XZ plane (-z is north), built from a
@@ -41,6 +42,17 @@ export function CambodiaMap() {
     [],
   );
 
+  // Province (ADM1) boundaries — each ring closed into a boundary polyline.
+  const provinceRings = useMemo(
+    () =>
+      CAMBODIA_PROVINCES.flatMap((p) =>
+        p.rings.map((ring) =>
+          [...ring, ring[0]].map(([x, z]) => [x, 0.045, z] as [number, number, number]),
+        ),
+      ),
+    [],
+  );
+
   const [lx, lz] = projectLatLng(12.85, 104.08); // Tonlé Sap, approx center
 
   return (
@@ -51,7 +63,12 @@ export function CambodiaMap() {
         <meshStandardMaterial color="#7c8a55" roughness={1} />
       </mesh>
 
-      {/* Coastline / border */}
+      {/* Province (ADM1) boundaries */}
+      {provinceRings.map((ring, i) => (
+        <Line key={i} points={ring} color="#4f5a34" lineWidth={1} transparent opacity={0.55} />
+      ))}
+
+      {/* Coastline / border (drawn over the province lines for a crisp edge) */}
       <Line points={coast} color="#e9e2c8" lineWidth={2} transparent opacity={0.85} />
 
       {/* Tonlé Sap lake */}
