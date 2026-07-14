@@ -1,6 +1,7 @@
 import { Sky, MeshReflectorMaterial } from "@react-three/drei";
 import { Palm } from "./Palm";
 import { AngkorLandscape } from "./AngkorLandscape";
+import { WatPhnomLandscape } from "./WatPhnomLandscape";
 
 /**
  * Outdoor daytime environment for a heritage site: a procedural sky, warm
@@ -28,14 +29,16 @@ export function Scenery({
   landscape,
 }: {
   water?: boolean;
-  landscape?: "angkor";
+  landscape?: "angkor" | "wat-phnom";
 }) {
   const angkor = landscape === "angkor";
+  const watphnom = landscape === "wat-phnom";
+  const aerialScene = angkor || watphnom;
   return (
     <>
       <Sky sunPosition={[16, 5, 10]} turbidity={7} rayleigh={1.4} mieCoefficient={0.007} mieDirectionalG={0.9} />
       {/* Longer fog when the site has a large landscape viewed from the air. */}
-      <fog attach="fog" args={["#d7e2ec", angkor ? 55 : 30, angkor ? 185 : 80]} />
+      <fog attach="fog" args={["#d7e2ec", aerialScene ? 55 : 30, aerialScene ? 185 : 80]} />
 
       {/* Lighting: warm sun + cool sky fill. */}
       <ambientLight intensity={0.28} />
@@ -58,12 +61,13 @@ export function Scenery({
       {/* Outer land (forest floor tone) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color={angkor ? "#5d7a35" : "#6f8b3d"} roughness={1} />
+        <meshStandardMaterial color={aerialScene ? "#5d7a35" : "#6f8b3d"} roughness={1} />
       </mesh>
 
-      {/* Site landscape (moat + island + forest + causeway) or a simple pool. */}
+      {/* Site landscape (Angkor's moat island, Wat Phnom's wooded hill) or a pool. */}
       {angkor && <AngkorLandscape />}
-      {water && !angkor && (
+      {watphnom && <WatPhnomLandscape />}
+      {water && !aerialScene && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 9]}>
           <planeGeometry args={[34, 16]} />
           <MeshReflectorMaterial
@@ -80,9 +84,9 @@ export function Scenery({
         </mesh>
       )}
 
-      {PALMS.map((p, i) => (
-        <Palm key={i} position={p.pos} scale={p.s} spin={p.r} />
-      ))}
+      {/* Wat Phnom brings its own vegetation; other scenes get the palm belt. */}
+      {!watphnom &&
+        PALMS.map((p, i) => <Palm key={i} position={p.pos} scale={p.s} spin={p.r} />)}
     </>
   );
 }

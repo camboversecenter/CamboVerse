@@ -35,6 +35,7 @@ export function Viewer({
   aerial = false,
   landscape,
   modelScale = 1,
+  modelY = 0,
 }: {
   modelUrl: string;
   blurb: string;
@@ -47,9 +48,11 @@ export function Viewer({
   mode?: "orbit" | "walk";
   walkInput?: MutableRefObject<WalkInput>;
   aerial?: boolean;
-  landscape?: "angkor";
+  landscape?: "angkor" | "wat-phnom";
   /** Uniform scale for the heritage model (e.g. Angkor's temple reads larger). */
   modelScale?: number;
+  /** Lift the model (e.g. Wat Phnom sits atop its hill). */
+  modelY?: number;
 }) {
   return (
     <div className="viewer">
@@ -68,7 +71,7 @@ export function Viewer({
             show a spinner while it streams. Materialize scales/rises it into
             place on arrival, completing the teleport. */}
         <Materialize>
-          <group scale={modelScale}>
+          <group scale={modelScale} position={[0, modelY, 0]}>
             {splat && splatUrl ? (
               <Suspense fallback={<Loader />}>
                 <SplatModel url={splatUrl} />
