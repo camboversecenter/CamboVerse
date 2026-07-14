@@ -20,6 +20,8 @@ export interface Era {
   blurb: string;
   story: string;
   highlights: string[];
+  /** What the specific site was like in this era, keyed by spot id. */
+  sites?: Record<string, string>;
 }
 
 export const ERAS: Era[] = [
@@ -58,6 +60,12 @@ export const ERAS: Era[] = [
     story:
       "In 802 Jayavarman II declared a unified empire. Over six centuries the Khmer built Angkor: vast reservoirs, roads, and hundreds of temples. Suryavarman II raised Angkor Wat (~1113); Jayavarman VII built the Bayon with its serene faces. A million people may have lived here — the largest pre-industrial city in the world.",
     highlights: ["Angkor Wat built (~1113)", "The Bayon & Angkor Thom (~1181)", "Immense barays and waterworks", "A metropolis of ~1 million"],
+    sites: {
+      "angkor-wat":
+        "You are standing at Angkor Wat's very birth: Suryavarman II raises it around 1113 as a temple to Vishnu, its towers gleaming with gilt and its galleries freshly carved.",
+      "wat-phnom":
+        "This hill by the Mekong is not yet a temple in the Angkor age — Phnom Penh's story is still centuries away.",
+    },
   },
   {
     id: "middle",
@@ -70,6 +78,12 @@ export const ERAS: Era[] = [
     story:
       "After the capital left Angkor, power shifted south to Longvek, Oudong and Phnom Penh. Trade with the wider world continued and Theravada Buddhism deepened, but the kingdom was pressed between rising neighbours — a long, resilient middle age.",
     highlights: ["Capitals at Longvek & Oudong", "Theravada Buddhism flourishes", "Maritime trade continues"],
+    sites: {
+      "angkor-wat":
+        "Angkor Wat is never truly abandoned — Buddhist monks tend it, and it becomes a revered Theravada temple visited by pilgrims.",
+      "wat-phnom":
+        "Wat Phnom's story begins here: by legend, in 1372 Lady Penh finds sacred images in the river and raises a shrine on this hill — giving Phnom Penh (‘Penh's hill’) its name.",
+    },
   },
   {
     id: "french",
@@ -82,6 +96,12 @@ export const ERAS: Era[] = [
     story:
       "In 1863 Cambodia became a French protectorate. Roads, schools and the modern city of Phnom Penh took shape, while French and Khmer scholars mapped and began restoring Angkor, bringing it to global attention. National feeling grew toward the century's end.",
     highlights: ["Angkor studied & restored", "Modern Phnom Penh develops", "Rising Khmer nationalism"],
+    sites: {
+      "angkor-wat":
+        "French explorers document Angkor Wat and clear the forest from its galleries; restoration begins and the temple's fame spreads around the world.",
+      "wat-phnom":
+        "The French lay out their capital around this hill, and Wat Phnom's great white stupa is rebuilt to its present form (1926) — the city literally centred on it.",
+    },
   },
   {
     id: "independence",
@@ -118,5 +138,11 @@ export const ERAS: Era[] = [
     story:
       "From 1979 Cambodia slowly rebuilt. Peace, the return of the monarchy, and UNESCO World Heritage status for Angkor (1992) renewed national pride. Today a young, connected generation carries Khmer heritage into the digital age — the very journey CamboVerse is part of.",
     highlights: ["Angkor named UNESCO World Heritage (1992)", "Peace & reconstruction", "A young, digital generation"],
+    sites: {
+      "angkor-wat":
+        "Angkor Wat becomes a UNESCO World Heritage Site (1992); careful conservation and millions of visitors return — and now you can walk it here, from anywhere on Earth.",
+      "wat-phnom":
+        "Wat Phnom remains a beloved landmark and gathering place at the heart of a fast-growing Phnom Penh — its flower clock ticking beside the modern skyline.",
+    },
   },
 ];

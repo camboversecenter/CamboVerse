@@ -111,6 +111,77 @@ export const MARKETS: Market[] = [
   },
 ];
 
+MARKETS.push({
+  id: "watphnom-market",
+  spotId: "wat-phnom",
+  title: "Phnom Penh Market",
+  blurb: "A market by the hill showcasing Cambodian food and crafts — order for real, delivered from a merchant in your country.",
+  kiosks: [
+    {
+      id: "num-pang",
+      brand: "Num Pang Corner",
+      emoji: "🥖",
+      tagline: "Khmer sandwiches",
+      color: "#b5623a",
+      accent: "#8a4529",
+      pos: [-10, -5.5],
+      rot: 1.07,
+      products: [
+        { id: "np-pork", name: "Num Pang Sach", emoji: "🥖", price: 250, desc: "Baguette with grilled pork & pickles." },
+        { id: "np-sardine", name: "Num Pang Sardine", emoji: "🐟", price: 200, desc: "Sardine, herbs and chilli." },
+        { id: "np-milo", name: "Iced Milo", emoji: "🧋", price: 150, desc: "Cold chocolate malt drink." },
+      ],
+    },
+    {
+      id: "tuktuk-coffee",
+      brand: "Tuk-Tuk Coffee",
+      emoji: "☕",
+      tagline: "Roadside brews",
+      color: "#6b4423",
+      accent: "#4a2e17",
+      pos: [-4.5, -9.5],
+      rot: 0.44,
+      products: [
+        { id: "tt-iced", name: "Iced Khmer Coffee", emoji: "🧋", price: 175, desc: "Dark roast, condensed milk, ice." },
+        { id: "tt-palm", name: "Palm Sugar Latte", emoji: "☕", price: 225, desc: "Sweetened with Kampong Speu palm sugar." },
+        { id: "tt-cane", name: "Sugarcane Juice", emoji: "🥤", price: 125, desc: "Fresh-pressed with a squeeze of lime." },
+      ],
+    },
+    {
+      id: "amok-house",
+      brand: "Amok House",
+      emoji: "🍲",
+      tagline: "Khmer kitchen",
+      color: "#3f7d4f",
+      accent: "#2c5c39",
+      pos: [4.5, -9.5],
+      rot: -0.44,
+      products: [
+        { id: "am-amok", name: "Fish Amok", emoji: "🍛", price: 450, desc: "Steamed coconut fish curry — the national dish." },
+        { id: "am-loklak", name: "Beef Lok Lak", emoji: "🥩", price: 500, desc: "Stir-fried beef with a lime-pepper dip." },
+        { id: "am-kroeung", name: "Chicken Kroeung", emoji: "🍗", price: 450, desc: "Lemongrass curry paste, grilled." },
+        { id: "am-rice", name: "Jasmine Rice", emoji: "🍚", price: 75, desc: "A bowl of fragrant rice." },
+      ],
+    },
+    {
+      id: "krama-crafts",
+      brand: "Krama Crafts",
+      emoji: "🧣",
+      tagline: "Artisan souvenirs",
+      color: "#c0392b",
+      accent: "#8e2a20",
+      pos: [10, -5.5],
+      rot: -1.07,
+      products: [
+        { id: "kr-krama", name: "Krama Scarf", emoji: "🧣", price: 600, desc: "Hand-woven checked cotton scarf." },
+        { id: "kr-silver", name: "Silver Charm", emoji: "🪙", price: 900, desc: "Artisan Khmer silver pendant." },
+        { id: "kr-fan", name: "Palm-leaf Fan", emoji: "🪭", price: 300, desc: "Woven by hand from sugar-palm leaf." },
+        { id: "kr-cards", name: "Postcard Set", emoji: "✉️", price: 250, desc: "Prints of Khmer heritage sites." },
+      ],
+    },
+  ],
+});
+
 export const marketForSpot = (spotId: string): Market | undefined =>
   MARKETS.find((m) => m.spotId === spotId);
 
