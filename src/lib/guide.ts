@@ -15,6 +15,8 @@ export interface GuideReply {
 export interface GuideRequest {
   spotId: string;
   poiId?: string | null;
+  /** When set, Kiri narrates this historical era (see history.ts) instead. */
+  eraId?: string;
   question?: string;
   lang: LangCode;
 }

@@ -12,6 +12,7 @@
  */
 import { SPOTS, type Spot, type Poi } from "../spots";
 import { MARKETS } from "../shops";
+import { ERAS } from "../history";
 import { fulfillmentFor } from "../lib/economy";
 
 interface Env {
@@ -31,6 +32,7 @@ const LANG_NAMES: Record<string, string> = {
 interface GuideBody {
   spotId?: string;
   poiId?: string | null;
+  eraId?: string;
   question?: string;
   lang?: string;
 }
@@ -86,25 +88,45 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
   const spot = SPOTS.find((s) => s.id === body.spotId);
   if (!spot) return Response.json({ text: "", fallback: true }, { status: 404 });
   const poi = spot.pois?.find((p) => p.id === body.poiId);
+  const era = body.eraId ? ERAS.find((e) => e.id === body.eraId) : undefined;
   const langName = LANG_NAMES[body.lang ?? "en"] ?? "English";
-  const fallbackText = poi?.info ?? spot.blurb;
+
+  // Grounding + fallback differ for a POI/site vs. a historical era.
+  const siteNote = era?.sites?.[spot.id];
+  const grounding = era
+    ? `Era: ${era.name} (${era.khmer}), ${era.years} — ${era.age}.\n` +
+      `About the era: ${era.story}\n` +
+      (siteNote ? `${spot.name} in this era: ${siteNote}\n` : "") +
+      `Highlights: ${era.highlights.join("; ")}.`
+    : groundingFor(spot, poi);
+  const fallbackText = era ? [era.story, siteNote].filter(Boolean).join(" ") : poi?.info ?? spot.blurb;
 
   // No key configured → static facts (keeps the demo working everywhere).
   if (!env.ANTHROPIC_API_KEY) {
     return Response.json({ text: fallbackText, fallback: true });
   }
 
+  const persona = era
+    ? `You are Kiri, a warm, playful young monkey who takes visitors "back in ` +
+      `time" through Cambodia's history. Narrate this era vividly and briefly ` +
+      `(2–4 sentences), as if the visitor is standing at ${spot.name} watching ` +
+      `it unfold. Be respectful — especially about difficult periods. `
+    : `You are Kiri, a warm, playful young monkey who guides visitors around ` +
+      `Cambodia's Khmer heritage sites. Speak in short, vivid, friendly turns ` +
+      `(2–4 sentences). `;
   const system =
-    `You are Kiri, a warm, playful young monkey who guides visitors around ` +
-    `Cambodia's Khmer heritage sites. Speak in short, vivid, friendly turns ` +
-    `(2–4 sentences). ALWAYS reply in ${langName}. Only state facts supported ` +
-    `by the CONTEXT below; if you are unsure, say so cheerfully rather than ` +
-    `inventing. Stay in character as Kiri, but never overshadow the wonder of ` +
-    `the place.\n\nCONTEXT:\n${groundingFor(spot, poi)}`;
+    persona +
+    `ALWAYS reply in ${langName}. Only state facts supported by the CONTEXT ` +
+    `below; if you are unsure, say so cheerfully rather than inventing. Stay in ` +
+    `character as Kiri.\n\nCONTEXT:\n${grounding}`;
 
   const userMessage =
     body.question?.trim() ||
-    (poi ? `Tell me about ${poi.title}.` : `Welcome me to ${spot.name}.`);
+    (era
+      ? `Take me back to ${era.name} at ${spot.name}.`
+      : poi
+        ? `Tell me about ${poi.title}.`
+        : `Welcome me to ${spot.name}.`);
 
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
