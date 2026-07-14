@@ -622,3 +622,307 @@ body,
   font: 600 12px system-ui, sans-serif;
   cursor: pointer;
 }
+
+/* ---- Digital economy: virtual shop ---- */
+.shop {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+}
+.shop .viewer,
+.shop canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Kiosk floating sign */
+.kiosk-sign {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.82);
+  color: #fff;
+  font: 700 12px system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+.kiosk-sign.active {
+  background: var(--accent);
+  border-color: transparent;
+}
+.kiosk-emoji {
+  font-size: 1.1em;
+}
+.market-arch {
+  padding: 4px 14px;
+  border-radius: 8px;
+  background: rgba(122, 59, 46, 0.92);
+  color: #ffe;
+  font: 800 14px system-ui, sans-serif;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* Cart button (top-right, below Photoreal slot) */
+.cart-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 14px);
+  right: calc(env(safe-area-inset-right, 0) + 16px);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.72);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.cart-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #c0392b;
+  color: #fff;
+  font: 700 11px system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Walk-up prompt */
+.near-prompt {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 150px);
+  z-index: 30;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 14px system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Shop icons on the site panels */
+.shop-icon {
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.hud-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.hud-actions .tour-start {
+  margin-top: 0;
+  flex: 1;
+}
+.shop-cta {
+  flex: 0 0 auto;
+  padding: 11px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 24%, rgba(12, 10, 7, 0.6));
+  color: var(--ink);
+  font: 800 14px system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/* Kiosk menu (bottom sheet) */
+.kiosk-menu,
+.checkout {
+  position: fixed;
+  left: env(safe-area-inset-left, 0);
+  right: env(safe-area-inset-right, 0);
+  bottom: 0;
+  z-index: 26;
+  margin: 0 auto;
+  max-width: 560px;
+  padding: 14px 18px calc(env(safe-area-inset-bottom, 0) + 16px);
+  background: linear-gradient(to top, rgba(12, 10, 7, 0.96), rgba(12, 10, 7, 0.85));
+  border-top: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.kiosk-menu-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+.kiosk-menu-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.kiosk-tag {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.menu-list,
+.cart-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+.menu-list li,
+.cart-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(244, 236, 224, 0.09);
+}
+.menu-emoji {
+  font-size: 1.5rem;
+  flex: 0 0 auto;
+}
+.menu-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.menu-info b {
+  font-size: 0.92rem;
+}
+.menu-info small {
+  opacity: 0.6;
+  font-size: 0.76rem;
+}
+.menu-price {
+  font: 700 0.9rem system-ui, sans-serif;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+.menu-add {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 0.9rem system-ui, sans-serif;
+}
+.qty button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(244, 236, 224, 0.25);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+}
+.cart-empty {
+  opacity: 0.7;
+  font-size: 0.9rem;
+  padding: 10px 0;
+}
+
+/* Fulfillment block */
+.fulfill {
+  margin: 12px 0 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(76, 138, 63, 0.14);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.fulfill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font: 700 0.82rem system-ui, sans-serif;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.fulfill-row select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--ink);
+  font: 600 13px system-ui, sans-serif;
+}
+.fulfill-detail {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.checkout-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.checkout-total {
+  font: 800 1.05rem system-ui, sans-serif;
+  flex: 1;
+}
+.checkout-btn {
+  flex: 0 0 auto;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 14px system-ui, sans-serif;
+  cursor: pointer;
+}
+.checkout-btn:disabled {
+  opacity: 0.6;
+}
+.order-done {
+  padding: 6px 0;
+}
+.order-check {
+  font: 800 1.1rem system-ui, sans-serif;
+  color: var(--accent);
+  margin: 6px 0;
+}
+.order-done p {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin: 6px 0;
+}
+.order-total {
+  font-weight: 800;
+}
+.order-note {
+  opacity: 0.6;
+  font-size: 0.8rem !important;
+}
+
+/* The HUD container is click-through (so you can orbit "under" it), but its
+   buttons must be tappable. */
+.hud button {
+  pointer-events: auto;
+}

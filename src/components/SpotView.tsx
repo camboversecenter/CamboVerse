@@ -3,8 +3,10 @@ import { Viewer } from "./Viewer";
 import { WalkControls } from "./WalkControls";
 import { TourGuide } from "./TourGuide";
 import { GuideMascot } from "./GuideMascot";
+import { ShopView } from "./ShopView";
 import type { WalkInput } from "./FirstPersonControls";
 import type { Spot } from "../spots";
+import { marketForSpot } from "../shops";
 
 /** How long the guided tour lingers at each stop before moving on (ms). */
 const TOUR_DWELL = 8000;
@@ -17,7 +19,9 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const [touring, setTouring] = useState(false);
   const [paused, setPaused] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
+  const market = marketForSpot(spot.id);
 
   const pois = spot.pois;
   const idx = pois ? pois.findIndex((p) => p.id === poiId) : -1;
@@ -62,6 +66,11 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   }, [touring, paused, poiId, idx, pois]);
 
   const walking = mode === "walk";
+
+  // Teleport into the virtual market for this site (digital-economy PoC).
+  if (shopOpen && market) {
+    return <ShopView market={market} onBack={() => setShopOpen(false)} />;
+  }
 
   return (
     <>
@@ -143,6 +152,11 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
                 {idx + 1} / {pois.length}
               </span>
               <div className="poi-head-actions">
+                {market && !touring && (
+                  <button className="shop-icon" onClick={() => setShopOpen(true)} aria-label="Open the market">
+                    🛍️ Shop
+                  </button>
+                )}
                 {touring && (
                   <button className="tour-pause" onClick={() => setPaused((p) => !p)}>
                     {paused ? "▶ Resume" : "⏸ Pause"}
@@ -175,9 +189,16 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
             </p>
             {pois && pois.length > 0 && (
               <>
-                <button className="tour-start" onClick={startTour}>
-                  ▶ Start guided tour
-                </button>
+                <div className="hud-actions">
+                  <button className="tour-start" onClick={startTour}>
+                    ▶ Start guided tour
+                  </button>
+                  {market && (
+                    <button className="shop-cta" onClick={() => setShopOpen(true)}>
+                      🛍️ Market
+                    </button>
+                  )}
+                </div>
                 <p className="poi-hint">
                   {spot.aerial
                     ? "◍ Tap a location to teleport down to it, or 🚶 walk in."
