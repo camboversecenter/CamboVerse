@@ -103,7 +103,9 @@ more is better if light and crowds allow.
 
 ## 6. Processing → the file the app loads
 
-Follow [`CAPTURE.md` §A](./CAPTURE.md) for the full pipeline. In short:
+Follow [`CAPTURE.md` §A](./CAPTURE.md) for the full pipeline — and to **train it
+for free on a Kaggle GPU**, see [`TRAIN_3DGS_KAGGLE.md`](./TRAIN_3DGS_KAGGLE.md).
+In short:
 
 1. **Camera poses** via COLMAP (most tools wrap this).
 2. **Train 3DGS** (Nerfstudio `splatfacto`, INRIA `gaussian-splatting`, or a
