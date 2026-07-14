@@ -96,40 +96,41 @@ export function AngkorLandscape() {
         </mesh>
       ))}
 
-      {/* Western entrance gopura — the long galleried gate with a towered
-          central portal and flanking towers, split to leave the gate opening. */}
+      {/* Western entrance gopura — a LOW galleried gate (deliberately much
+          smaller than the temple), with a modest towered portal and flanking
+          towers, split to leave the gate opening. */}
       <group position={[0, 0, GOPURA_Z]}>
         {[6, -6].map((cx) => (
           <group key={cx}>
-            <mesh position={[cx, 0.6, 0]} castShadow receiveShadow>
-              <boxGeometry args={[10, 1.2, 1.1]} />
+            <mesh position={[cx, 0.42, 0]} castShadow receiveShadow>
+              <boxGeometry args={[10, 0.84, 0.95]} />
               <meshStandardMaterial color={SAND} roughness={0.95} />
             </mesh>
-            <mesh position={[cx, 1.28, 0]} castShadow>
-              <boxGeometry args={[10.3, 0.16, 1.3]} />
+            <mesh position={[cx, 0.9, 0]} castShadow>
+              <boxGeometry args={[10.3, 0.14, 1.15]} />
               <meshStandardMaterial color={DARK_SAND} roughness={1} />
             </mesh>
           </group>
         ))}
         {/* Central gate tower over the portal */}
-        <mesh position={[0, 1.5, 0]} castShadow>
-          <boxGeometry args={[2.6, 3.0, 1.7]} />
+        <mesh position={[0, 0.9, 0]} castShadow>
+          <boxGeometry args={[2.1, 1.8, 1.3]} />
           <meshStandardMaterial color={SAND} roughness={0.95} />
         </mesh>
-        <mesh position={[0, 3.4, 0]} castShadow>
-          <coneGeometry args={[1.1, 1.6, 4]} />
+        <mesh position={[0, 2.05, 0]} castShadow>
+          <coneGeometry args={[0.85, 1.0, 4]} />
           <meshStandardMaterial color={DARK_SAND} roughness={1} />
         </mesh>
         {/* Flanking towers and end pavilions */}
-        {[5.4, -5.4].map((x) => (
-          <mesh key={x} position={[x, 1.15, 0]} castShadow>
-            <boxGeometry args={[1.8, 2.3, 1.4]} />
+        {[5.2, -5.2].map((x) => (
+          <mesh key={x} position={[x, 0.72, 0]} castShadow>
+            <boxGeometry args={[1.4, 1.35, 1.05]} />
             <meshStandardMaterial color={SAND} roughness={0.95} />
           </mesh>
         ))}
-        {[10.6, -10.6].map((x) => (
-          <mesh key={x} position={[x, 0.95, 0]} castShadow>
-            <boxGeometry args={[2.0, 1.9, 1.5]} />
+        {[10.4, -10.4].map((x) => (
+          <mesh key={x} position={[x, 0.6, 0]} castShadow>
+            <boxGeometry args={[1.6, 1.15, 1.15]} />
             <meshStandardMaterial color={SAND} roughness={0.95} />
           </mesh>
         ))}

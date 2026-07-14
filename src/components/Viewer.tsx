@@ -34,6 +34,7 @@ export function Viewer({
   walkInput,
   aerial = false,
   landscape,
+  modelScale = 1,
 }: {
   modelUrl: string;
   blurb: string;
@@ -47,6 +48,8 @@ export function Viewer({
   walkInput?: MutableRefObject<WalkInput>;
   aerial?: boolean;
   landscape?: "angkor";
+  /** Uniform scale for the heritage model (e.g. Angkor's temple reads larger). */
+  modelScale?: number;
 }) {
   return (
     <div className="viewer">
@@ -65,17 +68,19 @@ export function Viewer({
             show a spinner while it streams. Materialize scales/rises it into
             place on arrival, completing the teleport. */}
         <Materialize>
-          {splat && splatUrl ? (
-            <Suspense fallback={<Loader />}>
-              <SplatModel url={splatUrl} />
-            </Suspense>
-          ) : (
-            <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+          <group scale={modelScale}>
+            {splat && splatUrl ? (
               <Suspense fallback={<Loader />}>
-                <HeritageModel url={modelUrl} />
+                <SplatModel url={splatUrl} />
               </Suspense>
-            </ModelErrorBoundary>
-          )}
+            ) : (
+              <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
+                <Suspense fallback={<Loader />}>
+                  <HeritageModel url={modelUrl} />
+                </Suspense>
+              </ModelErrorBoundary>
+            )}
+          </group>
         </Materialize>
 
         {/* Points of interest to walk between — or a single info hotspot. */}
