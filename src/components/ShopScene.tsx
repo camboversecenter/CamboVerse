@@ -1,9 +1,10 @@
 import { useMemo, useRef } from "react";
-import { Sky, OrbitControls, Html, Instances, Instance } from "@react-three/drei";
+import { Sky, OrbitControls, Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { Kiosk } from "./Kiosk";
 import { Palm } from "./Palm";
+import { Forest } from "./Forest";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import type { Market } from "../shops";
 import type { MutableRefObject } from "react";
@@ -138,21 +139,8 @@ export function ShopScene({
         <Kiosk key={k.id} kiosk={k} active={activeKiosk === k.id} onSelect={onSelectKiosk} />
       ))}
 
-      {/* Forest — two instanced draws (trunks + canopies) */}
-      <Instances limit={trees.length} castShadow>
-        <cylinderGeometry args={[0.06, 0.11, 0.7, 6]} />
-        <meshStandardMaterial color="#6b573d" roughness={1} />
-        {trees.map((t, i) => (
-          <Instance key={i} position={[t.x, 0.4 * t.s, t.z]} scale={[t.s, t.s, t.s]} />
-        ))}
-      </Instances>
-      <Instances limit={trees.length} castShadow>
-        <sphereGeometry args={[0.65, 8, 7]} />
-        <meshStandardMaterial roughness={1} />
-        {trees.map((t, i) => (
-          <Instance key={i} color={t.c} position={[t.x, 0.75 * t.s + 0.4, t.z]} scale={[t.s, t.s * 0.85, t.s]} />
-        ))}
-      </Instances>
+      {/* Surrounding forest */}
+      <Forest trees={trees} />
 
       {/* Navigation */}
       {mode === "walk" ? (
