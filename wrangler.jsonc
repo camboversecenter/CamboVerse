@@ -9,6 +9,18 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  // Digital-economy order store (see DIGITAL_ECONOMY.md). For a real deploy run
+  // `wrangler d1 create camboverse` and paste the returned database_id here, then
+  // `wrangler d1 migrations apply camboverse`. The Worker is defensive: if D1 is
+  // absent, orders still confirm (they just aren't persisted).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "camboverse",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
   "observability": {
     "enabled": true
   }
