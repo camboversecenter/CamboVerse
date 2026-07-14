@@ -117,8 +117,8 @@ export function Viewer({
         )}
         <CameraRig poi={mode === "orbit" ? activePoi : null} />
 
-        {/* VR player (thumbstick locomotion); harmless outside a session. */}
-        <VRRig position={vrStart} />
+        {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
+        <VRRig position={vrStart} poi={activePoi} />
         {/* Desktop/mobile controls — suppressed while in a VR session. */}
         <Nav mode={mode} walkInput={walkInput} aerial={aerial} />
         </XR>
