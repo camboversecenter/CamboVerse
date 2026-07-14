@@ -1090,3 +1090,25 @@ body,
   min-width: 46px;
   text-align: center;
 }
+
+/* ---- Enter VR (WebXR) ---- */
+.vr-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.vr-btn:hover {
+  background: color-mix(in srgb, var(--accent) 34%, rgba(20, 16, 10, 0.78));
+}
