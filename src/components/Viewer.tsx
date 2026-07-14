@@ -1,5 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
+import { createXRStore, XR, useXR } from "@react-three/xr";
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Group, Vector3 } from "three";
 import { HeritageModel } from "./HeritageModel";
@@ -9,6 +10,7 @@ import { Loader } from "./Loader";
 import { Scenery } from "./Scenery";
 import { SplatModel } from "./SplatModel";
 import { PoiMarker } from "./PoiMarker";
+import { VRRig } from "./VRRig";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import type { Poi } from "../spots";
 import type { MutableRefObject } from "react";
@@ -54,8 +56,26 @@ export function Viewer({
   /** Lift the model (e.g. Wat Phnom sits atop its hill). */
   modelY?: number;
 }) {
+  // One XR store per viewer session; drives the optional VR mode. The device
+  // emulator is off (it pulls heavy room assets on localhost) — VR is tested on
+  // a real headset.
+  const store = useMemo(() => createXRStore({ emulate: false }), []);
+  const [vrSupported, setVrSupported] = useState(false);
+  useEffect(() => {
+    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
+    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
+  }, []);
+
+  // Where the VR visitor stands: on the ground, in front of the site.
+  const vrStart: [number, number, number] = aerial ? [0, 1.6, 16] : [0, 1.6, 9];
+
   return (
     <div className="viewer">
+      {vrSupported && (
+        <button className="vr-btn" onClick={() => store.enterVR()}>
+          🥽 Enter VR
+        </button>
+      )}
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={[1, 2]}
@@ -65,6 +85,7 @@ export function Viewer({
         camera={{ position: aerial ? [12, 22, 30] : [5, 2.8, 14], fov: 50 }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
+        <XR store={store}>
         <Scenery water={water} landscape={landscape} />
 
         {/* Load the real glTF model; fall back to the placeholder on error,
@@ -96,22 +117,42 @@ export function Viewer({
         )}
         <CameraRig poi={mode === "orbit" ? activePoi : null} />
 
-        {mode === "walk" && walkInput ? (
-          <FirstPersonControls input={walkInput} />
-        ) : (
-          <OrbitControls
-            makeDefault
-            enablePan={false}
-            minDistance={1.2}
-            maxDistance={aerial ? 55 : 20}
-            maxPolarAngle={Math.PI / 2.15}
-            enableDamping
-            dampingFactor={0.08}
-            target={[0, aerial ? 0.6 : 1.2, aerial ? 5 : 0]}
-          />
-        )}
+        {/* VR player (thumbstick locomotion); harmless outside a session. */}
+        <VRRig position={vrStart} />
+        {/* Desktop/mobile controls — suppressed while in a VR session. */}
+        <Nav mode={mode} walkInput={walkInput} aerial={aerial} />
+        </XR>
       </Canvas>
     </div>
+  );
+}
+
+/** Renders the flat-screen controls, but not while a VR session is active
+ *  (in VR the headset + thumbstick locomotion drive the view). */
+function Nav({
+  mode,
+  walkInput,
+  aerial,
+}: {
+  mode: "orbit" | "walk";
+  walkInput?: MutableRefObject<WalkInput>;
+  aerial: boolean;
+}) {
+  const inXR = useXR((s) => s.session != null);
+  if (inXR) return null;
+  return mode === "walk" && walkInput ? (
+    <FirstPersonControls input={walkInput} />
+  ) : (
+    <OrbitControls
+      makeDefault
+      enablePan={false}
+      minDistance={1.2}
+      maxDistance={aerial ? 55 : 20}
+      maxPolarAngle={Math.PI / 2.15}
+      enableDamping
+      dampingFactor={0.08}
+      target={[0, aerial ? 0.6 : 1.2, aerial ? 5 : 0]}
+    />
   );
 }
 
@@ -126,6 +167,7 @@ function CameraRig({ poi }: { poi: Poi | null }) {
   const controls = useThree((s) => s.controls) as
     | { target: Vector3; update: () => void; enabled: boolean }
     | null;
+  const inXR = useXR((s) => s.session != null);
   const done = useRef(false);
 
   const camVec = useMemo(() => (poi ? new Vector3(...poi.camera) : null), [poi]);
@@ -137,7 +179,8 @@ function CameraRig({ poi }: { poi: Poi | null }) {
   }, [poi, controls]);
 
   useFrame(() => {
-    if (!poi || !controls || done.current || !camVec || !tgtVec) return;
+    // In VR the headset owns the camera — don't fight it.
+    if (inXR || !poi || !controls || done.current || !camVec || !tgtVec) return;
     camera.position.lerp(camVec, 0.09);
     controls.target.lerp(tgtVec, 0.09);
     controls.update();
