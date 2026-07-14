@@ -42,8 +42,8 @@ export interface Spot {
   pois?: Poi[];
   /** Arrive high above the site (whole-complex aerial view), then teleport down. */
   aerial?: boolean;
-  /** Full surrounding landscape to render (e.g. Angkor's moat + forest island). */
-  landscape?: "angkor";
+  /** Full surrounding landscape to render (Angkor's moat island, Wat Phnom's hill). */
+  landscape?: "angkor" | "wat-phnom";
 }
 
 export const SPOTS: Spot[] = [
@@ -174,5 +174,63 @@ export const SPOTS: Spot[] = [
     lng: 104.9284,
     model: "/models/royal-palace.glb",
     live: true,
+  },
+  {
+    id: "wat-phnom",
+    name: "Wat Phnom",
+    khmer: "វត្តភ្នំ",
+    province: "Phnom Penh",
+    blurb:
+      "The hilltop temple that gives Phnom Penh its name — a great white stupa and an orange-roofed vihara crowning the city's only hill, founded in 1372.",
+    lat: 11.5764,
+    lng: 104.9282,
+    nudge: [0.25, -0.55],
+    model: "/models/wat-phnom.glb",
+    live: true,
+    aerial: true,
+    landscape: "wat-phnom",
+    splat: "/models/wat-phnom.splat",
+    pois: [
+      {
+        id: "central-stupa",
+        title: "The Great Stupa",
+        khmer: "ព្រះចេតិយ",
+        info: "The tall whitewashed stupa crowns the hill — it enshrines the ashes of King Ponhea Yat and, by legend, the sacred images Lady Penh found in the river, giving Phnom Penh its name.",
+        target: [0, 4.2, -2.2],
+        camera: [2.9, 4.7, 3.6],
+      },
+      {
+        id: "main-vihara",
+        title: "The Vihara",
+        khmer: "ព្រះវិហារ",
+        info: "The vihara — the main sanctuary hall — carries a tiered, gilded roof with soaring finials, and inside a great seated Buddha before richly painted walls.",
+        target: [0, 2.5, -0.25],
+        camera: [3.2, 2.8, 4.8],
+      },
+      {
+        id: "naga-staircase",
+        title: "Naga Staircase",
+        khmer: "ជណ្ដើរនាគ",
+        info: "The grand ceremonial stairway climbs the hill from the east, its balustrades formed by seven-headed nagas and guarded by lions — the sacred approach to the temple.",
+        target: [0, 0.8, 3.8],
+        camera: [2.2, 1.7, 7.6],
+      },
+      {
+        id: "flower-clock",
+        title: "The Flower Clock",
+        khmer: "នាឡិកាផ្កា",
+        info: "At the foot of the hill a working clock is planted into a circular flower garden — a beloved landmark and meeting point in the park around Wat Phnom.",
+        target: [0, 0.1, 12.6],
+        camera: [1.1, 5.8, 15.8],
+      },
+      {
+        id: "city-overlook",
+        title: "City Overlook",
+        khmer: "ទិដ្ឋភាពរាជធានី",
+        info: "From the hilltop the temple looks out over Phnom Penh — the wooded park below giving way to the boulevards and skyline of Cambodia's capital.",
+        target: [0, 1.0, 15],
+        camera: [1.6, 3.5, 3.2],
+      },
+    ],
   },
 ];

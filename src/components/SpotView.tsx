@@ -82,6 +82,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         aerial={spot.aerial}
         landscape={spot.landscape}
         modelScale={spot.landscape === "angkor" ? 1.4 : 1}
+        modelY={spot.landscape === "wat-phnom" ? 1.4 : 0}
       />
 
       {walking && <WalkControls input={walkInput} />}
