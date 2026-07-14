@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Viewer } from "./Viewer";
 import { WalkControls } from "./WalkControls";
+import { TourGuide } from "./TourGuide";
+import { GuideMascot } from "./GuideMascot";
 import type { WalkInput } from "./FirstPersonControls";
 import type { Spot } from "../spots";
 
@@ -14,6 +16,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const [mode, setMode] = useState<"orbit" | "walk">("orbit");
   const [touring, setTouring] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
 
   const pois = spot.pois;
@@ -27,6 +30,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const toggleMode = () => {
     setPoiId(null);
     setTouring(false);
+    setGuideOpen(false);
     setMode((m) => (m === "orbit" ? "walk" : "orbit"));
   };
 
@@ -77,6 +81,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         walkInput={walkInput}
         aerial={spot.aerial}
         landscape={spot.landscape}
+        modelScale={spot.landscape === "angkor" ? 1.4 : 1}
       />
 
       {walking && <WalkControls input={walkInput} />}
@@ -91,11 +96,34 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
         </button>
       )}
 
-      <button className="walk-toggle" onClick={toggleMode}>
-        {walking ? "⟳ Orbit" : "🚶 Walk in"}
-      </button>
+      {!guideOpen && (
+        <button className="walk-toggle" onClick={toggleMode}>
+          {walking ? "⟳ Orbit" : "🚶 Walk in"}
+        </button>
+      )}
+
+      {/* Kiri the monkey guide — tap to open the AI tour guide. */}
+      {!walking && spot.live && !guideOpen && (
+        <button className="guide-fab" onClick={() => setGuideOpen(true)} aria-label="Ask Kiri, the tour guide">
+          <GuideMascot state="idle" size={56} />
+          <span>Ask Kiri</span>
+        </button>
+      )}
+
+      {!walking && guideOpen && (
+        <TourGuide
+          spot={spot}
+          activePoi={activePoi}
+          count={pois?.length ?? 0}
+          index={idx}
+          onPrev={() => step(-1)}
+          onNext={() => step(1)}
+          onClose={() => setGuideOpen(false)}
+        />
+      )}
 
       {!walking &&
+        !guideOpen &&
         (activePoi && pois ? (
           <div className={touring ? "poi-panel touring" : "poi-panel"}>
             {touring && (

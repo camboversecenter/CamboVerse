@@ -378,3 +378,247 @@ body,
     transform: none;
   }
 }
+
+/* ---- Kiri the monkey guide ---- */
+
+/* Mascot animations */
+.mascot .mascot-head {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: mascot-bob 3.2s ease-in-out infinite;
+}
+.mascot .mascot-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-blink 4.5s infinite;
+}
+.mascot .mascot-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mascot-talking .mascot-head {
+  animation: mascot-bob 1s ease-in-out infinite;
+}
+.mascot-talking .mascot-mouth {
+  animation: mascot-chatter 0.28s ease-in-out infinite;
+}
+.mascot .mascot-arm {
+  transform-box: fill-box;
+  transform-origin: 83px 84px;
+  transform: rotate(38deg);
+  opacity: 0;
+}
+.mascot-pointing .mascot-arm {
+  opacity: 1;
+  animation: mascot-point 0.5s ease-out;
+}
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2.5px) rotate(-1.5deg); }
+}
+@keyframes mascot-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+@keyframes mascot-chatter {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1.3); }
+}
+@keyframes mascot-point {
+  from { transform: rotate(70deg); }
+  to { transform: rotate(38deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot .mascot-head,
+  .mascot .mascot-eyes,
+  .mascot-talking .mascot-mouth,
+  .mascot-pointing .mascot-arm {
+    animation: none;
+  }
+}
+
+/* Floating "Ask Kiri" button */
+.guide-fab {
+  position: fixed;
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 74px);
+  z-index: 28;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px 4px 4px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.72);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+.guide-fab:hover {
+  background: rgba(20, 16, 10, 0.85);
+}
+
+/* Guide bottom sheet */
+.guide {
+  position: fixed;
+  left: env(safe-area-inset-left, 0);
+  right: env(safe-area-inset-right, 0);
+  bottom: 0;
+  z-index: 26;
+  margin: 0 auto;
+  max-width: 560px;
+  padding: 14px 18px calc(env(safe-area-inset-bottom, 0) + 14px);
+  background: linear-gradient(to top, rgba(12, 10, 7, 0.96), rgba(12, 10, 7, 0.85));
+  border-top: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.guide-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(244, 236, 224, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+.guide-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.guide-avatar {
+  flex: 0 0 auto;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%);
+}
+.guide-avatar.speaking {
+  animation: guide-pulse 1.4s ease-in-out infinite;
+}
+@keyframes guide-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  50% { box-shadow: 0 0 0 7px transparent; }
+}
+.guide-speech {
+  flex: 1;
+  min-width: 0;
+  padding-right: 26px;
+}
+.guide-who {
+  font: 700 0.72rem system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.guide-where {
+  color: var(--ink);
+  opacity: 0.85;
+}
+.guide-count {
+  margin-left: 6px;
+  opacity: 0.6;
+}
+.guide-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink);
+  min-height: 2.6em;
+}
+.guide-text.loading {
+  opacity: 0.5;
+  letter-spacing: 0.2em;
+}
+.guide-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 2px;
+}
+.guide-langs .lang {
+  padding: 5px 11px;
+  border: 1px solid rgba(244, 236, 224, 0.2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: 600 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.guide-langs .lang.on {
+  border-color: transparent;
+  background: var(--accent);
+  color: #10140b;
+}
+.guide-sound {
+  margin-left: auto;
+  padding: 5px 9px;
+  border: 1px solid rgba(244, 236, 224, 0.2);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+}
+.guide-note {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+.guide-ask {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.guide-ask input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(244, 236, 224, 0.2);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  font: 500 13px system-ui, sans-serif;
+}
+.guide-ask input::placeholder {
+  color: rgba(244, 236, 224, 0.45);
+}
+.guide-mic,
+.guide-send {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.guide-mic.on {
+  background: #c0392b;
+  border-color: #c0392b;
+  animation: guide-pulse 1s infinite;
+}
+.guide-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.guide-nav button {
+  flex: 1;
+  padding: 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--ink);
+  font: 600 12px system-ui, sans-serif;
+  cursor: pointer;
+}
