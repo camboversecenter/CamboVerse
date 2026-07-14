@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Instances, Instance } from "@react-three/drei";
 import { Palm } from "./Palm";
+import { Forest } from "./Forest";
 
 /**
  * The Wat Phnom setting, modelled on the aerial photos: a wooded man-made hill
@@ -140,21 +141,8 @@ export function WatPhnomLandscape() {
         return <Palm key={i} position={[x, hillY(r), z]} scale={0.9} spin={i * 1.7} />;
       })}
 
-      {/* Hill forest — two instanced draws (trunks + canopies) */}
-      <Instances limit={trees.length} castShadow>
-        <cylinderGeometry args={[0.05, 0.09, 0.55, 6]} />
-        <meshStandardMaterial color="#6b573d" roughness={1} />
-        {trees.map((t, i) => (
-          <Instance key={i} position={[t.x, t.y + 0.3 * t.s, t.z]} scale={[t.s, t.s, t.s]} />
-        ))}
-      </Instances>
-      <Instances limit={trees.length} castShadow>
-        <sphereGeometry args={[0.5, 8, 7]} />
-        <meshStandardMaterial roughness={1} />
-        {trees.map((t, i) => (
-          <Instance key={i} color={t.c} position={[t.x, t.y + 0.55 * t.s + 0.35, t.z]} scale={[t.s, t.s * 0.85, t.s]} />
-        ))}
-      </Instances>
+      {/* Hill forest */}
+      <Forest trees={trees} />
     </group>
   );
 }

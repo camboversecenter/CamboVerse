@@ -926,3 +926,167 @@ body,
 .hud button {
   pointer-events: auto;
 }
+
+/* ---- Back in Time (history journey) ---- */
+.hud-actions {
+  flex-wrap: wrap;
+}
+
+.timetravel {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+}
+.tt-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 0.6s ease;
+}
+.tt-top {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+.tt-title {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.8);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.tt-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 236, 224, 0.25);
+  background: rgba(20, 16, 10, 0.8);
+  color: var(--ink);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tt-panel {
+  position: absolute;
+  left: env(safe-area-inset-left, 0);
+  right: env(safe-area-inset-right, 0);
+  bottom: 0;
+  margin: 0 auto;
+  max-width: 580px;
+  max-height: 74vh;
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: 12px 18px calc(env(safe-area-inset-bottom, 0) + 16px);
+  background: linear-gradient(to top, rgba(10, 9, 7, 0.97), rgba(10, 9, 7, 0.9));
+  border-top: 2px solid var(--accent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tt-rail {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+  scrollbar-width: none;
+}
+.tt-rail::-webkit-scrollbar {
+  display: none;
+}
+.tt-chip {
+  flex: 0 0 auto;
+  padding: 5px 11px;
+  border: 1px solid rgba(244, 236, 224, 0.25);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tt-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tt-age {
+  font: 800 0.75rem system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tt-years {
+  font: 600 0.8rem system-ui, sans-serif;
+  opacity: 0.7;
+}
+.tt-panel h2 {
+  margin: 4px 0 6px;
+  font-size: 1.3rem;
+}
+.tt-panel .khmer {
+  font-size: 0.8em;
+  opacity: 0.7;
+  font-weight: 500;
+}
+.tt-blurb {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+.tt-story {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+.tt-highlights {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tt-highlights li {
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+}
+.tt-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tt-nav button {
+  flex: 1;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.tt-nav button:disabled {
+  opacity: 0.4;
+}
+.tt-count {
+  flex: 0 0 auto;
+  font: 700 0.8rem system-ui, sans-serif;
+  opacity: 0.7;
+  min-width: 46px;
+  text-align: center;
+}

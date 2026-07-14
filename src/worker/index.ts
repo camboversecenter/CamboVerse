@@ -140,6 +140,19 @@ interface OrderBody {
   items?: { productId: string; qty: number }[];
 }
 
+// Create the orders table on first use (once per isolate), so persistence works
+// on deploy without a manual migration. Mirrors migrations/0001_orders.sql.
+let schemaReady = false;
+async function ensureSchema(db: D1Database): Promise<void> {
+  if (schemaReady) return;
+  await db
+    .prepare(
+      "CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, market_id TEXT NOT NULL, country TEXT NOT NULL, items TEXT NOT NULL, total_cents INTEGER NOT NULL, created_at TEXT NOT NULL)",
+    )
+    .run();
+  schemaReady = true;
+}
+
 /**
  * Place a (demo) order. Prices are recomputed server-side from the catalogue,
  * fulfillment is resolved from the visitor's country, and the order is persisted
@@ -169,13 +182,14 @@ async function handleOrder(request: Request, env: Env): Promise<Response> {
 
   if (env.DB) {
     try {
+      await ensureSchema(env.DB);
       await env.DB.prepare(
         "INSERT INTO orders (id, market_id, country, items, total_cents, created_at) VALUES (?, ?, ?, ?, ?, ?)",
       )
         .bind(orderId, market.id, fx.country, JSON.stringify(body.items ?? []), total, new Date().toISOString())
         .run();
     } catch {
-      // Table missing / D1 unavailable — confirm anyway (persistence is optional).
+      // D1 unavailable — confirm anyway (persistence is optional, never blocks).
     }
   }
 

@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-import { Instances, Instance, MeshReflectorMaterial } from "@react-three/drei";
+import { MeshReflectorMaterial } from "@react-three/drei";
 import { Shape, Path } from "three";
 import { Palm } from "./Palm";
+import { Forest } from "./Forest";
 
 /**
  * The Angkor Wat landscape, modelled on the Apsara Authority aerial photos and
@@ -201,26 +202,8 @@ export function AngkorLandscape() {
         </group>
       ))}
 
-      {/* Island forest — two instanced draws (trunks + canopies) */}
-      <Instances limit={trees.length} castShadow>
-        <cylinderGeometry args={[0.05, 0.09, 0.55, 6]} />
-        <meshStandardMaterial color="#6b573d" roughness={1} />
-        {trees.map((t, i) => (
-          <Instance key={i} position={[t.x, 0.3 * t.s, t.z]} scale={[t.s, t.s, t.s]} />
-        ))}
-      </Instances>
-      <Instances limit={trees.length} castShadow>
-        <sphereGeometry args={[0.5, 8, 7]} />
-        <meshStandardMaterial roughness={1} />
-        {trees.map((t, i) => (
-          <Instance
-            key={i}
-            color={t.c}
-            position={[t.x, 0.55 * t.s + 0.35, t.z]}
-            scale={[t.s, t.s * 0.8, t.s]}
-          />
-        ))}
-      </Instances>
+      {/* Island forest */}
+      <Forest trees={trees} />
     </group>
   );
 }

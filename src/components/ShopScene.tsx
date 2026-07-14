@@ -1,18 +1,23 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Sky, OrbitControls, Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { Kiosk } from "./Kiosk";
 import { Palm } from "./Palm";
+import { Forest } from "./Forest";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import type { Market } from "../shops";
 import type { MutableRefObject } from "react";
 
 /**
- * The virtual market plaza: a paved square ringed by brand kiosks, with a
- * central fountain and an entrance arch. Orbit and tap a stall to browse, or
- * switch to Walk and stroll up to a stall (a prompt appears when you're near).
+ * The virtual market — a paved clearing set inside the forest near the site,
+ * ringed by brand kiosks, with a central fountain and an entrance arch. Orbit
+ * and tap a stall to browse, or switch to Walk and stroll up to one (a prompt
+ * appears when you're near). The forest is a single instanced draw (mobile-cheap).
  */
+const CLEARING_R = 13; // paved market radius
+const GREENS = ["#3f6f2f", "#49772f", "#356329", "#547f37", "#2f5b26"];
+
 export function ShopScene({
   market,
   activeKiosk,
@@ -28,101 +33,131 @@ export function ShopScene({
   walkInput: MutableRefObject<WalkInput>;
   onNear: (id: string | null) => void;
 }) {
+  // Deterministic forest ringing the clearing (kept off the entrance path).
+  const trees = useMemo(() => {
+    const out: { x: number; z: number; s: number; c: string }[] = [];
+    let i = 0;
+    const rand = () => {
+      i++;
+      const v = Math.sin(i * 127.1) * 43758.5453;
+      return v - Math.floor(v);
+    };
+    let guard = 0;
+    while (out.length < 190 && guard++ < 4000) {
+      const ang = rand() * Math.PI * 2;
+      const r = CLEARING_R + 0.5 + rand() * 17;
+      const x = Math.cos(ang) * r;
+      const z = Math.sin(ang) * r;
+      if (Math.abs(x) < 3.2 && z > 8) continue; // keep the entrance (+z) open
+      out.push({ x, z, s: 0.8 + rand() * 0.9, c: GREENS[out.length % GREENS.length] });
+    }
+    return out;
+  }, []);
+
   return (
     <>
       <Sky sunPosition={[12, 6, 8]} turbidity={6} rayleigh={1.2} mieCoefficient={0.006} mieDirectionalG={0.9} />
-      <fog attach="fog" args={["#e6e0d0", 26, 70]} />
-      <ambientLight intensity={0.42} />
-      <hemisphereLight args={["#cfe0ff", "#6b6048", 0.6]} />
+      <fog attach="fog" args={["#dbe4d2", 34, 120]} />
+      <ambientLight intensity={0.4} />
+      <hemisphereLight args={["#cfe0ff", "#5c6b39", 0.6]} />
       <directionalLight
-        position={[12, 14, 8]}
+        position={[16, 18, 10]}
         intensity={1.9}
         color="#ffe9cf"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0004}
-        shadow-camera-left={-18}
-        shadow-camera-right={18}
-        shadow-camera-top={18}
-        shadow-camera-bottom={-18}
+        shadow-camera-left={-26}
+        shadow-camera-right={26}
+        shadow-camera-top={26}
+        shadow-camera-bottom={-26}
       />
 
-      {/* Paved plaza */}
+      {/* Forest floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[70, 70]} />
+        <planeGeometry args={[140, 140]} />
+        <meshStandardMaterial color="#4f6a30" roughness={1} />
+      </mesh>
+      {/* Paved market clearing */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
+        <circleGeometry args={[CLEARING_R, 56]} />
         <meshStandardMaterial color="#b8ae97" roughness={1} />
       </mesh>
-      {/* Central medallion */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -1]}>
-        <circleGeometry args={[6.5, 48]} />
+      {/* Central medallion + entrance path */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+        <circleGeometry args={[5, 48]} />
+        <meshStandardMaterial color="#a89c81" roughness={1} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 11]}>
+        <planeGeometry args={[3.4, 12]} />
         <meshStandardMaterial color="#a89c81" roughness={1} />
       </mesh>
 
       {/* Central fountain */}
-      <group position={[0, 0, -1]}>
-        <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[1.5, 1.7, 0.4, 24]} />
+      <group position={[0, 0, 0]}>
+        <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[1.9, 2.1, 0.5, 28]} />
           <meshStandardMaterial color="#8c8069" roughness={0.9} />
         </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.42, 0]}>
-          <circleGeometry args={[1.35, 24]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.52, 0]}>
+          <circleGeometry args={[1.7, 28]} />
           <meshStandardMaterial color="#4c7d90" roughness={0.3} metalness={0.4} />
         </mesh>
-        <mesh position={[0, 0.7, 0]} castShadow>
-          <cylinderGeometry args={[0.25, 0.4, 0.7, 16]} />
+        <mesh position={[0, 0.9, 0]} castShadow>
+          <cylinderGeometry args={[0.3, 0.5, 0.9, 16]} />
           <meshStandardMaterial color="#9a8e75" roughness={0.9} />
         </mesh>
       </group>
 
       {/* Entrance arch (front, +z) */}
-      <group position={[0, 0, 8]}>
-        {[-3.2, 3.2].map((x) => (
-          <mesh key={x} position={[x, 1.6, 0]} castShadow>
-            <boxGeometry args={[0.5, 3.2, 0.5]} />
+      <group position={[0, 0, 14]}>
+        {[-3.4, 3.4].map((x) => (
+          <mesh key={x} position={[x, 1.8, 0]} castShadow>
+            <boxGeometry args={[0.6, 3.6, 0.6]} />
             <meshStandardMaterial color="#7a3b2e" roughness={0.9} />
           </mesh>
         ))}
-        <mesh position={[0, 3.35, 0]} castShadow>
-          <boxGeometry args={[7.4, 0.7, 0.6]} />
+        <mesh position={[0, 3.75, 0]} castShadow>
+          <boxGeometry args={[8.0, 0.8, 0.7]} />
           <meshStandardMaterial color="#7a3b2e" roughness={0.9} />
         </mesh>
-        <Html position={[0, 3.35, 0.35]} center distanceFactor={13} occlude zIndexRange={[8, 0]}>
+        <Html position={[0, 3.75, 0.4]} center distanceFactor={15} occlude zIndexRange={[8, 0]}>
           <div className="market-arch">🛍️ {market.title}</div>
         </Html>
       </group>
 
-      {/* Planters with palms at the corners */}
-      {[[-12, -10], [12, -10], [-12, 6], [12, 6]].map(([x, z], i) => (
-        <group key={i} position={[x, 0, z]}>
-          <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
-            <cylinderGeometry args={[0.9, 1.0, 0.6, 12]} />
-            <meshStandardMaterial color="#6b5a41" roughness={1} />
-          </mesh>
-          <Palm position={[0, 0.55, 0]} scale={0.85} spin={i * 1.7} />
-        </group>
-      ))}
+      {/* Palms around the clearing edge */}
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i / 8) * Math.PI * 2 + 0.4;
+        return (
+          <Palm key={i} position={[Math.cos(a) * (CLEARING_R - 1), 0, Math.sin(a) * (CLEARING_R - 1)]} scale={0.95} spin={i * 1.7} />
+        );
+      })}
 
       {/* Kiosks */}
       {market.kiosks.map((k) => (
         <Kiosk key={k.id} kiosk={k} active={activeKiosk === k.id} onSelect={onSelectKiosk} />
       ))}
 
+      {/* Surrounding forest */}
+      <Forest trees={trees} />
+
       {/* Navigation */}
       {mode === "walk" ? (
         <>
-          <FirstPersonControls input={walkInput} start={[0, 1.5, 4]} />
+          <FirstPersonControls input={walkInput} start={[0, 1.5, 10]} />
           <NearWatcher market={market} onNear={onNear} />
         </>
       ) : (
         <OrbitControls
           makeDefault
           enablePan={false}
-          minDistance={4}
-          maxDistance={24}
+          minDistance={5}
+          maxDistance={40}
           maxPolarAngle={Math.PI / 2.15}
           enableDamping
           dampingFactor={0.08}
-          target={[0, 1.4, -2]}
+          target={[0, 1.4, 0]}
         />
       )}
     </>
@@ -136,7 +171,7 @@ function NearWatcher({ market, onNear }: { market: Market; onNear: (id: string |
   const tmp = useRef(new Vector3());
   useFrame(() => {
     let best: string | null = null;
-    let bestD = 3.6; // reach radius
+    let bestD = 4.2; // reach radius
     for (const k of market.kiosks) {
       tmp.current.set(k.pos[0], 1, k.pos[1]);
       const d = camera.position.distanceTo(tmp.current);
