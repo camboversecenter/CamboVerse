@@ -14,7 +14,7 @@ export interface WalkInput {
  */
 export function FirstPersonControls({
   input,
-  start = [0, 1.5, 5.4],
+  start = [0, 1.5, 9.5],
 }: {
   input: MutableRefObject<WalkInput>;
   start?: [number, number, number];
