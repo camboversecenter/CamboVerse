@@ -5,6 +5,7 @@ import { TourGuide } from "./TourGuide";
 import { GuideMascot } from "./GuideMascot";
 import { ShopView } from "./ShopView";
 import { TimeTravel } from "./TimeTravel";
+import { Credits } from "./Credits";
 import type { WalkInput } from "./FirstPersonControls";
 import type { Spot } from "../spots";
 import { marketForSpot } from "../shops";
@@ -22,6 +23,7 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const [pastOpen, setPastOpen] = useState(false);
+  const [creditsOpen, setCreditsOpen] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const market = marketForSpot(spot.id);
 
@@ -137,6 +139,9 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
       {/* Back in Time — a journey through Cambodia's ages, over this site. */}
       {!walking && pastOpen && <TimeTravel spot={spot} onClose={() => setPastOpen(false)} />}
 
+      {/* Attribution & provenance for this site's heritage data (CC-BY commons). */}
+      {creditsOpen && <Credits spotId={spot.id} onClose={() => setCreditsOpen(false)} />}
+
       {!walking &&
         !guideOpen &&
         !pastOpen &&
@@ -198,6 +203,9 @@ export function SpotView({ spot, onBack }: { spot: Spot; onBack: () => void }) {
             <p>
               {spot.province} · {spot.blurb}
             </p>
+            <button className="credits-link" onClick={() => setCreditsOpen(true)}>
+              ⓘ Credits &amp; licence
+            </button>
             {pois && pois.length > 0 && (
               <>
                 <div className="hud-actions">
