@@ -7,7 +7,15 @@ import { Passport } from "./Passport";
 import { SPOTS } from "../spots";
 
 /** The hub: an explorable map of Cambodia with a pin per heritage site. */
-export function MapView({ onEnter, onOpenTools }: { onEnter: (id: string) => void; onOpenTools: () => void }) {
+export function MapView({
+  onEnter,
+  onOpenTools,
+  onOpenClassroom,
+}: {
+  onEnter: (id: string) => void;
+  onOpenTools: () => void;
+  onOpenClassroom: () => void;
+}) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
     <>
@@ -59,6 +67,10 @@ export function MapView({ onEnter, onOpenTools }: { onEnter: (id: string) => voi
 
       <button className="tools-btn" onClick={onOpenTools}>
         🏺 Khmer Life
+      </button>
+
+      <button className="alphabet-btn" onClick={onOpenClassroom}>
+        🔤 Khmer Alphabet
       </button>
 
       {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}

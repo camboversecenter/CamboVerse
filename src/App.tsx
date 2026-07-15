@@ -2,11 +2,13 @@ import { useRef, useState } from "react";
 import { MapView } from "./components/MapView";
 import { SpotView } from "./components/SpotView";
 import { ToolsView } from "./components/ToolsView";
+import { ClassroomView } from "./components/ClassroomView";
 import { SPOTS } from "./spots";
 
 export function App() {
   const [spotId, setSpotId] = useState<string | null>(null);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [classroomOpen, setClassroomOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -31,8 +33,14 @@ export function App() {
         <SpotView spot={spot} onBack={() => go(null)} />
       ) : toolsOpen ? (
         <ToolsView onBackToMap={() => setToolsOpen(false)} />
+      ) : classroomOpen ? (
+        <ClassroomView onBackToMap={() => setClassroomOpen(false)} />
       ) : (
-        <MapView onEnter={(id) => go(id)} onOpenTools={() => setToolsOpen(true)} />
+        <MapView
+          onEnter={(id) => go(id)}
+          onOpenTools={() => setToolsOpen(true)}
+          onOpenClassroom={() => setClassroomOpen(true)}
+        />
       )}
 
       <div className={`warp${warping ? " warp--on" : ""}`} aria-hidden="true" />
