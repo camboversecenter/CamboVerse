@@ -80,7 +80,7 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
             <p className="artifact-blurb">{artifact.blurb}</p>
           )}
 
-          <p className="artifact-hint">◍ Tap a part of the pot to learn about it · 🥽 or view it in VR</p>
+          <p className="artifact-hint">◍ Tap a part to learn about it · 🥽 or view it in VR</p>
         </div>
       )}
     </>

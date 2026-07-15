@@ -90,6 +90,60 @@ export const ARTIFACTS: Artifact[] = [
   },
 ];
 
+ARTIFACTS.push({
+  id: "changkran",
+  khmer: "ចង្ក្រាន",
+  name: "Changkran",
+  english: "Clay cookstove",
+  category: "Traditional tool",
+  blurb: "A portable fired-clay stove that cooks with charcoal or firewood — the heart of the Khmer kitchen.",
+  story:
+    "The ចង្ក្រាន (changkran) is the traditional Khmer cookstove: a bucket-shaped pot of fired clay that burns charcoal or firewood. Fuel is fed through an arched mouth at the front, which also lets in air to feed the flames; the fire burns in a chamber inside, and the cooking pot rests on three clay supports on the rim, just above the coals. The thick clay walls soak up the heat and radiate it steadily, so little fuel is wasted, and the whole stove is light enough to carry from kitchen to courtyard to market stall. From family rice pots to bubbling somlar and street-side grills, the changkran has cooked Khmer food for generations — and still does, wherever there is no gas or electricity.",
+  utilities: [
+    "Cooks food with charcoal or firewood — no gas or electricity",
+    "Thick fired-clay walls hold and radiate heat evenly, saving fuel",
+    "Portable — carried between kitchen, courtyard, market, and street stall",
+    "The front mouth feeds fuel and lets in air to control the heat",
+    "Made by hand from local clay by village potters",
+  ],
+  origin: "Hand-made by village potters across Cambodia; a fixture of home and street-food cooking.",
+  model: "/models/changkran.glb",
+  pois: [
+    {
+      id: "mouth",
+      title: "The fire mouth",
+      khmer: "មាត់ភ្លើង",
+      info: "The arched opening at the front. Charcoal or firewood is fed in here, and it also lets in the air that feeds the flames — push fuel in or pull it back to make the fire hotter or gentler.",
+      target: [0, 0.5, 1.0],
+      camera: [1.7, 1.0, 3.1],
+    },
+    {
+      id: "cradle",
+      title: "The pot supports",
+      khmer: "ជើងទ្រ",
+      info: "Three clay lugs on the rim cradle the cooking pot just above the coals, leaving a gap so heat and smoke can rise around it. The pot sits here, never directly on the fire.",
+      target: [0, 1.55, 0],
+      camera: [2.0, 2.1, 2.9],
+    },
+    {
+      id: "body",
+      title: "The body — how it holds heat",
+      khmer: "តួចង្ក្រាន",
+      info: "The thick fired-clay walls absorb the fire's heat and radiate it steadily onto the pot, so the stove keeps cooking evenly and wastes little fuel. Yet it stays light enough to pick up and carry.",
+      target: [0, 0.8, 0],
+      camera: [2.7, 1.3, 3.3],
+    },
+    {
+      id: "pot",
+      title: "The cooking pot",
+      khmer: "ឆ្នាំង",
+      info: "A clay ឆ្នាំង (chnang) rests in the cradle. Clay cooks gently and evenly — ideal for simmering Khmer stews like somlar, steaming rice, or boiling water. Its lid holds in the heat.",
+      target: [0, 2.0, 0],
+      camera: [1.8, 2.6, 2.9],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }
