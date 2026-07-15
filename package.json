@@ -20,6 +20,7 @@
     "gen:royalpalace": "node scripts/generate-royalpalace.mjs",
     "gen:banteaysrei": "node scripts/generate-banteaysrei.mjs",
     "gen:watphnom": "node scripts/generate-watphnom.mjs",
+    "gen:kaom": "node scripts/generate-kaom.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
     "gen:provinces": "node scripts/generate-provinces.mjs"
   },
