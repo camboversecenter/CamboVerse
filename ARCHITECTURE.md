@@ -262,7 +262,10 @@ live in **R2**, keyed by content hash.
 | D2P | `GET /providers` | `POST /fulfill` |
 
 Public **read** is open to all (the commons). **Write** requires a certified
-partner key (charter §8 trust mark). Everything is versioned under `/v1/…`.
+partner key (charter §8 trust mark) — *shipped* for `POST /v1/assets` (register a
+commons asset; open licence enforced) and `POST /v1/entitlements` (grant a
+right); keys are configured on the host and writes are closed unless a key is
+set. Everything is versioned under `/v1/…`.
 
 ---
 

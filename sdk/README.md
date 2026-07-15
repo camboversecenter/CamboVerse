@@ -35,8 +35,8 @@ const route = await cv.fulfill({ type: "purchase", country: "KH" });
 | Rail | Methods |
 |---|---|
 | Identity | `getIdentity(create?)`, `clearIdentity()`, `me()` |
-| Asset | `listAssets(type?)`, `getAsset(id)` |
-| Entitlement | `can(subject, action, asset)`, `grant({assetId, subjectId, right, expiresAt?})` |
+| Asset | `listAssets(type?)`, `getAsset(id)`, `registerAsset({...})` *(certified)* |
+| Entitlement | `can(subject, action, asset)`, `grant({assetId, subjectId, right, expiresAt?})` *(certified)* |
 | Credential | `claimCredential(achievement, evidence?)`, `credentials(subject?)`, `earned(subject?)` |
 | Experience | `listScenes()`, `getScene(id)` |
 | D2P | `providers({type?, region?})`, `fulfill({type, country, buyerId?, details?})` |
@@ -49,6 +49,10 @@ Options:
   the browser, or an in-memory store elsewhere. Pass your own
   `{ getItem, setItem, removeItem }` to control persistence.
 - **`fetch`** — a custom `fetch` (defaults to the global one).
+- **`partnerKey`** — a **certified partner key**, required only for commons
+  *writes* (`registerAsset`, `grant`). Read-only apps never need one. `registerAsset`
+  enforces open licences (CC0 / CC-BY / CC-BY-SA) and mandatory
+  provenance/consent; without a valid key these calls throw `RailsError` `403`.
 
 ### Identity is lazy and anonymous
 

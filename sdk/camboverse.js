@@ -33,6 +33,8 @@
  * @property {{getItem(k:string):string|null, setItem(k:string,v:string):void, removeItem(k:string):void}} [storage]
  *   Token store. Defaults to localStorage in the browser, else in-memory.
  * @property {typeof fetch} [fetch]  Custom fetch (defaults to the global).
+ * @property {string} [partnerKey]  A certified partner key, required only for
+ *   commons writes (registerAsset, grant). Read-only apps never need one.
  */
 
 const KEY = "camboverse.identity.v1";
@@ -74,6 +76,7 @@ export function createClient(options = {}) {
   const baseUrl = (options.baseUrl ?? "").replace(/\/$/, "");
   const storage = options.storage ?? defaultStorage();
   const doFetch = options.fetch ?? (typeof fetch !== "undefined" ? fetch : null);
+  const partnerKey = options.partnerKey ?? null;
   if (!doFetch) throw new Error("No fetch available — pass options.fetch");
 
   let cached = /** @type {Identity|null} */ (null);
@@ -151,6 +154,15 @@ export function createClient(options = {}) {
   function getAsset(id) {
     return call(`/v1/assets/${encodeURIComponent(id)}`);
   }
+  /**
+   * Register a commons asset (certified write — needs `partnerKey`). Licence must
+   * be an open licence (CC0 / CC-BY / CC-BY-SA); `provenance.contributor` and
+   * `consent.steward` are required.
+   * @param {{type:string, name:string, description?:string, media?:any[], attributes?:any[], externalUrl?:string, license?:string, provenance:{contributor:string, method?:string}, consent:{steward:string, consentRef?:string}}} asset
+   */
+  function registerAsset(asset) {
+    return call("/v1/assets", { method: "POST", token: partnerKey, body: asset });
+  }
 
   // ---- Entitlements ---------------------------------------------------------
 
@@ -160,9 +172,9 @@ export function createClient(options = {}) {
     if (subject) q.set("subject", subject);
     return call(`/v1/entitlements?${q.toString()}`);
   }
-  /** Grant a right (own | view | use | rent). `expiresAt` makes it a rental. */
+  /** Grant a right (own | view | use | rent) — certified write, needs `partnerKey`. `expiresAt` makes it a rental. */
   function grant({ assetId, subjectId, right, grantedBy, expiresAt }) {
-    return call("/v1/entitlements", { method: "POST", body: { assetId, subjectId, right, grantedBy, expiresAt } });
+    return call("/v1/entitlements", { method: "POST", token: partnerKey, body: { assetId, subjectId, right, grantedBy, expiresAt } });
   }
 
   // ---- Learning credentials -------------------------------------------------
@@ -220,7 +232,7 @@ export function createClient(options = {}) {
 
   return {
     getIdentity, clearIdentity, me,
-    listAssets, getAsset,
+    listAssets, getAsset, registerAsset,
     can, grant,
     claimCredential, credentials, earned,
     listScenes, getScene,
