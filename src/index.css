@@ -1371,3 +1371,57 @@ body,
 .pp-stamp-title { font-weight: 700; }
 .pp-stamp-sub { color: var(--muted, #a6ab97); font-size: 0.8rem; }
 .pp-foot { color: var(--muted, #a6ab97); font-size: 0.78rem; margin-top: 18px; text-align: center; }
+
+/* ---- Credits & licence (attribution for the CC-BY commons) ---- */
+.credits-link {
+  margin: 8px 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: 600 0.82rem system-ui, sans-serif;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.credits {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 11, 7, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.credits-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel, #1b1e16);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 16px;
+}
+.credits-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.credits-title { font: 800 1rem system-ui, sans-serif; }
+.credits-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line, #33372a);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.credits-list { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; }
+.credits-list dt { color: var(--muted, #a6ab97); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; padding-top: 2px; }
+.credits-list dd { margin: 0; font-size: 0.9rem; }
+.credits-list a { color: var(--accent); }
+.credits-note { color: var(--muted, #a6ab97); font-size: 0.8rem; }
+.credits-foot { color: var(--muted, #a6ab97); font-size: 0.78rem; margin: 14px 0 0; }
