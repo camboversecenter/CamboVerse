@@ -23,6 +23,7 @@
     "gen:kaom": "node scripts/generate-kaom.mjs",
     "gen:changkran": "node scripts/generate-changkran.mjs",
     "gen:house": "node scripts/generate-house.mjs",
+    "gen:cake": "node scripts/generate-cake.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
     "gen:provinces": "node scripts/generate-provinces.mjs"
   },

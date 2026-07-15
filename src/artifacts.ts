@@ -208,6 +208,60 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "ansom",
+  khmer: "អន្សម",
+  name: "Ansom",
+  english: "Sticky-rice cake in banana leaf",
+  category: "Traditional cake",
+  blurb: "Cambodia's iconic festival cake — sticky rice and a filling, wrapped in banana leaf and steamed.",
+  story:
+    "អន្សម (ansom) is the most iconic Khmer cake. Glutinous (sticky) rice, soaked and mixed with coconut, is pressed around a filling and rolled up tightly in a banana leaf, tied with strips, and steamed or boiled for hours. Sweet អន្សមចេក has a banana or mung-bean centre; savoury អន្សមជ្រូក holds seasoned pork with mung bean. Ansom is above all a festival and family food — made especially for Khmer New Year (បុណ្យចូលឆ្នាំ) and Pchum Ben, when families gather the night before to wrap and boil dozens together, then share them with neighbours and offer them at the pagoda. The banana leaf is wrapper and flavour in one: it perfumes the rice as it steams, and it's completely natural and compostable.",
+  utilities: [
+    "Glutinous rice with coconut, wrapped around a sweet (banana / mung bean) or savoury (pork) filling",
+    "Rolled in banana leaf, tied with strips, then steamed or boiled for hours",
+    "Made especially for Khmer New Year and Pchum Ben — a family and community food",
+    "Families wrap and boil dozens together, then share them and offer them at the pagoda",
+    "The banana leaf flavours the rice and is a natural, compostable wrapper",
+  ],
+  origin: "A festive food made nationwide; families prepare it together for the big holidays.",
+  model: "/models/ansom.glb",
+  pois: [
+    {
+      id: "wrap",
+      title: "The banana-leaf wrap",
+      khmer: "ស្លឹកចេក",
+      info: "Each roll is wrapped in a banana leaf and its ends folded over. The leaf holds the shape while it steams, perfumes the rice with its aroma, and is a natural, compostable wrapper — no plastic needed.",
+      target: [0, 1.6, -0.45],
+      camera: [1.9, 2.3, 2.7],
+    },
+    {
+      id: "ties",
+      title: "The ties",
+      khmer: "ខ្សែចង",
+      info: "Strips of leaf rib, bamboo, or reed bind the roll tightly at intervals so it keeps its firm cylinder shape through hours of steaming or boiling.",
+      target: [0.5, 1.6, 0.15],
+      camera: [2.3, 2.1, 2.5],
+    },
+    {
+      id: "rice",
+      title: "The sticky rice",
+      khmer: "អង្ករដំណើប",
+      info: "Cut one open and you see the glutinous rice — soaked, mixed with coconut, and steamed until dense and chewy. It's the heart of the cake, pressed firmly around the filling.",
+      target: [0, 1.92, 0.85],
+      camera: [1.5, 2.4, 2.6],
+    },
+    {
+      id: "filling",
+      title: "The filling",
+      khmer: "ខ្លឹមក្នុង",
+      info: "At the centre sits the filling — sweet ripe banana or mung bean for អន្សមចេក, or seasoned pork with mung bean for the savoury អន្សមជ្រូក. It's what makes each ansom sweet or savoury.",
+      target: [0, 1.95, 0.85],
+      camera: [1.0, 2.3, 2.4],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }

@@ -62,7 +62,7 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
           {expanded ? (
             <>
               <p className="artifact-story">{artifact.story}</p>
-              <h3>What it's used for</h3>
+              <h3>Good to know</h3>
               <ul className="artifact-uses">
                 {artifact.utilities.map((u) => (
                   <li key={u}>{u}</li>
