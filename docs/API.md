@@ -24,6 +24,11 @@ commons and the same shared world.
   a person's public credentials) need no auth — this is a commons.
 - **Identity-bound writes** carry a bearer token:
   `Authorization: Bearer <token>` (obtained from `POST /v1/id`).
+- **Certified writes** (growing the commons) carry a **partner key**:
+  `Authorization: Bearer <partner-key>` (charter §8 trust mark). Registering an
+  asset and granting an entitlement are certified writes. Keys are configured on
+  the host (`PARTNER_KEYS`); **writes are closed unless a key is configured** —
+  never open by default. Unrecognised key ⇒ `403`.
 - **Money-neutral.** No endpoint takes a payment. The D2P rail only *routes* to a
   real provider; settlement happens in the ecosystem, never in the core.
 - **Errors** are `{ "error": "<message>" }` with a `4xx`/`5xx` status.
@@ -47,8 +52,9 @@ entitlements a `source` (`db` today, `chain` later). All are `null`/`db` now.
 | Identity | `GET /v1/id/me` | Bearer | The current identity |
 | Asset | `GET /v1/assets[?type=]` | — | List commons assets |
 | Asset | `GET /v1/assets/:id` | — | One asset (NFT-metadata-compatible) |
+| Asset | `POST /v1/assets` | Partner key | Register a commons asset (open licence enforced) |
 | Entitlement | `GET /v1/entitlements?subject=&asset=&action=` | — | `can(subject, action, asset)` |
-| Entitlement | `POST /v1/entitlements` | — | Grant a right (`own`/`view`/`use`/`rent`) |
+| Entitlement | `POST /v1/entitlements` | Partner key | Grant a right (`own`/`view`/`use`/`rent`) |
 | Credential | `POST /v1/credentials/claim` | Bearer or `subjectId` | Claim a learning credential |
 | Credential | `GET /v1/credentials?subject=` | — | A person's credentials |
 | Experience | `GET /v1/scenes` | — | List scene descriptors |
@@ -149,6 +155,28 @@ Optional `?type=` filter: `heritage-site` | `poi` | `history-era`.
 `404` if the id is unknown. The `media`/`attributes` layout is deliberately
 OpenSea-style so a startup can mint without re-modelling.
 
+### `POST /v1/assets` — register a commons asset *(certified write)*
+
+Grows the archive. Requires a **partner key** (`Authorization: Bearer <key>`).
+`type` and `name` are required; **`license` must be an open licence**
+(`CC0-1.0` / `CC-BY-4.0` / `CC-BY-SA-4.0` — NC/ND are refused), and
+`provenance.contributor` and `consent.steward` are **mandatory**.
+
+```jsonc
+// request
+{ "type": "artifact", "name": "Silver Naga Bowl", "description": "…",
+  "media": [ { "role": "model", "uri": "…", "format": "glb" } ],
+  "attributes": [ { "trait_type": "Museum", "value": "…" } ],
+  "license": "CC-BY-SA-4.0",
+  "provenance": { "contributor": "Sok Dara", "method": "photogrammetry" },
+  "consent": { "steward": "National Museum of Cambodia", "consentRef": "…" } }
+
+// → 201  (the stored asset; provenance records registeredBy: <partner>)
+```
+
+`403` without a valid partner key; `400` on a non-open licence or missing
+provenance/consent.
+
 ---
 
 ## Entitlement
@@ -178,15 +206,18 @@ Query: `asset` (required), `subject` (required unless the action is a public
 
 `400` if `asset` is missing.
 
-### `POST /v1/entitlements`
+### `POST /v1/entitlements` *(certified write)*
 
-Body: `assetId`, `subjectId`, `right` (required); `grantedBy`, `expiresAt`
-(optional; `expiresAt` makes it a rental).
+Requires a **partner key** — issuing an `own`/`use`/`rent` right is privileged
+(the public-good `view` needs no grant). Body: `assetId`, `subjectId`, `right`
+(required); `grantedBy`, `expiresAt` (optional; `expiresAt` makes it a rental).
 
 ```jsonc
 // → 201
 { "id": "ent_…", "assetId": "ast_…", "subjectId": "cid_…", "right": "use", "expiresAt": null }
 ```
+
+`403` without a valid partner key.
 
 > An on-chain resolver plugs in behind the same `GET` later (`source: "chain"`),
 > so ownership minted as a token is honoured without changing callers.

@@ -13,7 +13,19 @@ import { fulfillmentFor, DEMO_COUNTRIES } from "../lib/economy";
 
 interface RailsEnv {
   DB?: D1Database;
+  /**
+   * Certified partner keys (charter §8 trust mark) that may perform commons
+   * writes. Comma-separated; each entry is `partnerId:secret` (or just `secret`).
+   * Unset ⇒ no partner can write (writes are closed, never open by default).
+   */
+  PARTNER_KEYS?: string;
 }
+
+/**
+ * Open licences the commons accepts. A Digital Public Good must stay freely
+ * reusable, so NonCommercial (NC) and NoDerivatives (ND) licences are refused.
+ */
+const OPEN_LICENSES = new Set(["CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0"]);
 
 const CONTRIBUTOR = "CamboVerse Center / NUM";
 const STEWARD = "APSARA / Ministry of Culture and Fine Arts";
@@ -230,6 +242,23 @@ async function ensureRails(db: D1Database): Promise<void> {
 
 const bearer = (req: Request) => (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "") || null;
 
+/**
+ * Resolve a certified partner from the request's bearer key. Returns the
+ * partner's id (for attribution) or null if the key is missing/unrecognised.
+ * Writes are closed unless PARTNER_KEYS is configured — never open by default.
+ */
+function certifiedPartner(request: Request, env: RailsEnv): string | null {
+  const key = bearer(request);
+  if (!key) return null;
+  for (const entry of (env.PARTNER_KEYS || "").split(",").map((s) => s.trim()).filter(Boolean)) {
+    const idx = entry.indexOf(":");
+    const secret = idx >= 0 ? entry.slice(idx + 1) : entry;
+    const id = idx >= 0 ? entry.slice(0, idx) : "partner";
+    if (secret && secret === key) return id;
+  }
+  return null;
+}
+
 interface AssetRow {
   id: string; type: string; name: string; description: string; image: string | null;
   media: string; attributes: string; external_url: string; license: string;
@@ -332,6 +361,44 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
     const r = await db.prepare(`SELECT * FROM assets WHERE id = ?`).bind(id).first<AssetRow>();
     return r ? json(assetOut(r)) : json({ error: "not found" }, 404);
   }
+  // Register a commons asset (certified write). Contributions grow the archive;
+  // licence/provenance/consent are mandatory, and only OPEN licences are accepted.
+  if (p === "/v1/assets" && m === "POST") {
+    const partner = certifiedPartner(request, env);
+    if (!partner) return json({ error: "certified partner key required" }, 403);
+    const b = (await request.json().catch(() => ({}))) as {
+      type?: string; name?: string; description?: string; image?: string;
+      media?: unknown; attributes?: unknown; externalUrl?: string;
+      license?: string; provenance?: { contributor?: string; method?: string };
+      consent?: { steward?: string; consentRef?: string };
+    };
+    if (!b.type || !b.name) return json({ error: "type and name required" }, 400);
+    const license = b.license ?? "CC-BY-4.0";
+    if (!OPEN_LICENSES.has(license)) {
+      return json({ error: `licence must be an open licence (${[...OPEN_LICENSES].join(", ")}); NC/ND are not accepted` }, 400);
+    }
+    if (!b.provenance?.contributor) return json({ error: "provenance.contributor required" }, 400);
+    if (!b.consent?.steward) return json({ error: "consent.steward required" }, 400);
+    const id = rid("ast");
+    const ts = now();
+    const provenance = JSON.stringify({
+      contributor: b.provenance.contributor,
+      method: b.provenance.method ?? "contributed",
+      capturedAt: ts,
+      registeredBy: partner,
+    });
+    const consent = JSON.stringify({ steward: b.consent.steward, consentRef: b.consent.consentRef ?? "pending" });
+    await db.prepare(
+      `INSERT INTO assets (id,type,name,description,image,media,attributes,external_url,license,provenance,consent,token_binding,created_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    ).bind(
+      id, b.type, b.name, b.description ?? "", b.image ?? null,
+      JSON.stringify(b.media ?? []), JSON.stringify(b.attributes ?? []), b.externalUrl ?? null,
+      license, provenance, consent, null, ts,
+    ).run();
+    const r = await db.prepare(`SELECT * FROM assets WHERE id = ?`).bind(id).first<AssetRow>();
+    return json(assetOut(r as AssetRow), 201);
+  }
 
   // Entitlements --------------------------------------------------------------
   if (p === "/v1/entitlements" && m === "GET") {
@@ -353,12 +420,17 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
     return json({ granted: false });
   }
   if (p === "/v1/entitlements" && m === "POST") {
+    // Granting a right is a certified write — only a certified partner may issue
+    // ownership/use/rental rights (the public-good "view" needs no grant).
+    const partner = certifiedPartner(request, env);
+    if (!partner) return json({ error: "certified partner key required" }, 403);
     const b = (await request.json().catch(() => ({}))) as Record<string, string>;
     if (!b.assetId || !b.subjectId || !b.right) return json({ error: "assetId, subjectId, right required" }, 400);
+    if (!["own", "view", "use", "rent"].includes(b.right)) return json({ error: "right must be own | view | use | rent" }, 400);
     const id = rid("ent");
     await db.prepare(
       `INSERT INTO entitlements (id,asset_id,subject_id,right,granted_by,expires_at,source,created_at) VALUES (?,?,?,?,?,?,?,?)`,
-    ).bind(id, b.assetId, b.subjectId, b.right, b.grantedBy ?? "core", b.expiresAt ?? null, "db", now()).run();
+    ).bind(id, b.assetId, b.subjectId, b.right, b.grantedBy ?? partner, b.expiresAt ?? null, "db", now()).run();
     return json({ id, assetId: b.assetId, subjectId: b.subjectId, right: b.right, expiresAt: b.expiresAt ?? null }, 201);
   }
 
