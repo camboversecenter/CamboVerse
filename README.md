@@ -75,6 +75,25 @@ first entry in the Open Khmer Heritage Archive.
 
 See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 
+## Documentation
+
+**Vision & platform**
+- [`STRATEGY.md`](./STRATEGY.md) — the delivery strategy, governance, and technical framework.
+- [`PLATFORM_CHARTER.md`](./PLATFORM_CHARTER.md) — what CamboVerse **is and isn't**: Cambodia's cultural **Digital Public Infrastructure**, the **Digital‑to‑Physical (D2P)** model, and the staged building plan.
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the open **rails** (identity, assets, entitlements, learning credentials, experiences, D2P fulfillment) that ecosystem apps build on; Web2 now, Web3‑ready.
+- [`DIGITAL_ECONOMY.md`](./DIGITAL_ECONOMY.md) — the geo‑aware **Digital‑to‑Physical commerce** reference (order virtually → delivered locally).
+
+**Growing the heritage commons** *(capture pipeline)*
+- [`docs/CAPTURE.md`](./docs/CAPTURE.md) — turning a real site into an asset (photogrammetry / 3DGS → glTF / `.splat`), with the licensing and mobile‑budget rules.
+- [`docs/CAPTURE_WATPHNOM.md`](./docs/CAPTURE_WATPHNOM.md) — an on‑the‑ground field guide for capturing Wat Phnom.
+- [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md) — training a 3D Gaussian Splatting model **for free on Kaggle**.
+
+**Features**
+- [`docs/AI_GUIDE.md`](./docs/AI_GUIDE.md) — **Kiri**, the multilingual AI tour guide (setup, grounding, roadmap).
+
+**Contributing & agents**
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) · [`AGENTS.md`](./AGENTS.md) (orientation for AI coding agents).
+
 ## Technology
 
 The v1 stack, chosen to honor the "low-end Android over 4G" constraint:
