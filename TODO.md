@@ -24,6 +24,7 @@ Cambodia online for the world, with your name on it.
 | 📸 Photograph a temple | [Capture a site](#1-capture-a-heritage-site-photos--3dgs) |
 | 🖥️ Train a 3D model on a free GPU | [Train 3DGS on Kaggle](./docs/TRAIN_3DGS_KAGGLE.md) |
 | 📝 Write facts / history / quizzes | [Author POIs & history](#3-author-points-of-interest--history) |
+| 🏺 Add a Khmer tool / object in 3D | [Add a traditional tool](#add-a-khmer-traditional-tool-3d-artifact) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
 | 🧩 Build an app on the rails | [Build on the rails](#5-build-on-the-rails-ecosystem-apps) |
@@ -103,6 +104,58 @@ You don't need a camera to make a huge difference here.
   learning credential that shows up in the visitor's Heritage Passport.
 - **Accuracy over flourish.** Cite where you can; don't invent dates,
   attributions, or institutional relationships. Flag assumptions in the PR.
+
+## Add a Khmer traditional tool (3D artifact)
+
+The **🏺 Khmer Tools** gallery lets visitors inspect everyday Khmer objects in
+3D and VR, learn their parts, and see how they're used. The two objects there
+now — **ក្អម** (water pot) and **ចង្ក្រាន** (clay stove) — are just **sample
+builds** to show the pattern. **Help fill the gallery** with the rich world of
+Khmer tools, instruments, and household objects.
+
+Each artifact is a small, self-contained contribution — no server work, and it
+appears in the gallery **and** the Asset registry automatically.
+
+**How to add one**
+
+1. **Make the 3D model** (`public/models/<id>.glb`). Two paths:
+   - **Author it procedurally** — the easiest start. Copy a sample generator
+     (`scripts/generate-kaom.mjs` or `scripts/generate-changkran.mjs`) and reshape
+     it with the shared builder (`scripts/lib/temple.mjs`: `box`, `cyl`, `cone`,
+     `sphere`). A pot or stove is a *body of revolution* — a profile of
+     `[height, radius]` samples emitted as stacked frustums. Add a
+     `gen:<id>` script to `package.json`.
+   - **Capture a real one** — photograph an actual object and train a model
+     (photogrammetry / 3DGS). See [`docs/CAPTURE.md`](./docs/CAPTURE.md) and
+     [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md). Best of all — a
+     real artifact, captured with a museum or artisan's consent.
+2. **Add an entry to `src/artifacts.ts`** — Khmer + romanized names, an English
+   gloss, a short **educational story** (what it is and *how it works*), its
+   **utilities** (bullet list), its **origin**, the `model` path, and a few
+   **inspect POIs** that teach the object's parts (`target` = look-at point,
+   `camera` = where the camera sits, in the model's space). Model it on the two
+   samples.
+3. **That's it.** The gallery lists it, it's viewable in 3D and VR, and it's
+   seeded into the Asset registry as a `traditional-tool` (CC‑BY, provenance,
+   consent) — no other code changes.
+
+**Keep the rules:** a light model (it must load on a low‑end phone), an **open
+licence** (CC0 / CC‑BY / CC‑BY‑SA), **consent** for any real capture, and
+**accuracy** — describe the object and its use truthfully.
+
+**Ideas to claim** (from daily life, crafts, music, and the kitchen):
+
+- **Kitchen & home:** ពាង (large water jar), ឆ្នាំង (clay cooking pot), ខ្ទះ
+  (wok / frying pan), ត្បាល់ & អង្រែ (mortar & pestle), កញ្ជើ / ល្អី (baskets),
+  ស្លាបព្រា (spoon), កន្ទេល (woven mat).
+- **Farm & craft:** នង្គ័ល (plough), កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom),
+  សំណាញ់ (fishing net), and woven bamboo fish traps.
+- **Music (Pinpeat / Mahori):** រនាត (roneat xylophone), គង (gong circle),
+  ស្គរ (drums), ទ្រ (tro fiddle), ខ្លុយ (flute), ចាប៉ី (chapei lute).
+- **Everyday:** ក្រមា (the iconic checkered krama scarf), សំពត់ (traditional
+  cloth), ចង្កឹះ, កាំបិត.
+
+Propose your own, too — anything that carries a piece of Khmer daily life.
 
 ## 4. Translate & localise
 
