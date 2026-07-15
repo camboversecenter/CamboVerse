@@ -88,7 +88,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 
 **Growing the heritage commons** *(capture pipeline)*
 - [`docs/CAPTURE.md`](./docs/CAPTURE.md) — turning a real site into an asset (photogrammetry / 3DGS → glTF / `.splat`), with the licensing and mobile‑budget rules.
-- [`docs/CAPTURE_WATPHNOM.md`](./docs/CAPTURE_WATPHNOM.md) — an on‑the‑ground field guide for capturing Wat Phnom.
+- **Site field guides** — on‑the‑ground, per‑temple capture guides (what to shoot, when to go, access & consent, hazards): [Wat Phnom](./docs/CAPTURE_WATPHNOM.md) · [Bayon](./docs/CAPTURE_BAYON.md) · [Ta Prohm](./docs/CAPTURE_TAPROHM.md) · [Banteay Srei](./docs/CAPTURE_BANTEAYSREI.md) · [Preah Vihear](./docs/CAPTURE_PREAHVIHEAR.md) · [Royal Palace](./docs/CAPTURE_ROYALPALACE.md).
 - [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md) — training a 3D Gaussian Splatting model **for free on Kaggle**.
 
 **Build on CamboVerse** *(for ecosystem apps)*

@@ -9,6 +9,13 @@ geometry). The viewer already renders both; this is the Phase‑1 *content* work
 > **provenance** for every asset. Publish to the Open Khmer Heritage Archive under
 > **CC‑BY** (see `STRATEGY.md` §4.1).
 
+> **Going to a specific temple?** Read this pipeline first, then the
+> **site-specific field guide** for what to shoot on the ground:
+> [Wat Phnom](./CAPTURE_WATPHNOM.md) · [Bayon](./CAPTURE_BAYON.md) ·
+> [Ta Prohm](./CAPTURE_TAPROHM.md) · [Banteay Srei](./CAPTURE_BANTEAYSREI.md) ·
+> [Preah Vihear](./CAPTURE_PREAHVIHEAR.md) · [Royal Palace](./CAPTURE_ROYALPALACE.md).
+> Pick a site to claim from the [contributor task board](../TODO.md).
+
 ---
 
 ## Option A — Gaussian splat (photoreal)

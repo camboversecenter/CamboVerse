@@ -39,16 +39,17 @@ POIs** — these are the highest‑impact tasks right now.
 | Site | Province | Photoreal (3DGS) | Points of interest | Needs |
 |---|---|:---:|:---:|---|
 | Angkor Wat | Siem Reap | ✅ | ✅ (6) | polish, more POIs |
-| Wat Phnom | Phnom Penh | ✅ | ✅ (5) | polish |
-| **Bayon** | Siem Reap | ❌ | ❌ | **capture + POIs** |
-| **Ta Prohm** | Siem Reap | ❌ | ❌ | **capture + POIs** |
-| **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** |
-| **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** |
-| **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** |
+| Wat Phnom | Phnom Penh | ✅ | ✅ (5) | polish · [field guide](./docs/CAPTURE_WATPHNOM.md) |
+| **Bayon** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BAYON.md) |
+| **Ta Prohm** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_TAPROHM.md) |
+| **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
+| **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
+| **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
 | _New sites_ | — | — | — | **propose one!** (e.g. Sambor Prei Kuk, Koh Ker, Silver Pagoda, Phnom Bakheng) |
 
-Wat Phnom is in Phnom Penh and easy to reach — a great first capture. See the
-worked field guide: [`docs/CAPTURE_WATPHNOM.md`](./docs/CAPTURE_WATPHNOM.md).
+Each site above has a **site-specific field guide** (linked in the table) with
+what to shoot, when to go, access/consent notes, and hazards. Wat Phnom is in
+Phnom Penh and easy to reach — a great first capture.
 
 ---
 
