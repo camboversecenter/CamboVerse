@@ -58,7 +58,7 @@ export function MapView({ onEnter, onOpenTools }: { onEnter: (id: string) => voi
       </button>
 
       <button className="tools-btn" onClick={onOpenTools}>
-        🏺 Khmer Tools
+        🏺 Khmer Life
       </button>
 
       {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}

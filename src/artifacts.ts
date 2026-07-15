@@ -1,11 +1,12 @@
 /**
- * Khmer traditional tools & objects — 3D artifacts you can inspect up close, in
- * plain view or in VR, with an educational explanation and their everyday uses.
+ * Khmer traditional life — 3D artifacts you can inspect up close, in plain view
+ * or in VR, with an educational explanation and their everyday uses: everyday
+ * objects and tools, and traditional buildings like the Khmer stilt house.
  *
- * Unlike heritage sites (which live on the map), artifacts are portable objects.
- * Each carries a `model` (glTF) and points of interest that teach how it works.
- * They're seeded into the Asset registry as commons assets (license/provenance/
- * consent) just like sites — see src/worker/rails.ts.
+ * Unlike heritage sites (which live on the map), these are self-contained
+ * objects. Each carries a `model` (glTF) and points of interest that teach how
+ * it works. They're seeded into the Asset registry as commons assets (license/
+ * provenance/consent) just like sites — see src/worker/rails.ts.
  */
 import type { Poi } from "./spots";
 
@@ -140,6 +141,231 @@ ARTIFACTS.push({
       info: "A clay ឆ្នាំង (chnang) rests in the cradle. Clay cooks gently and evenly — ideal for simmering Khmer stews like somlar, steaming rice, or boiling water. Its lid holds in the heat.",
       target: [0, 2.0, 0],
       camera: [1.8, 2.6, 2.9],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "phteah",
+  khmer: "ផ្ទះខ្មែរ",
+  name: "Phteah Khmer",
+  english: "Traditional stilt house",
+  category: "Traditional house",
+  blurb: "A wooden house raised high on posts, with a steep tiled roof — climate wisdom in timber.",
+  story:
+    "The traditional Khmer house (ផ្ទះខ្មែរ) is a wooden home raised high on sturdy posts. Standing on stilts keeps the living floor cool with airflow, lifts it above seasonal floods and animals, and opens a shaded space below for work, rest, weaving, and storage. The steep roof — tiled or thatched — sheds the heavy monsoon rain, and wide eaves shade the walls; the ridge ends often curl upward in decorative finials (kbach). Walls are wooden planks with shuttered windows, thrown open for the breeze and closed against storms. A steep staircase climbs to an open veranda — the sociable heart of the home, where guests are received and the family gathers. Built by village carpenters from local hardwood and shaped by Cambodia's tropical climate, the Khmer house is architecture as everyday wisdom. Its forms vary by region and status — styles such as Rong, Keng, Pet, and Kantaing.",
+  utilities: [
+    "Raised on posts — cool airflow, and safe above floods and animals",
+    "The shaded space below is used for work, weaving, rest, and storage",
+    "The steep roof sheds heavy monsoon rain; wide eaves shade the walls",
+    "Wooden shutters open for the breeze and close against storms",
+    "The open veranda is the social heart — for guests and family life",
+    "Built from local hardwood by village carpenters, tuned to the tropical climate",
+  ],
+  origin: "Built by village carpenters across rural Cambodia; regional styles include Rong, Keng, Pet, and Kantaing.",
+  model: "/models/phteah.glb",
+  pois: [
+    {
+      id: "stilts",
+      title: "On stilts",
+      khmer: "ជើងផ្ទះ",
+      info: "Sturdy hardwood posts raise the whole house. This lifts the living floor above floods and animals, lets cool air flow underneath, and creates a shaded ground-level space used for work, weaving, resting, and storage.",
+      target: [0, 1.1, 1.6],
+      camera: [4.2, 1.8, 6.6],
+    },
+    {
+      id: "stairs",
+      title: "The staircase",
+      khmer: "ជណ្ដើរ",
+      info: "A steep wooden stair climbs from the ground to the raised veranda. It's often steep and sometimes removable — a modest threshold between the public ground and the private home above.",
+      target: [0, 1.4, 3.0],
+      camera: [2.4, 2.2, 6.8],
+    },
+    {
+      id: "veranda",
+      title: "The veranda",
+      khmer: "រានហាល",
+      info: "The open front porch is the sociable heart of the house — shaded and airy, where the family gathers, guests are received, children play, and daily work is done.",
+      target: [0, 3.0, 1.8],
+      camera: [3.4, 3.6, 6.2],
+    },
+    {
+      id: "roof",
+      title: "The roof & finials",
+      khmer: "ដំបូល",
+      info: "The steep roof — tiled or thatched — sheds Cambodia's heavy monsoon rain quickly, while wide eaves shade the walls from sun and rain. The ridge ends curl upward in carved finials (kbach), a signature of Khmer roofs.",
+      target: [0, 6.0, 0],
+      camera: [4.6, 6.4, 7.4],
+    },
+    {
+      id: "walls",
+      title: "Walls & shutters",
+      khmer: "ជញ្ជាំង និងបង្អួច",
+      info: "Walls are wooden planks; the windows are wooden shutters with no glass — opened wide to catch the breeze in the heat, and closed against wind and storms. Simple, repairable, and made from local timber.",
+      target: [-2.9, 3.8, -0.8],
+      camera: [-6.4, 4.1, 3.2],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "ansom",
+  khmer: "អន្សម",
+  name: "Ansom",
+  english: "Sticky-rice cake in banana leaf",
+  category: "Traditional cake",
+  blurb: "Cambodia's iconic festival cake — sticky rice and a filling, wrapped in banana leaf and steamed.",
+  story:
+    "អន្សម (ansom) is the most iconic Khmer cake. Glutinous (sticky) rice, soaked and mixed with coconut, is pressed around a filling and rolled up tightly in a banana leaf, tied with strips, and steamed or boiled for hours. Sweet អន្សមចេក has a banana or mung-bean centre; savoury អន្សមជ្រូក holds seasoned pork with mung bean. Ansom is above all a festival and family food — made especially for Khmer New Year (បុណ្យចូលឆ្នាំ) and Pchum Ben, when families gather the night before to wrap and boil dozens together, then share them with neighbours and offer them at the pagoda. The banana leaf is wrapper and flavour in one: it perfumes the rice as it steams, and it's completely natural and compostable.",
+  utilities: [
+    "Glutinous rice with coconut, wrapped around a sweet (banana / mung bean) or savoury (pork) filling",
+    "Rolled in banana leaf, tied with strips, then steamed or boiled for hours",
+    "Made especially for Khmer New Year and Pchum Ben — a family and community food",
+    "Families wrap and boil dozens together, then share them and offer them at the pagoda",
+    "The banana leaf flavours the rice and is a natural, compostable wrapper",
+  ],
+  origin: "A festive food made nationwide; families prepare it together for the big holidays.",
+  model: "/models/ansom.glb",
+  pois: [
+    {
+      id: "wrap",
+      title: "The banana-leaf wrap",
+      khmer: "ស្លឹកចេក",
+      info: "Each roll is wrapped in a banana leaf and its ends folded over. The leaf holds the shape while it steams, perfumes the rice with its aroma, and is a natural, compostable wrapper — no plastic needed.",
+      target: [0, 1.6, -0.45],
+      camera: [1.9, 2.3, 2.7],
+    },
+    {
+      id: "ties",
+      title: "The ties",
+      khmer: "ខ្សែចង",
+      info: "Strips of leaf rib, bamboo, or reed bind the roll tightly at intervals so it keeps its firm cylinder shape through hours of steaming or boiling.",
+      target: [0.5, 1.6, 0.15],
+      camera: [2.3, 2.1, 2.5],
+    },
+    {
+      id: "rice",
+      title: "The sticky rice",
+      khmer: "អង្ករដំណើប",
+      info: "Cut one open and you see the glutinous rice — soaked, mixed with coconut, and steamed until dense and chewy. It's the heart of the cake, pressed firmly around the filling.",
+      target: [0, 1.92, 0.85],
+      camera: [1.5, 2.4, 2.6],
+    },
+    {
+      id: "filling",
+      title: "The filling",
+      khmer: "ខ្លឹមក្នុង",
+      info: "At the centre sits the filling — sweet ripe banana or mung bean for អន្សមចេក, or seasoned pork with mung bean for the savoury អន្សមជ្រូក. It's what makes each ansom sweet or savoury.",
+      target: [0, 1.95, 0.85],
+      camera: [1.0, 2.3, 2.4],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "roneat",
+  khmer: "រនាតឯក",
+  name: "Roneat Ek",
+  english: "Lead Khmer xylophone",
+  category: "Traditional instrument",
+  blurb: "The lead xylophone of the Pinpeat — tuned bars over a carved, boat-shaped resonator.",
+  story:
+    "រនាតឯក (Roneat Ek) is the leading xylophone of the Pinpeat, Cambodia's classical ensemble for temple, court, and shadow-puppet (Sbek Thom) music. Twenty-one tuned bars of bamboo or hardwood are suspended by cord over a graceful boat-shaped wooden resonator — often richly carved and gilded, with ends that sweep up like naga tails. The player strikes the bars with two mallets: hard mallets for a bright, ringing tone, padded ones for a soft, mellow sound. As the 'ek' (leader), it carries the fast, ornamented melody the ensemble follows, answered by its deeper-toned partner, the Roneat Thung.",
+  utilities: [
+    "21 tuned bars of bamboo or hardwood, struck with two mallets",
+    "The carved, gilded boat-shaped body resonates and warms the sound",
+    "Leads the melody in the Pinpeat ensemble (temple, court, shadow theatre)",
+    "Hard mallets give a bright tone; padded mallets a mellow one",
+    "Paired with the lower-pitched Roneat Thung",
+  ],
+  origin: "The Pinpeat ensemble — Cambodia's classical court and temple music.",
+  model: "/models/roneat.glb",
+  pois: [
+    {
+      id: "bars",
+      title: "The tuned bars",
+      khmer: "ដងសំឡេង",
+      info: "Twenty-one bars of bamboo or hardwood, each shaved to a precise pitch and hung on cords. Longer, thicker bars sound lower. The player strikes them with two mallets to carry the melody.",
+      target: [0, 1.57, 0],
+      camera: [0.6, 2.5, 2.6],
+    },
+    {
+      id: "body",
+      title: "The resonator",
+      khmer: "តួធុង",
+      info: "The hollow, boat-shaped wooden body sits beneath the bars and resonates their sound, giving the Roneat Ek its warm, ringing voice. It is often beautifully carved and gilded.",
+      target: [0, 1.2, 0],
+      camera: [2.6, 1.7, 3.0],
+    },
+    {
+      id: "ends",
+      title: "The naga-tail ends",
+      khmer: "ក្បាច់ចុង",
+      info: "The ends of the body sweep upward in carved, gilded flourishes like naga tails — a reminder that a Khmer instrument is also a work of art and devotion, not only a tool for sound.",
+      target: [1.28, 1.72, 0],
+      camera: [3.2, 2.1, 2.6],
+    },
+    {
+      id: "mallets",
+      title: "The mallets",
+      khmer: "ដៃវាយ",
+      info: "Two mallets play the bars. Hard, unpadded heads give a bright, brilliant tone for lively pieces; padded heads give a soft, mellow sound for gentle ones.",
+      target: [0.15, 1.63, 0.3],
+      camera: [1.6, 2.2, 2.8],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "skor",
+  khmer: "ស្គរ",
+  name: "Skor",
+  english: "Khmer barrel drum",
+  category: "Traditional instrument",
+  blurb: "The two-headed barrel drum that gives Khmer music its pulse.",
+  story:
+    "ស្គរ (skor) are the drums that give Khmer music its pulse. This two-headed barrel drum is carved from a single log of hardwood and headed at both ends with stretched animal hide, laced and tensioned with cord to tune its pitch. In the Pinpeat ensemble the drums mark the rhythm the whole group locks to; drums also lead ceremonies and weddings, spur on the racing paddlers of the Water Festival (Bon Om Touk), and drive the ring at Kun Khmer boxing. Played with the hands or with sticks, one drummer can voice both a high, sharp 'crack' and a deep 'boom' from the two heads.",
+  utilities: [
+    "A two-headed barrel drum carved from hardwood, headed with animal hide",
+    "Cord lacing tensions the skins and tunes the pitch",
+    "Keeps the rhythm the Pinpeat ensemble locks to",
+    "Also drives weddings, the Water Festival, and Kun Khmer boxing",
+    "Played with the hands or sticks — high and low tones from the two heads",
+  ],
+  origin: "Central to the Pinpeat ensemble and to Khmer ceremony, festival, and sport.",
+  model: "/models/skor.glb",
+  pois: [
+    {
+      id: "head",
+      title: "The drumhead",
+      khmer: "ស្បែក",
+      info: "Each end is a head of stretched animal hide. Struck with the hand or a stick, it sounds the beat; the tighter the skin, the higher the pitch.",
+      target: [0.9, 1.25, 0],
+      camera: [3.0, 1.7, 2.4],
+    },
+    {
+      id: "barrel",
+      title: "The barrel body",
+      khmer: "តួស្គរ",
+      info: "The body is a hardwood barrel, traditionally hollowed from a single log. Its shape and cavity resonate the beat into a full, deep tone.",
+      target: [0, 1.25, 0],
+      camera: [2.6, 1.7, 3.1],
+    },
+    {
+      id: "lacing",
+      title: "The lacing",
+      khmer: "ខ្សែស្ទឹង",
+      info: "Cords laced between the two heads pull the skins tight. Tightening or loosening the lacing tunes the drum — the drummer's way of setting its voice.",
+      target: [0, 1.6, 0.5],
+      camera: [2.2, 2.1, 3.0],
+    },
+    {
+      id: "role",
+      title: "The pulse of the music",
+      khmer: "ចង្វាក់",
+      info: "In the Pinpeat, the skor keeps the rhythm the whole ensemble follows. Beyond the ensemble, drums lead weddings and festivals, race the Water Festival boats, and drive Kun Khmer boxing.",
+      target: [0, 1.25, 0],
+      camera: [2.4, 1.9, 3.3],
     },
   ],
 });
