@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { myCredentials, type Credential } from "../lib/identity";
 import { SPOTS } from "../spots";
 import { ERAS } from "../history";
+import { KHMER_GROUPS } from "../khmer";
 
 /**
  * The Heritage Passport — a visitor's collection of the learning credentials
@@ -37,6 +38,17 @@ function toStamp(c: Credential): Stamp {
         mood: era.mood,
       };
     }
+  }
+  if (parts[0] === "alphabet") {
+    const g = KHMER_GROUPS.find((x) => x.id === parts[1]);
+    return {
+      key: c.id,
+      title: g ? `${g.title} quiz` : "Alphabet quiz",
+      khmer: g?.khmer,
+      where: "Khmer alphabet",
+      when,
+      mood: "#4c8a3f",
+    };
   }
   // Any other achievement (e.g. an ecosystem app's) renders generically.
   return { key: c.id, title: c.achievement, where: "", when, mood: "#c8912e" };

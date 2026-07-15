@@ -3,7 +3,9 @@ import { OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import { LetterTile } from "./LetterTile";
+import { LetterQuiz } from "./LetterQuiz";
 import { makeGlyphTexture } from "../lib/glyphTexture";
+import { getIdentity, earnedAchievements } from "../lib/identity";
 import { KHMER_GROUPS, KHMER_FONTS, type KhmerShape, type KhmerLetter } from "../khmer";
 
 /**
@@ -19,9 +21,24 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
   const [groupId, setGroupId] = useState(KHMER_GROUPS[0].id);
   const [shape, setShape] = useState<KhmerShape>("normal");
   const [selected, setSelected] = useState<KhmerLetter | null>(null);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [earned, setEarned] = useState<Set<string>>(new Set());
 
   const group = KHMER_GROUPS.find((g) => g.id === groupId)!;
   const family = KHMER_FONTS[shape].family;
+  const passed = earned.has(`alphabet:${groupId}`);
+
+  // Load any alphabet credentials this visitor already holds (never mints one).
+  useEffect(() => {
+    let live = true;
+    (async () => {
+      const set = await earnedAchievements(await getIdentity(false));
+      if (live) setEarned(set);
+    })();
+    return () => {
+      live = false;
+    };
+  }, []);
 
   // Load the embedded Khmer fonts before drawing glyph textures (else tofu).
   useEffect(() => {
@@ -133,8 +150,20 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
               {KHMER_FONTS[s].label}
             </button>
           ))}
+          <button className="cls-quiz-btn" onClick={() => setQuizOpen(true)}>
+            🎯 Quiz{passed ? " ✓" : ""}
+          </button>
         </div>
       </div>
+
+      {quizOpen && (
+        <LetterQuiz
+          group={group}
+          shape={shape}
+          onClose={() => setQuizOpen(false)}
+          onEarned={() => setEarned((s) => new Set(s).add(`alphabet:${groupId}`))}
+        />
+      )}
 
       {selected ? (
         <div className="cls-info">

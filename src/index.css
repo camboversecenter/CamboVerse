@@ -1669,3 +1669,84 @@ body,
   color: var(--muted, #a6ab97); font: 600 0.9rem system-ui, sans-serif;
   pointer-events: none;
 }
+
+/* ---- Khmer letter quiz ---- */
+.cls-quiz-btn {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, rgba(20, 16, 10, 0.72));
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+  margin-left: 4px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.cls-quiz-btn:hover { background: color-mix(in srgb, var(--accent) 40%, rgba(20, 16, 10, 0.72)); }
+
+.quiz {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 11, 7, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.quiz-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--panel, #1b1e16);
+  border: 1px solid var(--accent);
+  border-radius: 18px;
+  padding: 18px;
+}
+.quiz-top { display: flex; align-items: center; justify-content: space-between; }
+.quiz-progress { font: 700 0.75rem system-ui, sans-serif; color: var(--muted, #a6ab97); letter-spacing: 0.04em; }
+.quiz-x {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line, #33372a); background: transparent; color: var(--ink); cursor: pointer;
+}
+.quiz-q { text-align: center; margin: 8px 0 4px; font-size: 0.88rem; color: var(--muted, #a6ab97); }
+.quiz-glyph {
+  display: grid; place-items: center;
+  height: 150px; margin: 0 auto 14px;
+  width: 150px;
+  background: #efe4cb; color: #241606;
+  border-radius: 14px;
+  font-size: 5.5rem; line-height: 1;
+}
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quiz-opt {
+  padding: 14px;
+  border: 1px solid var(--line, #33372a);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font: 700 1.05rem system-ui, sans-serif;
+  cursor: pointer;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-opt.correct { background: color-mix(in srgb, #4c8a3f 40%, transparent); border-color: #4c8a3f; }
+.quiz-opt.wrong { background: color-mix(in srgb, #b0492f 40%, transparent); border-color: #b0492f; }
+.quiz-opt:disabled { cursor: default; }
+
+.quiz-result { text-align: center; }
+.quiz-score { font: 900 2.6rem system-ui, sans-serif; margin: 6px 0; }
+.quiz-score.pass { color: var(--accent); }
+.quiz-msg { font-weight: 700; margin: 4px 0; }
+.quiz-msg.pass { color: #8fd07a; }
+.quiz-sub { color: var(--muted, #a6ab97); font-size: 0.86rem; margin: 4px 0 14px; }
+.quiz-done {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 14px system-ui, sans-serif;
+  cursor: pointer;
+}
