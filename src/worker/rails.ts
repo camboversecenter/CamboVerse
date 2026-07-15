@@ -9,6 +9,7 @@
  */
 import { SPOTS, type Spot } from "../spots";
 import { ERAS } from "../history";
+import { ARTIFACTS } from "../artifacts";
 import { fulfillmentFor, DEMO_COUNTRIES } from "../lib/economy";
 
 interface RailsEnv {
@@ -202,6 +203,20 @@ function seedAssets(): AssetSeed[] {
       media: [],
       attributes: [{ trait_type: "Years", value: e.years }],
       external_url: `/history/${e.id}`,
+    });
+  }
+  for (const a of ARTIFACTS) {
+    out.push({
+      id: `ast_tool_${a.id}`,
+      type: "traditional-tool",
+      name: `${a.name} (${a.khmer})`,
+      description: a.story,
+      media: [{ role: "model", uri: a.model, format: "glb" }],
+      attributes: [
+        { trait_type: "Khmer", value: a.khmer },
+        { trait_type: "Category", value: a.category },
+      ],
+      external_url: `/tools/${a.id}`,
     });
   }
   return out;
