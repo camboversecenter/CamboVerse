@@ -279,8 +279,9 @@ adapters. No module changes. The core stays money- and chain-neutral.
 - **Stage 2:** implement Identity + Asset registry + Credentials on D1/R2; migrate
   the existing heritage content into the Asset registry with provenance.
 - **Stage 3:** expose the public **APIs + SDK + sandbox**; generalise the D2P
-  `/fulfill` router from the shop reference; ship the certification program and a
-  reference partner app.
+  `/fulfill` router from the shop reference *(done: `POST /v1/fulfill` +
+  `GET /v1/providers`, with a reference provider registry)*; ship the
+  certification program and a reference partner app.
 - **Stage 4+:** ecosystem onboarding; later, the Web3 adapters (§9).
 
 ---

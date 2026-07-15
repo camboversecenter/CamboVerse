@@ -9,6 +9,7 @@
  */
 import { SPOTS } from "../spots";
 import { ERAS } from "../history";
+import { fulfillmentFor, DEMO_COUNTRIES } from "../lib/economy";
 
 interface RailsEnv {
   DB?: D1Database;
@@ -30,7 +31,46 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS assets (id TEXT PRIMARY KEY, type TEXT NOT NULL, name TEXT NOT NULL, description TEXT, image TEXT, media TEXT, attributes TEXT, external_url TEXT, license TEXT NOT NULL, provenance TEXT NOT NULL, consent TEXT NOT NULL, token_binding TEXT, created_at TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS entitlements (id TEXT PRIMARY KEY, asset_id TEXT NOT NULL, subject_id TEXT NOT NULL, right TEXT NOT NULL, granted_by TEXT, expires_at TEXT, source TEXT NOT NULL, created_at TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS credentials (id TEXT PRIMARY KEY, issuer TEXT NOT NULL, subject_id TEXT NOT NULL, achievement TEXT NOT NULL, evidence TEXT, issued_at TEXT NOT NULL, proof TEXT)`,
+  `CREATE TABLE IF NOT EXISTS providers (id TEXT PRIMARY KEY, type TEXT NOT NULL, region TEXT NOT NULL, name TEXT NOT NULL, pay_methods TEXT, handoff TEXT)`,
 ];
+
+/** Provider types the D2P router understands (ARCHITECTURE.md §6). */
+const FULFILL_TYPES = ["delivery", "purchase", "booking", "ticket"] as const;
+type FulfillType = (typeof FULFILL_TYPES)[number];
+
+interface ProviderSeed {
+  id: string;
+  type: FulfillType;
+  region: string;
+  name: string;
+  payMethods: string;
+  handoff: string;
+}
+
+/**
+ * A reference provider registry. CamboVerse defines the routing standard and
+ * ships reference partners (clearly placeholder, DPG-safe) so ecosystem apps can
+ * plug in real merchants/operators later. delivery + purchase everywhere;
+ * Cambodia — the heritage home — also offers tour booking and event ticketing.
+ */
+function seedProviders(): ProviderSeed[] {
+  const out: ProviderSeed[] = [];
+  for (const region of DEMO_COUNTRIES) {
+    const fx = fulfillmentFor(region);
+    const types: FulfillType[] = region === "KH" ? [...FULFILL_TYPES] : ["delivery", "purchase"];
+    for (const type of types) {
+      out.push({
+        id: `prov_${region.toLowerCase()}_${type}`,
+        type,
+        region,
+        name: `${fx.countryName} ${type} partner (reference)`,
+        payMethods: fx.payMethod,
+        handoff: `https://partners.camboverse.org/${region.toLowerCase()}/${type}`,
+      });
+    }
+  }
+  return out;
+}
 
 interface AssetSeed {
   id: string;
@@ -104,6 +144,14 @@ async function ensureRails(db: D1Database): Promise<void> {
     ),
   );
   if (batch.length) await db.batch(batch);
+
+  // Reference provider registry (idempotent).
+  const pstmt = db.prepare(
+    `INSERT OR IGNORE INTO providers (id,type,region,name,pay_methods,handoff) VALUES (?,?,?,?,?,?)`,
+  );
+  const pbatch = seedProviders().map((p) => pstmt.bind(p.id, p.type, p.region, p.name, p.payMethods, p.handoff));
+  if (pbatch.length) await db.batch(pbatch);
+
   ready = true;
 }
 
@@ -122,6 +170,15 @@ const assetOut = (r: AssetRow) => ({
   external_url: r.external_url, license: r.license,
   provenance: JSON.parse(r.provenance), consent: JSON.parse(r.consent),
   tokenBinding: r.token_binding ? JSON.parse(r.token_binding) : null,
+});
+
+interface ProviderRow {
+  id: string; type: string; region: string; name: string;
+  pay_methods: string | null; handoff: string | null;
+}
+const providerOut = (r: ProviderRow) => ({
+  id: r.id, type: r.type, region: r.region, name: r.name,
+  payMethods: r.pay_methods, handoff: r.handoff,
 });
 
 /** Does a stored right satisfy a requested action (rentals must be unexpired)? */
@@ -250,6 +307,55 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
         evidence: c.evidence, issuedAt: c.issued_at, proof: c.proof,
       })),
     });
+  }
+
+  // D2P fulfillment (ARCHITECTURE.md §6) ------------------------------------
+  // The core only ROUTES a digital action to a real, in-region provider. It
+  // never takes payment — settlement happens in the ecosystem. Money-neutral.
+  if (p === "/v1/providers" && m === "GET") {
+    const type = url.searchParams.get("type");
+    const region = url.searchParams.get("region")?.toUpperCase();
+    const where: string[] = [];
+    const binds: string[] = [];
+    if (type) { where.push("type = ?"); binds.push(type); }
+    if (region) { where.push("region = ?"); binds.push(region); }
+    const sql = `SELECT * FROM providers${where.length ? ` WHERE ${where.join(" AND ")}` : ""} ORDER BY region, type`;
+    const { results } = await db.prepare(sql).bind(...binds).all<ProviderRow>();
+    return json({ providers: (results ?? []).map(providerOut), count: results?.length ?? 0 });
+  }
+  if (p === "/v1/fulfill" && m === "POST") {
+    const b = (await request.json().catch(() => ({}))) as {
+      type?: string; buyerId?: string; country?: string; details?: unknown;
+    };
+    const type = (b.type ?? "delivery") as FulfillType;
+    if (!FULFILL_TYPES.includes(type)) {
+      return json({ error: `type must be one of ${FULFILL_TYPES.join(", ")}` }, 400);
+    }
+    // Region from the buyer's disclosed country (client choice, else Cloudflare).
+    const cf = (request as { cf?: { country?: string } }).cf?.country;
+    const fx = fulfillmentFor(b.country || cf || "");
+    // Prefer an exact region+type provider; fall back to region delivery, then a
+    // clearly-labelled reference so routing never dead-ends.
+    let prov = await db.prepare(`SELECT * FROM providers WHERE type = ? AND region = ? LIMIT 1`)
+      .bind(type, fx.country).first<ProviderRow>();
+    if (!prov) {
+      prov = await db.prepare(`SELECT * FROM providers WHERE region = ? ORDER BY type LIMIT 1`)
+        .bind(fx.country).first<ProviderRow>();
+    }
+    return json({
+      type,
+      region: fx.country,
+      regionName: fx.countryName,
+      flag: fx.flag,
+      buyerId: b.buyerId ?? null,
+      provider: prov?.name ?? `${fx.countryName} ${type} partner (reference)`,
+      providerId: prov?.id ?? null,
+      payMethod: prov?.pay_methods ?? fx.payMethod,
+      delivery: fx.delivery,
+      handoff: prov?.handoff ?? `https://partners.camboverse.org/${fx.country.toLowerCase()}/${type}`,
+      // The core does not settle. Payment happens in the ecosystem provider.
+      settlement: "ecosystem",
+    }, 201);
   }
 
   return json({ error: "not found" }, 404);
