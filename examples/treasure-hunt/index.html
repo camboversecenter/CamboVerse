@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CamboVerse — Reference Partner App (Treasure Hunt)</title>
+    <!--
+      A REFERENCE ecosystem app. It is NOT part of the CamboVerse product — it is
+      a worked example for startups/schools/museums, showing how an independent
+      app composes the open /v1 rails end-to-end using ONLY public HTTP calls:
+
+        Experience  → read a heritage scene and its points of interest
+        Identity    → get a free, portable CamboVerse ID (lazily, anonymous)
+        Credential  → "visit & learn" a POI earns a learning credential
+        Asset       → resolve a POI's asset (name/media/licence) from a scene ref
+        D2P         → once you've earned them all, route a real local reward
+
+      Self-contained: no build step, no dependencies, no external assets. Open
+      this file and point it at a CamboVerse host. See README.md.
+    -->
+    <style>
+      :root { --bg:#12140f; --panel:#1b1e16; --ink:#eef0e6; --muted:#a6ab97; --accent:#c8912e; --line:#33372a; }
+      * { box-sizing: border-box; }
+      body { margin:0; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+      header { padding:20px 16px; border-bottom:1px solid var(--line); }
+      h1 { margin:0 0 4px; font-size:1.15rem; }
+      .sub { color:var(--muted); font-size:.85rem; }
+      main { max-width:720px; margin:0 auto; padding:16px; }
+      .bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 16px; }
+      .bar input, .bar select { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; }
+      .bar input { flex:1; min-width:180px; }
+      button { background:var(--accent); color:#181a12; border:none; border-radius:8px; padding:9px 14px; font:700 14px system-ui; cursor:pointer; }
+      button.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+      button:disabled { opacity:.45; cursor:default; }
+      .scene { margin:0 0 16px; }
+      .scene h2 { margin:0 0 2px; }
+      .caps { color:var(--muted); font-size:.8rem; }
+      .poi { display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; margin:0 0 10px; }
+      .poi .body { flex:1; }
+      .poi .title { font-weight:700; }
+      .poi .info { color:var(--muted); font-size:.85rem; }
+      .poi .done { color:#8fd07a; font-weight:700; white-space:nowrap; }
+      .reward { background:var(--panel); border:1px solid var(--accent); border-radius:12px; padding:16px; margin-top:8px; }
+      .reward.locked { border-color:var(--line); opacity:.7; }
+      .route { font-size:.9rem; margin-top:10px; }
+      .route b { color:var(--accent); }
+      .log { white-space:pre-wrap; font:12px/1.5 ui-monospace, monospace; color:var(--muted); background:#0d0f0a; border:1px solid var(--line); border-radius:8px; padding:10px; margin-top:16px; max-height:180px; overflow:auto; }
+      a { color:var(--accent); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🗺️ Angkor Treasure Hunt <span class="sub">— a CamboVerse reference partner app</span></h1>
+      <div class="sub">Built entirely on the public <code>/v1</code> rails. Not a CamboVerse product — an example for ecosystem builders.</div>
+    </header>
+    <main>
+      <div class="bar">
+        <input id="host" placeholder="CamboVerse host, e.g. http://127.0.0.1:5173" />
+        <span class="sub">reward region</span>
+        <select id="country">
+          <option value="KH">🇰🇭 Cambodia</option>
+          <option value="US">🇺🇸 United States</option>
+          <option value="FR">🇫🇷 France</option>
+          <option value="JP">🇯🇵 Japan</option>
+          <option value="SG">🇸🇬 Singapore</option>
+        </select>
+        <button id="load">Load hunt</button>
+        <button id="reset" class="ghost" title="Forget this device's anonymous ID">New player</button>
+      </div>
+
+      <div id="scene" class="scene"></div>
+      <div id="pois"></div>
+      <div id="reward"></div>
+      <div id="log" class="log">Ready. Set a host and press “Load hunt”.</div>
+    </main>
+
+    <script>
+      // ---- Tiny rails client (identity + fetch helpers) -----------------------
+      const IDKEY = "camboverse.example.identity";
+      let BASE = "";
+      const $ = (id) => document.getElementById(id);
+      const log = (m) => { const el = $("log"); el.textContent += "\n" + m; el.scrollTop = el.scrollHeight; };
+
+      async function api(path, opts) {
+        const r = await fetch(BASE + path, opts);
+        const body = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(`${path} → ${r.status} ${JSON.stringify(body)}`);
+        return body;
+      }
+
+      // Identity is created LAZILY and anonymously — only when the player first
+      // earns something. Passive browsing makes no account.
+      async function getIdentity(create) {
+        const raw = localStorage.getItem(IDKEY);
+        if (raw) return JSON.parse(raw);
+        if (!create) return null;
+        const id = await api("/v1/id", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+        localStorage.setItem(IDKEY, JSON.stringify(id));
+        log("Identity: created anonymous player " + id.id);
+        return id;
+      }
+
+      async function earnedSet() {
+        const id = await getIdentity(false);
+        if (!id) return new Set();
+        const d = await api("/v1/credentials?subject=" + encodeURIComponent(id.id));
+        return new Set(d.credentials.map((c) => c.achievement));
+      }
+
+      // ---- Hunt state ---------------------------------------------------------
+      const SCENE_ID = "scene_angkor-wat";
+      let scene = null;
+
+      function achievementFor(poiId) { return `treasure:angkor-wat:${poiId}`; }
+
+      async function load() {
+        BASE = $("host").value.trim().replace(/\/$/, "");
+        try {
+          // Experience rail: read the scene (and, for flavour, resolve its assets).
+          scene = await api("/v1/scenes/" + SCENE_ID);
+          log(`Scene: ${scene.name} — ${scene.pois.length} POIs, capabilities [${scene.capabilities.join(", ")}]`);
+          const earned = await earnedSet();
+          renderScene();
+          await renderPois(earned);
+          renderReward(earned);
+        } catch (e) {
+          log("ERROR " + e.message);
+          $("scene").innerHTML = `<p class="sub">Could not reach the rails. Check the host (CORS is enabled on <code>/v1</code>).</p>`;
+        }
+      }
+
+      function renderScene() {
+        $("scene").innerHTML =
+          `<h2>${scene.name} <span class="sub">${scene.khmer}</span></h2>` +
+          `<div class="caps">Anchor ${scene.anchor.ref} · ${scene.anchor.geo.lat}, ${scene.anchor.geo.lng} · [${scene.capabilities.join(", ")}]</div>`;
+      }
+
+      async function renderPois(earned) {
+        const wrap = $("pois");
+        wrap.innerHTML = "";
+        for (const poi of scene.pois) {
+          const has = earned.has(achievementFor(poi.id));
+          // Asset rail: resolve the POI's asset for its authored description.
+          let info = "";
+          try { info = (await api("/v1/assets/" + poi.assetId)).description || ""; } catch {}
+          const row = document.createElement("div");
+          row.className = "poi";
+          row.innerHTML =
+            `<div class="body"><div class="title">${poi.title}</div><div class="info">${info.slice(0, 120)}…</div></div>`;
+          const slot = document.createElement("div");
+          if (has) { slot.className = "done"; slot.textContent = "✓ learned"; }
+          else {
+            const b = document.createElement("button");
+            b.textContent = "Visit & learn";
+            b.onclick = () => visit(poi, b);
+            slot.appendChild(b);
+          }
+          row.appendChild(slot);
+          wrap.appendChild(row);
+        }
+      }
+
+      // Credential rail: "visiting" a POI (here, a click; in a real app, arriving
+      // at it in 3D or answering a question) claims a learning credential.
+      async function visit(poi, btn) {
+        btn.disabled = true; btn.textContent = "…";
+        try {
+          const id = await getIdentity(true);
+          await api("/v1/credentials/claim", {
+            method: "POST",
+            headers: { "content-type": "application/json", authorization: "Bearer " + id.token },
+            body: JSON.stringify({ achievement: achievementFor(poi.id), evidence: "visited:" + SCENE_ID }),
+          });
+          log(`Credential: earned ${achievementFor(poi.id)}`);
+          const earned = await earnedSet();
+          await renderPois(earned);
+          renderReward(earned);
+        } catch (e) { log("ERROR " + e.message); btn.disabled = false; btn.textContent = "Visit & learn"; }
+      }
+
+      function renderReward(earned) {
+        const total = scene.pois.length;
+        const got = scene.pois.filter((p) => earned.has(achievementFor(p.id))).length;
+        const complete = got === total;
+        const el = $("reward");
+        el.className = "reward" + (complete ? "" : " locked");
+        el.innerHTML =
+          `<div><b>${complete ? "🎉 Hunt complete!" : "🔒 Reward locked"}</b> — ${got}/${total} places learned.</div>` +
+          (complete
+            ? `<div class="sub">You've earned every credential. Claim a real, locally-fulfilled reward (a Khmer craft) — payment happens with the local provider, never here.</div>`
+            : `<div class="sub">Learn all ${total} places to unlock a real reward.</div>`);
+        if (complete) {
+          const b = document.createElement("button");
+          b.textContent = "Claim my reward";
+          b.onclick = () => claimReward(b);
+          el.appendChild(document.createElement("br"));
+          el.appendChild(b);
+        }
+      }
+
+      // D2P rail: route the reward to a REAL in-region provider. The core only
+      // routes — settlement happens in the ecosystem, never in CamboVerse.
+      async function claimReward(btn) {
+        btn.disabled = true; btn.textContent = "Routing…";
+        try {
+          const id = await getIdentity(true);
+          const country = $("country").value;
+          const route = await api("/v1/fulfill", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ type: "purchase", country, buyerId: id.id, details: { reward: "khmer-craft", hunt: SCENE_ID } }),
+          });
+          log(`D2P: routed to ${route.provider} (${route.region})`);
+          const div = document.createElement("div");
+          div.className = "route";
+          div.innerHTML =
+            `Fulfilled from <b>${route.flag} ${route.regionName}</b> via <b>${route.provider}</b>.<br>` +
+            `Pay with ${route.payMethod} · delivered by ${route.delivery}.<br>` +
+            `<a href="${route.handoff}" target="_blank" rel="noreferrer">Continue with the provider →</a> ` +
+            `<span class="sub">(settlement: ${route.settlement})</span>`;
+          btn.replaceWith(div);
+        } catch (e) { log("ERROR " + e.message); btn.disabled = false; btn.textContent = "Claim my reward"; }
+      }
+
+      // ---- Wire up ------------------------------------------------------------
+      $("host").value = location.origin.startsWith("http") ? location.origin : "http://127.0.0.1:5173";
+      $("load").onclick = load;
+      $("reset").onclick = () => { localStorage.removeItem(IDKEY); log("New player — anonymous ID forgotten."); if (scene) load(); };
+    </script>
+  </body>
+</html>

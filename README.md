@@ -89,6 +89,10 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 - [`docs/CAPTURE_WATPHNOM.md`](./docs/CAPTURE_WATPHNOM.md) — an on‑the‑ground field guide for capturing Wat Phnom.
 - [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md) — training a 3D Gaussian Splatting model **for free on Kaggle**.
 
+**Build on CamboVerse** *(for ecosystem apps)*
+- [`docs/API.md`](./docs/API.md) — the `/v1` rails contract (also linked above).
+- [`examples/treasure-hunt/`](./examples/treasure-hunt/) — a **reference partner app**: one self‑contained HTML file that composes every rail end‑to‑end (scene → learning credentials → a real local reward).
+
 **Features**
 - [`docs/AI_GUIDE.md`](./docs/AI_GUIDE.md) — **Kiri**, the multilingual AI tour guide (setup, grounding, roadmap).
 

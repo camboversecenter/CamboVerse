@@ -18,8 +18,18 @@ interface RailsEnv {
 const CONTRIBUTOR = "CamboVerse Center / NUM";
 const STEWARD = "APSARA / Ministry of Culture and Fine Arts";
 
+// The rails are an OPEN, cross-origin API: ecosystem apps call them from their
+// own web origins. CORS `*` is correct here — reads are a public commons, and
+// writes authenticate with a bearer token in a header (not cookies), so `*`
+// carries no ambient-authority risk.
+const CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+  "access-control-allow-headers": "content-type, authorization",
+  "access-control-max-age": "86400",
+};
 const json = (data: unknown, status = 200) =>
-  Response.json(data, { status, headers: { "cache-control": "no-store" } });
+  Response.json(data, { status, headers: { "cache-control": "no-store", ...CORS } });
 const now = () => new Date().toISOString();
 const rid = (p: string) => `${p}_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
 
@@ -260,6 +270,9 @@ function satisfies(right: string, action: string, expiresAt: string | null): boo
 export async function handleRails(request: Request, env: RailsEnv, url: URL): Promise<Response> {
   const p = url.pathname;
   const m = request.method;
+
+  // CORS preflight for any /v1 endpoint.
+  if (m === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
   // Experience / scene rail (open read, pure-derived — works without a DB) -----
   if (p === "/v1/scenes" && m === "GET") {
