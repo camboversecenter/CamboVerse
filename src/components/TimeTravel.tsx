@@ -3,6 +3,7 @@ import { ERAS } from "../history";
 import { GuideMascot, type MascotState } from "./GuideMascot";
 import { askGuide } from "../lib/guide";
 import { LANGS, type LangCode, speak, stopSpeaking, ttsSupported } from "../lib/voice";
+import { getIdentity, earnedAchievements, claimCredential } from "../lib/identity";
 import type { Spot } from "../spots";
 
 /**
@@ -16,9 +17,27 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
   const [lang, setLang] = useState<LangCode>("en");
   const [speaking, setSpeaking] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [earned, setEarned] = useState<Set<string>>(new Set());
   const era = ERAS[i];
   const siteNote = era.sites?.[spot.id];
   const go = (d: number) => setI((v) => Math.min(ERAS.length - 1, Math.max(0, v + d)));
+
+  // The learning credential earned by passing this era's quiz, at this site.
+  const achievement = `history:${spot.id}:${era.id}`;
+  const hasCredential = earned.has(achievement);
+
+  // Load any credentials this visitor already holds (never mints an account).
+  useEffect(() => {
+    let live = true;
+    (async () => {
+      const id = await getIdentity(false);
+      const set = await earnedAchievements(id);
+      if (live) setEarned(set);
+    })();
+    return () => {
+      live = false;
+    };
+  }, []);
 
   // Stop any narration when the era changes or the panel closes.
   useEffect(() => {
@@ -97,6 +116,17 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
           ))}
         </ul>
 
+        {/* Learn-to-earn: pass the era's quiz to earn a learning credential */}
+        {era.quiz?.length ? (
+          <EraQuiz
+            key={achievement}
+            era={era}
+            earned={hasCredential}
+            onEarned={() => setEarned((s) => new Set(s).add(achievement))}
+            claim={() => claimCredential(achievement, `${spot.id}/${era.id}`)}
+          />
+        ) : null}
+
         {/* Kiri narrates this era */}
         <div className="tt-kiri">
           <div className={`tt-kiri-face${speaking ? " speaking" : ""}`}>
@@ -131,6 +161,111 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
             Later ▸
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A short, friendly quiz for one era. Answer every question correctly and the
+ * visitor earns a free, portable learning credential on the CamboVerse rails —
+ * the first "learn" loop of the platform. Non-monetary, and open to everyone.
+ */
+function EraQuiz({
+  era,
+  earned,
+  onEarned,
+  claim,
+}: {
+  era: { mood: string; quiz?: import("../history").QuizQuestion[] };
+  earned: boolean;
+  onEarned: () => void;
+  claim: () => Promise<boolean>;
+}) {
+  const quiz = era.quiz ?? [];
+  const [open, setOpen] = useState(false);
+  const [picks, setPicks] = useState<number[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<"pass" | "fail" | null>(null);
+
+  if (earned) {
+    return (
+      <div className="tt-cred earned" style={{ borderColor: era.mood }}>
+        <span className="tt-cred-badge" style={{ background: era.mood }}>
+          ✓
+        </span>
+        <span>Learning credential earned for this era.</span>
+      </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button className="tt-cred-start" style={{ borderColor: era.mood, color: era.mood }} onClick={() => setOpen(true)}>
+        🎓 Earn this era's learning credential
+      </button>
+    );
+  }
+
+  const answered = quiz.every((_, qi) => picks[qi] != null);
+
+  const submit = async () => {
+    const allCorrect = quiz.every((q, qi) => picks[qi] === q.answer);
+    if (!allCorrect) {
+      setResult("fail");
+      return;
+    }
+    setSubmitting(true);
+    const ok = await claim();
+    setSubmitting(false);
+    if (ok) {
+      setResult("pass");
+      onEarned();
+    } else {
+      setResult("fail");
+    }
+  };
+
+  return (
+    <div className="tt-quiz" style={{ borderColor: era.mood }}>
+      {quiz.map((q, qi) => (
+        <div key={qi} className="tt-q">
+          <p className="tt-q-text">{q.q}</p>
+          <div className="tt-q-choices">
+            {q.choices.map((c, ci) => (
+              <button
+                key={ci}
+                className={picks[qi] === ci ? "tt-choice on" : "tt-choice"}
+                style={picks[qi] === ci ? { borderColor: era.mood, background: `${era.mood}22` } : undefined}
+                onClick={() => {
+                  setResult(null);
+                  setPicks((p) => {
+                    const n = p.slice();
+                    n[qi] = ci;
+                    return n;
+                  });
+                }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+      {result === "fail" && <p className="tt-quiz-msg fail">Not quite — check the story above and try again.</p>}
+      {result === "pass" && <p className="tt-quiz-msg pass">🎉 Correct! Your credential is saved.</p>}
+      <div className="tt-quiz-actions">
+        <button className="tt-quiz-cancel" onClick={() => setOpen(false)}>
+          Close
+        </button>
+        <button
+          className="tt-quiz-submit"
+          style={{ background: era.mood }}
+          disabled={!answered || submitting || result === "pass"}
+          onClick={submit}
+        >
+          {submitting ? "Saving…" : "Submit"}
+        </button>
       </div>
     </div>
   );

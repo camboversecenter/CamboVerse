@@ -22,6 +22,15 @@ export interface Era {
   highlights: string[];
   /** What the specific site was like in this era, keyed by spot id. */
   sites?: Record<string, string>;
+  /** A short quiz — answer all correctly to earn this era's learning credential. */
+  quiz?: QuizQuestion[];
+}
+
+export interface QuizQuestion {
+  q: string;
+  choices: string[];
+  /** Index of the correct choice. */
+  answer: number;
 }
 
 export const ERAS: Era[] = [
@@ -36,6 +45,10 @@ export const ERAS: Era[] = [
     story:
       "Long before Angkor, the kingdom of Funan traded with India and China from ports like Óc Eo. Indian ideas — Hinduism, Buddhism, Sanskrit and writing — arrived by sea and began to shape Khmer culture. This is the deep root of everything that follows.",
     highlights: ["Maritime trade with India & China", "Arrival of Hindu–Buddhist culture", "Canals and the port of Óc Eo"],
+    quiz: [
+      { q: "Funan traded by sea mainly with…", choices: ["India and China", "Europe and Africa", "Japan and Korea"], answer: 0 },
+      { q: "What arrived through Funan's maritime trade?", choices: ["Hindu–Buddhist culture", "Gunpowder", "The printing press"], answer: 0 },
+    ],
   },
   {
     id: "chenla",
@@ -48,6 +61,10 @@ export const ERAS: Era[] = [
     story:
       "As Funan faded, the inland kingdoms of Chenla rose along the Mekong. Kings raised the first brick-and-stone Hindu temples and carved elegant Sanskrit inscriptions — the confident beginnings of Khmer temple architecture.",
     highlights: ["First stone temples (Sambor Prei Kuk)", "Sanskrit inscriptions", "Foundations of Khmer kingship"],
+    quiz: [
+      { q: "Chenla is known for building the first…", choices: ["stone temples", "railways", "glass towers"], answer: 0 },
+      { q: "Chenla's inscriptions were written in…", choices: ["Sanskrit", "Latin", "Chinese"], answer: 0 },
+    ],
   },
   {
     id: "angkor",
@@ -60,6 +77,10 @@ export const ERAS: Era[] = [
     story:
       "In 802 Jayavarman II declared a unified empire. Over six centuries the Khmer built Angkor: vast reservoirs, roads, and hundreds of temples. Suryavarman II raised Angkor Wat (~1113); Jayavarman VII built the Bayon with its serene faces. A million people may have lived here — the largest pre-industrial city in the world.",
     highlights: ["Angkor Wat built (~1113)", "The Bayon & Angkor Thom (~1181)", "Immense barays and waterworks", "A metropolis of ~1 million"],
+    quiz: [
+      { q: "Who built Angkor Wat around 1113?", choices: ["Suryavarman II", "Jayavarman VII", "Lady Penh"], answer: 0 },
+      { q: "The Bayon, with its serene stone faces, was built by…", choices: ["Jayavarman VII", "Suryavarman II", "the French"], answer: 0 },
+    ],
     sites: {
       "angkor-wat":
         "You are standing at Angkor Wat's very birth: Suryavarman II raises it around 1113 as a temple to Vishnu, its towers gleaming with gilt and its galleries freshly carved.",
@@ -78,6 +99,10 @@ export const ERAS: Era[] = [
     story:
       "After the capital left Angkor, power shifted south to Longvek, Oudong and Phnom Penh. Trade with the wider world continued and Theravada Buddhism deepened, but the kingdom was pressed between rising neighbours — a long, resilient middle age.",
     highlights: ["Capitals at Longvek & Oudong", "Theravada Buddhism flourishes", "Maritime trade continues"],
+    quiz: [
+      { q: "After Angkor, the capital moved south to…", choices: ["Longvek & Oudong", "Bangkok & Hanoi", "Beijing"], answer: 0 },
+      { q: "Which religion deepened in this period?", choices: ["Theravada Buddhism", "Islam", "Shinto"], answer: 0 },
+    ],
     sites: {
       "angkor-wat":
         "Angkor Wat is never truly abandoned — Buddhist monks tend it, and it becomes a revered Theravada temple visited by pilgrims.",
@@ -96,6 +121,10 @@ export const ERAS: Era[] = [
     story:
       "In 1863 Cambodia became a French protectorate. Roads, schools and the modern city of Phnom Penh took shape, while French and Khmer scholars mapped and began restoring Angkor, bringing it to global attention. National feeling grew toward the century's end.",
     highlights: ["Angkor studied & restored", "Modern Phnom Penh develops", "Rising Khmer nationalism"],
+    quiz: [
+      { q: "In which year did Cambodia become a French protectorate?", choices: ["1863", "1953", "1431"], answer: 0 },
+      { q: "What happened to Angkor in this era?", choices: ["It was studied and restored", "It was demolished", "It was moved to France"], answer: 0 },
+    ],
     sites: {
       "angkor-wat":
         "French explorers document Angkor Wat and clear the forest from its galleries; restoration begins and the temple's fame spreads around the world.",
@@ -114,6 +143,10 @@ export const ERAS: Era[] = [
     story:
       "Cambodia won full independence in 1953 under King Norodom Sihanouk. The Sangkum years brought a flourishing of Khmer cinema, music and architecture (the New Khmer style) — an optimistic, creative generation and a proud young nation.",
     highlights: ["Independence in 1953", "Golden age of film & music", "New Khmer architecture"],
+    quiz: [
+      { q: "Cambodia won full independence in…", choices: ["1953", "1863", "1979"], answer: 0 },
+      { q: "The Sangkum years are remembered as a golden age of…", choices: ["film and music", "space travel", "steam trains"], answer: 0 },
+    ],
   },
   {
     id: "war",
@@ -126,6 +159,10 @@ export const ERAS: Era[] = [
     story:
       "Civil war gave way in 1975 to the Khmer Rouge, whose brutal rule until 1979 caused the deaths of some 1.7–2 million Cambodians and immense loss to families, culture and knowledge. It is remembered with sorrow and dignity — a history carried by survivors and honoured so future generations learn from it.",
     highlights: ["1975–1979 Khmer Rouge period", "Immense human loss", "Remembrance & resilience"],
+    quiz: [
+      { q: "The Khmer Rouge ruled Cambodia from…", choices: ["1975 to 1979", "1953 to 1970", "1992 to 2000"], answer: 0 },
+      { q: "This difficult history is honoured so that…", choices: ["future generations learn from it", "it is forgotten", "it is repeated"], answer: 0 },
+    ],
   },
   {
     id: "modern",
@@ -138,6 +175,10 @@ export const ERAS: Era[] = [
     story:
       "From 1979 Cambodia slowly rebuilt. Peace, the return of the monarchy, and UNESCO World Heritage status for Angkor (1992) renewed national pride. Today a young, connected generation carries Khmer heritage into the digital age — the very journey CamboVerse is part of.",
     highlights: ["Angkor named UNESCO World Heritage (1992)", "Peace & reconstruction", "A young, digital generation"],
+    quiz: [
+      { q: "Angkor was named a UNESCO World Heritage Site in…", choices: ["1992", "1863", "1431"], answer: 0 },
+      { q: "Today's generation carries Khmer heritage into…", choices: ["the digital age", "the stone age", "the ice age"], answer: 0 },
+    ],
     sites: {
       "angkor-wat":
         "Angkor Wat becomes a UNESCO World Heritage Site (1992); careful conservation and millions of visitors return — and now you can walk it here, from anywhere on Earth.",
