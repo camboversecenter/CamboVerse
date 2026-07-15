@@ -1065,6 +1065,111 @@ body,
   background: rgba(255, 255, 255, 0.04);
   font-size: 0.78rem;
 }
+
+/* ---- Learn-to-earn: era quiz → learning credential ---- */
+.tt-cred {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.82rem;
+}
+.tt-cred-badge {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #10140b;
+  font-weight: 900;
+  font-size: 0.8rem;
+}
+.tt-cred-start {
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 11px;
+  border: 1px dashed var(--accent);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--accent);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.tt-quiz {
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.tt-q {
+  margin: 0 0 12px;
+}
+.tt-q-text {
+  margin: 0 0 7px;
+  font: 700 0.85rem system-ui, sans-serif;
+}
+.tt-q-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tt-choice {
+  text-align: left;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.tt-choice.on {
+  font-weight: 700;
+}
+.tt-quiz-msg {
+  margin: 4px 0 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.tt-quiz-msg.fail {
+  color: #e6a86b;
+}
+.tt-quiz-msg.pass {
+  color: #8fd07a;
+}
+.tt-quiz-actions {
+  display: flex;
+  gap: 10px;
+}
+.tt-quiz-cancel {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.tt-quiz-submit {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  color: #10140b;
+  font: 800 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.tt-quiz-submit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
 .tt-nav {
   display: flex;
   align-items: center;
