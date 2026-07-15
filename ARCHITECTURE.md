@@ -192,6 +192,12 @@ world** (charter §10: shared world + rails).
 - Asset formats: **glTF/GLB** (models), **.splat** (Gaussian splats), audio for
   music/instruments, plus AR marker bindings for the textbook module.
 
+**Endpoints** *(shipped)*
+- `GET /v1/scenes` — list scene descriptors (one per heritage site).
+- `GET /v1/scenes/:id` — a scene descriptor (`scene_<site>` or bare `<site>`),
+  derived from the heritage data; asset refs resolve via the Asset rail. Open
+  read, pure-derived — works with or without a database bound.
+
 ---
 
 ## 6. D2P Fulfillment rail

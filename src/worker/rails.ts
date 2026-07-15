@@ -7,7 +7,7 @@
  * Money-neutral: no currency here. Public read is open; the public-good "view"
  * right on any commons asset is always granted (we never gate access).
  */
-import { SPOTS } from "../spots";
+import { SPOTS, type Spot } from "../spots";
 import { ERAS } from "../history";
 import { fulfillmentFor, DEMO_COUNTRIES } from "../lib/economy";
 
@@ -22,6 +22,67 @@ const json = (data: unknown, status = 200) =>
   Response.json(data, { status, headers: { "cache-control": "no-store" } });
 const now = () => new Date().toISOString();
 const rid = (p: string) => `${p}_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
+
+// ---- Experience / scene format (ARCHITECTURE.md §5) --------------------------
+// Scene descriptors are derived from the heritage data (SPOTS), so ecosystem
+// apps can drop experiences into ONE shared CamboVerse world. Asset refs use the
+// same ids as the Asset registry seed, and resolve via GET /v1/assets/:id.
+// Pure-derived — no database needed — so the Experience rail works everywhere.
+
+const siteAssetId = (spotId: string) => `ast_site_${spotId}`;
+const poiAssetId = (spotId: string, poiId: string) => `ast_poi_${spotId}_${poiId}`;
+
+interface SceneDescriptor {
+  id: string;
+  anchor: { kind: "site"; ref: string; geo: { lat: number; lng: number } };
+  name: string;
+  khmer: string;
+  live: boolean;
+  capabilities: string[];
+  assets: string[];
+  pois: { id: string; assetId: string; title: string; target: number[]; camera: number[] }[];
+  entryPoints: { id: string; aerial?: boolean; camera?: number[]; target?: number[] }[];
+}
+
+function capabilitiesFor(spot: Spot): string[] {
+  const caps = ["orbit", "vr"]; // orbit + WebXR are always available
+  if (spot.pois?.length) caps.push("walk");
+  if (spot.aerial) caps.push("aerial");
+  if (spot.splat) caps.push("photoreal"); // Gaussian-splat capture present
+  return caps;
+}
+
+function buildScene(spot: Spot): SceneDescriptor {
+  const pois = spot.pois ?? [];
+  const first = pois[0];
+  return {
+    id: `scene_${spot.id}`,
+    anchor: { kind: "site", ref: siteAssetId(spot.id), geo: { lat: spot.lat, lng: spot.lng } },
+    name: spot.name,
+    khmer: spot.khmer,
+    live: spot.live,
+    capabilities: capabilitiesFor(spot),
+    assets: [siteAssetId(spot.id), ...pois.map((p) => poiAssetId(spot.id, p.id))],
+    pois: pois.map((p) => ({
+      id: p.id,
+      assetId: poiAssetId(spot.id, p.id),
+      title: p.title,
+      target: p.target,
+      camera: p.camera,
+    })),
+    entryPoints: [
+      ...(spot.aerial ? [{ id: "aerial", aerial: true }] : []),
+      ...(first ? [{ id: first.id, camera: first.camera, target: first.target }] : []),
+    ],
+  };
+}
+
+/** Look up a scene by "scene_<spotId>" or bare "<spotId>". */
+function sceneById(id: string): SceneDescriptor | null {
+  const spotId = id.replace(/^scene_/, "");
+  const spot = SPOTS.find((s) => s.id === spotId);
+  return spot ? buildScene(spot) : null;
+}
 
 // ---- Schema + seed (self-healing, once per isolate) --------------------------
 
@@ -197,11 +258,24 @@ function satisfies(right: string, action: string, expiresAt: string | null): boo
 // ---- Router ------------------------------------------------------------------
 
 export async function handleRails(request: Request, env: RailsEnv, url: URL): Promise<Response> {
+  const p = url.pathname;
+  const m = request.method;
+
+  // Experience / scene rail (open read, pure-derived — works without a DB) -----
+  if (p === "/v1/scenes" && m === "GET") {
+    const scenes = SPOTS.map(buildScene).map((s) => ({
+      id: s.id, anchor: s.anchor, name: s.name, khmer: s.khmer, live: s.live, capabilities: s.capabilities,
+    }));
+    return json({ scenes, count: scenes.length });
+  }
+  if (p.startsWith("/v1/scenes/") && m === "GET") {
+    const scene = sceneById(decodeURIComponent(p.slice("/v1/scenes/".length)));
+    return scene ? json(scene) : json({ error: "not found" }, 404);
+  }
+
   if (!env.DB) return json({ error: "rails unavailable (no database bound)" }, 503);
   await ensureRails(env.DB);
   const db = env.DB;
-  const p = url.pathname;
-  const m = request.method;
 
   // Identity ------------------------------------------------------------------
   if (p === "/v1/id" && m === "POST") {
