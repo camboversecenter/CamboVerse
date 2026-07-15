@@ -81,6 +81,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 - [`STRATEGY.md`](./STRATEGY.md) — the delivery strategy, governance, and technical framework.
 - [`PLATFORM_CHARTER.md`](./PLATFORM_CHARTER.md) — what CamboVerse **is and isn't**: Cambodia's cultural **Digital Public Infrastructure**, the **Digital‑to‑Physical (D2P)** model, and the staged building plan.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the open **rails** (identity, assets, entitlements, learning credentials, experiences, D2P fulfillment) that ecosystem apps build on; Web2 now, Web3‑ready.
+- [`docs/API.md`](./docs/API.md) — the **`/v1` API reference**: the concrete HTTP contract for the rails that startups, schools, and museums build against.
 - [`DIGITAL_ECONOMY.md`](./DIGITAL_ECONOMY.md) — the geo‑aware **Digital‑to‑Physical commerce** reference (order virtually → delivered locally).
 
 **Growing the heritage commons** *(capture pipeline)*
