@@ -262,6 +262,114 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "roneat",
+  khmer: "រនាតឯក",
+  name: "Roneat Ek",
+  english: "Lead Khmer xylophone",
+  category: "Traditional instrument",
+  blurb: "The lead xylophone of the Pinpeat — tuned bars over a carved, boat-shaped resonator.",
+  story:
+    "រនាតឯក (Roneat Ek) is the leading xylophone of the Pinpeat, Cambodia's classical ensemble for temple, court, and shadow-puppet (Sbek Thom) music. Twenty-one tuned bars of bamboo or hardwood are suspended by cord over a graceful boat-shaped wooden resonator — often richly carved and gilded, with ends that sweep up like naga tails. The player strikes the bars with two mallets: hard mallets for a bright, ringing tone, padded ones for a soft, mellow sound. As the 'ek' (leader), it carries the fast, ornamented melody the ensemble follows, answered by its deeper-toned partner, the Roneat Thung.",
+  utilities: [
+    "21 tuned bars of bamboo or hardwood, struck with two mallets",
+    "The carved, gilded boat-shaped body resonates and warms the sound",
+    "Leads the melody in the Pinpeat ensemble (temple, court, shadow theatre)",
+    "Hard mallets give a bright tone; padded mallets a mellow one",
+    "Paired with the lower-pitched Roneat Thung",
+  ],
+  origin: "The Pinpeat ensemble — Cambodia's classical court and temple music.",
+  model: "/models/roneat.glb",
+  pois: [
+    {
+      id: "bars",
+      title: "The tuned bars",
+      khmer: "ដងសំឡេង",
+      info: "Twenty-one bars of bamboo or hardwood, each shaved to a precise pitch and hung on cords. Longer, thicker bars sound lower. The player strikes them with two mallets to carry the melody.",
+      target: [0, 1.57, 0],
+      camera: [0.6, 2.5, 2.6],
+    },
+    {
+      id: "body",
+      title: "The resonator",
+      khmer: "តួធុង",
+      info: "The hollow, boat-shaped wooden body sits beneath the bars and resonates their sound, giving the Roneat Ek its warm, ringing voice. It is often beautifully carved and gilded.",
+      target: [0, 1.2, 0],
+      camera: [2.6, 1.7, 3.0],
+    },
+    {
+      id: "ends",
+      title: "The naga-tail ends",
+      khmer: "ក្បាច់ចុង",
+      info: "The ends of the body sweep upward in carved, gilded flourishes like naga tails — a reminder that a Khmer instrument is also a work of art and devotion, not only a tool for sound.",
+      target: [1.28, 1.72, 0],
+      camera: [3.2, 2.1, 2.6],
+    },
+    {
+      id: "mallets",
+      title: "The mallets",
+      khmer: "ដៃវាយ",
+      info: "Two mallets play the bars. Hard, unpadded heads give a bright, brilliant tone for lively pieces; padded heads give a soft, mellow sound for gentle ones.",
+      target: [0.15, 1.63, 0.3],
+      camera: [1.6, 2.2, 2.8],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "skor",
+  khmer: "ស្គរ",
+  name: "Skor",
+  english: "Khmer barrel drum",
+  category: "Traditional instrument",
+  blurb: "The two-headed barrel drum that gives Khmer music its pulse.",
+  story:
+    "ស្គរ (skor) are the drums that give Khmer music its pulse. This two-headed barrel drum is carved from a single log of hardwood and headed at both ends with stretched animal hide, laced and tensioned with cord to tune its pitch. In the Pinpeat ensemble the drums mark the rhythm the whole group locks to; drums also lead ceremonies and weddings, spur on the racing paddlers of the Water Festival (Bon Om Touk), and drive the ring at Kun Khmer boxing. Played with the hands or with sticks, one drummer can voice both a high, sharp 'crack' and a deep 'boom' from the two heads.",
+  utilities: [
+    "A two-headed barrel drum carved from hardwood, headed with animal hide",
+    "Cord lacing tensions the skins and tunes the pitch",
+    "Keeps the rhythm the Pinpeat ensemble locks to",
+    "Also drives weddings, the Water Festival, and Kun Khmer boxing",
+    "Played with the hands or sticks — high and low tones from the two heads",
+  ],
+  origin: "Central to the Pinpeat ensemble and to Khmer ceremony, festival, and sport.",
+  model: "/models/skor.glb",
+  pois: [
+    {
+      id: "head",
+      title: "The drumhead",
+      khmer: "ស្បែក",
+      info: "Each end is a head of stretched animal hide. Struck with the hand or a stick, it sounds the beat; the tighter the skin, the higher the pitch.",
+      target: [0.9, 1.25, 0],
+      camera: [3.0, 1.7, 2.4],
+    },
+    {
+      id: "barrel",
+      title: "The barrel body",
+      khmer: "តួស្គរ",
+      info: "The body is a hardwood barrel, traditionally hollowed from a single log. Its shape and cavity resonate the beat into a full, deep tone.",
+      target: [0, 1.25, 0],
+      camera: [2.6, 1.7, 3.1],
+    },
+    {
+      id: "lacing",
+      title: "The lacing",
+      khmer: "ខ្សែស្ទឹង",
+      info: "Cords laced between the two heads pull the skins tight. Tightening or loosening the lacing tunes the drum — the drummer's way of setting its voice.",
+      target: [0, 1.6, 0.5],
+      camera: [2.2, 2.1, 3.0],
+    },
+    {
+      id: "role",
+      title: "The pulse of the music",
+      khmer: "ចង្វាក់",
+      info: "In the Pinpeat, the skor keeps the rhythm the whole ensemble follows. Beyond the ensemble, drums lead weddings and festivals, race the Water Festival boats, and drive Kun Khmer boxing.",
+      target: [0, 1.25, 0],
+      camera: [2.4, 1.9, 3.3],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }

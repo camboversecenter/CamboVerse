@@ -24,6 +24,8 @@
     "gen:changkran": "node scripts/generate-changkran.mjs",
     "gen:house": "node scripts/generate-house.mjs",
     "gen:cake": "node scripts/generate-cake.mjs",
+    "gen:roneat": "node scripts/generate-roneat.mjs",
+    "gen:skor": "node scripts/generate-skor.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
     "gen:provinces": "node scripts/generate-provinces.mjs"
   },
