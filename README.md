@@ -199,6 +199,9 @@ orientation, then [`STRATEGY.md`](./STRATEGY.md) for full context.
 
 ## About the CamboVerse Center
 
+The CamboVerse Center was **initiated by H.E. Dr. Hor Peng, Rector of the
+National University of Management (NUM)**.
+
 Established within the National University of Management by Prakas of the
 Ministry of Education, Youth and Sport (MoEYS), signed by H.E. Dr. Hang Chuon
 Naron on 11 July 2024, with a mandate for teaching, learning, and developing
