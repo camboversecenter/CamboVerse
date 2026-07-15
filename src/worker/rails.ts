@@ -1,0 +1,256 @@
+/**
+ * CamboVerse rails (Stage 2) — the open interfaces from ARCHITECTURE.md, backed
+ * by D1. Identity, Asset registry, Entitlement, and Learning credentials, under
+ * a versioned /v1 surface. The heritage content we already have is seeded into
+ * the Asset registry (with license/provenance/consent) as the first commons.
+ *
+ * Money-neutral: no currency here. Public read is open; the public-good "view"
+ * right on any commons asset is always granted (we never gate access).
+ */
+import { SPOTS } from "../spots";
+import { ERAS } from "../history";
+
+interface RailsEnv {
+  DB?: D1Database;
+}
+
+const CONTRIBUTOR = "CamboVerse Center / NUM";
+const STEWARD = "APSARA / Ministry of Culture and Fine Arts";
+
+const json = (data: unknown, status = 200) =>
+  Response.json(data, { status, headers: { "cache-control": "no-store" } });
+const now = () => new Date().toISOString();
+const rid = (p: string) => `${p}_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
+
+// ---- Schema + seed (self-healing, once per isolate) --------------------------
+
+const SCHEMA = [
+  `CREATE TABLE IF NOT EXISTS identities (id TEXT PRIMARY KEY, handle TEXT UNIQUE, display_name TEXT, khmer_name TEXT, avatar_asset_id TEXT, wallet TEXT, created_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, identity_id TEXT NOT NULL, created_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS assets (id TEXT PRIMARY KEY, type TEXT NOT NULL, name TEXT NOT NULL, description TEXT, image TEXT, media TEXT, attributes TEXT, external_url TEXT, license TEXT NOT NULL, provenance TEXT NOT NULL, consent TEXT NOT NULL, token_binding TEXT, created_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS entitlements (id TEXT PRIMARY KEY, asset_id TEXT NOT NULL, subject_id TEXT NOT NULL, right TEXT NOT NULL, granted_by TEXT, expires_at TEXT, source TEXT NOT NULL, created_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS credentials (id TEXT PRIMARY KEY, issuer TEXT NOT NULL, subject_id TEXT NOT NULL, achievement TEXT NOT NULL, evidence TEXT, issued_at TEXT NOT NULL, proof TEXT)`,
+];
+
+interface AssetSeed {
+  id: string;
+  type: string;
+  name: string;
+  description: string;
+  media: { role: string; uri: string; format: string }[];
+  attributes: { trait_type: string; value: string }[];
+  external_url: string;
+}
+
+/** The heritage content we already have, as commons Asset records. */
+function seedAssets(): AssetSeed[] {
+  const out: AssetSeed[] = [];
+  for (const s of SPOTS) {
+    out.push({
+      id: `ast_site_${s.id}`,
+      type: "heritage-site",
+      name: s.name,
+      description: s.blurb,
+      media: [{ role: "model", uri: s.model, format: "glb" }],
+      attributes: [
+        { trait_type: "Province", value: s.province },
+        { trait_type: "Khmer", value: s.khmer },
+      ],
+      external_url: `/site/${s.id}`,
+    });
+    for (const p of s.pois ?? []) {
+      out.push({
+        id: `ast_poi_${s.id}_${p.id}`,
+        type: "poi",
+        name: p.title,
+        description: p.info,
+        media: [],
+        attributes: [{ trait_type: "Site", value: s.name }],
+        external_url: `/site/${s.id}#${p.id}`,
+      });
+    }
+  }
+  for (const e of ERAS) {
+    out.push({
+      id: `ast_era_${e.id}`,
+      type: "history-era",
+      name: e.name,
+      description: e.story,
+      media: [],
+      attributes: [{ trait_type: "Years", value: e.years }],
+      external_url: `/history/${e.id}`,
+    });
+  }
+  return out;
+}
+
+let ready = false;
+async function ensureRails(db: D1Database): Promise<void> {
+  if (ready) return;
+  for (const stmt of SCHEMA) await db.prepare(stmt).run();
+  // Seed the commons (idempotent).
+  const ts = now();
+  const provenance = JSON.stringify({ contributor: CONTRIBUTOR, method: "authored", capturedAt: ts });
+  const consent = JSON.stringify({ steward: STEWARD, consentRef: "pending" });
+  const stmt = db.prepare(
+    `INSERT OR IGNORE INTO assets (id,type,name,description,image,media,attributes,external_url,license,provenance,consent,token_binding,created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+  );
+  const batch = seedAssets().map((a) =>
+    stmt.bind(
+      a.id, a.type, a.name, a.description, null,
+      JSON.stringify(a.media), JSON.stringify(a.attributes), a.external_url,
+      "CC-BY-4.0", provenance, consent, null, ts,
+    ),
+  );
+  if (batch.length) await db.batch(batch);
+  ready = true;
+}
+
+// ---- Helpers -----------------------------------------------------------------
+
+const bearer = (req: Request) => (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "") || null;
+
+interface AssetRow {
+  id: string; type: string; name: string; description: string; image: string | null;
+  media: string; attributes: string; external_url: string; license: string;
+  provenance: string; consent: string; token_binding: string | null; created_at: string;
+}
+const assetOut = (r: AssetRow) => ({
+  id: r.id, type: r.type, name: r.name, description: r.description, image: r.image,
+  media: JSON.parse(r.media || "[]"), attributes: JSON.parse(r.attributes || "[]"),
+  external_url: r.external_url, license: r.license,
+  provenance: JSON.parse(r.provenance), consent: JSON.parse(r.consent),
+  tokenBinding: r.token_binding ? JSON.parse(r.token_binding) : null,
+});
+
+/** Does a stored right satisfy a requested action (rentals must be unexpired)? */
+function satisfies(right: string, action: string, expiresAt: string | null): boolean {
+  const live = !expiresAt || expiresAt > now();
+  if (right === "rent" && !live) return false;
+  switch (action) {
+    case "view": return true; // any held right implies view
+    case "use": return right === "own" || right === "use" || right === "rent";
+    case "own": return right === "own";
+    case "rent": return right === "own" || right === "rent";
+    default: return false;
+  }
+}
+
+// ---- Router ------------------------------------------------------------------
+
+export async function handleRails(request: Request, env: RailsEnv, url: URL): Promise<Response> {
+  if (!env.DB) return json({ error: "rails unavailable (no database bound)" }, 503);
+  await ensureRails(env.DB);
+  const db = env.DB;
+  const p = url.pathname;
+  const m = request.method;
+
+  // Identity ------------------------------------------------------------------
+  if (p === "/v1/id" && m === "POST") {
+    const b = (await request.json().catch(() => ({}))) as Record<string, string>;
+    const id = rid("cid");
+    const token = crypto.randomUUID();
+    try {
+      await db.prepare(
+        `INSERT INTO identities (id,handle,display_name,khmer_name,avatar_asset_id,wallet,created_at) VALUES (?,?,?,?,?,?,?)`,
+      ).bind(id, b.handle ?? null, b.displayName ?? null, b.khmerName ?? null, null, null, now()).run();
+    } catch {
+      return json({ error: "handle already taken" }, 409);
+    }
+    await db.prepare(`INSERT INTO sessions (token,identity_id,created_at) VALUES (?,?,?)`).bind(token, id, now()).run();
+    return json({ id, token, handle: b.handle ?? null, displayName: b.displayName ?? null }, 201);
+  }
+  if (p === "/v1/id/me" && m === "GET") {
+    const tok = bearer(request);
+    if (!tok) return json({ error: "unauthorized" }, 401);
+    const s = await db.prepare(`SELECT identity_id FROM sessions WHERE token = ?`).bind(tok).first<{ identity_id: string }>();
+    if (!s) return json({ error: "unauthorized" }, 401);
+    const idn = await db.prepare(`SELECT * FROM identities WHERE id = ?`).bind(s.identity_id).first<Record<string, unknown>>();
+    if (!idn) return json({ error: "not found" }, 404);
+    return json({
+      id: idn.id, handle: idn.handle, displayName: idn.display_name, khmerName: idn.khmer_name,
+      avatarAssetId: idn.avatar_asset_id, wallet: idn.wallet, createdAt: idn.created_at,
+    });
+  }
+
+  // Assets (open read) --------------------------------------------------------
+  if (p === "/v1/assets" && m === "GET") {
+    const type = url.searchParams.get("type");
+    const q = type
+      ? db.prepare(`SELECT * FROM assets WHERE type = ? ORDER BY id`).bind(type)
+      : db.prepare(`SELECT * FROM assets ORDER BY id`);
+    const { results } = await q.all<AssetRow>();
+    return json({ assets: (results ?? []).map(assetOut), count: results?.length ?? 0 });
+  }
+  if (p.startsWith("/v1/assets/") && m === "GET") {
+    const id = decodeURIComponent(p.slice("/v1/assets/".length));
+    const r = await db.prepare(`SELECT * FROM assets WHERE id = ?`).bind(id).first<AssetRow>();
+    return r ? json(assetOut(r)) : json({ error: "not found" }, 404);
+  }
+
+  // Entitlements --------------------------------------------------------------
+  if (p === "/v1/entitlements" && m === "GET") {
+    const subject = url.searchParams.get("subject") ?? "";
+    const asset = url.searchParams.get("asset") ?? "";
+    const action = url.searchParams.get("action") ?? "view";
+    if (!asset) return json({ error: "asset required" }, 400);
+    const known = await db.prepare(`SELECT id FROM assets WHERE id = ?`).bind(asset).first();
+    // Public good: view is always granted on a known commons asset.
+    if (action === "view" && known) return json({ granted: true, source: "public" });
+    if (!subject) return json({ granted: false });
+    const { results } = await db
+      .prepare(`SELECT right, expires_at FROM entitlements WHERE subject_id = ? AND asset_id = ?`)
+      .bind(subject, asset)
+      .all<{ right: string; expires_at: string | null }>();
+    for (const row of results ?? []) {
+      if (satisfies(row.right, action, row.expires_at)) return json({ granted: true, until: row.expires_at ?? null, source: "db" });
+    }
+    return json({ granted: false });
+  }
+  if (p === "/v1/entitlements" && m === "POST") {
+    const b = (await request.json().catch(() => ({}))) as Record<string, string>;
+    if (!b.assetId || !b.subjectId || !b.right) return json({ error: "assetId, subjectId, right required" }, 400);
+    const id = rid("ent");
+    await db.prepare(
+      `INSERT INTO entitlements (id,asset_id,subject_id,right,granted_by,expires_at,source,created_at) VALUES (?,?,?,?,?,?,?,?)`,
+    ).bind(id, b.assetId, b.subjectId, b.right, b.grantedBy ?? "core", b.expiresAt ?? null, "db", now()).run();
+    return json({ id, assetId: b.assetId, subjectId: b.subjectId, right: b.right, expiresAt: b.expiresAt ?? null }, 201);
+  }
+
+  // Learning credentials (non-monetary, non-transferable) ---------------------
+  if (p === "/v1/credentials/claim" && m === "POST") {
+    const b = (await request.json().catch(() => ({}))) as Record<string, string>;
+    let subject = b.subjectId;
+    const tok = bearer(request);
+    if (!subject && tok) {
+      const s = await db.prepare(`SELECT identity_id FROM sessions WHERE token = ?`).bind(tok).first<{ identity_id: string }>();
+      subject = s?.identity_id ?? "";
+    }
+    if (!subject || !b.achievement) return json({ error: "subjectId (or token) and achievement required" }, 400);
+    const id = rid("cred");
+    const issuedAt = now();
+    const proof = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${id}:${subject}:${b.achievement}:${issuedAt}`)))]
+      .map((x) => x.toString(16).padStart(2, "0")).join("");
+    await db.prepare(
+      `INSERT INTO credentials (id,issuer,subject_id,achievement,evidence,issued_at,proof) VALUES (?,?,?,?,?,?,?)`,
+    ).bind(id, "camboverse", subject, b.achievement, b.evidence ?? null, issuedAt, proof).run();
+    return json({ id, issuer: "camboverse", subjectId: subject, achievement: b.achievement, issuedAt, proof }, 201);
+  }
+  if (p === "/v1/credentials" && m === "GET") {
+    const subject = url.searchParams.get("subject") ?? "";
+    if (!subject) return json({ error: "subject required" }, 400);
+    const { results } = await db
+      .prepare(`SELECT id,issuer,subject_id,achievement,evidence,issued_at,proof FROM credentials WHERE subject_id = ? ORDER BY issued_at DESC`)
+      .bind(subject)
+      .all<Record<string, unknown>>();
+    return json({
+      credentials: (results ?? []).map((c) => ({
+        id: c.id, issuer: c.issuer, subjectId: c.subject_id, achievement: c.achievement,
+        evidence: c.evidence, issuedAt: c.issued_at, proof: c.proof,
+      })),
+    });
+  }
+
+  return json({ error: "not found" }, 404);
+}

@@ -14,6 +14,7 @@ import { SPOTS, type Spot, type Poi } from "../spots";
 import { MARKETS } from "../shops";
 import { ERAS } from "../history";
 import { fulfillmentFor } from "../lib/economy";
+import { handleRails } from "./rails";
 
 interface Env {
   ASSETS: Fetcher;
@@ -56,6 +57,11 @@ export default {
     }
     if (url.pathname === "/api/order" && request.method === "POST") {
       return handleOrder(request, env);
+    }
+
+    // Platform rails (Stage 2): identity, assets, entitlements, credentials.
+    if (url.pathname.startsWith("/v1/")) {
+      return handleRails(request, env, url);
     }
 
     // Anything else: hand back to the static asset server (SPA fallback).
