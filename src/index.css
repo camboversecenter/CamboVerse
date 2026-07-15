@@ -1750,3 +1750,69 @@ body,
   font: 800 14px system-ui, sans-serif;
   cursor: pointer;
 }
+
+/* ---- "How to write" animation ---- */
+.cls-write-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.cls-write-btn:hover { background: color-mix(in srgb, var(--accent) 34%, transparent); }
+
+.write {
+  position: fixed;
+  inset: 0;
+  z-index: 42;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 11, 7, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.write-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel, #1b1e16);
+  border: 1px solid var(--accent);
+  border-radius: 18px;
+  padding: 16px;
+}
+.write-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.write-title { font: 700 0.9rem system-ui, sans-serif; }
+.write-title b { color: var(--accent); }
+.write-x {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line, #33372a); background: transparent; color: var(--ink); cursor: pointer;
+}
+.write-stage {
+  background: #efe4cb;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.write-svg { width: 84%; height: 84%; }
+.write-fill { opacity: 0; transition: opacity 0.5s ease; }
+.write-fill.on { opacity: 1; }
+.write-pen { filter: drop-shadow(0 0 3px rgba(200, 145, 46, 0.7)); transition: opacity 0.2s; }
+.write-none { font-size: 5rem; color: #241606; }
+.write-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.write-shape { display: flex; gap: 6px; }
+.write-replay {
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.write-replay:disabled { opacity: 0.5; cursor: default; }
+.write-hint { color: var(--muted, #a6ab97); font-size: 0.8rem; text-align: center; margin: 10px 0 0; }

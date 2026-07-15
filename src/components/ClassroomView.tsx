@@ -4,8 +4,10 @@ import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import { LetterTile } from "./LetterTile";
 import { LetterQuiz } from "./LetterQuiz";
+import { WriteAnimation } from "./WriteAnimation";
 import { makeGlyphTexture } from "../lib/glyphTexture";
 import { getIdentity, earnedAchievements } from "../lib/identity";
+import { GLYPH_PATHS } from "../glyphPaths";
 import { KHMER_GROUPS, KHMER_FONTS, type KhmerShape, type KhmerLetter } from "../khmer";
 
 /**
@@ -22,6 +24,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
   const [shape, setShape] = useState<KhmerShape>("normal");
   const [selected, setSelected] = useState<KhmerLetter | null>(null);
   const [quizOpen, setQuizOpen] = useState(false);
+  const [writeFor, setWriteFor] = useState<KhmerLetter | null>(null);
   const [earned, setEarned] = useState<Set<string>>(new Set());
 
   const group = KHMER_GROUPS.find((g) => g.id === groupId)!;
@@ -197,6 +200,11 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
               </div>
             )}
             <div className="cls-cat">{group.title}</div>
+            {GLYPH_PATHS[selected.char] && (
+              <button className="cls-write-btn" onClick={() => setWriteFor(selected)}>
+                ✍️ How to write
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -209,6 +217,8 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
           </p>
         </div>
       )}
+
+      {writeFor && <WriteAnimation letter={writeFor} initialShape={shape} onClose={() => setWriteFor(null)} />}
 
       {!ready && <div className="cls-loading">Loading Khmer fonts…</div>}
     </div>

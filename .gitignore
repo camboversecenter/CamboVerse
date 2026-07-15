@@ -29,3 +29,6 @@ npm-debug.log*
 # assets here; only their own models / openly-licensed ones enter the repo.
 public/models/local/*
 !public/models/local/README.md
+
+# build-only font cache for glyph-path extraction
+scripts/.fontcache/
