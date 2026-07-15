@@ -11,6 +11,8 @@
 Stewarded by the **CamboVerse Center** (មជ្ឈមណ្ឌលខេមបូវើស) at the
 **National University of Management (NUM)**, established by MoEYS Prakas, 11 July 2024.
 
+**Want to help build it?** → [**See the contributor task board (`TODO.md`)**](./TODO.md) — capture a temple, train a 3D model on a free GPU, write history, translate, or build on the rails. Every contribution is CC‑BY and **credited in the app**.
+
 </div>
 
 ---
@@ -98,6 +100,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 - [`docs/AI_GUIDE.md`](./docs/AI_GUIDE.md) — **Kiri**, the multilingual AI tour guide (setup, grounding, roadmap).
 
 **Contributing & agents**
+- [**`TODO.md`**](./TODO.md) — **the contributor task board**: capture a temple, train 3DGS, author POIs & history, translate, or build on the rails. Every contribution is CC‑BY and credited in the app. **Start here to help.**
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) · [`AGENTS.md`](./AGENTS.md) (orientation for AI coding agents).
 
 ## Technology
