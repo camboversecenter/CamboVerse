@@ -1816,3 +1816,12 @@ body,
 }
 .write-replay:disabled { opacity: 0.5; cursor: default; }
 .write-hint { color: var(--muted, #a6ab97); font-size: 0.8rem; text-align: center; margin: 10px 0 0; }
+.write-draft {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #c8912e 26%, transparent);
+  color: #e6c079;
+  font: 700 0.62rem system-ui, sans-serif;
+  vertical-align: middle;
+}

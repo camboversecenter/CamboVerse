@@ -32,3 +32,4 @@ public/models/local/*
 
 # build-only font cache for glyph-path extraction
 scripts/.fontcache/
+scripts/.stroke-preview.html
