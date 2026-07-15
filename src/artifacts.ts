@@ -1,11 +1,12 @@
 /**
- * Khmer traditional tools & objects — 3D artifacts you can inspect up close, in
- * plain view or in VR, with an educational explanation and their everyday uses.
+ * Khmer traditional life — 3D artifacts you can inspect up close, in plain view
+ * or in VR, with an educational explanation and their everyday uses: everyday
+ * objects and tools, and traditional buildings like the Khmer stilt house.
  *
- * Unlike heritage sites (which live on the map), artifacts are portable objects.
- * Each carries a `model` (glTF) and points of interest that teach how it works.
- * They're seeded into the Asset registry as commons assets (license/provenance/
- * consent) just like sites — see src/worker/rails.ts.
+ * Unlike heritage sites (which live on the map), these are self-contained
+ * objects. Each carries a `model` (glTF) and points of interest that teach how
+ * it works. They're seeded into the Asset registry as commons assets (license/
+ * provenance/consent) just like sites — see src/worker/rails.ts.
  */
 import type { Poi } from "./spots";
 
@@ -140,6 +141,69 @@ ARTIFACTS.push({
       info: "A clay ឆ្នាំង (chnang) rests in the cradle. Clay cooks gently and evenly — ideal for simmering Khmer stews like somlar, steaming rice, or boiling water. Its lid holds in the heat.",
       target: [0, 2.0, 0],
       camera: [1.8, 2.6, 2.9],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "phteah",
+  khmer: "ផ្ទះខ្មែរ",
+  name: "Phteah Khmer",
+  english: "Traditional stilt house",
+  category: "Traditional house",
+  blurb: "A wooden house raised high on posts, with a steep tiled roof — climate wisdom in timber.",
+  story:
+    "The traditional Khmer house (ផ្ទះខ្មែរ) is a wooden home raised high on sturdy posts. Standing on stilts keeps the living floor cool with airflow, lifts it above seasonal floods and animals, and opens a shaded space below for work, rest, weaving, and storage. The steep roof — tiled or thatched — sheds the heavy monsoon rain, and wide eaves shade the walls; the ridge ends often curl upward in decorative finials (kbach). Walls are wooden planks with shuttered windows, thrown open for the breeze and closed against storms. A steep staircase climbs to an open veranda — the sociable heart of the home, where guests are received and the family gathers. Built by village carpenters from local hardwood and shaped by Cambodia's tropical climate, the Khmer house is architecture as everyday wisdom. Its forms vary by region and status — styles such as Rong, Keng, Pet, and Kantaing.",
+  utilities: [
+    "Raised on posts — cool airflow, and safe above floods and animals",
+    "The shaded space below is used for work, weaving, rest, and storage",
+    "The steep roof sheds heavy monsoon rain; wide eaves shade the walls",
+    "Wooden shutters open for the breeze and close against storms",
+    "The open veranda is the social heart — for guests and family life",
+    "Built from local hardwood by village carpenters, tuned to the tropical climate",
+  ],
+  origin: "Built by village carpenters across rural Cambodia; regional styles include Rong, Keng, Pet, and Kantaing.",
+  model: "/models/phteah.glb",
+  pois: [
+    {
+      id: "stilts",
+      title: "On stilts",
+      khmer: "ជើងផ្ទះ",
+      info: "Sturdy hardwood posts raise the whole house. This lifts the living floor above floods and animals, lets cool air flow underneath, and creates a shaded ground-level space used for work, weaving, resting, and storage.",
+      target: [0, 1.1, 1.6],
+      camera: [4.2, 1.8, 6.6],
+    },
+    {
+      id: "stairs",
+      title: "The staircase",
+      khmer: "ជណ្ដើរ",
+      info: "A steep wooden stair climbs from the ground to the raised veranda. It's often steep and sometimes removable — a modest threshold between the public ground and the private home above.",
+      target: [0, 1.4, 3.0],
+      camera: [2.4, 2.2, 6.8],
+    },
+    {
+      id: "veranda",
+      title: "The veranda",
+      khmer: "រានហាល",
+      info: "The open front porch is the sociable heart of the house — shaded and airy, where the family gathers, guests are received, children play, and daily work is done.",
+      target: [0, 3.0, 1.8],
+      camera: [3.4, 3.6, 6.2],
+    },
+    {
+      id: "roof",
+      title: "The roof & finials",
+      khmer: "ដំបូល",
+      info: "The steep roof — tiled or thatched — sheds Cambodia's heavy monsoon rain quickly, while wide eaves shade the walls from sun and rain. The ridge ends curl upward in carved finials (kbach), a signature of Khmer roofs.",
+      target: [0, 6.0, 0],
+      camera: [4.6, 6.4, 7.4],
+    },
+    {
+      id: "walls",
+      title: "Walls & shutters",
+      khmer: "ជញ្ជាំង និងបង្អួច",
+      info: "Walls are wooden planks; the windows are wooden shutters with no glass — opened wide to catch the breeze in the heat, and closed against wind and storms. Simple, repairable, and made from local timber.",
+      target: [-2.9, 3.8, -0.8],
+      camera: [-6.4, 4.1, 3.2],
     },
   ],
 });

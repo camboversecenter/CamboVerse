@@ -206,9 +206,12 @@ function seedAssets(): AssetSeed[] {
     });
   }
   for (const a of ARTIFACTS) {
+    // Asset type mirrors the artifact's category (e.g. traditional-tool,
+    // traditional-house), so the registry stays accurate as the collection grows.
+    const type = a.category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     out.push({
       id: `ast_tool_${a.id}`,
-      type: "traditional-tool",
+      type: type || "artifact",
       name: `${a.name} (${a.khmer})`,
       description: a.story,
       media: [{ role: "model", uri: a.model, format: "glb" }],

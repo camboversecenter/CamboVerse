@@ -1475,6 +1475,18 @@ body,
   cursor: pointer;
 }
 .tool-card:hover { border-color: var(--accent); }
+.tool-card-cat {
+  align-self: flex-start;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
 .tool-card-km { font-size: 1.6rem; font-weight: 700; }
 .tool-card-name { font-weight: 700; }
 .tool-card-en { color: var(--muted, #a6ab97); font-size: 0.82rem; }
