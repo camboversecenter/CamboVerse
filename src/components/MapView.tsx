@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { CambodiaMap } from "./CambodiaMap";
 import { Pin } from "./Pin";
+import { Passport } from "./Passport";
 import { SPOTS } from "../spots";
 
 /** The hub: an explorable map of Cambodia with a pin per heritage site. */
 export function MapView({ onEnter }: { onEnter: (id: string) => void }) {
+  const [passportOpen, setPassportOpen] = useState(false);
   return (
     <>
       <div className="viewer">
@@ -49,6 +52,12 @@ export function MapView({ onEnter }: { onEnter: (id: string) => void }) {
           temple or spot. Green pins are live; others are coming soon.
         </p>
       </div>
+
+      <button className="passport-btn" onClick={() => setPassportOpen(true)}>
+        🛂 Passport
+      </button>
+
+      {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}
     </>
   );
 }

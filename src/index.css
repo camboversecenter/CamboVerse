@@ -1278,3 +1278,96 @@ body,
   font: 700 12px system-ui, sans-serif;
   cursor: pointer;
 }
+
+/* ---- Heritage Passport ---- */
+.passport-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 14px);
+  right: calc(env(safe-area-inset-right, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.passport-btn:hover {
+  background: color-mix(in srgb, var(--accent) 30%, rgba(20, 16, 10, 0.78));
+}
+.passport {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: rgba(9, 11, 7, 0.92);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.pp-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 0) + 14px) 16px 12px;
+}
+.pp-title { font: 800 1.05rem system-ui, sans-serif; }
+.pp-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line, #33372a);
+  background: transparent;
+  color: var(--ink);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.pp-panel {
+  flex: 1;
+  overflow: auto;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 4px 16px 24px;
+}
+.pp-empty { color: var(--muted, #a6ab97); font-size: 0.9rem; text-align: center; padding: 24px 8px; }
+.pp-empty-big { font: 800 1.1rem system-ui, sans-serif; color: var(--ink); margin-bottom: 8px; }
+.pp-summary { font-size: 0.95rem; margin: 6px 0 10px; }
+.pp-summary b { color: var(--accent); font-size: 1.15rem; }
+.pp-progress { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 16px; }
+.pp-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--line, #33372a);
+  background: transparent;
+}
+.pp-dot.on { box-shadow: 0 0 8px rgba(200, 145, 46, 0.4); }
+.pp-stamps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pp-stamp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-left-width: 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.pp-seal {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 2px dashed currentColor;
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+.pp-body { display: flex; flex-direction: column; }
+.pp-stamp-title { font-weight: 700; }
+.pp-stamp-sub { color: var(--muted, #a6ab97); font-size: 0.8rem; }
+.pp-foot { color: var(--muted, #a6ab97); font-size: 0.78rem; margin-top: 18px; text-align: center; }

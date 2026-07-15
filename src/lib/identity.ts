@@ -61,6 +61,31 @@ export async function earnedAchievements(identity: Identity | null): Promise<Set
   }
 }
 
+export interface Credential {
+  id: string;
+  achievement: string;
+  evidence?: string | null;
+  issuedAt: string;
+}
+
+/**
+ * The full list of learning credentials the current visitor holds (for the
+ * Heritage Passport). Returns an empty list for a passive visitor with no
+ * identity — it never mints one.
+ */
+export async function myCredentials(): Promise<Credential[]> {
+  const id = await getIdentity(false);
+  if (!id) return [];
+  try {
+    const r = await fetch(`/v1/credentials?subject=${encodeURIComponent(id.id)}`);
+    if (!r.ok) return [];
+    const d = (await r.json()) as { credentials: Credential[] };
+    return d.credentials ?? [];
+  } catch {
+    return [];
+  }
+}
+
 /** Claim a learning credential for the given achievement. */
 export async function claimCredential(achievement: string, evidence: string): Promise<boolean> {
   const id = await getIdentity(true);
