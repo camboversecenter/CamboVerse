@@ -25,6 +25,7 @@ Cambodia online for the world, with your name on it.
 | 🖥️ Train a 3D model on a free GPU | [Train 3DGS on Kaggle](./docs/TRAIN_3DGS_KAGGLE.md) |
 | 📝 Write facts / history / quizzes | [Author POIs & history](#3-author-points-of-interest--history) |
 | 🏺 Add a Khmer tool / object in 3D | [Add a traditional tool](#add-a-khmer-traditional-tool-3d-artifact) |
+| 🔤 Teach the Khmer script | [Grow the Alphabet Classroom](#grow-the-khmer-alphabet-classroom) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
 | 🧩 Build an app on the rails | [Build on the rails](#5-build-on-the-rails-ecosystem-apps) |
@@ -156,6 +157,50 @@ licence** (CC0 / CC‑BY / CC‑BY‑SA), **consent** for any real capture, and
   cloth), ចង្កឹះ, កាំបិត.
 
 Propose your own, too — anything that carries a piece of Khmer daily life.
+
+## Grow the Khmer Alphabet Classroom
+
+The **🔤 Khmer Alphabet Classroom** teaches the Khmer script: every consonant,
+vowel, and numeral as a 3D tile, shown in both the **Normal** and **Moul**
+(ceremonial) shapes using embedded Google Khmer fonts, viewable in 3D and VR.
+It's a foundation with lots of room to grow — much of it needs no 3D at all.
+
+Highest-value help:
+
+- **🔊 Record pronunciations.** The biggest win: a short audio clip of each
+  letter's sound (and letter name), recorded by a native speaker, released
+  **CC‑BY / CC0**. This turns the classroom from *see* into *hear-and-repeat*.
+- **📝 Example words.** For each letter, a common word that starts with it — the
+  Khmer word, romanisation, and English meaning (optionally a small CC‑BY image).
+  Add them to `src/khmer.ts`.
+- **✍️ Stroke order** *(needs Khmer educators)*. The classroom animates **true
+  stroke order** — numbered strokes drawn in sequence over the letter — wherever
+  data exists in `src/strokeOrder.ts`, and falls back to a **write-on** outline
+  trace otherwise. The **numerals are seeded as a community draft** (`✎`): the
+  shapes are traced, but **the order and direction still need verifying**, and
+  the **consonants and vowels aren't authored yet**. To help:
+  - Each letter is `{ verified, strokes }`, where each stroke is a median
+    polyline `[[x,y], …]` in a 0..100 box (same coordinates as `glyphPaths.ts`) —
+    strokes drawn in array order, in the direction of the points.
+  - Run `node scripts/author-stroke-order.mjs` to render a preview (outline +
+    numbered strokes + grid) you can check while you edit `src/strokeOrder.ts`.
+  - Set `verified: true` once a Khmer educator confirms a letter's order.
+  This is ideal coursework at NUM — native Khmer writers authoring how the
+  script is really written.
+- **➕ Subscripts & diacritics.** Add the subscript (coeng ◌្) consonant forms and
+  the diacritics (និគ្គហិត, បន្តក់, …) that Khmer reading needs.
+- **🧩 A letter quiz.** A match-the-sound or find-the-letter game that earns a
+  **learning credential** (see the Credential rail) — pairs perfectly with the
+  Heritage Passport.
+- **🔤 More letter shapes.** Add other open-licensed Khmer styles (e.g. slanted
+  *Aksar Chrieng*), selectable like Normal/Moul. Open licences only (OFL).
+- **🧊 True 3D glyphs.** Sculpt/extrude the letter outlines from the OFL fonts into
+  real 3D geometry, for a more tactile feel than the textured tiles.
+- **🌏 Translate** the classroom's notes and letter descriptions.
+
+Accuracy matters — romanisations and series (a/o) should be checked by Khmer
+speakers. See `src/khmer.ts` for the data and `src/components/ClassroomView.tsx`
+for how it's shown.
 
 ## 4. Translate & localise
 

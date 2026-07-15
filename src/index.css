@@ -1,3 +1,19 @@
+/* Embedded Khmer fonts (Google Fonts, OFL-1.1) — see public/fonts/README.md. */
+@font-face {
+  font-family: "Noto Sans Khmer";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/NotoSansKhmer-Khmer.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Moul";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Moul-Khmer.woff2") format("woff2");
+}
+
 :root {
   --bg: #1a1410;
   --ink: #f4ece0;
@@ -1535,3 +1551,277 @@ body,
 .artifact-origin { font-size: 0.84rem; margin: 0 0 10px; }
 .artifact-hint { font-size: 0.82rem; color: var(--accent); margin: 0 0 6px; }
 .artifact-credit { font-size: 0.74rem; color: var(--muted, #a6ab97); margin: 0; }
+
+/* ---- Khmer Alphabet Classroom ---- */
+.alphabet-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 58px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.alphabet-btn:hover { background: color-mix(in srgb, var(--accent) 30%, rgba(20, 16, 10, 0.78)); }
+
+.classroom { position: fixed; inset: 0; z-index: 5; background: #14181c; }
+.cls-top {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 12px);
+  left: 0; right: 0;
+  z-index: 20;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  pointer-events: none;
+}
+.cls-top .backbtn { position: static; }
+.cls-top > * { pointer-events: auto; }
+.cls-title { font: 800 0.98rem system-ui, sans-serif; }
+.cls-vr { position: static; transform: none; }
+
+.cls-controls {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 54px);
+  left: 0; right: 0;
+  z-index: 18;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 0 12px;
+}
+.cls-tabs, .cls-shape { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.cls-tab, .cls-seg {
+  padding: 6px 12px;
+  border: 1px solid var(--line, #33372a);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.72);
+  color: var(--ink);
+  font: 600 12px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.cls-tab.on, .cls-seg.on { background: var(--accent); border-color: var(--accent); color: #10140b; font-weight: 800; }
+.cls-shape { align-items: center; }
+.cls-shape-label { font-size: 0.72rem; color: var(--muted, #a6ab97); margin-right: 2px; }
+
+.cls-hint {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 15;
+  width: min(560px, calc(100vw - 24px));
+  background: rgba(18, 20, 14, 0.9);
+  border: 1px solid var(--line, #33372a);
+  border-radius: 14px;
+  padding: 12px 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.cls-hint p { margin: 0 0 6px; font-size: 0.86rem; }
+.cls-hint p:last-child { margin: 0; }
+.cls-hint-sub { color: var(--muted, #a6ab97); }
+
+.cls-info {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 16;
+  width: min(560px, calc(100vw - 24px));
+  background: rgba(18, 20, 14, 0.94);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex; gap: 16px; align-items: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.cls-close {
+  position: absolute; top: 8px; right: 10px;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line, #33372a);
+  background: transparent; color: var(--ink); cursor: pointer;
+}
+.cls-shapes { display: flex; gap: 14px; }
+.cls-shape-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.cls-glyph {
+  display: grid; place-items: center;
+  width: 78px; height: 92px;
+  background: #efe4cb; color: #241606;
+  border-radius: 10px;
+  font-size: 3rem; line-height: 1;
+}
+.cls-shape-name { font-size: 0.66rem; color: var(--muted, #a6ab97); text-align: center; }
+.cls-meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.cls-roman { font: 800 1.5rem system-ui, sans-serif; color: var(--accent); }
+.cls-name { font-size: 1rem; }
+.cls-series { align-self: flex-start; padding: 2px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+.cls-series.a { background: color-mix(in srgb, #b8934e 26%, transparent); color: #d9b877; }
+.cls-series.o { background: color-mix(in srgb, #6f8aa8 26%, transparent); color: #a9c4e0; }
+.cls-cat { font-size: 0.74rem; color: var(--muted, #a6ab97); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.cls-loading {
+  position: fixed; inset: 0; z-index: 30;
+  display: grid; place-items: center;
+  color: var(--muted, #a6ab97); font: 600 0.9rem system-ui, sans-serif;
+  pointer-events: none;
+}
+
+/* ---- Khmer letter quiz ---- */
+.cls-quiz-btn {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, rgba(20, 16, 10, 0.72));
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+  margin-left: 4px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.cls-quiz-btn:hover { background: color-mix(in srgb, var(--accent) 40%, rgba(20, 16, 10, 0.72)); }
+
+.quiz {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 11, 7, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.quiz-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--panel, #1b1e16);
+  border: 1px solid var(--accent);
+  border-radius: 18px;
+  padding: 18px;
+}
+.quiz-top { display: flex; align-items: center; justify-content: space-between; }
+.quiz-progress { font: 700 0.75rem system-ui, sans-serif; color: var(--muted, #a6ab97); letter-spacing: 0.04em; }
+.quiz-x {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line, #33372a); background: transparent; color: var(--ink); cursor: pointer;
+}
+.quiz-q { text-align: center; margin: 8px 0 4px; font-size: 0.88rem; color: var(--muted, #a6ab97); }
+.quiz-glyph {
+  display: grid; place-items: center;
+  height: 150px; margin: 0 auto 14px;
+  width: 150px;
+  background: #efe4cb; color: #241606;
+  border-radius: 14px;
+  font-size: 5.5rem; line-height: 1;
+}
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quiz-opt {
+  padding: 14px;
+  border: 1px solid var(--line, #33372a);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font: 700 1.05rem system-ui, sans-serif;
+  cursor: pointer;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-opt.correct { background: color-mix(in srgb, #4c8a3f 40%, transparent); border-color: #4c8a3f; }
+.quiz-opt.wrong { background: color-mix(in srgb, #b0492f 40%, transparent); border-color: #b0492f; }
+.quiz-opt:disabled { cursor: default; }
+
+.quiz-result { text-align: center; }
+.quiz-score { font: 900 2.6rem system-ui, sans-serif; margin: 6px 0; }
+.quiz-score.pass { color: var(--accent); }
+.quiz-msg { font-weight: 700; margin: 4px 0; }
+.quiz-msg.pass { color: #8fd07a; }
+.quiz-sub { color: var(--muted, #a6ab97); font-size: 0.86rem; margin: 4px 0 14px; }
+.quiz-done {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 14px system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/* ---- "How to write" animation ---- */
+.cls-write-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--ink);
+  font: 700 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.cls-write-btn:hover { background: color-mix(in srgb, var(--accent) 34%, transparent); }
+
+.write {
+  position: fixed;
+  inset: 0;
+  z-index: 42;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(9, 11, 7, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.write-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel, #1b1e16);
+  border: 1px solid var(--accent);
+  border-radius: 18px;
+  padding: 16px;
+}
+.write-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.write-title { font: 700 0.9rem system-ui, sans-serif; }
+.write-title b { color: var(--accent); }
+.write-x {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line, #33372a); background: transparent; color: var(--ink); cursor: pointer;
+}
+.write-stage {
+  background: #efe4cb;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.write-svg { width: 84%; height: 84%; }
+.write-fill { opacity: 0; transition: opacity 0.5s ease; }
+.write-fill.on { opacity: 1; }
+.write-pen { filter: drop-shadow(0 0 3px rgba(200, 145, 46, 0.7)); transition: opacity 0.2s; }
+.write-none { font-size: 5rem; color: #241606; }
+.write-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.write-shape { display: flex; gap: 6px; }
+.write-replay {
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 13px system-ui, sans-serif;
+  cursor: pointer;
+}
+.write-replay:disabled { opacity: 0.5; cursor: default; }
+.write-hint { color: var(--muted, #a6ab97); font-size: 0.8rem; text-align: center; margin: 10px 0 0; }
+.write-draft {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #c8912e 26%, transparent);
+  color: #e6c079;
+  font: 700 0.62rem system-ui, sans-serif;
+  vertical-align: middle;
+}

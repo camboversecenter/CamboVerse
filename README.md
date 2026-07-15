@@ -98,6 +98,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 
 **Features**
 - [`docs/AI_GUIDE.md`](./docs/AI_GUIDE.md) — **Kiri**, the multilingual AI tour guide (setup, grounding, roadmap).
+- **Khmer Alphabet Classroom** — every Khmer letter as a 3D tile in both the **Normal** and **Moul** shapes (embedded Google Khmer fonts), viewable in 3D and VR. Help grow it via the [task board](./TODO.md#grow-the-khmer-alphabet-classroom).
 
 **Contributing & agents**
 - [**`TODO.md`**](./TODO.md) — **the contributor task board**: capture a temple, train 3DGS, author POIs & history, translate, or build on the rails. Every contribution is CC‑BY and credited in the app. **Start here to help.**
