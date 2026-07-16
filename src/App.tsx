@@ -3,12 +3,14 @@ import { MapView } from "./components/MapView";
 import { SpotView } from "./components/SpotView";
 import { ToolsView } from "./components/ToolsView";
 import { ClassroomView } from "./components/ClassroomView";
+import { KunKhmer } from "./components/KunKhmer";
 import { SPOTS } from "./spots";
 
 export function App() {
   const [spotId, setSpotId] = useState<string | null>(null);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [classroomOpen, setClassroomOpen] = useState(false);
+  const [kunOpen, setKunOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -35,11 +37,14 @@ export function App() {
         <ToolsView onBackToMap={() => setToolsOpen(false)} />
       ) : classroomOpen ? (
         <ClassroomView onBackToMap={() => setClassroomOpen(false)} />
+      ) : kunOpen ? (
+        <KunKhmer onBackToMap={() => setKunOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
           onOpenTools={() => setToolsOpen(true)}
           onOpenClassroom={() => setClassroomOpen(true)}
+          onOpenKunKhmer={() => setKunOpen(true)}
         />
       )}
 

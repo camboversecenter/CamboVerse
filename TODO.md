@@ -26,6 +26,7 @@ Cambodia online for the world, with your name on it.
 | 📝 Write facts / history / quizzes | [Author POIs & history](#3-author-points-of-interest--history) |
 | 🏺 Add a Khmer tool / object in 3D | [Add a traditional tool](#add-a-khmer-traditional-tool-3d-artifact) |
 | 🔤 Teach the Khmer script | [Grow the Alphabet Classroom](#grow-the-khmer-alphabet-classroom) |
+| 🥊 Teach Kun Khmer | [Grow the Kun Khmer Dojo](#grow-the-kun-khmer-dojo) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
 | 🧩 Build an app on the rails | [Build on the rails](#5-build-on-the-rails-ecosystem-apps) |
@@ -206,6 +207,42 @@ Highest-value help:
 Accuracy matters — romanisations and series (a/o) should be checked by Khmer
 speakers. See `src/khmer.ts` for the data and `src/components/ClassroomView.tsx`
 for how it's shown.
+
+## Grow the Kun Khmer Dojo
+
+The **🥊 Kun Khmer Dojo** lets a visitor *play and learn* Cambodia's ancient
+martial art (កុនខ្មែរ / *Kbach Kun Boran Khmer*). A procedural boxer — built
+from primitives, so it costs nothing to download — **demonstrates** each of the
+seven core techniques, and a **reaction-training** round earns a *Kun Khmer
+training* learning credential in the Heritage Passport. It runs in 3D and VR.
+
+The move set, names, and controls are adapted from CamboVerse's own **"Kun Khmer
+Fight 3D"** reference game (Apache‑2.0,
+[`camboversecenter/kunkhmer`](https://github.com/camboversecenter/kunkhmer)).
+This dojo is the *teaching* companion to that game. Lots of room to grow:
+
+- **🥋 Verify the techniques.** Kun Khmer masters and practitioners: check the
+  names, romanisations, and descriptions of the seven moves in `src/kunkhmer.ts`
+  (Mat/ដាល់, Mok Keng/ម៉ុកឃីង, Ti/ទាត់, Sok/កែងដៃ, Kumpleang/ភ្លៅ, Rung/រាំង,
+  Romiel/រមៀល), and refine the boxer's poses in `src/components/Fighter.tsx` so
+  each strike reads true.
+- **➕ More techniques & combinations.** Add moves and named combinations
+  (e.g. jab–cross–elbow), each as a `KunMove` in `src/kunkhmer.ts` with a pose in
+  the fighter. Traditional footwork and stances especially welcome.
+- **🕉️ The Kun Kru ritual** *(needs practitioners)*. Author the pre‑fight
+  **Kun Kru / Twer Kru** homage dance and the **mongkol**/**prajed** regalia as
+  a guided sequence — heritage as important as the strikes themselves.
+- **🎵 Sarama music.** A short, **CC‑BY/CC0** loop of the ringside *sarama*
+  (sralai oboe, skor drums, cymbals) to play in the dojo. Open licences only.
+- **🔊 Pronunciations.** Native‑speaker audio of each technique's Khmer name,
+  released CC‑BY/CC0, so the dojo can *say* the moves.
+- **📜 History & provenance.** Deepen the cultural briefing in `KUN_ABOUT`
+  (`src/kunkhmer.ts`) — the Angkor bas‑reliefs, regional styles, and the art's
+  living lineage — with cited, open sources.
+- **🌏 Translate** the dojo's briefing and technique descriptions.
+
+Accuracy and respect matter — this is living heritage. See `src/kunkhmer.ts` for
+the data and `src/components/KunKhmer.tsx` / `Fighter.tsx` for how it's shown.
 
 ## 4. Translate & localise
 

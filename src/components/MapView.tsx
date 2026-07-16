@@ -11,10 +11,12 @@ export function MapView({
   onEnter,
   onOpenTools,
   onOpenClassroom,
+  onOpenKunKhmer,
 }: {
   onEnter: (id: string) => void;
   onOpenTools: () => void;
   onOpenClassroom: () => void;
+  onOpenKunKhmer: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -71,6 +73,10 @@ export function MapView({
 
       <button className="alphabet-btn" onClick={onOpenClassroom}>
         🔤 Khmer Alphabet
+      </button>
+
+      <button className="kun-btn" onClick={onOpenKunKhmer}>
+        🥊 Kun Khmer
       </button>
 
       {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}
