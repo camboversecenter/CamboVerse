@@ -175,7 +175,15 @@ export function Fighter({
       g.rotation.y = MathUtils.lerp(g.rotation.y, ry, k);
       g.rotation.z = MathUtils.lerp(g.rotation.z, rz, k);
     });
-    if (cur.root) cur.root.position.y = MathUtils.lerp(cur.root.position.y, bob, k);
+    // Footwork along the fighter's forward axis (local +z faces the opponent):
+    // striking techniques step in to close the distance, a struck fighter is
+    // knocked back, and guard/block/dodge hold their ground.
+    const striking = move !== "hurt" && move !== "rung" && move !== "romiel" && move !== "guard";
+    const lunge = move === "hurt" ? -0.18 * e : striking ? 0.34 * e : 0;
+    if (cur.root) {
+      cur.root.position.y = MathUtils.lerp(cur.root.position.y, bob, k);
+      cur.root.position.z = MathUtils.lerp(cur.root.position.z, lunge, k);
+    }
   });
 
   const set = (name: keyof Joints) => (el: Group | null) => {
