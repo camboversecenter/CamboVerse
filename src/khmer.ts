@@ -25,6 +25,12 @@ export interface KhmerLetter {
   name?: string;
   /** Consonant series (a/o), where applicable. */
   series?: Series;
+  /** Consonant sound without its inherent vowel (e.g. ក → "k"), for syllables. */
+  base?: string;
+  /** Dependent-vowel reading after an a-series consonant. */
+  aRoman?: string;
+  /** Dependent-vowel reading after an o-series consonant. */
+  oRoman?: string;
 }
 
 export interface KhmerGroup {
@@ -36,8 +42,21 @@ export interface KhmerGroup {
 }
 
 const DOT = "◌"; // dotted circle base for combining vowels
-const dv = (char: string, roman: string): KhmerLetter => ({ char, display: DOT + char, roman });
-const con = (char: string, roman: string, series: Series): KhmerLetter => ({ char, display: char, roman, series });
+// Dependent vowel: two readings (a-series / o-series) — approximate teaching aids.
+const dv = (char: string, aRoman: string, oRoman: string): KhmerLetter => ({
+  char,
+  display: DOT + char,
+  roman: `${aRoman} / ${oRoman}`,
+  aRoman,
+  oRoman,
+});
+const con = (char: string, roman: string, series: Series, base: string): KhmerLetter => ({
+  char,
+  display: char,
+  roman,
+  series,
+  base,
+});
 
 export const KHMER_GROUPS: KhmerGroup[] = [
   {
@@ -47,13 +66,13 @@ export const KHMER_GROUPS: KhmerGroup[] = [
     note:
       "33 consonants. Each belongs to the a-series or o-series, which decides how the vowels with it are pronounced.",
     letters: [
-      con("ក", "kâ", "a"), con("ខ", "khâ", "a"), con("គ", "kô", "o"), con("ឃ", "khô", "o"), con("ង", "ngô", "o"),
-      con("ច", "châ", "a"), con("ឆ", "chhâ", "a"), con("ជ", "chô", "o"), con("ឈ", "chhô", "o"), con("ញ", "nhô", "o"),
-      con("ដ", "dâ", "a"), con("ឋ", "thâ", "a"), con("ឌ", "dô", "o"), con("ឍ", "thô", "o"), con("ណ", "nâ", "a"),
-      con("ត", "tâ", "a"), con("ថ", "thâ", "a"), con("ទ", "tô", "o"), con("ធ", "thô", "o"), con("ន", "nô", "o"),
-      con("ប", "bâ", "a"), con("ផ", "phâ", "a"), con("ព", "pô", "o"), con("ភ", "phô", "o"), con("ម", "mô", "o"),
-      con("យ", "yô", "o"), con("រ", "rô", "o"), con("ល", "lô", "o"), con("វ", "vô", "o"),
-      con("ស", "sâ", "a"), con("ហ", "hâ", "a"), con("ឡ", "lâ", "a"), con("អ", "’â", "a"),
+      con("ក", "kâ", "a", "k"), con("ខ", "khâ", "a", "kh"), con("គ", "kô", "o", "k"), con("ឃ", "khô", "o", "kh"), con("ង", "ngô", "o", "ng"),
+      con("ច", "châ", "a", "ch"), con("ឆ", "chhâ", "a", "chh"), con("ជ", "chô", "o", "ch"), con("ឈ", "chhô", "o", "chh"), con("ញ", "nhô", "o", "nh"),
+      con("ដ", "dâ", "a", "d"), con("ឋ", "thâ", "a", "th"), con("ឌ", "dô", "o", "d"), con("ឍ", "thô", "o", "th"), con("ណ", "nâ", "a", "n"),
+      con("ត", "tâ", "a", "t"), con("ថ", "thâ", "a", "th"), con("ទ", "tô", "o", "t"), con("ធ", "thô", "o", "th"), con("ន", "nô", "o", "n"),
+      con("ប", "bâ", "a", "b"), con("ផ", "phâ", "a", "ph"), con("ព", "pô", "o", "p"), con("ភ", "phô", "o", "ph"), con("ម", "mô", "o", "m"),
+      con("យ", "yô", "o", "y"), con("រ", "rô", "o", "r"), con("ល", "lô", "o", "l"), con("វ", "vô", "o", "v"),
+      con("ស", "sâ", "a", "s"), con("ហ", "hâ", "a", "h"), con("ឡ", "lâ", "a", "l"), con("អ", "’â", "a", "’"),
     ],
   },
   {
@@ -63,10 +82,10 @@ export const KHMER_GROUPS: KhmerGroup[] = [
     note:
       "Vowel signs that attach to a consonant. Each is read one way after an a-series consonant and another after an o-series one.",
     letters: [
-      dv("ា", "aa"), dv("ិ", "e/i"), dv("ី", "ei/i"), dv("ឹ", "oe"), dv("ឺ", "eu"),
-      dv("ុ", "o/u"), dv("ូ", "ou"), dv("ួ", "uo"), dv("ើ", "aeu"), dv("ឿ", "uea"),
-      dv("ៀ", "iə"), dv("េ", "e"), dv("ែ", "ae"), dv("ៃ", "ai"), dv("ោ", "ao"),
-      dv("ៅ", "au"), dv("ុំ", "om"), dv("ំ", "am/om"), dv("ាំ", "am"), dv("ះ", "ah"),
+      dv("ា", "aa", "ie"), dv("ិ", "e", "i"), dv("ី", "ei", "i"), dv("ឹ", "eu", "eu"), dv("ឺ", "eu", "eu"),
+      dv("ុ", "o", "u"), dv("ូ", "ou", "u"), dv("ួ", "uo", "uo"), dv("ើ", "aeu", "eu"), dv("ឿ", "eua", "eua"),
+      dv("ៀ", "ie", "ie"), dv("េ", "e", "e"), dv("ែ", "ae", "ee"), dv("ៃ", "ai", "ey"), dv("ោ", "ao", "oo"),
+      dv("ៅ", "au", "ou"), dv("ុំ", "om", "um"), dv("ំ", "am", "um"), dv("ាំ", "am", "oam"), dv("ះ", "ah", "eah"),
     ],
   },
   {
@@ -106,3 +125,72 @@ export const KHMER_FONTS = {
 } as const;
 
 export type KhmerShape = keyof typeof KHMER_FONTS;
+
+// ---- "How to use" a letter: syllables and examples ---------------------------
+
+export interface Syllable {
+  /** The composed Khmer text (font shapes it correctly). */
+  khmer: string;
+  /** Approximate romanised sound. */
+  sound: string;
+  /** Optional gloss (e.g. a numeral's value). */
+  note?: string;
+}
+
+export interface LetterUsage {
+  title: string;
+  lesson: string;
+  syllables: Syllable[];
+}
+
+const CONSONANTS = KHMER_GROUPS.find((g) => g.id === "consonants")!.letters;
+const DEP_VOWELS = KHMER_GROUPS.find((g) => g.id === "dependent-vowels")!.letters;
+
+/** Build the "how to use" content for a letter, given its group. */
+export function usageFor(letter: KhmerLetter, groupId: string): LetterUsage {
+  if (groupId === "consonants") {
+    const base = letter.base ?? "";
+    const series = letter.series ?? "a";
+    const syllables: Syllable[] = [{ khmer: letter.char, sound: letter.roman, note: "on its own" }];
+    for (const v of DEP_VOWELS) {
+      const reading = (series === "a" ? v.aRoman : v.oRoman) ?? v.roman;
+      syllables.push({ khmer: letter.char + v.char, sound: base + reading });
+    }
+    return {
+      title: `Using ${letter.char} (${letter.roman})`,
+      lesson: `A consonant + a vowel = a syllable. ${letter.char} is an ${series}-series consonant, so every vowel takes its ${series}-series reading.`,
+      syllables,
+    };
+  }
+  if (groupId === "dependent-vowels") {
+    const samples = ["ក", "គ", "ន", "ម", "ស", "ព"]
+      .map((c) => CONSONANTS.find((x) => x.char === c))
+      .filter(Boolean) as KhmerLetter[];
+    const syllables: Syllable[] = samples.map((c) => {
+      const reading = (c.series === "a" ? letter.aRoman : letter.oRoman) ?? letter.roman;
+      return { khmer: c.char + letter.char, sound: (c.base ?? "") + reading, note: `${c.series}-series` };
+    });
+    return {
+      title: `Using the vowel ${letter.display}`,
+      lesson: `This vowel attaches to a consonant, and its sound follows the consonant's series — “${letter.aRoman}” after a-series, “${letter.oRoman}” after o-series.`,
+      syllables,
+    };
+  }
+  if (groupId === "numerals") {
+    return {
+      title: `Using ${letter.char} (${letter.roman})`,
+      lesson: "Khmer digits combine just like Western ones to write any number.",
+      syllables: [
+        { khmer: letter.char + "០", sound: `${letter.roman}0`, note: `${letter.roman}0` },
+        { khmer: "១" + letter.char, sound: `1${letter.roman}`, note: `1${letter.roman}` },
+        { khmer: "២០២" + letter.char, sound: `202${letter.roman}`, note: "a year" },
+      ],
+    };
+  }
+  // independent vowels
+  return {
+    title: `Using ${letter.char} (${letter.roman})`,
+    lesson: "An independent vowel stands on its own — it begins a word without needing a consonant.",
+    syllables: [],
+  };
+}

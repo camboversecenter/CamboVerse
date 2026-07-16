@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LetterTile } from "./LetterTile";
 import { LetterQuiz } from "./LetterQuiz";
 import { WriteAnimation } from "./WriteAnimation";
+import { LetterSpace } from "./LetterSpace";
 import { makeGlyphTexture } from "../lib/glyphTexture";
 import { getIdentity, earnedAchievements } from "../lib/identity";
 import { GLYPH_PATHS } from "../glyphPaths";
@@ -25,6 +26,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
   const [selected, setSelected] = useState<KhmerLetter | null>(null);
   const [quizOpen, setQuizOpen] = useState(false);
   const [writeFor, setWriteFor] = useState<KhmerLetter | null>(null);
+  const [spaceFor, setSpaceFor] = useState<KhmerLetter | null>(null);
   const [earned, setEarned] = useState<Set<string>>(new Set());
 
   const group = KHMER_GROUPS.find((g) => g.id === groupId)!;
@@ -79,6 +81,9 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
 
   // Clear selection when the group changes.
   useEffect(() => setSelected(null), [groupId]);
+
+  // A dedicated 3D "learn to use" space for one letter replaces the board.
+  if (spaceFor) return <LetterSpace letter={spaceFor} groupId={groupId} onBack={() => setSpaceFor(null)} />;
 
   return (
     <div className="classroom">
@@ -200,11 +205,16 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
               </div>
             )}
             <div className="cls-cat">{group.title}</div>
-            {GLYPH_PATHS[selected.char] && (
-              <button className="cls-write-btn" onClick={() => setWriteFor(selected)}>
-                ✍️ How to write
+            <div className="cls-actions">
+              <button className="cls-use-btn" onClick={() => setSpaceFor(selected)}>
+                📖 Learn to use
               </button>
-            )}
+              {GLYPH_PATHS[selected.char] && (
+                <button className="cls-write-btn" onClick={() => setWriteFor(selected)}>
+                  ✍️ How to write
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (

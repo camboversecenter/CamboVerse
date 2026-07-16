@@ -28,9 +28,16 @@ export function makeGlyphTexture(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // The glyph, large, in the chosen Khmer font.
+  // The glyph, large, in the chosen Khmer font — shrunk to fit the card width.
   ctx.fillStyle = fg;
-  ctx.font = `${Math.round(size * 0.56)}px "${opts.family}"`;
+  let fontSize = Math.round(size * 0.56);
+  ctx.font = `${fontSize}px "${opts.family}"`;
+  const maxW = w * 0.86;
+  const measured = ctx.measureText(display).width;
+  if (measured > maxW) {
+    fontSize = Math.max(12, Math.floor(fontSize * (maxW / measured)));
+    ctx.font = `${fontSize}px "${opts.family}"`;
+  }
   ctx.fillText(display, w / 2, h * 0.42);
 
   // The romanisation, small, in a plain sans font.
