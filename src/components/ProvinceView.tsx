@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Line, Html, OrbitControls } from "@react-three/drei";
 import { Shape } from "three";
 import { CAMBODIA_PROVINCES } from "../cambodia-provinces";
 import { projectLatLng } from "../cambodia-outline";
 import { spotsInProvince, prettyProvince, type Spot } from "../spots";
+import { FARM_STAGES } from "../farm";
+import { listPlots, getPlot, type SharedPlot } from "../lib/farmShare";
 
 /**
  * The province map — the second teleport tier. Tapping a province on the
@@ -30,6 +32,19 @@ export function ProvinceView({
   );
   const sites = useMemo(() => (province ? spotsInProvince(province.name) : []), [province]);
   const [selected, setSelected] = useState<Spot | null>(null);
+
+  // Shared living farms in this province (docs/LIVING_FARM.md).
+  const [farms, setFarms] = useState<SharedPlot[]>([]);
+  const [farm, setFarm] = useState<SharedPlot | null>(null);
+  useEffect(() => {
+    let live = true;
+    setFarms([]);
+    setFarm(null);
+    if (province) listPlots(province.name).then((ps) => live && setFarms(ps));
+    return () => {
+      live = false;
+    };
+  }, [province]);
 
   // Filled shapes + a camera framed on this province.
   const geo = useMemo(() => {
@@ -68,6 +83,32 @@ export function ProvinceView({
   const { shapes, boundaries, cx, cz, r } = geo;
   const camDist = r * 2.4 + 1.2;
   const markerScale = Math.max(0.12, r * 0.16);
+
+  // Farm pin positions. Coarse geo collapses nearby farms to the same cell, so
+  // fan out any that would land on top of each other (privacy is preserved —
+  // this only separates the markers, it doesn't reveal a real location).
+  const farmPos = useMemo(() => {
+    const cell = new Map<string, number>();
+    return farms.map((pl, i) => {
+      let bx: number, bz: number;
+      if (pl.geo) {
+        const [x, z] = projectLatLng(pl.geo.lat, pl.geo.lng);
+        bx = x; bz = z;
+      } else {
+        bx = cx + ((i % 3) - 1) * r * 0.3;
+        bz = cz + (Math.floor(i / 3) - 1) * r * 0.3;
+      }
+      const key = `${Math.round(bx * 20)}_${Math.round(bz * 20)}`;
+      const n = cell.get(key) ?? 0;
+      cell.set(key, n + 1);
+      if (n > 0) {
+        const ang = n * 2.399; // golden angle
+        bx += Math.cos(ang) * r * 0.16;
+        bz += Math.sin(ang) * r * 0.16;
+      }
+      return [bx, 0, bz] as [number, number, number];
+    });
+  }, [farms, cx, cz, r]);
 
   return (
     <div className="prov">
@@ -113,6 +154,22 @@ export function ProvinceView({
           />
         ))}
 
+        {/* Living farms shared in this province (coarse location). */}
+        {farms.map((pl, i) => (
+          <FarmMarker
+            key={pl.id}
+            plot={pl}
+            position={farmPos[i]}
+            scale={markerScale}
+            selected={farm?.id === pl.id}
+            onSelect={async () => {
+              setSelected(null);
+              const detail = await getPlot(pl.id);
+              setFarm(detail ?? pl);
+            }}
+          />
+        ))}
+
         <OrbitControls
           enablePan={false}
           minDistance={camDist * 0.5}
@@ -130,7 +187,9 @@ export function ProvinceView({
         <span className="cls-title">🗺️ {prettyProvince(province.name)}</span>
       </div>
 
-      {selected ? (
+      {farm ? (
+        <FarmDetail plot={farm} onClose={() => setFarm(null)} />
+      ) : selected ? (
         <SiteDetail spot={selected} onClose={() => setSelected(null)} onEnter={() => onEnterSite(selected.id)} />
       ) : (
         <div className="prov-hint">
@@ -139,11 +198,16 @@ export function ProvinceView({
             {sites.length > 0
               ? `${sites.length} heritage ${sites.length === 1 ? "site" : "sites"}. Tap a marker to see its points of interest.`
               : "No heritage sites here yet."}
+            {farms.length > 0 && (
+              <>
+                {" "}🌾 <b>{farms.length}</b> living {farms.length === 1 ? "farm" : "farms"}.
+              </>
+            )}
           </p>
           <p className="prov-hint-sub">
-            {sites.length === 0
-              ? "Help put this province on the map — add a site (see TODO.md)."
-              : "District boundaries are coming soon."}
+            {sites.length === 0 && farms.length === 0
+              ? "Help put this province on the map — add a site (see TODO.md), or share your farm in the Virtual Farm."
+              : "Tap a green 🌾 pin to watch a real farm's season. District boundaries are coming soon."}
           </p>
         </div>
       )}
@@ -221,6 +285,108 @@ function SiteMarker({
         </button>
       </Html>
     </group>
+  );
+}
+
+/** A living-farm marker (🌾) on the province map. */
+function FarmMarker({
+  plot,
+  position,
+  scale,
+  selected,
+  onSelect,
+}: {
+  plot: SharedPlot;
+  position: [number, number, number];
+  scale: number;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const [hover, setHover] = useState(false);
+  const stage = FARM_STAGES.reduce((best, s) =>
+    Math.abs(s.growth - (plot.latestGrowth ?? 0.5)) < Math.abs(best.growth - (plot.latestGrowth ?? 0.5)) ? s : best,
+  );
+  const color = stage.color;
+  return (
+    <group
+      position={position}
+      scale={(hover || selected ? 1.15 : 1) * scale}
+      onClick={(e) => { e.stopPropagation(); onSelect(); }}
+      onPointerOver={(e) => { e.stopPropagation(); setHover(true); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { setHover(false); document.body.style.cursor = "auto"; }}
+    >
+      <mesh position={[0, 0.9, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 1.8, 8]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+      <mesh position={[0, 0.55, 0]}>
+        <cylinderGeometry args={[0.06, 0.06, 1.1, 8]} />
+        <meshStandardMaterial color={color} roughness={0.6} />
+      </mesh>
+      {/* a little paddy patch as the pin head */}
+      <mesh position={[0, 1.15, 0]}>
+        <boxGeometry args={[0.34, 0.14, 0.34]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={selected ? 0.5 : hover ? 0.35 : 0.15} roughness={0.5} />
+      </mesh>
+      <Html position={[0, 1.85, 0]} center occlude={false}>
+        <button
+          className="prov-label prov-label-farm"
+          onClick={(e) => { e.stopPropagation(); onSelect(); }}
+        >
+          🌾 {plot.name}
+        </button>
+      </Html>
+    </group>
+  );
+}
+
+/** Bottom sheet: a shared farm's season — photos + stage, scrub the timeline. */
+function FarmDetail({ plot, onClose }: { plot: SharedPlot; onClose: () => void }) {
+  const [i, setI] = useState(Math.max(0, (plot.checkins?.length ?? 1) - 1));
+  const checks = plot.checkins ?? [];
+  const c = checks[Math.min(i, checks.length - 1)];
+  const st = c ? FARM_STAGES.find((s) => s.id === c.stageId) : undefined;
+  return (
+    <div className="prov-detail">
+      <button className="cls-close" onClick={onClose} aria-label="Close">✕</button>
+      <div className="prov-detail-head">
+        <h2>🌾 {plot.name}</h2>
+      </div>
+      <p className="prov-blurb">
+        {prettyProvince(plot.province)}
+        {plot.variety ? ` · ${plot.variety}` : ""} — a real farm's season, shared to the commons.
+      </p>
+      {c ? (
+        <>
+          <div className="prov-farm-view">
+            {c.photo && <img className="prov-farm-photo" src={c.photo} alt={`${plot.name} on ${c.takenOn}`} />}
+            <div className="prov-farm-meta">
+              <div className="prov-farm-stage" style={{ color: st?.color }}>
+                {st?.emoji} <span className="khmer">{st?.khmer}</span> · {st?.english}
+              </div>
+              <div className="prov-farm-date">{c.takenOn}</div>
+              {c.note && <div className="prov-farm-note">“{c.note}”</div>}
+            </div>
+          </div>
+          {checks.length > 1 && (
+            <div className="farm-scrub">
+              <span className="farm-scrub-cap">{Math.min(i, checks.length - 1) + 1} / {checks.length}</span>
+              <input
+                type="range"
+                min={0}
+                max={checks.length - 1}
+                value={Math.min(i, checks.length - 1)}
+                onChange={(e) => setI(Number(e.target.value))}
+                aria-label="Scrub the season"
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="prov-nopoi">No approved photos yet.</p>
+      )}
+      <p className="prov-farm-credit">Shared CC-BY · location shown to village level only.</p>
+    </div>
   );
 }
 

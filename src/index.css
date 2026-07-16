@@ -1575,6 +1575,19 @@ body,
   font-size: 0.66rem; font-weight: 800;
 }
 
+.prov-label-farm { border-color: rgba(76, 138, 63, 0.75); }
+.prov-farm-view { display: flex; gap: 14px; align-items: flex-start; margin: 4px 0 10px; }
+.prov-farm-photo {
+  width: 45%; max-width: 220px; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+}
+.prov-farm-meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.prov-farm-stage { font-weight: 800; font-size: 0.9rem; }
+.prov-farm-stage .khmer { font-weight: 500; }
+.prov-farm-date { font-size: 0.8rem; color: var(--muted, #a6ab97); }
+.prov-farm-note { font-size: 0.82rem; color: #c9d3bf; font-style: italic; }
+.prov-farm-credit { font-size: 0.72rem; color: var(--muted, #a6ab97); margin: 8px 0 0; }
+
 .prov-hint {
   position: fixed;
   left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
