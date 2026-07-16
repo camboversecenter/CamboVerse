@@ -1,8 +1,8 @@
 # The Living Farm — a photo-driven digital twin of real Cambodian farms
 
-> **Status:** Phase 1 (offline prototype) **and** Phase 2 (shared, consented,
-> moderated commons) shipped in the Virtual Farm. Remaining next step:
-> living-farm pins on the province map.
+> **Status:** Phase 1 (offline prototype), Phase 2 (shared, consented, moderated
+> commons), and **living-farm pins on the province map** are all shipped in the
+> Virtual Farm. Remaining hardening is listed under "Still to harden" below.
 > **Concept owner:** community idea, stewarded by CamboVerse Center / NUM.
 
 ## The idea
@@ -86,13 +86,14 @@ The diary can now be **shared to the CamboVerse commons**, on the platform rails
   also sees their own pending ones). The Farm's **🌏 Community** tab renders
   this — pick a farm, scrub its season, and the 3D paddy grows to match.
 
-**Remaining next step:** put these living-farm pins on the **province map** (the
-province teleport already exists), so a visitor discovers real farms
-geographically. `GET /v1/farm/plots?province=` already returns coarse geo per
-plot for exactly this.
+**Province-map pins (shipped).** Living farms now appear as 🌾 pins on the
+province map (`src/components/ProvinceView.tsx`) — a visitor taps a province,
+sees its real farms geographically (pin-head colour tracks the latest growth
+stage), and opens one to scrub its shared season. Pins that share a coarse cell
+are fanned out so they stay tappable without revealing a real location.
 
-Client code: `src/lib/farmShare.ts`; rails: the `/v1/farm/*` handlers in
-`src/worker/rails.ts` (`farm_plots`, `farm_checkins`).
+Client code: `src/lib/farmShare.ts`, `src/components/ProvinceView.tsx`; rails:
+the `/v1/farm/*` handlers in `src/worker/rails.ts` (`farm_plots`, `farm_checkins`).
 
 ### Still to harden before a public launch
 
