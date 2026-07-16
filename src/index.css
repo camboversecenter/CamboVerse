@@ -1888,6 +1888,18 @@ body,
 .kun-btn:hover { background: color-mix(in srgb, #e0562f 30%, rgba(20, 16, 10, 0.78)); }
 
 .kun { position: fixed; inset: 0; z-index: 5; background: #1a1220; }
+.kun-stage { position: absolute; inset: 0; }
+.kun--shake { animation: kun-shake 0.22s ease-in-out; }
+@keyframes kun-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-5px, 3px); }
+  40% { transform: translate(5px, -3px); }
+  60% { transform: translate(-4px, -2px); }
+  80% { transform: translate(4px, 2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kun--shake { animation: none; }
+}
 
 .kun-modes {
   position: fixed;

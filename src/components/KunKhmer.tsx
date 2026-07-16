@@ -1,10 +1,15 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Mesh, MeshBasicMaterial } from "three";
 import { Fighter } from "./Fighter";
 import { KUN_MOVES, KUN_ABOUT, KUN_CREDENTIAL, moveById, type KunMove } from "../kunkhmer";
 import { claimCredential, getIdentity, earnedAchievements } from "../lib/identity";
+import { playHit, playWhoosh, playBell, setMuted, isMuted, type HitKind } from "../lib/kunSound";
+
+const hitKind = (m: KunMove): HitKind =>
+  m.id === "ti" ? "kick" : m.id === "kumpleang" ? "knee" : m.id === "sok" ? "elbow" : "punch";
 
 /**
  * The Kun Khmer Dojo — play and learn Cambodia's ancient martial art, in a ring
@@ -46,11 +51,30 @@ export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
   const [selected, setSelected] = useState<KunMove>(KUN_MOVES[0]);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [alreadyTrained, setAlreadyTrained] = useState(false);
+  const [muted, setMutedState] = useState(isMuted());
 
-  useEffect(() => () => window.clearTimeout(reactTimer.current), []);
+  // Impact burst + screen shake on contact.
+  const [impact, setImpact] = useState<{ n: number; x: number; color: string } | null>(null);
+  const [shaking, setShaking] = useState(false);
+  const impactN = useRef(0);
+  const shakeTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => {
+    window.clearTimeout(reactTimer.current);
+    window.clearTimeout(shakeTimer.current);
+  }, []);
 
   const bumpP = (id: string) => { setPMove(id); setPTrig((t) => t + 1); };
   const bumpO = (id: string) => { setOMove(id); setOTrig((t) => t + 1); };
+
+  // A landed strike: spark at the impact point (x) + a quick screen shake.
+  const boom = useCallback((x: number, color: string) => {
+    impactN.current += 1;
+    setImpact({ n: impactN.current, x, color });
+    setShaking(true);
+    window.clearTimeout(shakeTimer.current);
+    shakeTimer.current = window.setTimeout(() => setShaking(false), 220);
+  }, []);
 
   // Your fighter strikes; the opponent responds. A defensive technique makes
   // the opponent throw a punch that you block/dodge; otherwise it recoils.
@@ -58,19 +82,33 @@ export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
     window.clearTimeout(reactTimer.current);
     setSelected(m);
     bumpP(m.id);
+    playWhoosh();
     if (isDefensive(m.id)) {
       bumpO("mat");
+      if (m.id === "rung") {
+        // a block makes contact (on your guard); a dodge slips it cleanly
+        reactTimer.current = window.setTimeout(() => { playHit("block"); boom(-0.46, m.color); }, 180);
+      }
     } else {
-      reactTimer.current = window.setTimeout(() => bumpO("hurt"), 180);
+      reactTimer.current = window.setTimeout(() => {
+        bumpO("hurt");
+        playHit(hitKind(m));
+        boom(0.46, m.color);
+      }, 180);
     }
-  }, []);
+  }, [boom]);
 
   // The opponent lands one on you: it jabs, then you recoil.
   const takeHit = useCallback(() => {
     window.clearTimeout(reactTimer.current);
     bumpO("mat");
-    reactTimer.current = window.setTimeout(() => bumpP("hurt"), 190);
-  }, []);
+    playWhoosh();
+    reactTimer.current = window.setTimeout(() => {
+      bumpP("hurt");
+      playHit("punch");
+      boom(-0.46, "#2f6ae0");
+    }, 190);
+  }, [boom]);
 
   const resetStances = useCallback(() => {
     window.clearTimeout(reactTimer.current);
@@ -97,24 +135,28 @@ export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
 
   return (
     <div className="kun">
-      <Canvas dpr={[1, 2]} camera={{ position: [0, 1.7, 8.2], fov: 40 }} gl={{ antialias: true }} shadows>
-        <XR store={store}>
-          <color attach="background" args={["#1a1220"]} />
-          <fog attach="fog" args={["#1a1220", 11, 22]} />
-          <ambientLight intensity={0.7} />
-          <directionalLight position={[3, 7, 5]} intensity={1.15} castShadow shadow-mapSize={[1024, 1024]} />
-          <spotLight position={[0, 8, 3]} angle={0.7} intensity={0.7} color="#ffd9a0" penumbra={0.6} castShadow />
+      <div className={`kun-stage${shaking ? " kun--shake" : ""}`}>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 1.6, 7.4], fov: 40 }} gl={{ antialias: true }} shadows>
+          <XR store={store}>
+            <color attach="background" args={["#1a1220"]} />
+            <fog attach="fog" args={["#1a1220", 11, 22]} />
+            <ambientLight intensity={0.7} />
+            <directionalLight position={[3, 7, 5]} intensity={1.15} castShadow shadow-mapSize={[1024, 1024]} />
+            <spotLight position={[0, 8, 3]} angle={0.7} intensity={0.7} color="#ffd9a0" penumbra={0.6} castShadow />
 
-          <Ring />
+            <Ring />
 
-          {/* Two boxers, facing each other across the canvas. */}
-          <Fighter move={pMove} trigger={pTrig} facing={Math.PI / 2} palette="red" position={[-0.78, 0.16, 0.12]} />
-          <Fighter move={oMove} trigger={oTrig} facing={-Math.PI / 2} palette="blue" position={[0.78, 0.16, -0.12]} />
+            {/* Two boxers at real fighting range, facing each other. */}
+            <Fighter move={pMove} trigger={pTrig} facing={Math.PI / 2} palette="red" position={[-0.52, 0.16, 0.1]} />
+            <Fighter move={oMove} trigger={oTrig} facing={-Math.PI / 2} palette="blue" position={[0.52, 0.16, -0.1]} />
 
-          <XROrigin position={[0, 1.1, 3.9]} />
-          <Nav />
-        </XR>
-      </Canvas>
+            {impact && <Impact key={impact.n} position={[impact.x, 1.25, 0.15]} color={impact.color} />}
+
+            <XROrigin position={[0, 1.1, 3.9]} />
+            <Nav />
+          </XR>
+        </Canvas>
+      </div>
 
       {/* ---- HUD ---- */}
       <div className="cls-top">
@@ -142,6 +184,13 @@ export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
         >
           🥊 Spar{alreadyTrained ? " ✓" : ""}
         </button>
+        <button
+          className="kun-about-btn"
+          aria-label={muted ? "Unmute" : "Mute"}
+          onClick={() => { const m = !muted; setMuted(m); setMutedState(m); }}
+        >
+          {muted ? "🔇" : "🔊"}
+        </button>
         <button className="kun-about-btn" onClick={() => setAboutOpen(true)}>
           ℹ️ About
         </button>
@@ -161,6 +210,38 @@ export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
 
       {aboutOpen && <AboutPanel onClose={() => setAboutOpen(false)} />}
     </div>
+  );
+}
+
+/** A quick impact burst — an expanding ring + a bright flash — at a strike. */
+function Impact({ position, color }: { position: [number, number, number]; color: string }) {
+  const ring = useRef<Mesh>(null);
+  const flash = useRef<Mesh>(null);
+  const t = useRef(0);
+  useFrame((_, dt) => {
+    t.current += dt;
+    const p = Math.min(1, t.current / 0.42); // life ~0.42s
+    const s = 0.3 + p * 1.7;
+    if (ring.current) {
+      ring.current.scale.setScalar(s);
+      (ring.current.material as MeshBasicMaterial).opacity = 1 - p;
+    }
+    if (flash.current) {
+      flash.current.scale.setScalar(Math.max(0.001, (1 - p) * 0.8 + 0.2));
+      (flash.current.material as MeshBasicMaterial).opacity = (1 - p) * 0.95;
+    }
+  });
+  return (
+    <group position={position}>
+      <mesh ref={ring}>
+        <torusGeometry args={[0.42, 0.07, 8, 24]} />
+        <meshBasicMaterial color={color} transparent toneMapped={false} />
+      </mesh>
+      <mesh ref={flash}>
+        <sphereGeometry args={[0.42, 12, 12]} />
+        <meshBasicMaterial color="#fff3c4" transparent toneMapped={false} />
+      </mesh>
+    </group>
   );
 }
 
@@ -289,6 +370,7 @@ function SparPanel({
     setOHP(100);
     setPHP(100);
     onReset();
+    playBell(1); // seconds out — the round begins
     setPhase("prompt");
   };
 
@@ -298,6 +380,7 @@ function SparPanel({
         setPhase("done");
         onReset();
         const s = all.filter(Boolean).length;
+        playBell(s / ROUND >= PASS ? 2 : 1); // double bell for a win
         if (s / ROUND >= PASS) {
           setClaiming(true);
           claimCredential(KUN_CREDENTIAL, `spar:${s}/${ROUND}`).then((ok) => {
