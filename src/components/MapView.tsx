@@ -9,11 +9,13 @@ import { SPOTS } from "../spots";
 /** The hub: an explorable map of Cambodia with a pin per heritage site. */
 export function MapView({
   onEnter,
+  onEnterProvince,
   onOpenTools,
   onOpenClassroom,
   onOpenKunKhmer,
 }: {
   onEnter: (id: string) => void;
+  onEnterProvince: (name: string) => void;
   onOpenTools: () => void;
   onOpenClassroom: () => void;
   onOpenKunKhmer: () => void;
@@ -32,7 +34,7 @@ export function MapView({
 
           {/* Scale the map to fit a portrait phone viewport. */}
           <group scale={0.55}>
-            <CambodiaMap />
+            <CambodiaMap onSelectProvince={onEnterProvince} />
             {SPOTS.map((s) => (
               <Pin key={s.id} spot={s} onEnter={onEnter} />
             ))}
@@ -56,10 +58,11 @@ export function MapView({
 
       <div className="hud">
         <span className="tag">Explore Cambodia · Prototype</span>
-        <h1>Tap a site to teleport</h1>
+        <h1>Tap a province or a site</h1>
         <p>
-          Drag to look around the map, then tap a pin to travel into that
-          temple or spot. Green pins are live; others are coming soon.
+          Tap a <b>province</b> to open its map and its heritage sites, or tap a
+          <b> pin</b> to teleport straight into a temple or spot. Green pins are
+          live; others are coming soon.
         </p>
       </div>
 

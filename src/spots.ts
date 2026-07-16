@@ -46,6 +46,28 @@ export interface Spot {
   landscape?: "angkor" | "wat-phnom";
 }
 
+/** Normalise a province name for matching (spots use "Siem Reap", the ADM1
+ * boundary data uses "Siemreap", etc.). */
+const normProvince = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "");
+
+/** The heritage sites that fall within a given province (by name). */
+export function spotsInProvince(provinceName: string): Spot[] {
+  const key = normProvince(provinceName);
+  return SPOTS.filter((s) => normProvince(s.province) === key);
+}
+
+/** A friendlier display name for a few ADM1 names that read oddly. */
+export function prettyProvince(name: string): string {
+  const fixes: Record<string, string> = {
+    Siemreap: "Siem Reap",
+    "Preah Sihanouk": "Preah Sihanouk",
+    "Tboung Khmum": "Tboung Khmum",
+    "Mondul Kiri": "Mondulkiri",
+    "Ratanak Kiri": "Ratanakiri",
+  };
+  return fixes[name] ?? name;
+}
+
 export const SPOTS: Spot[] = [
   {
     id: "angkor-wat",
