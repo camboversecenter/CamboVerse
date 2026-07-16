@@ -1996,8 +1996,38 @@ body,
   padding: 10px 22px; background: #e0562f; color: #fff;
   font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
 }
-.kun-train-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
 .kun-train-count { font-size: 0.74rem; color: var(--muted, #a6ab97); }
+
+/* Sparring HUD: health bars + the called technique, above the move pad. */
+.kun-spar-hud {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 132px);
+  transform: translateX(-50%);
+  z-index: 16;
+  width: min(600px, calc(100vw - 20px));
+  background: rgba(18, 14, 22, 0.9);
+  border: 1px solid var(--line, #33372a);
+  border-radius: 14px;
+  padding: 10px 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.kun-hp { display: flex; flex-direction: column; gap: 5px; }
+.kun-hp-row { display: flex; align-items: center; gap: 8px; }
+.kun-hp-name { width: 44px; font: 800 0.72rem system-ui, sans-serif; }
+.kun-hp-name.you { color: #f0885f; }
+.kun-hp-name.opp { color: #6f9be8; }
+.kun-hp-bar {
+  flex: 1; height: 9px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1); overflow: hidden;
+}
+.kun-hp-fill { display: block; height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+.kun-hp-fill.you { background: linear-gradient(90deg, #e0562f, #f0885f); }
+.kun-hp-fill.opp { background: linear-gradient(90deg, #2f6ae0, #6f9be8); }
+.kun-spar-call {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 8px;
+}
 .kun-call { font-size: 0.98rem; }
 .kun-call .khmer { font-size: 1.2rem; }
 .kun-call.ok { color: #7bd06a; font-weight: 800; }
