@@ -173,6 +173,11 @@ Highest-value help:
 - **📝 Example words.** For each letter, a common word that starts with it — the
   Khmer word, romanisation, and English meaning (optionally a small CC‑BY image).
   Add them to `src/khmer.ts`.
+- **🔤 Verify the "learn to use" readings.** Each letter has a 3D space showing
+  how it's used (a consonant with every vowel → syllables, a vowel across both
+  series, etc.). The composed Khmer is font‑correct, but the **romanised sounds**
+  (consonant `base` and vowel `aRoman`/`oRoman` in `src/khmer.ts`) are
+  approximate teaching aids — Khmer speakers, please refine them.
 - **✍️ Stroke order** *(needs Khmer educators)*. The classroom animates **true
   stroke order** — numbered strokes drawn in sequence over the letter — wherever
   data exists in `src/strokeOrder.ts`, and falls back to a **write-on** outline

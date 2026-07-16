@@ -1825,3 +1825,43 @@ body,
   font: 700 0.62rem system-ui, sans-serif;
   vertical-align: middle;
 }
+
+/* ---- Letter "learn to use" space ---- */
+.cls-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.cls-use-btn {
+  align-self: flex-start;
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #10140b;
+  font: 800 12px system-ui, sans-serif;
+  cursor: pointer;
+}
+.cls-use-btn:hover { filter: brightness(1.08); }
+
+.lspace { position: fixed; inset: 0; z-index: 5; background: #14181c; }
+.ls-info {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 16;
+  width: min(520px, calc(100vw - 24px));
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(18, 20, 14, 0.94);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.ls-syll {
+  display: grid; place-items: center;
+  min-width: 96px; height: 96px; padding: 0 10px;
+  background: #efe4cb; color: #241606;
+  border-radius: 12px;
+  font-size: 3rem; line-height: 1;
+}
+.ls-meta { flex: 1; }
+.ls-sound { font: 800 1.7rem system-ui, sans-serif; color: var(--accent); }
+.ls-note { color: var(--muted, #a6ab97); font-size: 0.82rem; margin-top: 2px; }
