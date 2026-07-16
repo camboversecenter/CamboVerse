@@ -6,6 +6,7 @@ import { ToolsView } from "./components/ToolsView";
 import { ClassroomView } from "./components/ClassroomView";
 import { KunKhmer } from "./components/KunKhmer";
 import { GamesView } from "./components/GamesView";
+import { FarmView } from "./components/FarmView";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -15,6 +16,7 @@ export function App() {
   const [classroomOpen, setClassroomOpen] = useState(false);
   const [kunOpen, setKunOpen] = useState(false);
   const [gamesOpen, setGamesOpen] = useState(false);
+  const [farmOpen, setFarmOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -56,6 +58,8 @@ export function App() {
         <KunKhmer onBackToMap={() => setKunOpen(false)} />
       ) : gamesOpen ? (
         <GamesView onBackToMap={() => setGamesOpen(false)} />
+      ) : farmOpen ? (
+        <FarmView onBackToMap={() => setFarmOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -64,6 +68,7 @@ export function App() {
           onOpenClassroom={() => setClassroomOpen(true)}
           onOpenKunKhmer={() => setKunOpen(true)}
           onOpenGames={() => setGamesOpen(true)}
+          onOpenFarm={() => setFarmOpen(true)}
         />
       )}
 

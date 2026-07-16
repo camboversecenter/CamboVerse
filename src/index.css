@@ -1989,6 +1989,115 @@ body,
 }
 .games-btn:hover { background: color-mix(in srgb, #e0a92f 30%, rgba(20, 16, 10, 0.78)); }
 
+.farm-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 190px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #5aa03a 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.farm-btn:hover { background: color-mix(in srgb, #5aa03a 30%, rgba(20, 16, 10, 0.78)); }
+
+/* ---- Virtual Farm ---- */
+.farm { position: fixed; inset: 0; z-index: 5; background: #a9d0e8; }
+
+.farm-steps {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 54px);
+  left: 0; right: 0;
+  z-index: 18;
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  padding: 0 12px;
+}
+.farm-step {
+  position: relative;
+  width: 40px; height: 40px;
+  border: 2px solid rgba(255,255,255,0.55);
+  border-radius: 50%;
+  background: rgba(20, 40, 24, 0.42);
+  cursor: pointer;
+  display: grid; place-items: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.farm-step-emoji { font-size: 1.1rem; line-height: 1; }
+.farm-step.on { background: rgba(20, 40, 24, 0.78); transform: scale(1.12); }
+.farm-step.done { border-color: #7bd06a; }
+.farm-step-tick {
+  position: absolute; right: -3px; bottom: -3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #4c8a3f; color: #fff; font-size: 0.6rem; font-weight: 800;
+  display: grid; place-items: center;
+}
+
+.farm-info {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 15;
+  width: min(600px, calc(100vw - 20px));
+  max-height: 48vh; overflow: auto;
+  background: rgba(16, 26, 16, 0.92);
+  border: 1.5px solid var(--accent);
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #f2f0e4;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.farm-info-head { display: flex; align-items: center; gap: 12px; }
+.farm-emoji { font-size: 1.9rem; }
+.farm-info-head h2 { margin: 0; font-size: 1.15rem; }
+.farm-info-head .khmer { font-size: 1.15rem; }
+.farm-en { font-size: 0.82rem; color: #b9c3ac; }
+.farm-count { margin-left: auto; font-size: 0.78rem; color: #b9c3ac; align-self: flex-start; }
+.farm-tool { font-size: 0.82rem; color: #dfe6cf; margin: 8px 0 4px; }
+.farm-tool-en { color: #b9c3ac; }
+.farm-fact { font-size: 0.88rem; line-height: 1.55; margin: 6px 0 12px; }
+
+.farm-actionrow { display: flex; align-items: center; gap: 12px; }
+.farm-do {
+  border: none; border-radius: 999px;
+  padding: 11px 18px; color: #fff; font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
+  flex: 0 0 auto;
+}
+.farm-prog { flex: 1; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.12); overflow: hidden; }
+.farm-prog-fill { display: block; height: 100%; border-radius: 999px; transition: width 0.18s ease; }
+.farm-donerow { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+.farm-check { font-weight: 800; font-size: 0.9rem; }
+.farm-next {
+  border: none; border-radius: 999px;
+  padding: 9px 18px; color: #fff; font: 800 0.85rem system-ui, sans-serif; cursor: pointer;
+}
+
+.farm-win {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(8, 16, 10, 0.72);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.farm-win-card {
+  width: min(460px, 100%);
+  background: #16261a; border: 1.5px solid #4c8a3f;
+  border-radius: 18px; padding: 22px; text-align: center; color: #f2f0e4;
+}
+.farm-win-emoji { font-size: 2.4rem; }
+.farm-win-card h2 { margin: 8px 0 6px; }
+.farm-win-card p { font-size: 0.9rem; line-height: 1.55; margin: 0 0 10px; }
+.farm-win-sub { color: #b9c3ac; font-size: 0.84rem; }
+.farm-win-btn {
+  margin-top: 8px; border: none; border-radius: 999px;
+  padding: 11px 22px; background: #4c8a3f; color: #fff; font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
+}
+
 /* ---- Khmer Traditional Games ---- */
 .games { position: fixed; inset: 0; z-index: 5; background: #f0c33a; }
 

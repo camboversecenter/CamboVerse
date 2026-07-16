@@ -14,6 +14,7 @@ export function MapView({
   onOpenClassroom,
   onOpenKunKhmer,
   onOpenGames,
+  onOpenFarm,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -21,6 +22,7 @@ export function MapView({
   onOpenClassroom: () => void;
   onOpenKunKhmer: () => void;
   onOpenGames: () => void;
+  onOpenFarm: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -86,6 +88,10 @@ export function MapView({
 
       <button className="games-btn" onClick={onOpenGames}>
         🎪 Khmer Games
+      </button>
+
+      <button className="farm-btn" onClick={onOpenFarm}>
+        🌾 Virtual Farm
       </button>
 
       {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}
