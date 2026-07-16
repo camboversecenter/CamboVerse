@@ -1972,6 +1972,152 @@ body,
 }
 .kun-btn:hover { background: color-mix(in srgb, #e0562f 30%, rgba(20, 16, 10, 0.78)); }
 
+.games-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 146px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #e0a92f 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.games-btn:hover { background: color-mix(in srgb, #e0a92f 30%, rgba(20, 16, 10, 0.78)); }
+
+/* ---- Khmer Traditional Games ---- */
+.games { position: fixed; inset: 0; z-index: 5; background: #f0c33a; }
+
+.games-tabs {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 54px);
+  left: 0; right: 0;
+  z-index: 18;
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  padding: 0 12px;
+}
+.games-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--line, #33372a);
+  border-radius: 12px;
+  background: rgba(20, 16, 10, 0.72);
+  color: #f4ece0;
+  font: 600 12px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.games-tab .khmer { font-size: 1rem; }
+.games-tab.on { color: #17110a; font-weight: 800; }
+.games-tab-en { font-size: 0.68rem; }
+
+.games-info {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 15;
+  width: min(600px, calc(100vw - 20px));
+  max-height: 46vh; overflow: auto;
+  background: rgba(18, 14, 10, 0.92);
+  border: 1.5px solid var(--accent);
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #f4ece0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.games-info-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.games-info-head h2 { margin: 0; font-size: 1.2rem; }
+.games-info-head .khmer { font-size: 1.1rem; }
+.games-en { color: var(--muted, #a6ab97); font-size: 0.9rem; }
+.games-facts { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0; font-size: 0.78rem; color: #d8cdb8; }
+.games-how { font-size: 0.9rem; line-height: 1.5; margin: 6px 0; }
+.games-desc { font-size: 0.84rem; line-height: 1.5; margin: 0 0 12px; color: #ccc3b0; }
+.games-play {
+  border: none; border-radius: 999px;
+  padding: 10px 20px; color: #17110a;
+  font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
+}
+
+/* Minigame overlay */
+.gp {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; place-items: center; padding: 18px;
+  background: rgba(9, 7, 4, 0.78);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.gp-card {
+  width: min(460px, 100%);
+  background: #1c1710; border: 1.5px solid var(--accent);
+  border-radius: 18px; padding: 16px 18px; color: #f4ece0;
+}
+.gp-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.gp-title { font: 800 1rem system-ui, sans-serif; }
+.gp-title .khmer { font-size: 1.05rem; }
+.gp-x { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line, #33372a); background: transparent; color: #f4ece0; cursor: pointer; }
+
+.gp-play { display: flex; flex-direction: column; gap: 10px; }
+.gp-instr { font-size: 0.85rem; line-height: 1.4; margin: 0; color: #d8cdb8; }
+.gp-do {
+  border: none; border-radius: 999px; padding: 13px 18px;
+  color: #17110a; font: 800 1rem system-ui, sans-serif; cursor: pointer;
+}
+.gp-do:disabled { opacity: 0.6; }
+
+/* Hit the Pot */
+.gp-track {
+  position: relative; height: 64px; border-radius: 12px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line, #33372a);
+  overflow: hidden;
+}
+.gp-zone { position: absolute; top: 0; bottom: 0; opacity: 0.35; }
+.gp-pot { position: absolute; top: 6px; transform: translateX(-50%); font-size: 1.5rem; }
+.gp-marker { position: absolute; bottom: 2px; transform: translateX(-50%); font-size: 1.3rem; color: #fff; }
+.gp-flash { text-align: center; height: 20px; font-weight: 800; font-size: 0.95rem; }
+.gp-flash.hit { color: #ffd23f; }
+.gp-flash.miss { color: #9aa0a6; }
+.gp-meta { display: flex; justify-content: space-between; font-size: 0.78rem; color: #ccc3b0; }
+
+/* Sack race */
+.gp-race { display: flex; flex-direction: column; gap: 12px; }
+.gp-lane { position: relative; }
+.gp-lane-name { font-size: 0.72rem; font-weight: 800; }
+.gp-lane-name.rival { color: #d98a5a; }
+.gp-lane-bar { display: block; height: 12px; margin-top: 3px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.gp-lane-fill { display: block; height: 100%; border-radius: 999px; transition: width 0.08s linear; }
+.gp-lane-fill.rival { background: #d98a5a; transition: width 0.12s linear; }
+.gp-hopper { position: absolute; bottom: 12px; font-size: 1.1rem; transition: left 0.08s linear; }
+.gp-feet { display: flex; gap: 10px; }
+.gp-foot {
+  flex: 1; padding: 16px 8px; border-radius: 12px;
+  border: 2px solid var(--line, #33372a); background: rgba(255,255,255,0.05);
+  color: #f4ece0; font: 800 0.95rem system-ui, sans-serif; cursor: pointer;
+}
+.gp-foot.next { background: rgba(255,255,255,0.12); }
+
+/* Tug of war */
+.gp-tug { display: flex; align-items: center; gap: 8px; }
+.gp-tug-side { font-size: 0.72rem; font-weight: 800; width: 42px; }
+.gp-tug-side.left { color: #6f9be8; text-align: right; }
+.gp-tug-track { position: relative; flex: 1; height: 30px; }
+.gp-tug-rope { position: absolute; top: 50%; left: 0; right: 0; height: 4px; transform: translateY(-50%); border-radius: 999px; opacity: 0.7; }
+.gp-tug-mid { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: rgba(255,255,255,0.35); }
+.gp-knot { position: absolute; top: 50%; transform: translate(-50%, -50%); font-size: 1rem; transition: left 0.08s linear; }
+.gp-mash { padding: 16px; font-size: 1.1rem; }
+
+.gp-result { text-align: center; display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.gp-score { font: 900 1.6rem system-ui, sans-serif; color: #ccc3b0; }
+.gp-score.win { color: #ffd23f; }
+.gp-sub { font-size: 0.85rem; color: #d8cdb8; margin: 0; }
+.gp-actions { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
+.gp-again { border: none; border-radius: 999px; padding: 9px 18px; color: #17110a; font: 800 0.85rem system-ui, sans-serif; cursor: pointer; }
+.gp-back { border: 1px solid var(--line, #33372a); border-radius: 999px; padding: 9px 18px; background: transparent; color: #f4ece0; cursor: pointer; }
+
 .kun { position: fixed; inset: 0; z-index: 5; background: #1a1220; }
 .kun-stage { position: absolute; inset: 0; }
 .kun--shake { animation: kun-shake 0.22s ease-in-out; }

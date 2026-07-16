@@ -27,6 +27,7 @@ Cambodia online for the world, with your name on it.
 | 🏺 Add a Khmer tool / object in 3D | [Add a traditional tool](#add-a-khmer-traditional-tool-3d-artifact) |
 | 🔤 Teach the Khmer script | [Grow the Alphabet Classroom](#grow-the-khmer-alphabet-classroom) |
 | 🥊 Teach Kun Khmer | [Grow the Kun Khmer Dojo](#grow-the-kun-khmer-dojo) |
+| 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -244,6 +245,36 @@ This dojo is the *teaching* companion to that game. Lots of room to grow:
 
 Accuracy and respect matter — this is living heritage. See `src/kunkhmer.ts` for
 the data and `src/components/KunKhmer.tsx` / `Fighter.tsx` for how it's shown.
+
+## Grow the Khmer Traditional Games
+
+The **🎪 Khmer Traditional Games** hub is a festival ground where visitors learn
+and play the games of Cambodian celebrations — above all *Choul Chnam Thmey*
+(Khmer New Year). It ships with three: **Vay Kaom** (វាយក្អម, Hit the Pot),
+**Loat Bao** (លោតបាវ, Sack Race), and **Teanh Prot** (ទាញព្រ័ត្រ, Tug of War),
+each with a 3D scene, its story, and a quick playable version that earns a
+Heritage Passport credential. Cambodia has many more — help add them:
+
+- **➕ Add a game.** Add a `KhmerGame` to `src/games.ts` (Khmer + romanised +
+  English name, who plays, the occasion, how-to, and a cultural note) and give
+  it a scene in `src/components/GamesView.tsx`. Great candidates:
+  - **Chol Chhoung** (ចោលឈូង) — teams toss a knotted scarf between boys and girls, with a sung challenge.
+  - **Bos Angkunh** (បោះអង្គុញ) — throwing large *angkunh* seeds to knock down the other team's.
+  - **Leak Kanseng** (លាក់កន្សែង) — "hide the scarf" behind a seated circle (like duck-duck-goose).
+  - **Klah Klok** (ខ្លាឃ្លោក) — a lively dice/betting game with tiger, gourd, prawn, fish, crab and rooster.
+  - **Chab Kon Kleng** (ចាប់កូនខ្លែង) — "hawk catches the chicks", a line-and-tag chasing game.
+  - **Bay Khom**, ** Leak konseng**, spinning tops (**Kaon Kleng**), and more.
+- **🎮 Make a game playable.** Each game maps to a small minigame in
+  `src/components/GamePlay.tsx` (currently `aim`, `race`, `tug`). Add new
+  mechanics (throw, catch, memory, dice) and wire them to a `play` type.
+- **🎨 Richer scenes.** The festival figures and props are simple primitives —
+  improve the models, add sarong patterns, music, and a New Year atmosphere.
+- **📜 Accuracy & provenance.** Verify names, rules, and regional variations with
+  players and cite open sources; some games differ village to village.
+- **🌏 Translate** the rules and cultural notes.
+
+Accuracy and respect matter — these are living traditions. See `src/games.ts`,
+`src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
 
 ## Grow the province maps
 
