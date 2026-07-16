@@ -29,6 +29,8 @@ export interface FarmStage {
   action: string;
   /** Paddy state to render. */
   field: Field;
+  /** Where this stage sits on the 0→1 growth curve (drives the living paddy). */
+  growth: number;
   /** Accent colour. */
   color: string;
 }
@@ -44,6 +46,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "As the first monsoon rains soften the earth, farmers flood and plough the paddy behind a water buffalo — the buffalo is the family's most valued partner. The King opens the season nationwide with the Royal Ploughing Ceremony (ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល).",
     action: "Guide the buffalo",
     field: "ploughed",
+    growth: 0.02,
     color: "#8a6a3a",
   },
   {
@@ -56,6 +59,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "Rice isn't sown straight into the field. Seed is first raised thickly in a small nursery bed, where the young seedlings grow strong for a month before they are moved. Phka Rumduol — Cambodia's world-famous jasmine rice — begins its life here.",
     action: "Scatter the seed",
     field: "seedbed",
+    growth: 0.15,
     color: "#5aa03a",
   },
   {
@@ -68,6 +72,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "Bent double under the sun, workers push seedlings into the mud one bunch at a time, in neat rows. It is hard, sociable work — whole villages trade labour (ប្រវាស់ដៃ) to plant each other's fields.",
     action: "Plant the seedlings",
     field: "transplanted",
+    growth: 0.32,
     color: "#4c8a3f",
   },
   {
@@ -80,6 +85,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "Through the rainy season the crop is nursed: low earthen dikes (ភ្លឺ) hold rain in the paddy, and farmers open and close them to keep the water just right. The whole harvest rides on the timing of the monsoon.",
     action: "Tend the dikes",
     field: "growing",
+    growth: 0.55,
     color: "#2f8ae0",
   },
   {
@@ -92,6 +98,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "When the dry season turns the paddy gold, the rice is cut by hand with a curved sickle, gathered into sheaves, and carried in. Harvest is a season of plenty and of gratitude.",
     action: "Cut the rice",
     field: "ripe",
+    growth: 0.85,
     color: "#e0a92f",
   },
   {
@@ -104,6 +111,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "The grain is beaten from the stalks (បោក), then tossed from a wide woven basket so the breeze carries off the light chaff (រៃ) and the heavy rice falls back — a skill of wind and wrist.",
     action: "Winnow the grain",
     field: "harvested",
+    growth: 0.95,
     color: "#c8912e",
   },
   {
@@ -116,6 +124,7 @@ export const FARM_STAGES: FarmStage[] = [
     fact: "The clean rice is stored in a raised wooden granary to feed the family through the year — and to become sticky-rice cakes like អន្សម at festivals. Nothing is wasted: straw feeds the buffalo, and the cycle begins again.",
     action: "Fill the granary",
     field: "harvested",
+    growth: 1.0,
     color: "#a9762e",
   },
 ];
