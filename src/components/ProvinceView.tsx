@@ -8,6 +8,7 @@ import { spotsInProvince, prettyProvince, type Spot } from "../spots";
 import { FARM_STAGES } from "../farm";
 import { listPlots, getPlot, type SharedPlot } from "../lib/farmShare";
 import type { District } from "../cambodia-districts";
+import { loadCommunes, type Commune } from "../communes";
 
 /** Ray-casting point-in-polygon on a map-plane ring [[x, z], …]. */
 function pointInRing(x: number, z: number, ring: [number, number][]): boolean {
@@ -18,9 +19,10 @@ function pointInRing(x: number, z: number, ring: [number, number][]): boolean {
   }
   return inside;
 }
-const inDistrict = (x: number, z: number, d: District) => d.rings.some((r) => pointInRing(x, z, r));
-function centroid(d: District): [number, number] {
-  const ring = d.rings.reduce((a, b) => (b.length > a.length ? b : a), d.rings[0]);
+type Region = { rings: [number, number][][] };
+const inRegion = (x: number, z: number, g: Region) => g.rings.some((r) => pointInRing(x, z, r));
+function centroid(g: Region): [number, number] {
+  const ring = g.rings.reduce((a, b) => (b.length > a.length ? b : a), g.rings[0]);
   let sx = 0, sz = 0;
   for (const [x, z] of ring) { sx += x; sz += z; }
   return [sx / ring.length, sz / ring.length];
@@ -80,6 +82,21 @@ export function ProvinceView({
       live = false;
     };
   }, [province]);
+
+  // Commune (ADM3) boundaries — the fourth tier, loaded only once a district is
+  // opened (one province's communes at a time, ~30 KB).
+  const [communes, setCommunes] = useState<Commune[]>([]);
+  const [activeC, setActiveC] = useState<Commune | null>(null);
+  useEffect(() => setActiveC(null), [activeD]);
+  useEffect(() => {
+    let live = true;
+    if (activeD && communes.length === 0 && province) {
+      loadCommunes(province.pcode).then((cs) => live && setCommunes(cs));
+    }
+    return () => {
+      live = false;
+    };
+  }, [activeD, province, communes.length]);
 
   // Filled shapes + a camera framed on this province.
   const geo = useMemo(() => {
@@ -162,21 +179,43 @@ export function ProvinceView({
     [districts],
   );
 
-  // What falls inside the selected district (the "filter to a district" tier).
-  const activeContents = useMemo(() => {
-    if (!activeD) return { sites: [] as Spot[], farms: [] as SharedPlot[] };
+  // Communes of the open district (finer borders + clickable fills).
+  const districtCommunes = useMemo(
+    () => (activeD ? communes.filter((c) => c.district === activeD.pcode) : []),
+    [activeD, communes],
+  );
+  const communeGeo = useMemo(
+    () =>
+      districtCommunes.map((c) => ({
+        c,
+        lines: c.rings.map((ring) => [...ring, ring[0]].map(([x, z]) => [x, 0.055, z] as [number, number, number])),
+        shapes: c.rings.map((ring) => {
+          const s = new Shape();
+          ring.forEach(([x, z], i) => (i === 0 ? s.moveTo(x, -z) : s.lineTo(x, -z)));
+          s.closePath();
+          return s;
+        }),
+      })),
+    [districtCommunes],
+  );
+
+  // What falls inside the active region (district, or a commune within it) —
+  // the "filter to an area" tiers.
+  const contentsOf = (region: Region | null) => {
+    if (!region) return { sites: [] as Spot[], farms: [] as SharedPlot[] };
     const s = sites.filter((sp) => {
       const [x, z] = projectLatLng(sp.lat, sp.lng);
-      return inDistrict(x, z, activeD);
+      return inRegion(x, z, region);
     });
     const f = farms.filter((pl, i) => {
       const [x, z] = pl.geo ? projectLatLng(pl.geo.lat, pl.geo.lng) : [farmPos[i][0], farmPos[i][2]];
-      return inDistrict(x, z, activeD);
+      return inRegion(x, z, region);
     });
     return { sites: s, farms: f };
-  }, [activeD, sites, farms, farmPos]);
+  };
+  const activeContents = useMemo(() => contentsOf(activeC ?? activeD), [activeC, activeD, sites, farms, farmPos]);
 
-  const clearAll = () => { setSelected(null); setFarm(null); setActiveD(null); };
+  const clearAll = () => { setSelected(null); setFarm(null); setActiveD(null); setActiveC(null); };
   const openFarm = async (pl: SharedPlot) => { setSelected(null); setFarm(await getPlot(pl.id) ?? pl); };
 
   return (
@@ -247,6 +286,36 @@ export function ProvinceView({
           );
         })}
 
+        {/* Commune (ADM3) subdivisions of the open district — finer borders. */}
+        {communeGeo.map(({ c, shapes: csh, lines }) => {
+          const on = activeC?.pcode === c.pcode;
+          return (
+            <group key={c.pcode}>
+              {csh.map((s, i) => (
+                <mesh
+                  key={i}
+                  rotation={[-Math.PI / 2, 0, 0]}
+                  position={[0, 0.055, 0]}
+                  onClick={(e) => { e.stopPropagation(); setSelected(null); setFarm(null); setActiveC((p) => (p?.pcode === c.pcode ? null : c)); }}
+                  onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; }}
+                  onPointerOut={() => { document.body.style.cursor = "auto"; }}
+                >
+                  <shapeGeometry args={[s]} />
+                  <meshBasicMaterial color="#bfe0bf" transparent opacity={on ? 0.32 : 0} depthWrite={false} />
+                </mesh>
+              ))}
+              {lines.map((l, i) => (
+                <Line key={i} points={l} color={on ? "#dcf0dc" : "#6f8a5c"} lineWidth={on ? 1.4 : 0.8} transparent opacity={on ? 0.9 : 0.42} />
+              ))}
+              {on && (
+                <Html position={[centroid(c)[0], 0.12, centroid(c)[1]]} center occlude={false}>
+                  <span className="prov-comm-label">{c.name}</span>
+                </Html>
+              )}
+            </group>
+          );
+        })}
+
         {/* Heritage sites in this province. */}
         {sites.map((spot) => (
           <SiteMarker
@@ -295,9 +364,23 @@ export function ProvinceView({
         <FarmDetail plot={farm} onClose={() => setFarm(null)} />
       ) : selected ? (
         <SiteDetail spot={selected} onClose={() => setSelected(null)} onEnter={() => onEnterSite(selected.id)} />
+      ) : activeC ? (
+        <RegionPanel
+          icon="🏡"
+          name={activeC.name}
+          kind="commune"
+          sites={activeContents.sites}
+          farms={activeContents.farms}
+          onClose={() => setActiveC(null)}
+          onSite={(s) => setSelected(s)}
+          onFarm={openFarm}
+        />
       ) : activeD ? (
-        <DistrictPanel
-          district={activeD}
+        <RegionPanel
+          icon="🏙️"
+          name={activeD.name}
+          kind="district"
+          sub={districtCommunes.length > 0 ? `${districtCommunes.length} communes · tap one to zoom in` : undefined}
           sites={activeContents.sites}
           farms={activeContents.farms}
           onClose={() => setActiveD(null)}
@@ -324,7 +407,7 @@ export function ProvinceView({
           </p>
           <p className="prov-hint-sub">
             {districts.length > 0
-              ? "Tap a district to see what's inside it, a marker for a site's points of interest, or a 🌾 pin for a real farm's season."
+              ? "Tap a district, then a commune to zoom in — or a marker for a site's points of interest, or a 🌾 pin for a real farm's season."
               : "Tap a marker for a site's points of interest, or a 🌾 pin for a real farm's season."}
           </p>
         </div>
@@ -333,16 +416,22 @@ export function ProvinceView({
   );
 }
 
-/** Bottom sheet for a tapped district — the "filter to a district" tier. */
-function DistrictPanel({
-  district,
+/** Bottom sheet for a tapped district or commune — the "filter to an area" tiers. */
+function RegionPanel({
+  icon,
+  name,
+  kind,
+  sub,
   sites,
   farms,
   onClose,
   onSite,
   onFarm,
 }: {
-  district: District;
+  icon: string;
+  name: string;
+  kind: string;
+  sub?: string;
   sites: Spot[];
   farms: SharedPlot[];
   onClose: () => void;
@@ -354,14 +443,14 @@ function DistrictPanel({
     <div className="prov-detail">
       <button className="cls-close" onClick={onClose} aria-label="Close">✕</button>
       <div className="prov-detail-head">
-        <h2>🏙️ {district.name}</h2>
+        <h2>{icon} {name}</h2>
       </div>
       <p className="prov-blurb">
         {sites.length} heritage {sites.length === 1 ? "site" : "sites"} · 🌾 {farms.length} living{" "}
-        {farms.length === 1 ? "farm" : "farms"} in this district.
+        {farms.length === 1 ? "farm" : "farms"} in this {kind}.{sub ? ` · ${sub}` : ""}
       </p>
       {empty ? (
-        <p className="prov-nopoi">Nothing mapped in this district yet — add a site (see TODO.md) or share your farm.</p>
+        <p className="prov-nopoi">Nothing mapped in this {kind} yet — add a site (see TODO.md) or share your farm.</p>
       ) : (
         <ul className="prov-dist-list">
           {sites.map((s) => (
