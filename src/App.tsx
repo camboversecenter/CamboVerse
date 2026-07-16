@@ -5,6 +5,7 @@ import { ProvinceView } from "./components/ProvinceView";
 import { ToolsView } from "./components/ToolsView";
 import { ClassroomView } from "./components/ClassroomView";
 import { KunKhmer } from "./components/KunKhmer";
+import { GamesView } from "./components/GamesView";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -13,6 +14,7 @@ export function App() {
   const [toolsOpen, setToolsOpen] = useState(false);
   const [classroomOpen, setClassroomOpen] = useState(false);
   const [kunOpen, setKunOpen] = useState(false);
+  const [gamesOpen, setGamesOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -52,6 +54,8 @@ export function App() {
         <ClassroomView onBackToMap={() => setClassroomOpen(false)} />
       ) : kunOpen ? (
         <KunKhmer onBackToMap={() => setKunOpen(false)} />
+      ) : gamesOpen ? (
+        <GamesView onBackToMap={() => setGamesOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -59,6 +63,7 @@ export function App() {
           onOpenTools={() => setToolsOpen(true)}
           onOpenClassroom={() => setClassroomOpen(true)}
           onOpenKunKhmer={() => setKunOpen(true)}
+          onOpenGames={() => setGamesOpen(true)}
         />
       )}
 

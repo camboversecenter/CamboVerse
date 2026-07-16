@@ -3,6 +3,7 @@ import { myCredentials, type Credential } from "../lib/identity";
 import { SPOTS } from "../spots";
 import { ERAS } from "../history";
 import { KHMER_GROUPS } from "../khmer";
+import { gameById } from "../games";
 
 /**
  * The Heritage Passport — a visitor's collection of the learning credentials
@@ -58,6 +59,17 @@ function toStamp(c: Credential): Stamp {
       where: "the Kun Khmer Dojo",
       when,
       mood: "#e0562f",
+    };
+  }
+  if (parts[0] === "game") {
+    const g = gameById(parts[1]);
+    return {
+      key: c.id,
+      title: g ? `${g.english} — won` : "Traditional game",
+      khmer: g?.khmer,
+      where: "Khmer Traditional Games",
+      when,
+      mood: g?.color ?? "#e0a92f",
     };
   }
   // Any other achievement (e.g. an ecosystem app's) renders generically.
