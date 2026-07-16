@@ -289,11 +289,15 @@ lots of room to grow (see `src/farm.ts`, `src/components/FarmView.tsx`):
 - **🌱 The Living Farm** *(concept: [`docs/LIVING_FARM.md`](./docs/LIVING_FARM.md))*.
   A farmer photographs their real paddy through the season and tags each photo's
   stage; the virtual field **grows to match**, and anyone can scrub the season.
-  The **My Farm** tab ships this as an offline, on-device prototype — the next
-  step is Phase 2: promote it onto the rails (a registered plot, photos as
-  CC-BY assets in R2/D1 with **consent, coarse geo, and moderation**), and put
-  living-farm pins on the province map. Auto growth-detection from the photo is
-  a later bonus, not a dependency.
+  Shipped: the **My Farm** on-device diary (Phase 1) **and** sharing to the
+  commons (Phase 2) — a registered plot + consented, **CC-BY**, **moderated**
+  (pending → approved) photo check-ins on the `/v1/farm/*` rails, with a
+  village-coarse location, browsable in the **🌏 Community** tab. **Next:**
+  - put **living-farm pins on the province map** (`GET /v1/farm/plots?province=`
+    already returns coarse geo);
+  - move shared photos from D1 to **R2**; a **moderation queue** for stewards;
+    **consent-withdrawal / takedown**; EXIF time/geo trust checks;
+  - optional **auto growth-detection** from the photo (a later bonus).
 - **🎮 Make each step interactive.** Right now each guided stage is completed by
   a simple tap action. Turn them into real mini-games in the 3D scene — steer the
   buffalo down a furrow, plant seedlings into a grid, open/close dikes to hold

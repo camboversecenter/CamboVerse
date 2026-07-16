@@ -2200,6 +2200,40 @@ body,
   padding: 12px 18px; background: var(--accent); color: #fff;
   font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
 }
+.farm-modal-save:disabled { opacity: 0.5; cursor: default; }
+select.farm-modal-note { appearance: none; }
+
+/* Share to the commons */
+.farm-diary-actions { display: flex; gap: 8px; margin-top: 12px; }
+.farm-diary-actions .farm-add { margin-top: 0; flex: 1; }
+.farm-share {
+  flex: 1; border: 1px solid var(--accent); border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent); color: #eaf3e2;
+  font: 800 0.9rem system-ui, sans-serif; cursor: pointer; padding: 11px 12px;
+}
+.farm-consent {
+  display: flex; gap: 8px; align-items: flex-start;
+  font-size: 0.82rem; line-height: 1.45; color: #d8cdb8; margin: 12px 0;
+}
+.farm-consent input { margin-top: 2px; accent-color: var(--accent); }
+
+/* Community list */
+.farm-community-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.farm-community-filter {
+  border: 1px solid var(--line, #33372a); border-radius: 8px;
+  background: rgba(255,255,255,0.05); color: #f2f0e4; font-size: 0.8rem; padding: 5px 8px;
+}
+.farm-community-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.farm-community-card {
+  width: 100%; text-align: left; display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px; border: 1px solid var(--line, #33372a); border-radius: 12px;
+  background: rgba(255,255,255,0.04); color: #f2f0e4; cursor: pointer;
+}
+.farm-community-card:hover { border-color: var(--accent); }
+.farm-community-name { font-weight: 800; font-size: 0.92rem; }
+.farm-community-sub { font-size: 0.78rem; color: #b9c3ac; }
+.farm-community-where { font-size: 0.8rem; color: #b9c3ac; }
+.farm-photo-empty { display: grid; place-items: center; background: rgba(255,255,255,0.06); color: #9db096; font-size: 0.78rem; }
 
 /* ---- Khmer Traditional Games ---- */
 .games { position: fixed; inset: 0; z-index: 5; background: #f0c33a; }

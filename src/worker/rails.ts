@@ -116,6 +116,12 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS entitlements (id TEXT PRIMARY KEY, asset_id TEXT NOT NULL, subject_id TEXT NOT NULL, right TEXT NOT NULL, granted_by TEXT, expires_at TEXT, source TEXT NOT NULL, created_at TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS credentials (id TEXT PRIMARY KEY, issuer TEXT NOT NULL, subject_id TEXT NOT NULL, achievement TEXT NOT NULL, evidence TEXT, issued_at TEXT NOT NULL, proof TEXT)`,
   `CREATE TABLE IF NOT EXISTS providers (id TEXT PRIMARY KEY, type TEXT NOT NULL, region TEXT NOT NULL, name TEXT NOT NULL, pay_methods TEXT, handoff TEXT)`,
+  // Living Farm (docs/LIVING_FARM.md): a farmer's real plot and their dated,
+  // stage-tagged photo check-ins. Photos are consented and CC-BY; each check-in
+  // is moderated (pending → approved) before it is shown publicly, and the plot
+  // location is stored coarse (village-level), never the exact field.
+  `CREATE TABLE IF NOT EXISTS farm_plots (id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, name TEXT NOT NULL, province TEXT NOT NULL, district TEXT, variety TEXT, planting_date TEXT, lat REAL, lng REAL, license TEXT NOT NULL, consent TEXT NOT NULL, created_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS farm_checkins (id TEXT PRIMARY KEY, plot_id TEXT NOT NULL, stage_id TEXT NOT NULL, growth REAL NOT NULL, note TEXT, photo TEXT NOT NULL, taken_on TEXT, status TEXT NOT NULL, created_at TEXT NOT NULL)`,
 ];
 
 /** Provider types the D2P router understands (ARCHITECTURE.md §6). */
@@ -276,6 +282,18 @@ function certifiedPartner(request: Request, env: RailsEnv): string | null {
   }
   return null;
 }
+
+/** Resolve the visitor's identity id from their session bearer token (or null). */
+async function identityFromToken(db: D1Database, request: Request): Promise<string | null> {
+  const tok = bearer(request);
+  if (!tok) return null;
+  const s = await db.prepare(`SELECT identity_id FROM sessions WHERE token = ?`).bind(tok).first<{ identity_id: string }>();
+  return s?.identity_id ?? null;
+}
+
+/** Round a coordinate to ~village level (0.05° ≈ 5 km) — we never store the
+ * exact location of someone's field or home. */
+const coarse = (n: number) => Math.round(n / 0.05) * 0.05;
 
 interface AssetRow {
   id: string; type: string; name: string; description: string; image: string | null;
@@ -533,6 +551,131 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
       // The core does not settle. Payment happens in the ecosystem provider.
       settlement: "ecosystem",
     }, 201);
+  }
+
+  // Living Farm (docs/LIVING_FARM.md) ----------------------------------------
+  // A farmer registers a plot and adds stage-tagged photo check-ins. Photos are
+  // consented + CC-BY; each check-in is moderated before it is public; the plot
+  // location is stored coarse. A farmer authenticates with their identity token;
+  // moderation needs a certified-partner key.
+
+  // List public plots (those with ≥1 approved check-in), optionally by province.
+  if (p === "/v1/farm/plots" && m === "GET") {
+    const province = url.searchParams.get("province");
+    const rows = await db
+      .prepare(
+        `SELECT pl.id, pl.name, pl.province, pl.district, pl.variety, pl.planting_date, pl.lat, pl.lng, pl.created_at,
+                COUNT(ck.id) AS approved,
+                MAX(CASE WHEN ck.status='approved' THEN ck.growth END) AS latest_growth
+         FROM farm_plots pl
+         JOIN farm_checkins ck ON ck.plot_id = pl.id AND ck.status = 'approved'
+         ${province ? "WHERE pl.province = ?" : ""}
+         GROUP BY pl.id ORDER BY pl.created_at DESC`,
+      )
+      .bind(...(province ? [province] : []))
+      .all<Record<string, unknown>>();
+    return json({
+      plots: (rows.results ?? []).map((r) => ({
+        id: r.id, name: r.name, province: r.province, district: r.district, variety: r.variety,
+        plantingDate: r.planting_date, geo: r.lat != null ? { lat: r.lat, lng: r.lng } : null,
+        approvedCheckins: r.approved, latestGrowth: r.latest_growth,
+      })),
+      count: rows.results?.length ?? 0,
+    });
+  }
+
+  // A plot + its check-ins. Public sees approved only; the owner (by token) sees
+  // their own pending ones too.
+  if (p.startsWith("/v1/farm/plots/") && !p.endsWith("/checkins") && m === "GET") {
+    const id = decodeURIComponent(p.slice("/v1/farm/plots/".length));
+    const pl = await db.prepare(`SELECT * FROM farm_plots WHERE id = ?`).bind(id).first<Record<string, unknown>>();
+    if (!pl) return json({ error: "not found" }, 404);
+    const me = await identityFromToken(db, request);
+    const owner = me && me === pl.owner_id;
+    const cks = await db
+      .prepare(
+        `SELECT id, stage_id, growth, note, photo, taken_on, status, created_at FROM farm_checkins
+         WHERE plot_id = ? ${owner ? "" : "AND status = 'approved'"} ORDER BY taken_on, created_at`,
+      )
+      .bind(id)
+      .all<Record<string, unknown>>();
+    return json({
+      id: pl.id, name: pl.name, province: pl.province, district: pl.district, variety: pl.variety,
+      plantingDate: pl.planting_date, geo: pl.lat != null ? { lat: pl.lat, lng: pl.lng } : null,
+      license: pl.license, consent: JSON.parse((pl.consent as string) || "{}"), owner,
+      checkins: (cks.results ?? []).map((c) => ({
+        id: c.id, stageId: c.stage_id, growth: c.growth, note: c.note,
+        photo: c.photo, takenOn: c.taken_on, status: c.status,
+      })),
+    });
+  }
+
+  // Register a plot (farmer identity token required, plus explicit consent).
+  if (p === "/v1/farm/plots" && m === "POST") {
+    const owner = await identityFromToken(db, request);
+    if (!owner) return json({ error: "identity token required" }, 401);
+    const b = (await request.json().catch(() => ({}))) as {
+      name?: string; province?: string; district?: string; variety?: string; plantingDate?: string;
+      geo?: { lat?: number; lng?: number }; license?: string;
+      consent?: { owner?: string; consentRef?: string; agreed?: boolean };
+    };
+    if (!b.name || !b.province) return json({ error: "name and province required" }, 400);
+    if (!b.consent?.agreed) return json({ error: "consent required to share a farm publicly" }, 400);
+    const license = b.license ?? "CC-BY-4.0";
+    if (!OPEN_LICENSES.has(license)) {
+      return json({ error: `licence must be an open licence (${[...OPEN_LICENSES].join(", ")})` }, 400);
+    }
+    const id = rid("plot");
+    const consent = JSON.stringify({ owner: b.consent.owner ?? "farmer", consentRef: b.consent.consentRef ?? "in-app", agreed: true });
+    const lat = typeof b.geo?.lat === "number" ? coarse(b.geo.lat) : null;
+    const lng = typeof b.geo?.lng === "number" ? coarse(b.geo.lng) : null;
+    await db.prepare(
+      `INSERT INTO farm_plots (id,owner_id,name,province,district,variety,planting_date,lat,lng,license,consent,created_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+    ).bind(id, owner, b.name, b.province, b.district ?? null, b.variety ?? null, b.plantingDate ?? null, lat, lng, license, consent, now()).run();
+    return json({ id, name: b.name, province: b.province, owner: true }, 201);
+  }
+
+  // Add a photo check-in to a plot (owner token + per-photo consent). Stored
+  // pending until moderated.
+  if (p.startsWith("/v1/farm/plots/") && p.endsWith("/checkins") && m === "POST") {
+    const owner = await identityFromToken(db, request);
+    if (!owner) return json({ error: "identity token required" }, 401);
+    const plotId = decodeURIComponent(p.slice("/v1/farm/plots/".length, p.length - "/checkins".length));
+    const pl = await db.prepare(`SELECT owner_id FROM farm_plots WHERE id = ?`).bind(plotId).first<{ owner_id: string }>();
+    if (!pl) return json({ error: "plot not found" }, 404);
+    if (pl.owner_id !== owner) return json({ error: "not your plot" }, 403);
+    const b = (await request.json().catch(() => ({}))) as {
+      stageId?: string; growth?: number; note?: string; photo?: string; takenOn?: string; consent?: boolean;
+    };
+    if (!b.stageId || typeof b.growth !== "number" || !b.photo) {
+      return json({ error: "stageId, growth and photo required" }, 400);
+    }
+    if (!b.consent) return json({ error: "consent required to publish this photo" }, 400);
+    if (!/^data:image\//.test(b.photo) || b.photo.length > 600_000) {
+      return json({ error: "photo must be a small (downscaled) data URL image" }, 400);
+    }
+    const id = rid("chk");
+    await db.prepare(
+      `INSERT INTO farm_checkins (id,plot_id,stage_id,growth,note,photo,taken_on,status,created_at)
+       VALUES (?,?,?,?,?,?,?,?,?)`,
+    ).bind(id, plotId, b.stageId, b.growth, b.note ?? null, b.photo, b.takenOn ?? now().slice(0, 10), "pending", now()).run();
+    return json({ id, plotId, status: "pending", note: "awaiting review before it appears publicly" }, 201);
+  }
+
+  // Moderate a check-in (certified partner only) — approve or reject before it
+  // is shown publicly. This is the guardrail for real photos of real places.
+  if (p.startsWith("/v1/farm/checkins/") && p.endsWith("/moderate") && m === "POST") {
+    const partner = certifiedPartner(request, env);
+    if (!partner) return json({ error: "certified partner key required" }, 403);
+    const id = decodeURIComponent(p.slice("/v1/farm/checkins/".length, p.length - "/moderate".length));
+    const b = (await request.json().catch(() => ({}))) as { status?: string };
+    if (b.status !== "approved" && b.status !== "rejected") {
+      return json({ error: "status must be approved | rejected" }, 400);
+    }
+    const r = await db.prepare(`UPDATE farm_checkins SET status = ? WHERE id = ?`).bind(b.status, id).run();
+    if (!r.meta.changes) return json({ error: "not found" }, 404);
+    return json({ id, status: b.status, moderatedBy: partner });
   }
 
   return json({ error: "not found" }, 404);

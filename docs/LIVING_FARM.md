@@ -1,6 +1,8 @@
 # The Living Farm — a photo-driven digital twin of real Cambodian farms
 
-> **Status:** Phase 1 (offline prototype) shipped in the Virtual Farm.
+> **Status:** Phase 1 (offline prototype) **and** Phase 2 (shared, consented,
+> moderated commons) shipped in the Virtual Farm. Remaining next step:
+> living-farm pins on the province map.
 > **Concept owner:** community idea, stewarded by CamboVerse Center / NUM.
 
 ## The idea
@@ -63,24 +65,43 @@ In the Virtual Farm, the **My Farm** tab is a photo diary kept **on the device**
 No backend, no account, nothing leaves the phone. This proves the whole loop and
 is genuinely usable by a single farmer today.
 
-## Phase 2 — a shared, consented photo commons
+## Phase 2 — a shared, consented photo commons (shipped)
 
-Promote the diary onto the platform rails (this is where the responsibility, and
-the value, grows):
+The diary can now be **shared to the CamboVerse commons**, on the platform rails:
 
-- **Plot** — a registered field: name, **province / district**, planting date,
-  rice variety. Living-farm pins appear on the province map (see the province
-  teleport feature).
-- **Asset rail + R2 + D1** — each photo becomes an asset with **provenance**
-  (contributor, plot, timestamp, coarse geo) and a **CC-BY** licence, exactly
-  as the existing `Credits` panel expects. Store the image in R2, metadata in
-  D1, behind the certified-partner / farmer write auth (`env.PARTNER_KEYS`).
-- **Consent & privacy — required.** Photos may show people and homes. Get
-  explicit consent; **never publish exact home coordinates** (snap to
-  commune/village); **moderate before public display**. This is the biggest new
-  duty and must be designed in from the first shared upload.
-- **Trust.** Use photo timestamp + geotag to bind a check-in to its plot and
-  time; a light review deters spam.
+- **Plot** — a registered field: name, **province** (district to come), planting
+  date, rice variety. `POST /v1/farm/plots` (farmer identity token + explicit
+  consent). Stored in D1; the location is stored **coarse** (0.05° ≈ village
+  level) — never the exact field.
+- **Check-ins** — `POST /v1/farm/plots/:id/checkins` shares a stage-tagged,
+  downscaled photo with **per-photo consent**. Photos are **CC-BY**. (Phase 1
+  photos live in `localStorage`; shared photos are stored on the rail — today as
+  a bounded data URL in D1, with **R2 object storage the production target**.)
+- **Moderation — required, and enforced.** Every check-in is stored **pending**
+  and is **not shown publicly** until a **certified partner** approves it via
+  `POST /v1/farm/checkins/:id/moderate` (guarded by `env.PARTNER_KEYS`). This is
+  the guardrail for real photos of real places.
+- **Browse** — `GET /v1/farm/plots[?province=]` lists only farms with approved
+  check-ins; `GET /v1/farm/plots/:id` returns the season (the owner, by token,
+  also sees their own pending ones). The Farm's **🌏 Community** tab renders
+  this — pick a farm, scrub its season, and the 3D paddy grows to match.
+
+**Remaining next step:** put these living-farm pins on the **province map** (the
+province teleport already exists), so a visitor discovers real farms
+geographically. `GET /v1/farm/plots?province=` already returns coarse geo per
+plot for exactly this.
+
+Client code: `src/lib/farmShare.ts`; rails: the `/v1/farm/*` handlers in
+`src/worker/rails.ts` (`farm_plots`, `farm_checkins`).
+
+### Still to harden before a public launch
+
+- **Trust** — bind a check-in to its plot/time via photo EXIF timestamp + geotag;
+  rate-limit submissions.
+- **Storage** — move shared photos from D1 to **R2** with signed URLs.
+- **Moderation UX** — a reviewer queue/tool for the certified stewards.
+- **Takedown & privacy** — a way for a farmer (or a person in a photo) to
+  withdraw consent and remove a check-in.
 
 ## Phase 3 — richer experience
 

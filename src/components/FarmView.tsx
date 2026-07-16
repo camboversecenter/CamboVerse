@@ -5,6 +5,9 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Object3D, type InstancedMesh, type Group } from "three";
 import { FARM_STAGES, FARM_CREDENTIAL } from "../farm";
 import { claimCredential, getIdentity, earnedAchievements } from "../lib/identity";
+import { registerPlot, shareCheckin, listPlots, getPlot, type SharedPlot } from "../lib/farmShare";
+import { CAMBODIA_PROVINCES } from "../cambodia-provinces";
+import { prettyProvince } from "../spots";
 
 /**
  * The Virtual Farm — the Khmer rice year, two ways:
@@ -24,6 +27,7 @@ import { claimCredential, getIdentity, earnedAchievements } from "../lib/identit
  */
 const TAPS = 4; // action taps to complete a learn stage
 const DIARY_KEY = "camboverse.farm.diary.v1";
+const PLOT_KEY = "camboverse.farm.plot.v1"; // the shared plot id, once created
 
 interface CheckIn {
   id: string;
@@ -32,9 +36,10 @@ interface CheckIn {
   growth: number;
   photo: string; // downscaled data URL
   note?: string;
+  shared?: boolean;
 }
 
-type Mode = "learn" | "diary";
+type Mode = "learn" | "diary" | "community";
 
 export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
@@ -55,13 +60,30 @@ export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
   const [adding, setAdding] = useState<string | null>(null); // pending photo data URL
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Sharing to the commons (Phase 2).
+  const [plotId, setPlotId] = useState<string | null>(() => {
+    try { return localStorage.getItem(PLOT_KEY); } catch { return null; }
+  });
+  const [sharing, setSharing] = useState(false); // share modal open
+  const [shareBusy, setShareBusy] = useState(false);
+
+  // Community — public shared farms.
+  const [communityPlot, setCommunityPlot] = useState<SharedPlot | null>(null);
+  const [communitySel, setCommunitySel] = useState(0);
+
   const stage = FARM_STAGES[index];
   const allDone = done.size === FARM_STAGES.length;
   const stageDone = done.has(stage.id);
 
   // Growth that drives the 3D paddy depends on the mode.
   const selCheck = checks[Math.min(sel, checks.length - 1)];
-  const growth = mode === "learn" ? stage.growth : (selCheck?.growth ?? -1);
+  const communityCheck = communityPlot?.checkins?.[communitySel];
+  const growth =
+    mode === "learn"
+      ? stage.growth
+      : mode === "community"
+        ? (communityCheck?.growth ?? -1)
+        : (selCheck?.growth ?? -1);
 
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
@@ -139,6 +161,43 @@ export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
     saveChecks(nextChecks);
   };
 
+  // Share this season to the commons: register a plot (once), then push each
+  // not-yet-shared check-in. Everything goes up pending, for moderation.
+  const shareSeason = async (name: string, province: string, variety: string, consentOwner: string) => {
+    setShareBusy(true);
+    try {
+      let id = plotId;
+      if (!id) {
+        const res = await registerPlot({ name, province, variety: variety || undefined, consentOwner });
+        if (!res) return;
+        id = res.id;
+        setPlotId(id);
+        try { localStorage.setItem(PLOT_KEY, id); } catch { /* ignore */ }
+      }
+      const updated: CheckIn[] = [];
+      for (const c of checks) {
+        if (c.shared) { updated.push(c); continue; }
+        const ok = await shareCheckin(id, {
+          stageId: c.stageId, growth: c.growth, note: c.note, photo: c.photo, takenOn: c.date,
+        });
+        updated.push(ok ? { ...c, shared: true } : c);
+      }
+      setChecks(updated);
+      saveChecks(updated);
+      setSharing(false);
+    } finally {
+      setShareBusy(false);
+    }
+  };
+
+  const openCommunityPlot = async (id: string) => {
+    const pl = await getPlot(id);
+    if (pl) {
+      setCommunityPlot(pl);
+      setCommunitySel(Math.max(0, (pl.checkins?.length ?? 1) - 1));
+    }
+  };
+
   return (
     <div className="farm">
       <Canvas dpr={[1, 2]} camera={{ position: [0, 3.1, 6.6], fov: 45 }} gl={{ antialias: true }} shadows>
@@ -169,10 +228,16 @@ export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
 
       <div className="farm-modes">
         <button className={mode === "learn" ? "farm-seg on" : "farm-seg"} onClick={() => setMode("learn")}>
-          📖 Learn the cycle
+          📖 Learn
         </button>
         <button className={mode === "diary" ? "farm-seg on" : "farm-seg"} onClick={() => setMode("diary")}>
           🌱 My Farm{checks.length ? ` · ${checks.length}` : ""}
+        </button>
+        <button
+          className={mode === "community" ? "farm-seg on" : "farm-seg"}
+          onClick={() => { setMode("community"); setCommunityPlot(null); }}
+        >
+          🌏 Community
         </button>
       </div>
 
@@ -257,13 +322,24 @@ export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
             </div>
           )}
         </>
-      ) : (
+      ) : mode === "diary" ? (
         <DiaryPanel
           checks={checks}
           sel={Math.min(sel, checks.length - 1)}
           onScrub={setSel}
           onAdd={() => fileRef.current?.click()}
           onRemove={removeCheck}
+          shared={!!plotId}
+          unsharedCount={checks.filter((c) => !c.shared).length}
+          onShare={() => setSharing(true)}
+        />
+      ) : (
+        <CommunityPanel
+          plot={communityPlot}
+          sel={communitySel}
+          onOpen={openCommunityPlot}
+          onScrub={setCommunitySel}
+          onClose={() => setCommunityPlot(null)}
         />
       )}
 
@@ -278,6 +354,9 @@ export function FarmView({ onBackToMap }: { onBackToMap: () => void }) {
       />
 
       {adding && <AddCheckModal photo={adding} onSave={saveCheck} onCancel={() => setAdding(null)} />}
+      {sharing && (
+        <ShareModal busy={shareBusy} alreadyPlot={!!plotId} onShare={shareSeason} onCancel={() => setSharing(false)} />
+      )}
     </div>
   );
 }
@@ -290,12 +369,18 @@ function DiaryPanel({
   onScrub,
   onAdd,
   onRemove,
+  shared,
+  unsharedCount,
+  onShare,
 }: {
   checks: CheckIn[];
   sel: number;
   onScrub: (i: number) => void;
   onAdd: () => void;
   onRemove: (id: string) => void;
+  shared: boolean;
+  unsharedCount: number;
+  onShare: () => void;
 }) {
   if (checks.length === 0) {
     return (
@@ -347,9 +432,210 @@ function DiaryPanel({
         </div>
       )}
 
-      <button className="farm-add" onClick={onAdd}>
-        📷 Add a photo
-      </button>
+      <div className="farm-diary-actions">
+        <button className="farm-add" onClick={onAdd}>
+          📷 Add a photo
+        </button>
+        <button className="farm-share" onClick={onShare}>
+          {shared ? (unsharedCount ? `🌏 Share ${unsharedCount} new` : "🌏 Shared ✓") : "🌏 Share this season"}
+        </button>
+      </div>
+      <p className="farm-diary-note">
+        Sharing sends your photos to the CamboVerse commons (CC-BY) — held for review before they appear.
+        See docs/LIVING_FARM.md.
+      </p>
+    </div>
+  );
+}
+
+/* ---------- Share to the commons ---------- */
+
+function ShareModal({
+  busy,
+  alreadyPlot,
+  onShare,
+  onCancel,
+}: {
+  busy: boolean;
+  alreadyPlot: boolean;
+  onShare: (name: string, province: string, variety: string, consentOwner: string) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [province, setProvince] = useState(CAMBODIA_PROVINCES[0].name);
+  const [variety, setVariety] = useState("");
+  const [owner, setOwner] = useState("");
+  const [consent, setConsent] = useState(false);
+  const canShare = consent && (alreadyPlot || name.trim().length > 0);
+  return (
+    <div className="farm-modal" onClick={onCancel}>
+      <div className="farm-modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="farm-modal-top">
+          <span className="farm-modal-title">🌏 Share to CamboVerse</span>
+          <button className="cls-close" onClick={onCancel} aria-label="Close">
+            ✕
+          </button>
+        </div>
+        {alreadyPlot ? (
+          <p className="farm-modal-q">Share your new photos to your farm. They’re held for review first.</p>
+        ) : (
+          <>
+            <p className="farm-modal-q">Tell us about your farm. Only a coarse (village-level) location is ever stored.</p>
+            <input
+              className="farm-modal-note"
+              placeholder="Farm / plot name — e.g. Sok family paddy"
+              value={name}
+              maxLength={60}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <select className="farm-modal-note" value={province} onChange={(e) => setProvince(e.target.value)}>
+              {CAMBODIA_PROVINCES.map((p) => (
+                <option key={p.pcode} value={p.name}>
+                  {prettyProvince(p.name)}
+                </option>
+              ))}
+            </select>
+            <input
+              className="farm-modal-note"
+              placeholder="Rice variety (optional) — e.g. Phka Rumduol"
+              value={variety}
+              maxLength={40}
+              onChange={(e) => setVariety(e.target.value)}
+            />
+            <input
+              className="farm-modal-note"
+              placeholder="Your name to credit (optional)"
+              value={owner}
+              maxLength={40}
+              onChange={(e) => setOwner(e.target.value)}
+            />
+          </>
+        )}
+        <label className="farm-consent">
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+          <span>
+            I took these photos and agree to share them as an open (CC-BY) contribution to the CamboVerse
+            heritage commons.
+          </span>
+        </label>
+        <button className="farm-modal-save" disabled={!canShare || busy} onClick={() => onShare(name.trim(), province, variety.trim(), owner.trim())}>
+          {busy ? "Sharing…" : "Share to the commons"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Community: browse shared farms ---------- */
+
+function CommunityPanel({
+  plot,
+  sel,
+  onOpen,
+  onScrub,
+  onClose,
+}: {
+  plot: SharedPlot | null;
+  sel: number;
+  onOpen: (id: string) => void;
+  onScrub: (i: number) => void;
+  onClose: () => void;
+}) {
+  const [province, setProvince] = useState("");
+  const [plots, setPlots] = useState<SharedPlot[] | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    setPlots(null);
+    listPlots(province || undefined).then((ps) => live && setPlots(ps));
+    return () => {
+      live = false;
+    };
+  }, [province]);
+
+  if (plot) {
+    const c = plot.checkins?.[sel];
+    const st = c ? FARM_STAGES.find((s) => s.id === c.stageId) : undefined;
+    return (
+      <div className="farm-diary">
+        <div className="farm-diary-top">
+          {c?.photo ? (
+            <img className="farm-photo" src={c.photo} alt={`${plot.name} on ${c.takenOn}`} />
+          ) : (
+            <div className="farm-photo farm-photo-empty">No photos yet</div>
+          )}
+          <div className="farm-diary-meta">
+            <div className="farm-diary-date">
+              {st?.emoji} {plot.name}
+            </div>
+            <div className="farm-community-where">
+              {prettyProvince(plot.province)}
+              {plot.variety ? ` · ${plot.variety}` : ""}
+            </div>
+            {c && (
+              <div className="farm-diary-stage" style={{ color: st?.color }}>
+                <span className="khmer">{st?.khmer}</span> · {st?.english} · {c.takenOn}
+              </div>
+            )}
+            {c?.note && <div className="farm-diary-noteline">“{c.note}”</div>}
+            <button className="farm-remove" onClick={onClose}>
+              ← All farms
+            </button>
+          </div>
+        </div>
+        {(plot.checkins?.length ?? 0) > 1 && (
+          <div className="farm-scrub">
+            <span className="farm-scrub-cap">
+              {sel + 1} / {plot.checkins!.length}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={plot.checkins!.length - 1}
+              value={sel}
+              onChange={(e) => onScrub(Number(e.target.value))}
+              aria-label="Scrub this farm's season"
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="farm-diary">
+      <div className="farm-community-head">
+        <b>Living farms</b>
+        <select className="farm-community-filter" value={province} onChange={(e) => setProvince(e.target.value)}>
+          <option value="">All provinces</option>
+          {CAMBODIA_PROVINCES.map((p) => (
+            <option key={p.pcode} value={p.name}>
+              {prettyProvince(p.name)}
+            </option>
+          ))}
+        </select>
+      </div>
+      {plots === null ? (
+        <p className="farm-diary-note">Loading…</p>
+      ) : plots.length === 0 ? (
+        <p className="farm-diary-note">
+          No shared farms yet{province ? ` in ${prettyProvince(province)}` : ""}. Be the first — open{" "}
+          <b>My Farm</b> and share your season.
+        </p>
+      ) : (
+        <ul className="farm-community-list">
+          {plots.map((p) => (
+            <li key={p.id}>
+              <button className="farm-community-card" onClick={() => onOpen(p.id)}>
+                <span className="farm-community-name">{p.name}</span>
+                <span className="farm-community-sub">
+                  {prettyProvince(p.province)} · {p.approvedCheckins} photo{p.approvedCheckins === 1 ? "" : "s"}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
