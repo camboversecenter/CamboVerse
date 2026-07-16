@@ -50,6 +50,16 @@ function toStamp(c: Credential): Stamp {
       mood: "#4c8a3f",
     };
   }
+  if (parts[0] === "kun-khmer") {
+    return {
+      key: c.id,
+      title: "Kun Khmer training",
+      khmer: "កុនខ្មែរ",
+      where: "the Kun Khmer Dojo",
+      when,
+      mood: "#e0562f",
+    };
+  }
   // Any other achievement (e.g. an ecosystem app's) renders generically.
   return { key: c.id, title: c.achievement, where: "", when, mood: "#c8912e" };
 }
