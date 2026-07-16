@@ -72,6 +72,16 @@ function toStamp(c: Credential): Stamp {
       mood: g?.color ?? "#e0a92f",
     };
   }
+  if (parts[0] === "farm") {
+    return {
+      key: c.id,
+      title: "Rice cycle — completed",
+      khmer: "វដ្ដដាំស្រូវ",
+      where: "the Virtual Farm",
+      when,
+      mood: "#5aa03a",
+    };
+  }
   // Any other achievement (e.g. an ecosystem app's) renders generically.
   return { key: c.id, title: c.achievement, where: "", when, mood: "#c8912e" };
 }

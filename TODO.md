@@ -28,6 +28,7 @@ Cambodia online for the world, with your name on it.
 | 🔤 Teach the Khmer script | [Grow the Alphabet Classroom](#grow-the-khmer-alphabet-classroom) |
 | 🥊 Teach Kun Khmer | [Grow the Kun Khmer Dojo](#grow-the-kun-khmer-dojo) |
 | 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
+| 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -275,6 +276,39 @@ Heritage Passport credential. Cambodia has many more — help add them:
 
 Accuracy and respect matter — these are living traditions. See `src/games.ts`,
 `src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
+
+## Grow the Virtual Farm
+
+The **🌾 Virtual Farm** is a guided walk through the Khmer rice year (វដ្ដដាំស្រូវ):
+the paddy in the scene changes with each step — ploughing behind the buffalo,
+the seedbed, transplanting, tending the water, harvest, threshing & winnowing,
+and the granary — each with its traditional tool and a cultural note, earning a
+Heritage Passport credential for the whole cycle. It's a **rice-first MVP** with
+lots of room to grow (see `src/farm.ts`, `src/components/FarmView.tsx`):
+
+- **🎮 Make each step interactive.** Right now each stage is completed by a
+  simple tap action. Turn them into real mini-games in the 3D scene — steer the
+  buffalo down a furrow, plant seedlings into a grid, open/close dikes to hold
+  the water level, time the sickle at harvest, winnow with the breeze.
+- **🌧️ Seasons & a light simulation.** Layer the wet/dry monsoon cycle and a
+  simple plant → grow → harvest loop on top of the same stages, tied to the
+  Khmer lunar months — **without any in-game currency** (the core stays
+  money-neutral; progress is knowledge, not coins).
+- **👑 The Royal Ploughing Ceremony** (ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល). Author the
+  royal oxen choosing from the seven trays (rice, corn, beans, sesame, grass,
+  water, wine) to augur the year — a vignette that opens the farming season.
+- **🌴 Companion crops & livestock** *(next scope)*. Add the sugar palm (ត្នោត)
+  and its juice, lotus ponds, paddy fish, and chickens/pigs/ducks around the
+  stilt house — a fuller village farm. Each as its own small journey.
+- **🐃 Richer models & audio.** Improve the buffalo, farmers, tools, and house;
+  add field-work songs and ambient sound (open-licensed / CC0 only).
+- **📜 Accuracy & provenance** *(needs farmers & NUM)*. Verify the steps, tool
+  names, rice varieties (e.g. Phka Rumduol jasmine rice), and regional practices
+  with Cambodian farmers and agronomists; cite open sources. Mark anything
+  uncertain as a community draft.
+- **🌏 Translate** the stage names, tools, and facts.
+
+Rice is the heart of Cambodian life — accuracy and respect matter.
 
 ## Grow the province maps
 
