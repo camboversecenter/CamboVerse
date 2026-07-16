@@ -72,33 +72,15 @@ export function MapView({
         </p>
       </div>
 
-      <button className="passport-btn" onClick={() => setPassportOpen(true)}>
-        🛂 Passport
-      </button>
-
-      <button className="tools-btn" onClick={onOpenTools}>
-        🏺 Khmer Life
-      </button>
-
-      <button className="alphabet-btn" onClick={onOpenClassroom}>
-        🔤 Khmer Alphabet
-      </button>
-
-      <button className="kun-btn" onClick={onOpenKunKhmer}>
-        🥊 Kun Khmer
-      </button>
-
-      <button className="games-btn" onClick={onOpenGames}>
-        🎪 Khmer Games
-      </button>
-
-      <button className="farm-btn" onClick={onOpenFarm}>
-        🌾 Virtual Farm
-      </button>
-
-      <button className="med-btn" onClick={onOpenMeditation}>
-        🧘 Meditation
-      </button>
+      <nav className="map-nav" aria-label="CamboVerse features">
+        <button className="tools-btn" onClick={onOpenTools}>🏺 Khmer Life</button>
+        <button className="alphabet-btn" onClick={onOpenClassroom}>🔤 Khmer Alphabet</button>
+        <button className="kun-btn" onClick={onOpenKunKhmer}>🥊 Kun Khmer</button>
+        <button className="games-btn" onClick={onOpenGames}>🎪 Khmer Games</button>
+        <button className="farm-btn" onClick={onOpenFarm}>🌾 Virtual Farm</button>
+        <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
+        <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
+      </nav>
 
       {passportOpen && <Passport onClose={() => setPassportOpen(false)} />}
     </>
