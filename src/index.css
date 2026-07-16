@@ -2019,6 +2019,129 @@ body,
 }
 .farm-btn:hover { background: color-mix(in srgb, #5aa03a 30%, rgba(20, 16, 10, 0.78)); }
 
+.med-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 234px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #7fa0b8 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.med-btn:hover { background: color-mix(in srgb, #7fa0b8 30%, rgba(20, 16, 10, 0.78)); }
+
+/* ---- Virtual Meditation ---- */
+.med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }
+.med-mute {
+  position: fixed; z-index: 20;
+  top: calc(env(safe-area-inset-top, 0) + 54px);
+  right: calc(env(safe-area-inset-right, 0) + 14px);
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.35); color: #fff; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
+.med-setup {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 16px);
+  transform: translateX(-50%); z-index: 15;
+  width: min(600px, calc(100vw - 20px)); max-height: 62vh; overflow: auto;
+  background: rgba(12, 16, 22, 0.82); border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 18px; padding: 16px; color: #eef2f6;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  text-align: center;
+}
+.med-invite { margin-bottom: 12px; }
+.med-inv-title { font: 800 1.05rem system-ui, sans-serif; }
+.med-inv-title .khmer { font-weight: 500; }
+.med-invite p { font-size: 0.88rem; line-height: 1.55; margin: 6px 0 0; color: #cdd6df; }
+.med-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+.med-chip {
+  padding: 7px 12px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 999px;
+  background: rgba(255,255,255,0.05); color: #eef2f6; font: 700 0.8rem system-ui, sans-serif; cursor: pointer;
+}
+.med-chip .khmer { font-weight: 500; }
+.med-chip.on { color: #10161f; }
+.med-opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.med-opt { display: flex; align-items: center; gap: 10px; justify-content: space-between; flex-wrap: wrap; }
+.med-opt-label { font-size: 0.78rem; color: #aeb9c4; min-width: 84px; text-align: left; }
+.med-seg-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.med-seg {
+  padding: 7px 12px; border: 1px solid rgba(255,255,255,0.22); border-radius: 999px;
+  background: rgba(255,255,255,0.05); color: #eef2f6; font: 600 0.78rem system-ui, sans-serif; cursor: pointer;
+}
+.med-seg.on { background: rgba(255,255,255,0.9); color: #12161d; font-weight: 800; }
+.med-begin {
+  border: none; border-radius: 999px; padding: 13px 26px; color: #fff;
+  font: 800 0.95rem system-ui, sans-serif; cursor: pointer;
+}
+.med-note { font-size: 0.78rem; color: #aeb9c4; margin: 10px 0 0; }
+
+/* Breathing guide */
+.med-guide {
+  position: fixed; left: 0; right: 0; top: 42%; transform: translateY(-50%);
+  z-index: 12; display: grid; place-items: center; pointer-events: none;
+}
+.med-ring {
+  width: 150px; height: 150px; border-radius: 50%;
+  border: 3px solid #7fa0b8; background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 70%);
+  transition: transform 0.12s linear;
+}
+.med-phase {
+  position: absolute; font: 700 1.05rem system-ui, sans-serif; color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5); letter-spacing: 0.04em;
+}
+.med-active-bar {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 16px);
+  transform: translateX(-50%); z-index: 15;
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(12, 16, 22, 0.7); border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px; padding: 8px 14px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.med-clock { font: 800 1.05rem system-ui, sans-serif; color: #eef2f6; min-width: 46px; }
+.med-end {
+  border: 1px solid rgba(255,255,255,0.3); border-radius: 999px;
+  background: transparent; color: #eef2f6; font: 700 0.8rem system-ui, sans-serif; padding: 7px 14px; cursor: pointer;
+}
+
+/* Sutra card */
+.med-sutra {
+  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0) + 108px);
+  transform: translateX(-50%); z-index: 14;
+  width: min(560px, calc(100vw - 24px)); text-align: center;
+  background: rgba(12, 16, 22, 0.66); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px; padding: 12px 16px; color: #eef2f6;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.med-sutra-title { font-size: 0.74rem; color: #c8912e; text-transform: uppercase; letter-spacing: 0.06em; }
+.med-sutra-pali { font: italic 600 1rem system-ui, sans-serif; margin: 6px 0 3px; }
+.med-sutra-khmer { font-size: 0.95rem; }
+.med-sutra-en { font-size: 0.85rem; color: #cdd6df; margin-top: 3px; }
+.med-sutra-note { font-size: 0.68rem; color: #8b97a3; margin-top: 8px; }
+
+.med-done {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 16px);
+  transform: translateX(-50%); z-index: 15;
+  width: min(460px, calc(100vw - 24px)); text-align: center;
+  background: rgba(12, 16, 22, 0.85); border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 18px; padding: 20px; color: #eef2f6;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.med-done-emoji { font-size: 2.2rem; }
+.med-done h2 { margin: 6px 0; }
+.med-done p { font-size: 0.9rem; color: #cdd6df; margin: 0 0 6px; }
+.med-done-actions { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .med-ring { transition: none; }
+}
+
 /* ---- Virtual Farm ---- */
 .farm { position: fixed; inset: 0; z-index: 5; background: #a9d0e8; }
 

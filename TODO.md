@@ -29,6 +29,7 @@ Cambodia online for the world, with your name on it.
 | 🥊 Teach Kun Khmer | [Grow the Kun Khmer Dojo](#grow-the-kun-khmer-dojo) |
 | 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
 | 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
+| 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -276,6 +277,43 @@ Heritage Passport credential. Cambodia has many more — help add them:
 
 Accuracy and respect matter — these are living traditions. See `src/games.ts`,
 `src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
+
+## Grow the Virtual Meditation
+
+The **🧘 Virtual Meditation** lets anyone in the world sit inside a serene Khmer
+sanctuary — forest, temple at dawn, mountain mist, riverside — with a generated
+ambient soundscape and a gentle breathing guide, in 3D or VR. The **practice is
+universal** (breath and presence, for any faith or none); the **setting** honours
+Cambodia's sacred landscapes. An optional chant layer offers traditional
+Theravada verses, shared as heritage. Ways to grow it (see `src/meditation.ts`,
+`src/components/MeditationView.tsx`, `src/lib/meditationSound.ts`):
+
+- **🎧 Real, consented soundscapes** *(highest value)*. The ambience is
+  synthesized today. Contribute **CC0 / CC-BY** field recordings — a Cardamom
+  dawn chorus, temple bells, monsoon rain, the Mekong at dusk — with provenance
+  and, where people are recorded, consent.
+- **🔔 Real chant, with consent** *(needs monastic partners)*. The chant tone is
+  synthesized on purpose — we don't put a recording of monks where a synth tone
+  belongs. Real Khmer Buddhist chanting must come from a **monastery that
+  chooses to share it** under an open licence, with clear attribution.
+- **📜 Verify the sutras** *(needs monks / Pali scholars)*. Check the verses in
+  `SUTRAS` — the Pali, the **Khmer-script rendering**, and the translations — and
+  add more widely-recited ones (Mangala Sutta, Karaniya Metta Sutta …). Keep
+  everything respectful and non-instructional.
+- **🏞️ More sanctuaries.** Add a `Sanctuary` (scene + soundscape + palette):
+  a bamboo grove, a lotus pond, a seashore (Kep/Koh Rong), a cave hermitage,
+  a rice field at dawn (reuse the Virtual Farm). Real captured **3DGS** heritage
+  sites can become meditation spaces too.
+- **🧭 Guided sessions.** Optional, open-licensed **written or spoken** guidance
+  (body scan, loving-kindness, walking meditation), in **多 languages** — always
+  skippable, never required.
+- **🌗 Living scenes.** Day/night and weather, birds that match the habitat,
+  slow "walk the temple" movement, haptics in VR.
+- **♿ Accessibility.** Honour reduced-motion (done), add captions for any audio,
+  and colour/contrast options.
+
+Respect first: this touches living religion. Frame as heritage and wellbeing,
+never instruction or conversion; keep the core money-neutral.
 
 ## Grow the Virtual Farm
 
