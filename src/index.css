@@ -2098,6 +2098,109 @@ body,
   padding: 11px 22px; background: #4c8a3f; color: #fff; font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
 }
 
+/* Farm mode toggle (Learn / My Farm) */
+.farm-modes {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 54px);
+  left: 0; right: 0;
+  z-index: 19;
+  display: flex; gap: 6px; justify-content: center;
+  padding: 0 12px;
+}
+.farm-seg {
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 999px;
+  background: rgba(20, 40, 24, 0.5);
+  color: #f2f0e4;
+  font: 600 12px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.farm-seg.on { background: #4c8a3f; border-color: #4c8a3f; font-weight: 800; }
+
+/* Learn stepper sits a little lower to clear the mode toggle. */
+.farm-steps { top: calc(env(safe-area-inset-top, 0) + 96px); }
+
+/* Living-Farm diary */
+.farm-diary {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%);
+  z-index: 15;
+  width: min(600px, calc(100vw - 20px));
+  max-height: 52vh; overflow: auto;
+  background: rgba(16, 26, 16, 0.92);
+  border: 1.5px solid var(--accent);
+  border-radius: 16px;
+  padding: 14px 16px;
+  color: #f2f0e4;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.farm-diary-empty { text-align: center; }
+.farm-diary-lead { font-size: 0.88rem; line-height: 1.5; margin: 0 0 12px; }
+.farm-diary-note { font-size: 0.74rem; color: #9db096; margin: 10px 0 0; }
+.farm-diary-top { display: flex; gap: 14px; }
+.farm-photo {
+  width: 42%; max-width: 220px; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+}
+.farm-diary-meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.farm-diary-date { font: 800 0.95rem system-ui, sans-serif; }
+.farm-diary-stage { font-size: 0.85rem; font-weight: 700; }
+.farm-diary-stage .khmer { font-weight: 500; }
+.farm-diary-noteline { font-size: 0.82rem; color: #c9d3bf; font-style: italic; }
+.farm-remove {
+  align-self: flex-start; margin-top: auto;
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 999px;
+  background: transparent; color: #b9c3ac; font-size: 0.72rem; padding: 3px 10px; cursor: pointer;
+}
+.farm-scrub { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
+.farm-scrub-cap { font-size: 0.72rem; color: #b9c3ac; white-space: nowrap; }
+.farm-scrub input[type="range"] { flex: 1; accent-color: var(--accent); }
+.farm-add {
+  margin-top: 12px; width: 100%;
+  border: none; border-radius: 999px;
+  padding: 11px 18px; background: var(--accent); color: #fff;
+  font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
+}
+
+/* Add-photo modal */
+.farm-modal {
+  position: fixed; inset: 0; z-index: 45;
+  display: grid; place-items: center; padding: 18px;
+  background: rgba(8, 16, 10, 0.8);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.farm-modal-card {
+  width: min(440px, 100%); max-height: 88vh; overflow: auto;
+  background: #16261a; border: 1.5px solid var(--accent);
+  border-radius: 18px; padding: 16px; color: #f2f0e4;
+}
+.farm-modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.farm-modal-title { font: 800 1rem system-ui, sans-serif; }
+.farm-modal-photo { width: 100%; max-height: 34vh; object-fit: cover; border-radius: 12px; }
+.farm-modal-q { font-size: 0.88rem; margin: 12px 0 8px; }
+.farm-modal-stages { display: flex; flex-wrap: wrap; gap: 6px; }
+.farm-chip {
+  padding: 7px 11px; border: 1.5px solid var(--line, #33372a); border-radius: 999px;
+  background: rgba(255,255,255,0.04); color: #f2f0e4;
+  font: 700 0.78rem system-ui, sans-serif; cursor: pointer;
+}
+.farm-chip.on { color: #10140b; }
+.farm-modal-note {
+  width: 100%; margin: 12px 0; padding: 10px 12px;
+  border: 1px solid var(--line, #33372a); border-radius: 10px;
+  background: rgba(255,255,255,0.05); color: #f2f0e4; font-size: 0.85rem;
+}
+.farm-modal-save {
+  width: 100%; border: none; border-radius: 999px;
+  padding: 12px 18px; background: var(--accent); color: #fff;
+  font: 800 0.9rem system-ui, sans-serif; cursor: pointer;
+}
+
 /* ---- Khmer Traditional Games ---- */
 .games { position: fixed; inset: 0; z-index: 5; background: #f0c33a; }
 

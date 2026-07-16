@@ -286,8 +286,16 @@ and the granary — each with its traditional tool and a cultural note, earning 
 Heritage Passport credential for the whole cycle. It's a **rice-first MVP** with
 lots of room to grow (see `src/farm.ts`, `src/components/FarmView.tsx`):
 
-- **🎮 Make each step interactive.** Right now each stage is completed by a
-  simple tap action. Turn them into real mini-games in the 3D scene — steer the
+- **🌱 The Living Farm** *(concept: [`docs/LIVING_FARM.md`](./docs/LIVING_FARM.md))*.
+  A farmer photographs their real paddy through the season and tags each photo's
+  stage; the virtual field **grows to match**, and anyone can scrub the season.
+  The **My Farm** tab ships this as an offline, on-device prototype — the next
+  step is Phase 2: promote it onto the rails (a registered plot, photos as
+  CC-BY assets in R2/D1 with **consent, coarse geo, and moderation**), and put
+  living-farm pins on the province map. Auto growth-detection from the photo is
+  a later bonus, not a dependency.
+- **🎮 Make each step interactive.** Right now each guided stage is completed by
+  a simple tap action. Turn them into real mini-games in the 3D scene — steer the
   buffalo down a furrow, plant seedlings into a grid, open/close dikes to hold
   the water level, time the sickle at harvest, winnow with the breeze.
 - **🌧️ Seasons & a light simulation.** Layer the wet/dry monsoon cycle and a
