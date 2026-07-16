@@ -368,13 +368,14 @@ map, showing every heritage site inside it and each site's **points of
 interest** in detail. This is the second map tier — there's room to make it
 much richer:
 
-- **🏙️ District (ADM2) boundaries** *(data ready to slot in)*. The province map
-  is built to be subdivided into districts. Add the ADM2 boundary GeoJSON the
-  same way provinces were done: extend `scripts/generate-provinces.mjs` (or add
-  `generate-districts.mjs`) to emit `src/cambodia-districts.ts` in the **same
-  map plane** (`projectLatLng`, north is −z), then draw and label them in
-  `src/components/ProvinceView.tsx`. Source must be an **open licence** (the
-  official `khm_admbnda_adm2` set is suitable) — credit it.
+- **🏙️ District (ADM2) & commune (ADM3) boundaries** *(shipped)*. The province
+  map is subdivided into its **197 districts** (`khm_admbnda_adm2`) and, on
+  drill-down, each district into its **communes** (`khm_admbnda_adm3`, ~1,600 —
+  generated **per province** under `src/communes/` and lazy-loaded a province at
+  a time). Tap a district, then a commune, to **filter to what's inside** — its
+  heritage sites and living farms. Generators: `scripts/generate-districts.mjs`,
+  `scripts/generate-communes.mjs`. Room to grow: **name labels/search**, Khmer
+  names per area, and **village (ADM4)** as a fifth tier.
 - **📍 Put more sites on the map.** Every province with “No heritage sites here
   yet” needs its first one. Add a `Spot` in `src/spots.ts` with real `lat`/`lng`
   (it appears on both the national and province maps automatically) — pagodas,
@@ -386,10 +387,8 @@ much richer:
   description, and its emblem/known-for (temples, pepper, silk…), shown on the
   province map. (The ADM1 names come from the boundary data; a couple read oddly
   and are prettified in `src/spots.ts` — extend that as needed.)
-- **🧭 District detail.** Once districts exist, let a visitor tap a district to
-  filter the sites within it — the third teleport tier.
-
-See `src/components/ProvinceView.tsx` and `src/cambodia-provinces.ts`.
+See `src/components/ProvinceView.tsx`, `src/cambodia-provinces.ts`, and
+`src/cambodia-districts.ts`.
 
 ## 4. Translate & localise
 

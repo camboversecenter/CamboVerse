@@ -28,7 +28,9 @@
     "gen:roneat": "node scripts/generate-roneat.mjs",
     "gen:skor": "node scripts/generate-skor.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
-    "gen:provinces": "node scripts/generate-provinces.mjs"
+    "gen:provinces": "node scripts/generate-provinces.mjs",
+    "gen:districts": "node scripts/generate-districts.mjs",
+    "gen:communes": "node scripts/generate-communes.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
