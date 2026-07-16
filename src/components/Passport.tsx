@@ -82,6 +82,16 @@ function toStamp(c: Credential): Stamp {
       mood: "#5aa03a",
     };
   }
+  if (parts[0] === "meditation") {
+    return {
+      key: c.id,
+      title: "A moment of calm",
+      khmer: "សមាធិ",
+      where: "Virtual Meditation",
+      when,
+      mood: "#7fa0b8",
+    };
+  }
   // Any other achievement (e.g. an ecosystem app's) renders generically.
   return { key: c.id, title: c.achievement, where: "", when, mood: "#c8912e" };
 }
