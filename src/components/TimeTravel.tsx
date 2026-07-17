@@ -46,16 +46,31 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
   }, [i, lang]);
   useEffect(() => () => stopSpeaking(), []);
 
+  const [translatedText, setTranslatedText] = useState("");
+
+  useEffect(() => {
+    if (lang === "en") {
+      setTranslatedText("");
+      return;
+    }
+    const ctrl = new AbortController();
+    setLoading(true);
+    askGuide({ spotId: spot.id, eraId: era.id, lang }, ctrl.signal).then((reply) => {
+      if (!ctrl.signal.aborted && reply?.text) {
+        setTranslatedText(reply.text.trim());
+      }
+      setLoading(false);
+    });
+    return () => ctrl.abort();
+  }, [spot.id, era.id, lang]);
+
   const narrate = async () => {
     if (speaking) {
       stopSpeaking();
       setSpeaking(false);
       return;
     }
-    setLoading(true);
-    const reply = await askGuide({ spotId: spot.id, eraId: era.id, lang });
-    const text = reply?.text?.trim() || [era.story, siteNote].filter(Boolean).join(" ");
-    setLoading(false);
+    const text = translatedText || [era.story, siteNote].filter(Boolean).join(" ");
     const bcp = LANGS.find((l) => l.code === lang)!.bcp;
     speak(text, bcp, { onStart: () => setSpeaking(true), onEnd: () => setSpeaking(false) });
   };
@@ -101,13 +116,33 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
         <h2>
           {era.name} <span className="khmer">{era.khmer}</span>
         </h2>
-        <p className="tt-blurb">{era.blurb}</p>
-        <p className="tt-story">{era.story}</p>
-        {siteNote && (
-          <p className="tt-site" style={{ borderColor: era.mood }}>
-            <b>At {spot.name}:</b> {siteNote}
-          </p>
+        
+        {lang !== "en" && translatedText ? (
+          <div className="tt-bilingual">
+            <p className="tt-story" style={{ color: era.mood }}>
+              {translatedText}
+            </p>
+            <hr style={{ opacity: 0.2, margin: "16px 0", borderColor: era.mood }} />
+            <p className="tt-blurb">{era.blurb}</p>
+            <p className="tt-story">{era.story}</p>
+            {siteNote && (
+              <p className="tt-site" style={{ borderColor: era.mood }}>
+                <b>At {spot.name}:</b> {siteNote}
+              </p>
+            )}
+          </div>
+        ) : (
+          <>
+            <p className="tt-blurb">{era.blurb}</p>
+            <p className="tt-story">{era.story}</p>
+            {siteNote && (
+              <p className="tt-site" style={{ borderColor: era.mood }}>
+                <b>At {spot.name}:</b> {siteNote}
+              </p>
+            )}
+          </>
         )}
+
         <ul className="tt-highlights">
           {era.highlights.map((h) => (
             <li key={h} style={{ borderColor: era.mood }}>

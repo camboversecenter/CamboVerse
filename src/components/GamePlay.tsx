@@ -51,6 +51,8 @@ export function GamePlay({
             <AimGame color={game.color} onDone={finish} />
           ) : game.play === "race" ? (
             <RaceGame color={game.color} onDone={finish} />
+          ) : game.play === "catch" ? (
+            <CatchGame color={game.color} onDone={finish} />
           ) : (
             <TugGame color={game.color} onDone={finish} />
           )
@@ -290,6 +292,95 @@ function TugGame({ color, onDone }: { color: string; onDone: (win: boolean) => v
       </div>
       <button className="gp-do gp-mash" style={{ background: color }} onClick={pull}>
         Pull! 💪
+      </button>
+    </div>
+  );
+}
+
+/* ---------- Scarf Tossing (ចោលឈូង) — catch ---------- */
+const CATCH_ROUNDS = 3;
+const CATCH_ZONE = 18; // Size of the valid catch zone (%)
+
+function CatchGame({ color, onDone }: { color: string; onDone: (win: boolean) => void }) {
+  const [pos, setPos] = useState(0); // 0 = thrown from far away, 100 = reaches you
+  const [catches, setCatches] = useState(0);
+  const [flash, setFlash] = useState<"" | "catch" | "miss" | "drop">("");
+  const paused = useRef(false);
+  const raf = useRef<number | undefined>(undefined);
+  const speed = useRef(1.2);
+
+  // The chhoung flies towards you (0 to 100).
+  useEffect(() => {
+    let last = 0;
+    const tick = (t: number) => {
+      raf.current = requestAnimationFrame(tick);
+      if (!last) last = t;
+      const dt = Math.min(48, t - last);
+      last = t;
+      if (paused.current) return;
+      
+      setPos((p) => {
+        const n = p + speed.current * (dt / 16);
+        if (n >= 100) {
+          // You didn't tap in time, it dropped!
+          paused.current = true;
+          setFlash("drop");
+          window.setTimeout(() => onDone(false), 1000);
+          return 100;
+        }
+        return n;
+      });
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
+  }, [onDone]);
+
+  const attemptCatch = () => {
+    if (paused.current) return;
+    paused.current = true;
+    // Catch zone is between 75 and 95
+    const isCatch = pos >= 85 - CATCH_ZONE && pos <= 85 + CATCH_ZONE;
+    
+    if (isCatch) {
+      setFlash("catch");
+      const nCatches = catches + 1;
+      setCatches(nCatches);
+      window.setTimeout(() => {
+        setFlash("");
+        if (nCatches >= CATCH_ROUNDS) {
+          onDone(true);
+        } else {
+          // Next round, reset and make it slightly faster
+          setPos(0);
+          speed.current += 0.3;
+          paused.current = false;
+        }
+      }, 700);
+    } else {
+      setFlash("miss");
+      window.setTimeout(() => onDone(false), 1000);
+    }
+  };
+
+  return (
+    <div className="gp-play">
+      <p className="gp-instr">The chhoung is flying towards you! Tap <b>Catch!</b> when it enters the target zone. Catch {CATCH_ROUNDS} to win.</p>
+      
+      <div className="gp-track" style={{ height: "40px", position: "relative", background: "#e8e2d2", borderRadius: "20px", margin: "10px 0" }}>
+        {/* The safe catching zone */}
+        <span
+          style={{ position: "absolute", left: `${85 - CATCH_ZONE}%`, width: `${CATCH_ZONE * 2}%`, height: "100%", background: color, opacity: 0.3, borderRadius: "20px" }}
+        />
+        {/* The flying chhoung */}
+        <span style={{ position: "absolute", left: `calc(${pos}% - 12px)`, top: "8px", fontSize: "20px", transition: "none" }}>☄️</span>
+      </div>
+      
+      <div className={`gp-flash ${flash}`}>{flash === "catch" ? "CAUGHT IT!" : flash === "miss" ? "Too early!" : flash === "drop" ? "Dropped!" : ""}</div>
+      <div className="gp-meta">
+        <span>Catches: {catches} / {CATCH_ROUNDS}</span>
+      </div>
+      <button className="gp-do" style={{ background: color, padding: "12px 24px", fontSize: "18px", borderRadius: "30px", color: "white", border: "none", fontWeight: "bold", width: "100%" }} onClick={attemptCatch} disabled={flash !== ""}>
+        Catch! 🤲
       </button>
     </div>
   );

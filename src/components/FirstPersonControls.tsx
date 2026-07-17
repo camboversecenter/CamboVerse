@@ -31,6 +31,7 @@ export function FirstPersonControls({
   const DOWN = useRef(new Vector3(0, -1, 0));
   const EYE = 1.25;
   const SPEED = 2.4;
+  const keys = useRef({ w: false, a: false, s: false, d: false, shift: false });
 
   useEffect(() => {
     camera.rotation.order = "YXZ";
@@ -38,6 +39,29 @@ export function FirstPersonControls({
     yaw.current = 0;
     pitch.current = -0.04;
   }, [camera, start]);
+
+  useEffect(() => {
+    const onDown = (e: KeyboardEvent) => {
+      if (e.code === "KeyW" || e.code === "ArrowUp") keys.current.w = true;
+      if (e.code === "KeyA" || e.code === "ArrowLeft") keys.current.a = true;
+      if (e.code === "KeyS" || e.code === "ArrowDown") keys.current.s = true;
+      if (e.code === "KeyD" || e.code === "ArrowRight") keys.current.d = true;
+      if (e.key === "Shift") keys.current.shift = true;
+    };
+    const onUp = (e: KeyboardEvent) => {
+      if (e.code === "KeyW" || e.code === "ArrowUp") keys.current.w = false;
+      if (e.code === "KeyA" || e.code === "ArrowLeft") keys.current.a = false;
+      if (e.code === "KeyS" || e.code === "ArrowDown") keys.current.s = false;
+      if (e.code === "KeyD" || e.code === "ArrowRight") keys.current.d = false;
+      if (e.key === "Shift") keys.current.shift = false;
+    };
+    window.addEventListener("keydown", onDown);
+    window.addEventListener("keyup", onUp);
+    return () => {
+      window.removeEventListener("keydown", onDown);
+      window.removeEventListener("keyup", onUp);
+    };
+  }, []);
 
   useFrame((_, dt) => {
     const inp = input.current;
@@ -50,8 +74,15 @@ export function FirstPersonControls({
     camera.rotation.set(pitch.current, yaw.current, 0, "YXZ");
 
     // Move (horizontal, relative to look direction)
-    const mx = inp.move.x;
-    const my = inp.move.y;
+    let mx = inp.move.x;
+    let my = inp.move.y;
+    if (keys.current.w) my -= 1;
+    if (keys.current.s) my += 1;
+    if (keys.current.a) mx -= 1;
+    if (keys.current.d) mx += 1;
+    mx = MathUtils.clamp(mx, -1, 1);
+    my = MathUtils.clamp(my, -1, 1);
+
     const mag = Math.min(1, Math.hypot(mx, my));
     if (mag > 0.02) {
       fwd.current.set(-Math.sin(yaw.current), 0, -Math.cos(yaw.current));
@@ -59,7 +90,8 @@ export function FirstPersonControls({
       dir.current.set(0, 0, 0).addScaledVector(fwd.current, -my).addScaledVector(rgt.current, mx);
       if (dir.current.lengthSq() > 0) {
         dir.current.normalize();
-        const step = SPEED * dt * mag;
+        const activeSpeed = keys.current.shift ? SPEED * 2.5 : SPEED;
+        const step = activeSpeed * dt * mag;
         ray.current.set(camera.position, dir.current);
         ray.current.far = step + 0.4;
         const wall = ray.current

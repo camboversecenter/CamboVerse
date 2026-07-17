@@ -52,7 +52,8 @@ POIs** — these are the highest‑impact tasks right now.
 | **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
 | **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
 | **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
-| _New sites_ | — | — | — | **propose one!** (e.g. Sambor Prei Kuk, Koh Ker, Silver Pagoda, Phnom Bakheng) |
+| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (3) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
+| _New sites_ | — | — | — | **propose one!** (e.g. Koh Ker, Silver Pagoda, Phnom Bakheng) |
 
 Each site above has a **site-specific field guide** (linked in the table) with
 what to shoot, when to go, access/consent notes, and hazards. Wat Phnom is in

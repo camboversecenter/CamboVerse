@@ -7,7 +7,7 @@
  * This is a starting set — see TODO.md ("Grow the Khmer Traditional Games") for
  * the many more the community can add.
  */
-export type GamePlay = "aim" | "race" | "tug";
+export type GamePlay = "aim" | "race" | "tug" | "catch";
 
 export interface KhmerGame {
   id: string;
@@ -67,6 +67,18 @@ export const KHMER_GAMES: KhmerGame[] = [
     desc: "More than a game — Teanh Prot is an age-old ritual played to mark the turning of the seasons, its outcome once believed to help call the coming rains.",
     play: "tug",
     color: "#4c8a3f",
+  },
+  {
+    id: "chol-chhoung",
+    name: "Chol Chhoung",
+    khmer: "ចោលឈូង",
+    english: "Scarf Tossing",
+    players: "Two facing teams (often boys vs girls)",
+    occasion: "Khmer New Year",
+    how: "A rolled-up krama (the chhoung) is tossed back and forth between two lines of players. If you drop it, your team pays a penalty—usually having to sing a song or dance! Tap exactly when the chhoung is in the catch zone to grab it.",
+    desc: "A joyous courtship game played during Khmer New Year. It brings young people together with singing, dancing, and teasing as the chhoung flies between the teams.",
+    play: "catch",
+    color: "#d9662f",
   },
 ];
 

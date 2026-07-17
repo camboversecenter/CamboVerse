@@ -256,6 +256,33 @@ function GameScene({ game }: { game: KhmerGame }) {
     );
   }
 
+  if (game.play === "catch") {
+    // Two lines of people facing each other, throwing a chhoung back and forth
+    return (
+      <group>
+        <Crowd radius={4.5} count={12} />
+        {/* Left Team */}
+        {[-1.2, 0, 1.2].map((z, i) => (
+          <Person key={`l-${i}`} position={[-1.6, 0, z]} rotation={Math.PI / 2} color={SARONGS[i % SARONGS.length]} />
+        ))}
+        {/* Right Team */}
+        {[-1.2, 0, 1.2].map((z, i) => (
+          <Person key={`r-${i}`} position={[1.6, 0, z]} rotation={-Math.PI / 2} color={SARONGS[(i + 3) % SARONGS.length]} />
+        ))}
+        {/* The Chhoung (flying in the middle) */}
+        <mesh position={[0, 1.8, 0]} castShadow>
+          <sphereGeometry args={[0.15, 12, 12]} />
+          <meshStandardMaterial color={game.color} />
+        </mesh>
+        {/* The tail of the Chhoung (since it's a rolled up scarf) */}
+        <mesh position={[0, 1.65, 0.1]} rotation={[0.5, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.04, 0.08, 0.25, 8]} />
+          <meshStandardMaterial color={game.color} />
+        </mesh>
+      </group>
+    );
+  }
+
   // Tug of war — a rope and two teams leaning back.
   return (
     <group>

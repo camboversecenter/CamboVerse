@@ -20,8 +20,12 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
         blurb={artifact.blurb}
         pois={pois}
         activePoi={activePoi}
-        onSelectPoi={(id) => setPoiId(id)}
+        onSelectPoi={(id) => {
+          setPoiId(id);
+          playInstrumentSound(artifact.id);
+        }}
         mode="orbit"
+        float={true}
       />
 
       <button className="backbtn" onClick={onBack}>
@@ -85,4 +89,43 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
       )}
     </>
   );
+}
+
+function playInstrumentSound(artifactId: string) {
+  const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+  if (!AudioContext) return;
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  
+  if (artifactId === "roneat") {
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } else if (artifactId === "skor") {
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.3);
+  } else {
+    // Generic UI pop for non-musical artifacts
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+  }
 }
