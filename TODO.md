@@ -30,6 +30,8 @@ Cambodia online for the world, with your name on it.
 | 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
 | 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
 | 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
+| 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
+| 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -136,6 +138,12 @@ appears in the gallery **and** the Asset registry automatically.
      (photogrammetry / 3DGS). See [`docs/CAPTURE.md`](./docs/CAPTURE.md) and
      [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md). Best of all — a
      real artifact, captured with a museum or artisan's consent.
+   - **One photo → 3D with AI** — the fastest on-ramp: run a single photo of the
+     object through **TripoSplat** (MIT, open weights) on a free GPU. See
+     [`docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md`](./docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md).
+     These are labelled **🤖 AI-reconstructed** in the app — a plausible model,
+     not a measured record — so use it for engagement, and prefer a real capture
+     for anything authoritative.
 2. **Add an entry to `src/artifacts.ts`** — Khmer + romanized names, an English
    gloss, a short **educational story** (what it is and *how it works*), its
    **utilities** (bullet list), its **origin**, the `model` path, and a few
@@ -278,6 +286,70 @@ Heritage Passport credential. Cambodia has many more — help add them:
 
 Accuracy and respect matter — these are living traditions. See `src/games.ts`,
 `src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
+
+## Grow the Khmer Village
+
+The **🏡 Khmer Village** (ភូមិខ្មែរ) is a procedural, explorable Cambodian
+village — red-dirt roads, stilt houses on their posts, sugar palms, a pond, rice
+paddies, and the village **wat** as its landmark — built entirely from
+primitives with a deterministic layout (`src/components/VillageView.tsx`). It's a
+**reusable kit**; the same pieces can dress the Farm and Meditation scenes. Lots
+of ways to enrich it:
+
+- **🧩 More village pieces.** Add a market (ផ្សារ) with stalls, a school, a
+  well, fences, ox-carts (រទេះគោ), chickens/ducks/pigs, a spirit house
+  (ខ្ទមទេវតា), fruit trees (mango, banana, jackfruit), lotus in the pond.
+- **🏠 Better stilt houses & the wat.** Refine the roofs (Khmer hip roofs,
+  finials/ចុងស្លា), add windows/shutters, wooden textures, and a richer wat
+  (gopura, naga balustrades, boundary stones/សីមា).
+- **🗺️ Real layouts (open data).** Feed the generator a real commune's **roads
+  and building footprints from OpenStreetMap** (ODbL — attribute it) so a village
+  mirrors an actual place. This ties into the commune map tier.
+- **🎨 Open-licensed asset kits.** Where hand-building is slow, vendor **CC0**
+  low-poly props (Kenney, Quaternius, Poly Pizza) locally and restyle them Khmer.
+  Open licences only (CC0 / CC-BY / CC-BY-SA); credit the source; decimate for
+  the $150-phone / 4G budget.
+- **🌗 Life & seasons.** Day/night, cooking smoke, monks on morning alms round,
+  wet/dry-season paddies, sound (a distant temple bell, roosters).
+- **🚶 Wander mode.** First-person walking (reuse `WalkControls`) and VR
+  teleport locomotion to stroll the roads.
+- **♿ Performance.** Instance the houses/props (like the palms + paddy already
+  are) so bigger villages stay light on a low-end phone.
+
+Keep it authentically Khmer — the stilts, sugar palms, red dirt, and the wat are
+what make it Cambodia. See `src/components/VillageView.tsx`.
+
+## Grow the Khmer Traditional Fashion
+
+The **👗 Khmer Traditional Fashion** (សម្លៀកបំពាក់ប្រពៃណីខ្មែរ) dresses a
+procedural figure three ways: the **seven-day colour** custom (ពណ៌ប្រចាំថ្ងៃ),
+the **varieties** of garment (sbai, sampot chang kben, phamuong, av pak, krama),
+and how dress **changed through the ages** — tied to the "Back in Time" eras. The
+figure and every garment are built from primitives (`src/components/FashionView.tsx`),
+and the data lives in `src/fashion.ts`. Ways to grow it:
+
+- **🎨 Verify the seven-day colours.** The palette (`DAY_COLORS`) is a common
+  version, but sources vary by region and school. Confirm each day's colour with
+  **Khmer elders / dance teachers** and cite the source, so this becomes a
+  trustworthy reference rather than one of several.
+- **👚 Add garments (the "Varieties" TODO).** Grow `VARIETIES` — sampot hol
+  ( សំពត់ហូល, ikat), sampot tep apsara, the *av bam pot* wedding blouse, men's
+  formal wear, monastic robes (ចីវរ), regional and ethnic-minority dress. Give
+  each a Khmer name, a short history, and an accurate `Outfit`.
+- **🧵 Truer silhouettes & weave.** Refine the chang-kben wrap and the sbai
+  drape, and add **procedural textile patterns** (hol ikat, checks, gold thread)
+  as generated textures — no external image assets, keep it self-contained.
+- **⏳ Deepen the eras.** Add pre-Angkor (Funan/Chenla) and split the modern era;
+  base each on **bas-reliefs, museum pieces, and photographs** (open-licensed or
+  described), with citations. Handle the Khmer Rouge years with the same care.
+- **💃 Bring it to life.** A gentle idle animation, an apsara hand-pose, or let a
+  visitor **mix and match** (pick a sampot + top + colour) and save the look to
+  their Passport.
+- **♿ Performance & consent.** Keep the figure light for the $150-phone / 4G
+  budget, and treat sacred/royal regalia with cultural consent and provenance.
+
+Keep it respectful and sourced — dress carries identity. See
+`src/fashion.ts` and `src/components/FashionView.tsx`.
 
 ## Grow the Virtual Meditation
 

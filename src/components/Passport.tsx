@@ -82,6 +82,16 @@ function toStamp(c: Credential): Stamp {
       mood: "#5aa03a",
     };
   }
+  if (parts[0] === "fashion") {
+    return {
+      key: c.id,
+      title: "Khmer fashion through the ages",
+      khmer: "សម្លៀកបំពាក់",
+      where: "Khmer Traditional Fashion",
+      when,
+      mood: "#b0325a",
+    };
+  }
   if (parts[0] === "meditation") {
     return {
       key: c.id,
