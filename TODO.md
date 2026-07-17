@@ -30,6 +30,7 @@ Cambodia online for the world, with your name on it.
 | 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
 | 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
 | 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
+| 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -284,6 +285,38 @@ Heritage Passport credential. Cambodia has many more — help add them:
 
 Accuracy and respect matter — these are living traditions. See `src/games.ts`,
 `src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
+
+## Grow the Khmer Village
+
+The **🏡 Khmer Village** (ភូមិខ្មែរ) is a procedural, explorable Cambodian
+village — red-dirt roads, stilt houses on their posts, sugar palms, a pond, rice
+paddies, and the village **wat** as its landmark — built entirely from
+primitives with a deterministic layout (`src/components/VillageView.tsx`). It's a
+**reusable kit**; the same pieces can dress the Farm and Meditation scenes. Lots
+of ways to enrich it:
+
+- **🧩 More village pieces.** Add a market (ផ្សារ) with stalls, a school, a
+  well, fences, ox-carts (រទេះគោ), chickens/ducks/pigs, a spirit house
+  (ខ្ទមទេវតា), fruit trees (mango, banana, jackfruit), lotus in the pond.
+- **🏠 Better stilt houses & the wat.** Refine the roofs (Khmer hip roofs,
+  finials/ចុងស្លា), add windows/shutters, wooden textures, and a richer wat
+  (gopura, naga balustrades, boundary stones/សីមា).
+- **🗺️ Real layouts (open data).** Feed the generator a real commune's **roads
+  and building footprints from OpenStreetMap** (ODbL — attribute it) so a village
+  mirrors an actual place. This ties into the commune map tier.
+- **🎨 Open-licensed asset kits.** Where hand-building is slow, vendor **CC0**
+  low-poly props (Kenney, Quaternius, Poly Pizza) locally and restyle them Khmer.
+  Open licences only (CC0 / CC-BY / CC-BY-SA); credit the source; decimate for
+  the $150-phone / 4G budget.
+- **🌗 Life & seasons.** Day/night, cooking smoke, monks on morning alms round,
+  wet/dry-season paddies, sound (a distant temple bell, roosters).
+- **🚶 Wander mode.** First-person walking (reuse `WalkControls`) and VR
+  teleport locomotion to stroll the roads.
+- **♿ Performance.** Instance the houses/props (like the palms + paddy already
+  are) so bigger villages stay light on a low-end phone.
+
+Keep it authentically Khmer — the stilts, sugar palms, red dirt, and the wat are
+what make it Cambodia. See `src/components/VillageView.tsx`.
 
 ## Grow the Virtual Meditation
 

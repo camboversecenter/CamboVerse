@@ -2093,6 +2093,26 @@ body,
 }
 .med-btn:hover { background: color-mix(in srgb, #7fa0b8 30%, rgba(20, 16, 10, 0.78)); }
 
+.village-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 278px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #b5843f 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.village-btn:hover { background: color-mix(in srgb, #b5843f 30%, rgba(20, 16, 10, 0.78)); }
+
+/* ---- Khmer Village ---- */
+.village { position: fixed; inset: 0; z-index: 5; background: #bcd4e6; }
+
 /* ---- Virtual Meditation ---- */
 .med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }
 .med-mute {
