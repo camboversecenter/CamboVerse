@@ -32,6 +32,7 @@ Cambodia online for the world, with your name on it.
 | 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
 | 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
 | 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
+| 🪷 Add a yant or a vetted master | [Grow Sak Yant](#grow-sak-yant) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -345,11 +346,48 @@ and the data lives in `src/fashion.ts`. Ways to grow it:
 - **💃 Bring it to life.** A gentle idle animation, an apsara hand-pose, or let a
   visitor **mix and match** (pick a sampot + top + colour) and save the look to
   their Passport.
+- **🤳 Improve "Try it on".** The AR mirror (`FashionTryOn.tsx`) tracks the head
+  on-device with **MediaPipe FaceLandmarker** (Apache-2.0, vendored under
+  `public/mediapipe/`) and paints a mkot crown, earrings, collar, and sbai onto
+  the live selfie — nothing is uploaded. Grow it: add more headpieces and
+  jewellery, use **pose tracking** for a properly-draped sbai over the shoulders,
+  offer a men's look, and let visitors pick which garment to wear in the mirror.
+  Keep it on-device and consent-first — **no face data ever leaves the phone.**
 - **♿ Performance & consent.** Keep the figure light for the $150-phone / 4G
   budget, and treat sacred/royal regalia with cultural consent and provenance.
 
 Keep it respectful and sourced — dress carries identity. See
 `src/fashion.ts` and `src/components/FashionView.tsx`.
+
+## Grow Sak Yant
+
+**🪷 Sak Yant** (សាក់យ័ន្ត) is the Khmer sacred tattoo. The hub teaches what it
+is and who applies it, shows the best-known yant (each **drawn procedurally** in
+`src/sakyant.ts` — Gao Yord, Hah Taew, Paed Tidt, Unalome, tiger, naga), lets a
+visitor **preview one on their own skin** with the on-device camera
+(`SakYantTryOn.tsx` — touch-place ink, nothing uploaded), and — the whole point
+— points them to a **genuine Khmer master** to receive a real, blessed one.
+Handle it with care: Sak Yant is sacred, not decoration.
+
+- **🧎 A vetted directory of masters.** This is the priority. The referral now
+  links the **Federation of Khmer Sakyantra**; `REFERRAL.studios` is left empty
+  on purpose. Work with the Federation and the community to add **real, consenting
+  masters and studios** (name, city, link) — never invent shop details. This is
+  how the feature supports Cambodia's living practitioners at the source.
+- **✍️ More yant, verified.** Add yant (twin tigers, Hanuman, Yant Kroh Petch,
+  the sacred script rows) with meanings **confirmed by a master** — lineages vary.
+  Improve the procedural drawings (the tiger especially) and the abstract script
+  so they evoke the forms respectfully without copying specific sacred inscriptions.
+- **🖐️ Better try-on.** Optional on-device **hand/pose tracking** so a yant wraps
+  the arm or shoulder naturally; more ink tones; a placement guide. Keep it
+  on-device and consent-first — **no image ever leaves the phone.**
+- **🌐 Language & respect.** Full Khmer localisation, and a short note on the
+  etiquette of receiving a Sak Yant. Confirm all wording with Khmer cultural and
+  religious authorities before it ships as guidance.
+
+Sources for the descriptions are open-web references (Wikipedia "Yantra
+tattooing", the Federation of Khmer Sakyantra, general Sak Yant guides); treat
+them as a starting point to be verified by masters. See `src/sakyant.ts`.
 
 ## Grow the Virtual Meditation
 

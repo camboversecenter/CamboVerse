@@ -2127,6 +2127,23 @@ body,
 }
 .fashion-btn:hover { background: color-mix(in srgb, #b0325a 30%, rgba(20, 16, 10, 0.78)); }
 
+.sakyant-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 366px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #8a6a4a 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.sakyant-btn:hover { background: color-mix(in srgb, #8a6a4a 30%, rgba(20, 16, 10, 0.78)); }
+
 /* ---- Khmer Village ---- */
 .village { position: fixed; inset: 0; z-index: 5; background: #bcd4e6; }
 
@@ -2187,6 +2204,191 @@ body,
 .fash-en { font: 600 0.86rem system-ui, sans-serif; color: #8a6a4a; margin-bottom: 4px; }
 .fash-desc { font: 400 0.9rem/1.5 system-ui, sans-serif; margin: 4px 0 8px; }
 .fash-note { font: 500 0.76rem/1.4 system-ui, sans-serif; color: #8a6a4a; margin: 0; }
+
+/* "Try it on" launcher button */
+.fash-try {
+  position: fixed; z-index: 16;
+  top: calc(env(safe-area-inset-top, 0) + 96px);
+  left: 50%; transform: translateX(-50%);
+  padding: 9px 20px; border: none; border-radius: 999px;
+  background: linear-gradient(135deg, #d23b30, #b0325a); color: #fff;
+  font: 800 14px system-ui, sans-serif; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(176, 50, 90, 0.4);
+}
+.fash-try:hover { filter: brightness(1.06); }
+
+/* ---- Fashion "Try it on" overlay ---- */
+.fash-tryon { position: fixed; inset: 0; z-index: 40; background: #1c150f; overflow: hidden; }
+.tryon-stage { position: absolute; inset: 0; }
+.tryon-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.avatar-canvas { position: absolute; inset: 0; }
+
+.tryon-msg {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 40px)); text-align: center;
+  background: rgba(20, 16, 10, 0.78); color: #f6ecdc; padding: 18px 20px;
+  border-radius: 16px; font: 500 0.92rem/1.5 system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.tryon-alt {
+  margin-top: 12px; padding: 9px 18px; border: none; border-radius: 999px;
+  background: #c8912e; color: #2a1f14; font: 800 13px system-ui, sans-serif; cursor: pointer;
+}
+
+.tryon-top {
+  position: fixed; z-index: 42;
+  top: calc(env(safe-area-inset-top, 0) + 10px); left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  pointer-events: none;
+}
+.tryon-top > * { pointer-events: auto; }
+.tryon-top .backbtn { position: static; }
+.tryon-title { font: 800 0.98rem system-ui, sans-serif; color: #f6ecdc; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+
+.tryon-tabs {
+  position: fixed; z-index: 42;
+  top: calc(env(safe-area-inset-top, 0) + 52px); left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.tryon-tab {
+  padding: 7px 16px; border: 1px solid rgba(255, 246, 230, 0.4); border-radius: 999px;
+  background: rgba(20, 16, 10, 0.62); color: #f6ecdc;
+  font: 700 12px system-ui, sans-serif; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.tryon-tab.on { background: #f6ecdc; color: #2a1f14; border-color: #f6ecdc; }
+
+.tryon-controls {
+  position: fixed; z-index: 42; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  width: min(600px, calc(100vw - 20px));
+  background: rgba(20, 16, 10, 0.7); border: 1px solid rgba(255, 246, 230, 0.18);
+  border-radius: 18px; padding: 12px 14px; color: #f6ecdc;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.tryon-tones, .tryon-swatches { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.tryon-tone {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
+  border: 2px solid rgba(255, 246, 230, 0.35);
+}
+.tryon-tone.on { border-color: #fff; transform: scale(1.14); }
+.tryon-actions { display: flex; justify-content: center; }
+.tryon-snap {
+  padding: 10px 24px; border: none; border-radius: 999px;
+  background: linear-gradient(135deg, #d23b30, #b0325a); color: #fff;
+  font: 800 14px system-ui, sans-serif; cursor: pointer;
+}
+.tryon-note { font: 500 0.72rem/1.4 system-ui, sans-serif; color: #d8cbb0; text-align: center; margin: 8px 0 0; }
+
+.tryon-postcard {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.72); padding: 20px;
+}
+.pc-card {
+  width: min(420px, 90vw); background: #efe7dc; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+.pc-card img { display: block; width: 100%; height: auto; }
+.pc-actions { display: flex; gap: 10px; padding: 12px; justify-content: center; }
+.pc-save, .pc-close {
+  padding: 9px 20px; border-radius: 999px; font: 800 13px system-ui, sans-serif;
+  cursor: pointer; text-decoration: none;
+}
+.pc-save { background: #c8912e; color: #2a1f14; border: none; }
+.pc-close { background: transparent; color: #6a4b2a; border: 1px solid #c8912e; }
+
+/* ---- Sak Yant (Khmer sacred tattoo) ---- */
+.sakyant { position: fixed; inset: 0; z-index: 5; background: #efe3c8; color: #2b2018; }
+.sy-scroll { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 40px; }
+.sy-top {
+  position: sticky; top: 0; z-index: 6;
+  padding: calc(env(safe-area-inset-top, 0) + 10px) 12px 10px;
+  background: linear-gradient(#efe3c8, rgba(239, 227, 200, 0.86));
+}
+.sy-top .cls-title, .sakyant .cls-title { color: #2b2018; }
+
+.sy-tabs {
+  display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+  padding: 4px 12px 10px; position: sticky; top: 52px; z-index: 6;
+  background: rgba(239, 227, 200, 0.86);
+}
+.sy-tab {
+  padding: 7px 13px; border: 1px solid rgba(60, 40, 24, 0.3); border-radius: 999px;
+  background: rgba(255, 250, 236, 0.7); color: #4a3626;
+  font: 700 12px system-ui, sans-serif; cursor: pointer;
+}
+.sy-tab.on { background: #2b2018; color: #f0e6d2; border-color: #2b2018; }
+
+.sy-designs, .sy-about, .sy-shops { padding: 6px 14px; max-width: 620px; margin: 0 auto; }
+.sy-designs { display: flex; flex-direction: column; align-items: center; }
+
+.yant-canvas {
+  border-radius: 12px; max-width: 100%; height: auto;
+  box-shadow: 0 6px 18px rgba(40, 26, 14, 0.18); border: 2px solid #d8c69a;
+}
+.yant-canvas.thumb { box-shadow: none; border: none; }
+
+.sy-picker { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+.sy-thumb {
+  padding: 0; border: 2px solid transparent; border-radius: 10px; cursor: pointer;
+  background: #efe3c8; line-height: 0; overflow: hidden;
+}
+.sy-thumb.on { border-color: #b8912f; box-shadow: 0 0 0 2px rgba(184, 145, 47, 0.35); }
+
+.sy-info { text-align: center; max-width: 560px; }
+.sy-info-head { display: flex; align-items: baseline; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.sy-info-head b { font-size: 1.08rem; }
+.sy-en { font: 600 0.86rem system-ui, sans-serif; color: #8a6a4a; margin: 2px 0 6px; }
+.sy-desc { font: 400 0.92rem/1.55 system-ui, sans-serif; margin: 4px 0; }
+.sy-place { font: 600 0.82rem system-ui, sans-serif; color: #8a6a4a; margin: 6px 0 0; }
+
+.sy-try, .sy-cta-btn {
+  display: inline-block; margin: 16px auto 6px; padding: 11px 24px; border: none; border-radius: 999px;
+  background: linear-gradient(135deg, #6a4b2a, #2b2018); color: #f2e7cf;
+  font: 800 14px system-ui, sans-serif; cursor: pointer; text-decoration: none; text-align: center;
+}
+.sy-try:hover, .sy-cta-btn:hover { filter: brightness(1.08); }
+
+.sy-card {
+  background: rgba(255, 250, 236, 0.72); border: 1px solid #d8c69a; border-radius: 14px;
+  padding: 14px 16px; margin: 10px 0;
+}
+.sy-plist { margin: 8px 0 0; padding-left: 18px; }
+.sy-plist li { margin: 6px 0; font: 400 0.9rem/1.45 system-ui, sans-serif; }
+.sy-note { font: 500 0.78rem/1.5 system-ui, sans-serif; color: #7a5c3c; margin: 10px 0 0; text-align: center; }
+
+.sy-cta { text-align: center; border-color: #b8912f; }
+.sy-studios { list-style: none; padding: 0; margin: 10px 0; }
+.sy-studio {
+  background: rgba(255, 250, 236, 0.72); border: 1px solid #d8c69a; border-radius: 12px;
+  padding: 10px 14px; margin: 8px 0; font: 400 0.92rem system-ui, sans-serif;
+}
+.sy-city { color: #8a6a4a; }
+
+/* Sak Yant "try it on" overlay */
+.sy-tryon { position: fixed; inset: 0; z-index: 40; background: #14100c; overflow: hidden; }
+.sy-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; touch-action: none; cursor: grab; }
+.sy-cam-note {
+  position: fixed; z-index: 42; left: 50%; transform: translateX(-50%);
+  top: calc(env(safe-area-inset-top, 0) + 92px);
+  width: min(460px, calc(100vw - 28px)); text-align: center;
+  padding: 8px 12px; border-radius: 999px;
+  background: rgba(20, 16, 10, 0.6); color: #f0e6d2;
+  font: 600 0.76rem system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.sy-inks { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
+.sy-ink {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
+  border: 2px solid rgba(255, 246, 230, 0.4);
+}
+.sy-ink.on { border-color: #fff; transform: scale(1.14); }
+.sy-slider {
+  display: flex; align-items: center; gap: 10px; color: #f0e6d2;
+  font: 700 12px system-ui, sans-serif; margin: 6px 0;
+}
+.sy-slider span { width: 52px; }
+.sy-slider input { flex: 1; accent-color: #c8912e; }
 
 /* ---- Virtual Meditation ---- */
 .med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }

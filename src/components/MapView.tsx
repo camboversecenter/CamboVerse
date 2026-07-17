@@ -18,6 +18,7 @@ export function MapView({
   onOpenMeditation,
   onOpenVillage,
   onOpenFashion,
+  onOpenSakYant,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -29,6 +30,7 @@ export function MapView({
   onOpenMeditation: () => void;
   onOpenVillage: () => void;
   onOpenFashion: () => void;
+  onOpenSakYant: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -84,6 +86,7 @@ export function MapView({
         <button className="farm-btn" onClick={onOpenFarm}>🌾 Virtual Farm</button>
         <button className="village-btn" onClick={onOpenVillage}>🏡 Khmer Village</button>
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
+        <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>
