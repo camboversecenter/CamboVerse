@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Viewer } from "./Viewer";
-import type { Artifact } from "../artifacts";
+import { METHOD_LABEL, DEFAULT_PROVENANCE, type Artifact } from "../artifacts";
 
 /**
  * Inspect a single Khmer artifact in 3D — orbit it, tap its parts to learn how
@@ -75,10 +75,34 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
               <p className="artifact-origin">
                 <b>Where it's from:</b> {artifact.origin}
               </p>
-              <p className="artifact-credit">
-                3D model: stylized stand-in by the CamboVerse Center · CC-BY-4.0 — pending a real
-                capture from a village potter.
-              </p>
+              {(() => {
+                const prov = artifact.provenance ?? DEFAULT_PROVENANCE;
+                const ai = prov.method === "ai-image";
+                return (
+                  <>
+                    <p className="artifact-credit">
+                      <span className={`artifact-prov ${prov.method}`}>
+                        {ai ? "🤖 " : ""}
+                        {METHOD_LABEL[prov.method]}
+                      </span>
+                      {prov.tool ? ` · ${prov.tool}` : ""}
+                      {prov.by ? ` · ${prov.by}` : ""} · {prov.license ?? "CC-BY-4.0"}
+                      {prov.sourcePhoto ? ` · source photo: ${prov.sourcePhoto}` : ""}
+                    </p>
+                    {ai && (
+                      <p className="artifact-ainote">
+                        A plausible 3D reconstruction generated from a single photo — engaging to explore,
+                        but <b>not a measured record</b> of the real object.
+                      </p>
+                    )}
+                    {prov.method === "procedural" && (
+                      <p className="artifact-ainote">
+                        A stylised stand-in — pending a real capture from an artisan or museum.
+                      </p>
+                    )}
+                  </>
+                );
+              })()}
             </>
           ) : (
             <p className="artifact-blurb">{artifact.blurb}</p>

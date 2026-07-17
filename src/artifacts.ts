@@ -10,6 +10,38 @@
  */
 import type { Poi } from "./spots";
 
+/**
+ * How an artifact's 3D model was made — surfaced honestly to visitors. A DPG for
+ * heritage must not pass off a generative reconstruction as a measured record,
+ * so `ai-image` models (e.g. a single photo run through TripoSplat) are labelled
+ * as reconstructions, not captures. See docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md.
+ */
+export interface ArtifactProvenance {
+  method: "procedural" | "photogrammetry" | "3dgs" | "ai-image";
+  /** The tool/model used, e.g. "TripoSplat (VAST-AI-Research, MIT)". */
+  tool?: string;
+  /** Who made / contributed the 3D asset. */
+  by?: string;
+  /** Licence of the 3D asset (open licences only). */
+  license?: string;
+  /** For a capture or AI reconstruction: credit + consent for the source photo. */
+  sourcePhoto?: string;
+}
+
+export const METHOD_LABEL: Record<ArtifactProvenance["method"], string> = {
+  procedural: "Procedural stand-in",
+  photogrammetry: "Photogrammetry capture",
+  "3dgs": "3D-Gaussian-Splatting capture",
+  "ai-image": "AI-reconstructed from a photo",
+};
+
+/** Fallback for artifacts that don't declare provenance (today's hand-built ones). */
+export const DEFAULT_PROVENANCE: ArtifactProvenance = {
+  method: "procedural",
+  by: "CamboVerse Center / NUM",
+  license: "CC-BY-4.0",
+};
+
 export interface Artifact {
   id: string;
   /** Khmer name. */
@@ -29,6 +61,10 @@ export interface Artifact {
   /** Where it comes from / who makes it. */
   origin: string;
   model: string;
+  /** Optional splat capture for a photoreal toggle (.splat / .ply). */
+  splat?: string;
+  /** How the 3D model was made (defaults to a procedural stand-in). */
+  provenance?: ArtifactProvenance;
   /** Inspect points that teach the object's parts and how it works. */
   pois: Poi[];
 }

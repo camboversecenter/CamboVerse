@@ -136,6 +136,12 @@ appears in the gallery **and** the Asset registry automatically.
      (photogrammetry / 3DGS). See [`docs/CAPTURE.md`](./docs/CAPTURE.md) and
      [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md). Best of all — a
      real artifact, captured with a museum or artisan's consent.
+   - **One photo → 3D with AI** — the fastest on-ramp: run a single photo of the
+     object through **TripoSplat** (MIT, open weights) on a free GPU. See
+     [`docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md`](./docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md).
+     These are labelled **🤖 AI-reconstructed** in the app — a plausible model,
+     not a measured record — so use it for engagement, and prefer a real capture
+     for anything authoritative.
 2. **Add an entry to `src/artifacts.ts`** — Khmer + romanized names, an English
    gloss, a short **educational story** (what it is and *how it works*), its
    **utilities** (bullet list), its **origin**, the `model` path, and a few

@@ -1577,6 +1577,13 @@ body,
 .artifact-origin { font-size: 0.84rem; margin: 0 0 10px; }
 .artifact-hint { font-size: 0.82rem; color: var(--accent); margin: 0 0 6px; }
 .artifact-credit { font-size: 0.74rem; color: var(--muted, #a6ab97); margin: 0; }
+.artifact-prov {
+  display: inline-block; padding: 1px 7px; border-radius: 999px; font-weight: 700;
+  background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent);
+}
+.artifact-prov.ai-image { background: color-mix(in srgb, #b3728a 28%, transparent); color: #e0a9bd; }
+.artifact-prov.photogrammetry { background: color-mix(in srgb, #4c8a3f 26%, transparent); color: #8fce7f; }
+.artifact-ainote { font-size: 0.74rem; color: var(--muted, #a6ab97); margin: 4px 0 0; line-height: 1.45; }
 
 /* ---- Province map (second teleport tier) ---- */
 .prov { position: fixed; inset: 0; z-index: 5; background: #16232b; }
