@@ -5,6 +5,7 @@ import type { FaceLandmarker } from "@mediapipe/tasks-vision";
 import { DAY_COLORS, type Outfit } from "../fashion";
 import { FashionFigure, SKIN_TONES, SKIN } from "./FashionFigure";
 import { claimCredential } from "../lib/identity";
+import { makePostcard } from "../lib/postcard";
 
 /**
  * "Try it on" — let a visitor wear Khmer dress virtually, two ways:
@@ -156,13 +157,13 @@ export function FashionTryOn({
   const snapMirror = () => {
     const src = canvasRef.current;
     if (!src) return;
-    setPostcard(makePostcard(src));
+    setPostcard(makePostcard(src, "សម្លៀកបំពាក់ខ្មែរ", "I tried Khmer dress · CamboVerse"));
     rewardOnce();
   };
   const snapAvatar = () => {
     const src = document.querySelector<HTMLCanvasElement>(".fash-tryon .avatar-canvas canvas");
     if (!src) return;
-    setPostcard(makePostcard(src));
+    setPostcard(makePostcard(src, "សម្លៀកបំពាក់ខ្មែរ", "I tried Khmer dress · CamboVerse"));
     rewardOnce();
   };
 
@@ -438,45 +439,3 @@ function drawMkot(ctx: CanvasRenderingContext2D, fw: number) {
   ctx.fill();
 }
 
-/* ---------- compose a keepsake postcard from a source canvas ---------- */
-
-function makePostcard(src: HTMLCanvasElement): string {
-  const W = 1080;
-  const pad = 36;
-  const banner = 132;
-  const iw = src.width || 640;
-  const ih = src.height || 480;
-  const scale = (W - pad * 2) / iw;
-  const dh = ih * scale;
-  const H = Math.round(pad * 2 + dh + banner);
-
-  const c = document.createElement("canvas");
-  c.width = W;
-  c.height = H;
-  const ctx = c.getContext("2d")!;
-
-  // warm silk background
-  ctx.fillStyle = "#efe7dc";
-  ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = "#c8912e";
-  ctx.fillRect(0, 0, W, 10);
-  ctx.fillRect(0, H - 10, W, 10);
-
-  // photo
-  ctx.drawImage(src, pad, pad, W - pad * 2, dh);
-  ctx.strokeStyle = "#c8912e";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(pad, pad, W - pad * 2, dh);
-
-  // caption banner
-  const by = pad + dh;
-  ctx.fillStyle = "#3a2c1e";
-  ctx.textAlign = "center";
-  ctx.font = "700 46px system-ui, sans-serif";
-  ctx.fillText("សម្លៀកបំពាក់ខ្មែរ", W / 2, by + 56);
-  ctx.font = "600 30px system-ui, sans-serif";
-  ctx.fillStyle = "#8a6a4a";
-  ctx.fillText("I tried Khmer dress · CamboVerse", W / 2, by + 100);
-
-  return c.toDataURL("image/png");
-}

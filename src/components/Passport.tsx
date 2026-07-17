@@ -93,6 +93,17 @@ function toStamp(c: Credential): Stamp {
       mood: "#b0325a",
     };
   }
+  if (parts[0] === "sakyant") {
+    const triedOn = parts[1] === "tried-it-on";
+    return {
+      key: c.id,
+      title: triedOn ? "Previewed a Sak Yant" : "Learned about Sak Yant",
+      khmer: "សាក់យ័ន្ត",
+      where: "Sak Yant · Khmer sacred tattoo",
+      when,
+      mood: "#2b2018",
+    };
+  }
   if (parts[0] === "meditation") {
     return {
       key: c.id,
