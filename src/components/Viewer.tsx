@@ -38,6 +38,7 @@ export function Viewer({
   landscape,
   modelScale = 1,
   modelY = 0,
+  float = false,
 }: {
   modelUrl: string;
   blurb: string;
@@ -55,15 +56,19 @@ export function Viewer({
   modelScale?: number;
   /** Lift the model (e.g. Wat Phnom sits atop its hill). */
   modelY?: number;
+  /** Floating micro-animation (used for artifacts). */
+  float?: boolean;
 }) {
   // One XR store per viewer session; drives the optional VR mode. The device
   // emulator is off (it pulls heavy room assets on localhost) — VR is tested on
   // a real headset.
   const store = useMemo(() => createXRStore({ emulate: false }), []);
   const [vrSupported, setVrSupported] = useState(false);
+  const [arSupported, setArSupported] = useState(false);
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
     xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
+    xr?.isSessionSupported("immersive-ar").then(setArSupported).catch(() => setArSupported(false));
   }, []);
 
   // Where the VR visitor stands: on the ground, in front of the site.
@@ -71,11 +76,18 @@ export function Viewer({
 
   return (
     <div className="viewer">
-      {vrSupported && (
-        <button className="vr-btn" onClick={() => store.enterVR()}>
-          🥽 Enter VR
-        </button>
-      )}
+      <div className="xr-buttons" style={{ position: "absolute", bottom: 20, right: 20, zIndex: 10, display: "flex", gap: "10px" }}>
+        {arSupported && (
+          <button className="vr-btn" onClick={() => store.enterAR()} style={{ background: "rgba(0,0,0,0.6)", color: "white", padding: "8px 16px", borderRadius: "20px", border: "1px solid white", cursor: "pointer" }}>
+            👁️ Enter AR
+          </button>
+        )}
+        {vrSupported && (
+          <button className="vr-btn" onClick={() => store.enterVR()} style={{ background: "rgba(0,0,0,0.6)", color: "white", padding: "8px 16px", borderRadius: "20px", border: "1px solid white", cursor: "pointer" }}>
+            🥽 Enter VR
+          </button>
+        )}
+      </div>
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={[1, 2]}
@@ -86,7 +98,7 @@ export function Viewer({
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
         <XR store={store}>
-        <Scenery water={water} landscape={landscape} />
+        <ConditionalScenery water={water} landscape={landscape} />
 
         {/* Load the real glTF model; fall back to the placeholder on error,
             show a spinner while it streams. Materialize scales/rises it into
@@ -100,7 +112,7 @@ export function Viewer({
             ) : (
               <ModelErrorBoundary fallback={<HeritagePlaceholder />}>
                 <Suspense fallback={<Loader />}>
-                  <HeritageModel url={modelUrl} />
+                  <HeritageModel url={modelUrl} float={float} />
                 </Suspense>
               </ModelErrorBoundary>
             )}
@@ -236,4 +248,11 @@ function Hotspot({ blurb }: { blurb: string }) {
       </button>
     </Html>
   );
+}
+
+/** Renders scenery only if NOT in immersive-ar mode */
+function ConditionalScenery({ water, landscape }: { water?: boolean; landscape?: "angkor" | "wat-phnom" }) {
+  const inAR = useXR((s) => s.session && s.mode === "immersive-ar");
+  if (inAR) return null;
+  return <Scenery water={water} landscape={landscape} />;
 }

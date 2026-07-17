@@ -370,6 +370,88 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "roteh-koh",
+  khmer: "រទេះគោ",
+  name: "Roteh Koh",
+  english: "Khmer ox-cart",
+  category: "Traditional transport",
+  blurb: "The iconic wooden ox-cart that has transported rice and people across the Cambodian countryside for centuries.",
+  story:
+    "The រទេះគោ (Roteh Koh) is the traditional ox-drawn cart of Cambodia. Built entirely of hardwood by village craftsmen, its large spoked wheels and sturdy bed were designed to navigate the deep ruts, mud, and dust of rural roads where modern vehicles might fail. Pulled by a pair of strong oxen (or water buffalo), it has carried harvests of rice, supplies, and families for generations. Though modern tractors are replacing it today, the ox-cart remains a powerful symbol of Khmer agricultural life and rural endurance.",
+  utilities: [
+    "Used for transporting rice harvests, firewood, and goods",
+    "Navigates deep mud and rough country roads better than many vehicles",
+    "Pulled by a matched pair of oxen or water buffalo",
+    "Hand-built entirely of local hardwoods by skilled village wrights",
+  ],
+  origin: "Constructed in rural villages across Cambodia, though increasingly rare today.",
+  model: "/models/roteh-koh.glb",
+  pois: [
+    {
+      id: "wheels",
+      title: "The wooden wheels",
+      khmer: "កង់រទេះ",
+      info: "Large, sturdy wooden wheels lift the cart high above deep mud and flooded roads. Historically made with a massive wooden hub and spokes, bound by an iron rim.",
+      target: [0.6, 0.5, 0],
+      camera: [1.8, 1.0, 1.5],
+    },
+    {
+      id: "bed",
+      title: "The cart bed",
+      khmer: "ទ្រុងរទេះ",
+      info: "The slatted wooden bed carries heavy loads of unhusked rice (paddy), tools, or passengers. Side rails keep the cargo secure on bumpy trails.",
+      target: [0, 0.6, 0.3],
+      camera: [1.5, 1.6, 2.2],
+    },
+    {
+      id: "yoke",
+      title: "The drawpole & yoke",
+      khmer: "នឹម",
+      info: "A long central drawpole extends forward, terminating in a wooden crossbar yoke. This rests on the necks of two oxen, transferring their pulling power to the cart.",
+      target: [0, 0.5, -2.1],
+      camera: [1.2, 1.2, -3.5],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "krama",
+  khmer: "ក្រមា",
+  name: "Krama",
+  english: "Traditional woven scarf",
+  category: "Traditional clothing",
+  blurb: "The iconic checkered scarf of Cambodia — worn, wrapped, tied, and used for everything.",
+  story:
+    "The ក្រមា (krama) is the national symbol of Khmer identity. This sturdy, checkered cotton scarf is woven on wooden handlooms in villages across the country, most classically in red-and-white or blue-and-white. It is infinitely versatile: a farmer wraps it around their head to block the sun, a mother fashions it into a hammock for her baby, a martial artist ties it around their waist, and bathers use it as a towel or modesty wrap. Softening with every wash, a good krama lasts for years. It is a piece of clothing, a tool, a bag, and a symbol of rural pride all woven into one.",
+  utilities: [
+    "Worn as a sun-shield, sweatband, or dust mask in the fields",
+    "Tied as a sturdy baby hammock or carrying sling",
+    "Used as a bathing wrap or quick-drying towel",
+    "Woven by hand on traditional wooden looms in Khmer villages",
+  ],
+  origin: "Woven in villages nationwide, especially in Takeo and Kampong Cham provinces.",
+  model: "/models/krama.glb",
+  pois: [
+    {
+      id: "checkers",
+      title: "The checkered weave",
+      khmer: "ក្រឡា",
+      info: "The classic krama is woven in a grid of red-and-white or blue-and-white. The sturdy cotton weave softens with age and absorbs water quickly.",
+      target: [0, 0.55, 0],
+      camera: [0, 1.2, 1.2],
+    },
+    {
+      id: "folds",
+      title: "The folds",
+      khmer: "ផ្នត់",
+      info: "Lightweight but large, a krama can be folded small to pack, or opened wide to wrap around the shoulders or waist.",
+      target: [0.4, 0.5, 0],
+      camera: [1.2, 0.8, 1.0],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }

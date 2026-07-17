@@ -1,22 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
-import type { Mesh } from "three";
+import { useFrame } from "@react-three/fiber";
+import type { Mesh, Group } from "three";
 
 const MODEL_URL = "/models/heritage-sample.glb";
 
-/**
- * Loads and renders the heritage model (glTF/GLB).
- *
- * Draco and meshopt decoders are disabled here because the sample asset is
- * uncompressed — this keeps the viewer fully self-contained (no decoder is
- * fetched from any CDN). When we ship real, compressed captures, enable the
- * decoder that matches the asset:
- *   - meshopt: `useGLTF(MODEL_URL, false, true)` (decoder is bundled)
- *   - Draco:   `useGLTF(MODEL_URL, true)` + `useGLTF.setDecoderPath('/draco/')`
- *     with the decoder files copied into `public/draco/` (avoid the default CDN).
- */
-export function HeritageModel({ url = MODEL_URL }: { url?: string }) {
+export function HeritageModel({ url = MODEL_URL, float = false }: { url?: string; float?: boolean }) {
   const { scene } = useGLTF(url, false, false);
+  const ref = useRef<Group>(null);
   // Enable shadows on the model's meshes (once per loaded scene).
   useMemo(() => {
     scene.traverse((o) => {
@@ -27,7 +18,18 @@ export function HeritageModel({ url = MODEL_URL }: { url?: string }) {
       }
     });
   }, [scene]);
-  return <primitive object={scene} />;
+
+  useFrame((state) => {
+    if (float && ref.current) {
+      ref.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.05;
+    }
+  });
+
+  return (
+    <group ref={ref}>
+      <primitive object={scene} />
+    </group>
+  );
 }
 
 useGLTF.preload(MODEL_URL, false, false);

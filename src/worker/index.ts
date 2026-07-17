@@ -109,7 +109,10 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
 
   // No key configured → static facts (keeps the demo working everywhere).
   if (!env.ANTHROPIC_API_KEY) {
-    return Response.json({ text: fallbackText, fallback: true });
+    const text = (body.lang && body.lang !== "en")
+      ? `[Demo: Set ANTHROPIC_API_KEY in .dev.vars for live ${langName} translation]\n\n${fallbackText}`
+      : fallbackText;
+    return Response.json({ text, fallback: true });
   }
 
   const persona = era
@@ -149,7 +152,10 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
         messages: [{ role: "user", content: userMessage }],
       }),
     });
-    if (!r.ok) return Response.json({ text: fallbackText, fallback: true });
+    if (!r.ok) {
+      const errText = (body.lang && body.lang !== "en") ? `[API Error: Translation failed]\n\n${fallbackText}` : fallbackText;
+      return Response.json({ text: errText, fallback: true });
+    }
     const data = (await r.json()) as { content?: { type: string; text?: string }[] };
     const text = (data.content ?? [])
       .filter((b) => b.type === "text")
@@ -158,7 +164,8 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
       .trim();
     return Response.json({ text: text || fallbackText, fallback: !text });
   } catch {
-    return Response.json({ text: fallbackText, fallback: true });
+    const errText = (body.lang && body.lang !== "en") ? `[API Error: Translation failed]\n\n${fallbackText}` : fallbackText;
+    return Response.json({ text: errText, fallback: true });
   }
 }
 
