@@ -31,6 +31,7 @@ Cambodia online for the world, with your name on it.
 | 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
 | 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
 | 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
+| 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -317,6 +318,38 @@ of ways to enrich it:
 
 Keep it authentically Khmer — the stilts, sugar palms, red dirt, and the wat are
 what make it Cambodia. See `src/components/VillageView.tsx`.
+
+## Grow the Khmer Traditional Fashion
+
+The **👗 Khmer Traditional Fashion** (សម្លៀកបំពាក់ប្រពៃណីខ្មែរ) dresses a
+procedural figure three ways: the **seven-day colour** custom (ពណ៌ប្រចាំថ្ងៃ),
+the **varieties** of garment (sbai, sampot chang kben, phamuong, av pak, krama),
+and how dress **changed through the ages** — tied to the "Back in Time" eras. The
+figure and every garment are built from primitives (`src/components/FashionView.tsx`),
+and the data lives in `src/fashion.ts`. Ways to grow it:
+
+- **🎨 Verify the seven-day colours.** The palette (`DAY_COLORS`) is a common
+  version, but sources vary by region and school. Confirm each day's colour with
+  **Khmer elders / dance teachers** and cite the source, so this becomes a
+  trustworthy reference rather than one of several.
+- **👚 Add garments (the "Varieties" TODO).** Grow `VARIETIES` — sampot hol
+  ( សំពត់ហូល, ikat), sampot tep apsara, the *av bam pot* wedding blouse, men's
+  formal wear, monastic robes (ចីវរ), regional and ethnic-minority dress. Give
+  each a Khmer name, a short history, and an accurate `Outfit`.
+- **🧵 Truer silhouettes & weave.** Refine the chang-kben wrap and the sbai
+  drape, and add **procedural textile patterns** (hol ikat, checks, gold thread)
+  as generated textures — no external image assets, keep it self-contained.
+- **⏳ Deepen the eras.** Add pre-Angkor (Funan/Chenla) and split the modern era;
+  base each on **bas-reliefs, museum pieces, and photographs** (open-licensed or
+  described), with citations. Handle the Khmer Rouge years with the same care.
+- **💃 Bring it to life.** A gentle idle animation, an apsara hand-pose, or let a
+  visitor **mix and match** (pick a sampot + top + colour) and save the look to
+  their Passport.
+- **♿ Performance & consent.** Keep the figure light for the $150-phone / 4G
+  budget, and treat sacred/royal regalia with cultural consent and provenance.
+
+Keep it respectful and sourced — dress carries identity. See
+`src/fashion.ts` and `src/components/FashionView.tsx`.
 
 ## Grow the Virtual Meditation
 

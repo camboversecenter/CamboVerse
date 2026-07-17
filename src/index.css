@@ -2110,8 +2110,83 @@ body,
 }
 .village-btn:hover { background: color-mix(in srgb, #b5843f 30%, rgba(20, 16, 10, 0.78)); }
 
+.fashion-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 322px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #b0325a 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.fashion-btn:hover { background: color-mix(in srgb, #b0325a 30%, rgba(20, 16, 10, 0.78)); }
+
 /* ---- Khmer Village ---- */
 .village { position: fixed; inset: 0; z-index: 5; background: #bcd4e6; }
+
+/* ---- Khmer Traditional Fashion ---- */
+.fashion { position: fixed; inset: 0; z-index: 5; background: #efe7dc; }
+
+.fash-modes {
+  position: fixed; z-index: 15;
+  top: calc(env(safe-area-inset-top, 0) + 52px);
+  left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  width: min(560px, calc(100vw - 20px));
+}
+.fash-seg {
+  flex: 1 1 auto; padding: 7px 10px;
+  border: 1px solid rgba(60, 40, 30, 0.28); border-radius: 999px;
+  background: rgba(255, 252, 246, 0.86); color: #4a3626;
+  font: 700 12px system-ui, sans-serif; cursor: pointer; white-space: nowrap;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.fash-seg.on { background: #4a3626; color: #f6ecdc; border-color: #4a3626; }
+
+.fash-panel {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  transform: translateX(-50%); z-index: 15;
+  width: min(600px, calc(100vw - 20px)); max-height: 54vh; overflow: auto;
+  background: rgba(255, 251, 244, 0.92); border: 2px solid #c8912e;
+  border-radius: 18px; padding: 14px 16px; color: #3a2c1e;
+  box-shadow: 0 10px 30px rgba(40, 26, 14, 0.22);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+
+.fash-swatches { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.fash-swatch {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid rgba(60, 40, 30, 0.25); cursor: pointer; padding: 0;
+  transition: transform 0.12s ease;
+}
+.fash-swatch.on { transform: scale(1.18); border-color: #3a2c1e; box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor; }
+.fash-swatch.today { outline: 2px dashed #3a2c1e; outline-offset: 2px; }
+
+.fash-chips, .fash-eras { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.fash-chip, .fash-era {
+  padding: 6px 12px; border: 1px solid rgba(60, 40, 30, 0.28); border-radius: 999px;
+  background: rgba(255, 252, 246, 0.9); color: #4a3626;
+  font: 700 12px system-ui, sans-serif; cursor: pointer;
+}
+.fash-chip.on, .fash-era.on { background: #c8912e; color: #fff; border-color: #c8912e; }
+
+.fash-info-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.fash-info-head b { font-size: 1.05rem; }
+.fash-years { font: 600 0.8rem system-ui, sans-serif; color: #8a6a4a; }
+.fash-today {
+  font: 800 0.66rem system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.06em;
+  background: #3a2c1e; color: #f6ecdc; padding: 2px 7px; border-radius: 999px;
+}
+.fash-daycolor { font: 800 0.92rem system-ui, sans-serif; margin: 2px 0 6px; }
+.fash-en { font: 600 0.86rem system-ui, sans-serif; color: #8a6a4a; margin-bottom: 4px; }
+.fash-desc { font: 400 0.9rem/1.5 system-ui, sans-serif; margin: 4px 0 8px; }
+.fash-note { font: 500 0.76rem/1.4 system-ui, sans-serif; color: #8a6a4a; margin: 0; }
 
 /* ---- Virtual Meditation ---- */
 .med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }

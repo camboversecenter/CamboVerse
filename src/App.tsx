@@ -9,6 +9,7 @@ import { GamesView } from "./components/GamesView";
 import { FarmView } from "./components/FarmView";
 import { MeditationView } from "./components/MeditationView";
 import { VillageView } from "./components/VillageView";
+import { FashionView } from "./components/FashionView";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
   const [farmOpen, setFarmOpen] = useState(false);
   const [medOpen, setMedOpen] = useState(false);
   const [villageOpen, setVillageOpen] = useState(false);
+  const [fashionOpen, setFashionOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -68,6 +70,8 @@ export function App() {
         <MeditationView onBackToMap={() => setMedOpen(false)} />
       ) : villageOpen ? (
         <VillageView onBackToMap={() => setVillageOpen(false)} />
+      ) : fashionOpen ? (
+        <FashionView onBackToMap={() => setFashionOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -79,6 +83,7 @@ export function App() {
           onOpenFarm={() => setFarmOpen(true)}
           onOpenMeditation={() => setMedOpen(true)}
           onOpenVillage={() => setVillageOpen(true)}
+          onOpenFashion={() => setFashionOpen(true)}
         />
       )}
 
