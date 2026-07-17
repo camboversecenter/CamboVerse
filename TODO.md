@@ -345,6 +345,13 @@ and the data lives in `src/fashion.ts`. Ways to grow it:
 - **💃 Bring it to life.** A gentle idle animation, an apsara hand-pose, or let a
   visitor **mix and match** (pick a sampot + top + colour) and save the look to
   their Passport.
+- **🤳 Improve "Try it on".** The AR mirror (`FashionTryOn.tsx`) tracks the head
+  on-device with **MediaPipe FaceLandmarker** (Apache-2.0, vendored under
+  `public/mediapipe/`) and paints a mkot crown, earrings, collar, and sbai onto
+  the live selfie — nothing is uploaded. Grow it: add more headpieces and
+  jewellery, use **pose tracking** for a properly-draped sbai over the shoulders,
+  offer a men's look, and let visitors pick which garment to wear in the mirror.
+  Keep it on-device and consent-first — **no face data ever leaves the phone.**
 - **♿ Performance & consent.** Keep the figure light for the $150-phone / 4G
   budget, and treat sacred/royal regalia with cultural consent and provenance.
 

@@ -33,6 +33,7 @@
     "gen:communes": "node scripts/generate-communes.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.18",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@react-three/xr": "^6.6.30",

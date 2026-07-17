@@ -2188,6 +2188,98 @@ body,
 .fash-desc { font: 400 0.9rem/1.5 system-ui, sans-serif; margin: 4px 0 8px; }
 .fash-note { font: 500 0.76rem/1.4 system-ui, sans-serif; color: #8a6a4a; margin: 0; }
 
+/* "Try it on" launcher button */
+.fash-try {
+  position: fixed; z-index: 16;
+  top: calc(env(safe-area-inset-top, 0) + 96px);
+  left: 50%; transform: translateX(-50%);
+  padding: 9px 20px; border: none; border-radius: 999px;
+  background: linear-gradient(135deg, #d23b30, #b0325a); color: #fff;
+  font: 800 14px system-ui, sans-serif; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(176, 50, 90, 0.4);
+}
+.fash-try:hover { filter: brightness(1.06); }
+
+/* ---- Fashion "Try it on" overlay ---- */
+.fash-tryon { position: fixed; inset: 0; z-index: 40; background: #1c150f; overflow: hidden; }
+.tryon-stage { position: absolute; inset: 0; }
+.tryon-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.avatar-canvas { position: absolute; inset: 0; }
+
+.tryon-msg {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 40px)); text-align: center;
+  background: rgba(20, 16, 10, 0.78); color: #f6ecdc; padding: 18px 20px;
+  border-radius: 16px; font: 500 0.92rem/1.5 system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.tryon-alt {
+  margin-top: 12px; padding: 9px 18px; border: none; border-radius: 999px;
+  background: #c8912e; color: #2a1f14; font: 800 13px system-ui, sans-serif; cursor: pointer;
+}
+
+.tryon-top {
+  position: fixed; z-index: 42;
+  top: calc(env(safe-area-inset-top, 0) + 10px); left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  pointer-events: none;
+}
+.tryon-top > * { pointer-events: auto; }
+.tryon-top .backbtn { position: static; }
+.tryon-title { font: 800 0.98rem system-ui, sans-serif; color: #f6ecdc; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+
+.tryon-tabs {
+  position: fixed; z-index: 42;
+  top: calc(env(safe-area-inset-top, 0) + 52px); left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.tryon-tab {
+  padding: 7px 16px; border: 1px solid rgba(255, 246, 230, 0.4); border-radius: 999px;
+  background: rgba(20, 16, 10, 0.62); color: #f6ecdc;
+  font: 700 12px system-ui, sans-serif; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.tryon-tab.on { background: #f6ecdc; color: #2a1f14; border-color: #f6ecdc; }
+
+.tryon-controls {
+  position: fixed; z-index: 42; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  width: min(600px, calc(100vw - 20px));
+  background: rgba(20, 16, 10, 0.7); border: 1px solid rgba(255, 246, 230, 0.18);
+  border-radius: 18px; padding: 12px 14px; color: #f6ecdc;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.tryon-tones, .tryon-swatches { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.tryon-tone {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
+  border: 2px solid rgba(255, 246, 230, 0.35);
+}
+.tryon-tone.on { border-color: #fff; transform: scale(1.14); }
+.tryon-actions { display: flex; justify-content: center; }
+.tryon-snap {
+  padding: 10px 24px; border: none; border-radius: 999px;
+  background: linear-gradient(135deg, #d23b30, #b0325a); color: #fff;
+  font: 800 14px system-ui, sans-serif; cursor: pointer;
+}
+.tryon-note { font: 500 0.72rem/1.4 system-ui, sans-serif; color: #d8cbb0; text-align: center; margin: 8px 0 0; }
+
+.tryon-postcard {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.72); padding: 20px;
+}
+.pc-card {
+  width: min(420px, 90vw); background: #efe7dc; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+.pc-card img { display: block; width: 100%; height: auto; }
+.pc-actions { display: flex; gap: 10px; padding: 12px; justify-content: center; }
+.pc-save, .pc-close {
+  padding: 9px 20px; border-radius: 999px; font: 800 13px system-ui, sans-serif;
+  cursor: pointer; text-decoration: none;
+}
+.pc-save { background: #c8912e; color: #2a1f14; border: none; }
+.pc-close { background: transparent; color: #6a4b2a; border: 1px solid #c8912e; }
+
 /* ---- Virtual Meditation ---- */
 .med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }
 .med-mute {

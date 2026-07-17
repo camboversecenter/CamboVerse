@@ -198,6 +198,14 @@ orientation, then [`STRATEGY.md`](./STRATEGY.md) for full context.
 - **Heritage data, content, and documentation:** Creative Commons Attribution
   4.0 (`CC-BY-4.0`) unless noted otherwise.
 
+**Bundled open-source components** (vendored locally — no external runtime calls):
+
+- **[MediaPipe Tasks Vision](https://github.com/google-ai-edge/mediapipe)**
+  (`Apache-2.0`) — on-device face tracking powering the Khmer Fashion "Try it
+  on" mirror. The WASM runtime and `face_landmarker` model are served from
+  [`public/mediapipe/`](./public/mediapipe); the camera stream never leaves the
+  device.
+
 ## About the CamboVerse Center
 
 The CamboVerse Center was **initiated by H.E. Dr. Hor Peng, Rector of the
