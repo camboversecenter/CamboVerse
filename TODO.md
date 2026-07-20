@@ -120,11 +120,12 @@ You don't need a camera to make a huge difference here.
 
 ## Add a Khmer traditional tool (3D artifact)
 
-The **🏺 Khmer Tools** gallery lets visitors inspect everyday Khmer objects in
-3D and VR, learn their parts, and see how they're used. The two objects there
-now — **ក្អម** (water pot) and **ចង្ក្រាន** (clay stove) — are just **sample
-builds** to show the pattern. **Help fill the gallery** with the rich world of
-Khmer tools, instruments, and household objects.
+The **🏺 Khmer Life** gallery lets visitors inspect everyday Khmer objects in
+3D and VR, learn their parts, and see how they're used. Eleven objects live
+there now — from the **ក្អម** water pot and **ចង្ក្រាន** stove to the
+**នង្គ័ល** plough and the **ចាប៉ី** lute — all procedural stand-ins awaiting
+real captures. **Help fill the gallery** with the rich world of Khmer tools,
+instruments, and household objects — or recapture an existing one for real.
 
 Each artifact is a small, self-contained contribution — no server work, and it
 appears in the gallery **and** the Asset registry automatically.
@@ -165,12 +166,13 @@ licence** (CC0 / CC‑BY / CC‑BY‑SA), **consent** for any real capture, and
 **Ideas to claim** (from daily life, crafts, music, and the kitchen):
 
 - **Kitchen & home:** ពាង (large water jar), ឆ្នាំង (clay cooking pot), ខ្ទះ
-  (wok / frying pan), ត្បាល់ & អង្រែ (mortar & pestle), កញ្ជើ / ល្អី (baskets),
-  ស្លាបព្រា (spoon), កន្ទេល (woven mat).
-- **Farm & craft:** នង្គ័ល (plough), កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom),
-  សំណាញ់ (fishing net), and woven bamboo fish traps.
-- **Music (Pinpeat / Mahori):** រនាត (roneat xylophone), គង (gong circle),
-  ស្គរ (drums), ទ្រ (tro fiddle), ខ្លុយ (flute), ចាប៉ី (chapei lute).
+  (wok / frying pan), កញ្ជើ / ល្អី (baskets), ស្លាបព្រា (spoon), កន្ទេល (woven
+  mat). *(ត្បាល់ & អង្រែ — mortar & pestle — is in the gallery.)*
+- **Farm & craft:** កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom), សំណាញ់ (fishing
+  net), and woven bamboo fish traps. *(នង្គ័ល — the plough — is in the
+  gallery.)*
+- **Music (Pinpeat / Mahori):** គង (gong circle), ទ្រ (tro fiddle), ខ្លុយ
+  (flute). *(រនាត, ស្គរ and ចាប៉ី are in the gallery.)*
 - **Everyday:** ក្រមា (the iconic checkered krama scarf), សំពត់ (traditional
   cloth), ចង្កឹះ, កាំបិត.
 

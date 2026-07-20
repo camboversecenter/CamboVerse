@@ -488,6 +488,180 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "tbal",
+  khmer: "ត្បាល់ និង អង្រែ",
+  name: "Tbal & Angre",
+  english: "Mortar and pestle",
+  category: "Traditional tool",
+  blurb: "The heavy mortar and pestle that pounds kroeung — the aromatic paste at the heart of Khmer cooking.",
+  story:
+    "The ត្បាល់ (tbal, mortar) and អង្រែ (angre, pestle) are the heartbeat of the Khmer kitchen — literally: in the late afternoon a village rings with the steady thud of pounding as evening meals begin. Their great work is គ្រឿង — kroeung, the fragrant paste of lemongrass, galangal, turmeric, kaffir lime and garlic pounded together as the base of amok, samlor korko and countless other dishes. Pounding does what no blender can: it crushes and bruises the fibres so the oils blend rather than merely chop. The Khmer word បុក (bok) means 'to pound', and beloved dishes carry the sound in their name — bok l'hong, the pounded green-papaya salad, is named after the very act of making it.",
+  utilities: [
+    "Pounds kroeung — the lemongrass–galangal–turmeric paste at the base of Khmer curries",
+    "Makes bok l'hong (pounded papaya salad) — 'bok' means 'to pound'",
+    "Crushes prahok, dried fish, garlic, chillies and peppercorns",
+    "A small tbal pounds betel for elders — a gentle duty of respect",
+    "Heavy by design: the mortar's weight keeps it steady under the blows",
+  ],
+  origin:
+    "Carved from stone or turned from dense hardwood by village artisans — Pursat province is famous for its stone carving.",
+  model: "/models/tbal.glb",
+  pois: [
+    {
+      id: "bowl",
+      title: "The bowl",
+      khmer: "មាត់ត្បាល់",
+      info: "The wide, thick-walled bowl takes the blows. Its inside stays rough on purpose — the coarse surface grips and tears the fibres of lemongrass and galangal so they surrender their oils.",
+      target: [0, 1.05, 0],
+      camera: [1.6, 2.1, 2.4],
+    },
+    {
+      id: "foot",
+      title: "The waist & foot",
+      khmer: "ជើងត្បាល់",
+      info: "Below the bowl the stone pinches into a waist and spreads into a heavy foot. The weight is part of the tool: a mortar must sit dead-steady and never 'walk' across the floor mid-pounding.",
+      target: [0, 0.3, 0],
+      camera: [2.2, 0.9, 2.8],
+    },
+    {
+      id: "angre",
+      title: "The pestle — angre",
+      khmer: "អង្រែ",
+      info: "A club of dense hardwood, heavier at the working end. A practised cook barely swings it — the pestle is lifted and dropped, and its own weight does the pounding, hour after hour without tiring the wrist.",
+      target: [0.32, 2.1, 0],
+      camera: [2.0, 2.5, 2.6],
+    },
+    {
+      id: "bok",
+      title: "The sound of 'bok'",
+      khmer: "សូរបុក",
+      info: "Bok — the Khmer word for 'pound' — is also the sound the tbal makes. In the villages it is the sound of supper coming: when the pounding starts in the late afternoon, the day's work is ending and the kitchen has taken over.",
+      target: [0.12, 1.2, 0],
+      camera: [1.3, 1.9, 2.9],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "neangkoal",
+  khmer: "នង្គ័ល",
+  name: "Neangkoal",
+  english: "Wooden plough",
+  category: "Traditional tool",
+  blurb: "The ox-drawn wooden plough that opens the rice year — honoured by a royal ceremony that bears its name.",
+  story:
+    "The នង្គ័ល (neangkoal) is the wooden plough that begins everything: when the first rains soften the paddy, a pair of oxen or water buffalo is yoked to it and the rice year opens. Its design is elegantly minimal — a wooden sole that runs in the furrow, an iron share (ផាល, phal) at its nose to cut the earth, a long beam sweeping up to the neck-yoke, and a single rear handle: the ploughman steers one-handed, the free hand holding the goad, calling to the team. The whole plough is light enough to carry over one shoulder between fields. So central is it to Khmer life that the kingdom's royal calendar honours it: at the Royal Ploughing Ceremony (ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល) — literally 'the royal driving of the plough' — sacred oxen plough a ceremonial furrow, then are offered rice, corn, beans, sesame, grass, water and wine; what they choose to eat is read as the year's harvest forecast.",
+  utilities: [
+    "Breaks and turns the flooded paddy soil after the first rains",
+    "Pulled by a pair of oxen or water buffalo under a neck-yoke",
+    "The iron share (phal) cuts; the wooden sole lifts and turns the earth",
+    "Steered with one hand — the other drives the team",
+    "Light enough to shoulder from field to field",
+    "Gives its name to the Royal Ploughing Ceremony, which forecasts the harvest",
+  ],
+  origin:
+    "Made by village carpenters from hardwood with a forge-made iron share — a design little changed since the ploughing scenes carved at Angkor. Meet it at work in the Virtual Farm's first stage.",
+  model: "/models/neangkoal.glb",
+  pois: [
+    {
+      id: "phal",
+      title: "The iron share — phal",
+      khmer: "ផាល",
+      info: "The one piece of metal on the plough: a forged iron point socketed onto the wooden sole's nose. It slices the soaked earth so the sole behind it can lift and turn the furrow.",
+      target: [0.95, 0.1, 0],
+      camera: [2.0, 0.9, 2.2],
+    },
+    {
+      id: "handle",
+      title: "The single handle",
+      khmer: "ដៃនង្គ័ល",
+      info: "Khmer ploughs are steered one-handed from a single rear post. Press down and the share bites deeper; ease off and it rises. The free hand holds the goad and 'talks' the oxen along the furrow.",
+      target: [-0.79, 1.05, 0],
+      camera: [-2.2, 1.6, 2.2],
+    },
+    {
+      id: "beam",
+      title: "The beam",
+      khmer: "ដងនង្គ័ល",
+      info: "The long wooden beam sweeps forward and up from the sole to the yoke, transferring the animals' pull down into the cutting share at exactly the right angle.",
+      target: [1.0, 0.72, 0],
+      camera: [2.4, 1.5, 2.6],
+    },
+    {
+      id: "nim",
+      title: "The yoke — nim",
+      khmer: "នឹម",
+      info: "The crossbar that rests on the necks of the paired oxen or buffalo, with pegs to keep it seated. Lashed to the beam with rattan, it turns two animals walking into one steady pull.",
+      target: [1.49, 0.97, 0.2],
+      camera: [2.8, 1.6, 1.8],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "chapei",
+  khmer: "ចាប៉ីដងវែង",
+  name: "Chapei Dong Veng",
+  english: "Long-necked lute",
+  category: "Traditional instrument",
+  blurb: "The two-stringed Khmer lute of sung poetry and wit — inscribed by UNESCO as heritage in urgent need of safeguarding.",
+  story:
+    "The ចាប៉ីដងវែង (chapei dong veng — 'lute with the long neck') is Cambodia's storytelling instrument. Over a round, moon-like soundbox and two plucked strings, the player performs ច្រៀងចាប៉ី (chrieng chapei): half-sung, half-spoken verses improvised on the spot — proverbs and blessings, history and news, and above all wit, the sharper the better. A great chapei master answers any topic the audience throws with rhyming verse. The art nearly vanished: most of its masters died under the Khmer Rouge, and a handful of survivors — among them the celebrated Kong Nay — carried it forward and taught it anew. In 2016 UNESCO inscribed chapei dong veng on its List of Intangible Cultural Heritage in Need of Urgent Safeguarding, and today young players are learning it again.",
+  utilities: [
+    "Accompanies chrieng chapei — improvised sung poetry of proverbs, blessings and satire",
+    "Two strings, plucked with the fingertips; the long fretted neck lets notes bend and slide",
+    "Played at weddings, festivals and storytelling evenings",
+    "A solo art: one voice, one lute, and a quick mind",
+    "Inscribed by UNESCO (2016) as heritage in urgent need of safeguarding",
+  ],
+  origin:
+    "Made by luthiers from jackfruit wood and other hardwoods; the tradition survives through a handful of masters and the students they have trained.",
+  model: "/models/chapei.glb",
+  pois: [
+    {
+      id: "soundbox",
+      title: "The moon-round soundbox",
+      khmer: "ស្នូកចាប៉ី",
+      info: "The flat, round body is the instrument's chest — a hollow of jackfruit wood that catches the strings' vibration and warms it into the chapei's dry, speaking tone.",
+      target: [0, 0.52, 0.1],
+      camera: [1.4, 1.1, 2.6],
+    },
+    {
+      id: "neck",
+      title: "The long neck",
+      khmer: "ដងវែង",
+      info: "'Dong veng' means 'long neck' — and it is the instrument's name and signature. The frets stand tall off the neck, so the player can press lightly and bend or slide each note like a spoken inflection.",
+      target: [-0.5, 1.4, 0],
+      camera: [-2.0, 1.8, 2.4],
+    },
+    {
+      id: "strings",
+      title: "The two strings",
+      khmer: "ខ្សែទាំងពីរ",
+      info: "Just two strings — once silk, today usually nylon — plucked with the fingertips. One mostly drones, one mostly speaks: enough to carry a melody underneath an improvised verse.",
+      target: [-0.35, 1.2, 0.1],
+      camera: [1.0, 1.6, 2.8],
+    },
+    {
+      id: "head",
+      title: "The head & pegs",
+      khmer: "ក្បាលចាប៉ី",
+      info: "At the top of the neck the head curves back, holding the two friction pegs that tune the strings. Makers often finish it with a carved flourish — every chapei is a little different.",
+      target: [-1.0, 2.25, 0],
+      camera: [-2.4, 2.7, 2.0],
+    },
+    {
+      id: "chrieng",
+      title: "The singer's art",
+      khmer: "ច្រៀងចាប៉ី",
+      info: "The chapei is only half the performance — the other half is the improvised verse it accompanies. Audiences shout topics; the master answers in rhyme, teasing, blessing and teaching. UNESCO lists the art as urgently in need of safeguarding, and a new generation is taking it up.",
+      target: [0, 0.52, 0.1],
+      camera: [2.6, 1.4, 3.2],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }
