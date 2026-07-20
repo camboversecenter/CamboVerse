@@ -42,21 +42,23 @@ Cambodia online for the world, with your name on it.
 
 ## Site status — where the commons needs you most
 
-Two sites are "full" (photoreal 3D‑Gaussian‑Splatting capture **and** authored
-points of interest). The rest have a base model but **need a real capture and
-POIs** — these are the highest‑impact tasks right now.
+Every site now has authored points of interest, but only two are "full"
+(photoreal 3D‑Gaussian‑Splatting capture **and** POIs). What the commons needs
+most now is **real captures** — these are the highest‑impact tasks right now.
+(More POIs, and native‑speaker review of the existing ones, are always welcome.)
 
 | Site | Province | Photoreal (3DGS) | Points of interest | Needs |
 |---|---|:---:|:---:|---|
 | Angkor Wat | Siem Reap | ✅ | ✅ (6) | polish, more POIs |
 | Wat Phnom | Phnom Penh | ✅ | ✅ (5) | polish · [field guide](./docs/CAPTURE_WATPHNOM.md) |
-| **Bayon** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BAYON.md) |
-| **Ta Prohm** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_TAPROHM.md) |
-| **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
-| **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
-| **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
-| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (3) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
-| _New sites_ | — | — | — | **propose one!** (e.g. Koh Ker, Silver Pagoda, Phnom Bakheng) |
+| **Bayon** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BAYON.md) |
+| **Ta Prohm** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_TAPROHM.md) |
+| **Banteay Srei** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
+| **Preah Vihear** | Preah Vihear | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
+| **Royal Palace** | Phnom Penh | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
+| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (4) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
+| **Koh Ker** | Preah Vihear | ❌ | ✅ (3) | **capture**, a field guide, more POIs |
+| _New sites_ | — | — | — | **propose one!** (e.g. Silver Pagoda, Phnom Bakheng, Neak Poan) |
 
 Each site above has a **site-specific field guide** (linked in the table) with
 what to shoot, when to go, access/consent notes, and hazards. Wat Phnom is in
@@ -105,10 +107,11 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) §3 for the asset schema and
 
 You don't need a camera to make a huge difference here.
 
-- **Points of interest (POIs):** the sites marked "needs POIs" above have no
-  places to walk to yet. Add a few — a title, a couple of true sentences, and
-  where the camera should look. Model them on the Angkor Wat / Wat Phnom POIs in
-  `src/spots.ts`.
+- **Points of interest (POIs):** every site now has a starter set of POIs in
+  `src/spots.ts` — grow them. Add a new one (a title, a couple of true
+  sentences, and where the camera should look), deepen an existing one, or —
+  especially valued — review the Khmer titles as a native speaker. Model new
+  POIs on the Angkor Wat / Wat Phnom entries.
 - **History & "Back in Time":** deepen the era stories, add per‑site notes, or
   write **quiz questions** for an era in `src/history.ts`. Passing a quiz earns a
   learning credential that shows up in the visitor's Heritage Passport.
