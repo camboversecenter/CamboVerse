@@ -42,21 +42,23 @@ Cambodia online for the world, with your name on it.
 
 ## Site status — where the commons needs you most
 
-Two sites are "full" (photoreal 3D‑Gaussian‑Splatting capture **and** authored
-points of interest). The rest have a base model but **need a real capture and
-POIs** — these are the highest‑impact tasks right now.
+Every site now has authored points of interest, but only two are "full"
+(photoreal 3D‑Gaussian‑Splatting capture **and** POIs). What the commons needs
+most now is **real captures** — these are the highest‑impact tasks right now.
+(More POIs, and native‑speaker review of the existing ones, are always welcome.)
 
 | Site | Province | Photoreal (3DGS) | Points of interest | Needs |
 |---|---|:---:|:---:|---|
 | Angkor Wat | Siem Reap | ✅ | ✅ (6) | polish, more POIs |
 | Wat Phnom | Phnom Penh | ✅ | ✅ (5) | polish · [field guide](./docs/CAPTURE_WATPHNOM.md) |
-| **Bayon** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BAYON.md) |
-| **Ta Prohm** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_TAPROHM.md) |
-| **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
-| **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
-| **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
-| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (3) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
-| _New sites_ | — | — | — | **propose one!** (e.g. Koh Ker, Silver Pagoda, Phnom Bakheng) |
+| **Bayon** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BAYON.md) |
+| **Ta Prohm** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_TAPROHM.md) |
+| **Banteay Srei** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
+| **Preah Vihear** | Preah Vihear | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
+| **Royal Palace** | Phnom Penh | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
+| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (4) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
+| **Koh Ker** | Preah Vihear | ❌ | ✅ (3) | **capture**, a field guide, more POIs |
+| _New sites_ | — | — | — | **propose one!** (e.g. Silver Pagoda, Phnom Bakheng, Neak Poan) |
 
 Each site above has a **site-specific field guide** (linked in the table) with
 what to shoot, when to go, access/consent notes, and hazards. Wat Phnom is in
@@ -105,10 +107,11 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) §3 for the asset schema and
 
 You don't need a camera to make a huge difference here.
 
-- **Points of interest (POIs):** the sites marked "needs POIs" above have no
-  places to walk to yet. Add a few — a title, a couple of true sentences, and
-  where the camera should look. Model them on the Angkor Wat / Wat Phnom POIs in
-  `src/spots.ts`.
+- **Points of interest (POIs):** every site now has a starter set of POIs in
+  `src/spots.ts` — grow them. Add a new one (a title, a couple of true
+  sentences, and where the camera should look), deepen an existing one, or —
+  especially valued — review the Khmer titles as a native speaker. Model new
+  POIs on the Angkor Wat / Wat Phnom entries.
 - **History & "Back in Time":** deepen the era stories, add per‑site notes, or
   write **quiz questions** for an era in `src/history.ts`. Passing a quiz earns a
   learning credential that shows up in the visitor's Heritage Passport.
@@ -117,11 +120,12 @@ You don't need a camera to make a huge difference here.
 
 ## Add a Khmer traditional tool (3D artifact)
 
-The **🏺 Khmer Tools** gallery lets visitors inspect everyday Khmer objects in
-3D and VR, learn their parts, and see how they're used. The two objects there
-now — **ក្អម** (water pot) and **ចង្ក្រាន** (clay stove) — are just **sample
-builds** to show the pattern. **Help fill the gallery** with the rich world of
-Khmer tools, instruments, and household objects.
+The **🏺 Khmer Life** gallery lets visitors inspect everyday Khmer objects in
+3D and VR, learn their parts, and see how they're used. Eleven objects live
+there now — from the **ក្អម** water pot and **ចង្ក្រាន** stove to the
+**នង្គ័ល** plough and the **ចាប៉ី** lute — all procedural stand-ins awaiting
+real captures. **Help fill the gallery** with the rich world of Khmer tools,
+instruments, and household objects — or recapture an existing one for real.
 
 Each artifact is a small, self-contained contribution — no server work, and it
 appears in the gallery **and** the Asset registry automatically.
@@ -162,12 +166,13 @@ licence** (CC0 / CC‑BY / CC‑BY‑SA), **consent** for any real capture, and
 **Ideas to claim** (from daily life, crafts, music, and the kitchen):
 
 - **Kitchen & home:** ពាង (large water jar), ឆ្នាំង (clay cooking pot), ខ្ទះ
-  (wok / frying pan), ត្បាល់ & អង្រែ (mortar & pestle), កញ្ជើ / ល្អី (baskets),
-  ស្លាបព្រា (spoon), កន្ទេល (woven mat).
-- **Farm & craft:** នង្គ័ល (plough), កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom),
-  សំណាញ់ (fishing net), and woven bamboo fish traps.
-- **Music (Pinpeat / Mahori):** រនាត (roneat xylophone), គង (gong circle),
-  ស្គរ (drums), ទ្រ (tro fiddle), ខ្លុយ (flute), ចាប៉ី (chapei lute).
+  (wok / frying pan), កញ្ជើ / ល្អី (baskets), ស្លាបព្រា (spoon), កន្ទេល (woven
+  mat). *(ត្បាល់ & អង្រែ — mortar & pestle — is in the gallery.)*
+- **Farm & craft:** កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom), សំណាញ់ (fishing
+  net), and woven bamboo fish traps. *(នង្គ័ល — the plough — is in the
+  gallery.)*
+- **Music (Pinpeat / Mahori):** គង (gong circle), ទ្រ (tro fiddle), ខ្លុយ
+  (flute). *(រនាត, ស្គរ and ចាប៉ី are in the gallery.)*
 - **Everyday:** ក្រមា (the iconic checkered krama scarf), សំពត់ (traditional
   cloth), ចង្កឹះ, កាំបិត.
 
@@ -494,10 +499,13 @@ much richer:
 - **✍️ Author points of interest.** A site with no `pois` shows “not authored
   yet”. Add its points of interest (title, Khmer, a short description) so the
   province map — and the in-site tour — teaches the place.
-- **🇰🇭 Province identity.** Give each province a Khmer name, a one-line
-  description, and its emblem/known-for (temples, pepper, silk…), shown on the
-  province map. (The ADM1 names come from the boundary data; a couple read oddly
-  and are prettified in `src/spots.ts` — extend that as needed.)
+- **🇰🇭 Province identity.** All 25 provinces now carry a Khmer name, a
+  one-line identity, and known-for chips (temples, pepper, silk…) in
+  `src/provinces.ts`, shown on the province map. Help by **verifying and
+  refining** them — especially native-speaker review of the Khmer names — or
+  by proposing better emblems for a province you know well. (The ADM1 names
+  come from the boundary data; a couple read oddly and are prettified in
+  `src/spots.ts` — extend that as needed.)
 See `src/components/ProvinceView.tsx`, `src/cambodia-provinces.ts`, and
 `src/cambodia-districts.ts`.
 
