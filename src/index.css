@@ -2153,6 +2153,23 @@ body,
 }
 .sakyant-btn:hover { background: color-mix(in srgb, #8a6a4a 30%, rgba(20, 16, 10, 0.78)); }
 
+.grove-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 410px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #4c9a4f 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.grove-btn:hover { background: color-mix(in srgb, #4c9a4f 30%, rgba(20, 16, 10, 0.78)); }
+
 /* ---- Khmer Village ---- */
 .village { position: fixed; inset: 0; z-index: 5; background: #bcd4e6; }
 
@@ -2398,6 +2415,91 @@ body,
 }
 .sy-slider span { width: 52px; }
 .sy-slider input { flex: 1; accent-color: #c8912e; }
+
+/* ---- Grove Garden (verified virtual twin) ---- */
+.grove { position: fixed; inset: 0; z-index: 5; background: #bfe0d6; }
+
+.grove-verify {
+  position: fixed; z-index: 15;
+  top: calc(env(safe-area-inset-top, 0) + 50px); left: 50%; transform: translateX(-50%);
+  width: min(560px, calc(100vw - 20px)); text-align: center;
+  padding: 7px 12px; border-radius: 999px;
+  background: rgba(18, 40, 30, 0.82); color: #d8f5e4;
+  font: 700 0.76rem system-ui, sans-serif;
+  border: 1px solid rgba(120, 220, 160, 0.35);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
+.grove-source {
+  position: fixed; z-index: 15;
+  top: calc(env(safe-area-inset-top, 0) + 88px); left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  width: min(560px, calc(100vw - 20px));
+}
+.grove-import {
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  background: rgba(255, 255, 255, 0.82); color: #26482f;
+  font: 700 12px system-ui, sans-serif; border: 1px solid rgba(40, 80, 50, 0.3);
+}
+.grove-node { display: flex; gap: 4px; flex: 1 1 260px; min-width: 220px; }
+.grove-node input {
+  flex: 1; min-width: 0; padding: 6px 10px; border-radius: 999px;
+  border: 1px solid rgba(40, 80, 50, 0.3); background: rgba(255, 255, 255, 0.82);
+  color: #26482f; font: 500 11px system-ui, monospace;
+}
+.grove-node button {
+  padding: 6px 12px; border-radius: 999px; border: none; cursor: pointer;
+  background: #2f7d4a; color: #fff; font: 700 12px system-ui, sans-serif; white-space: nowrap;
+}
+
+.grove-panel {
+  position: fixed; z-index: 15; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  width: min(600px, calc(100vw - 20px));
+  background: rgba(16, 32, 24, 0.78); color: #eafff2;
+  border: 1px solid rgba(120, 220, 160, 0.25); border-radius: 18px; padding: 12px 16px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.grove-totals { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; font: 500 0.86rem system-ui, sans-serif; }
+.grove-totals b { font-size: 1.05rem; }
+.grove-co2 { color: #bff0cf; }
+.grove-co2 i { font-style: italic; opacity: 0.8; font-size: 0.8rem; }
+.grove-timeline { display: flex; align-items: center; gap: 10px; margin: 10px 0 4px; }
+.grove-play {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer; flex: 0 0 auto;
+  background: #2f7d4a; color: #fff; font-size: 14px;
+}
+.grove-timeline input { flex: 1; accent-color: #6fdca0; }
+.grove-date { font: 600 0.74rem monospace; color: #bff0cf; width: 76px; text-align: right; }
+.grove-foot { font: 500 0.72rem/1.45 system-ui, sans-serif; color: #b8d8c6; margin: 8px 0 0; text-align: center; }
+
+.grove-tag {
+  background: rgba(16, 32, 24, 0.85); color: #eafff2; border: 1px solid rgba(120, 220, 160, 0.3);
+  border-radius: 10px; padding: 3px 8px; font: 700 11px system-ui, sans-serif; white-space: nowrap;
+  cursor: pointer; display: flex; gap: 5px; align-items: baseline;
+}
+.grove-tag.on { border-color: #6fdca0; box-shadow: 0 0 0 2px rgba(111, 220, 160, 0.35); }
+.grove-tag span { font-weight: 500; opacity: 0.85; }
+
+.grove-detail {
+  position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.5); padding: 20px;
+}
+.grove-card {
+  width: min(420px, 92vw); background: #f3faf5; color: #234; border-radius: 16px; padding: 16px 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+.grove-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.grove-card-head b { font-size: 1.05rem; }
+.grove-x { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #567; }
+.grove-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0; border-top: 1px solid #e0ece4; font: 400 0.9rem system-ui, sans-serif; }
+.grove-row span:first-child { color: #6a8478; }
+.grove-row code { font: 500 0.8rem monospace; color: #2f7d4a; }
+.grove-row i { font-style: italic; opacity: 0.7; font-size: 0.82em; }
+.grove-trust { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
+.grove-trust-bar { width: 60px; height: 7px; border-radius: 4px; background: #dce8e0; overflow: hidden; }
+.grove-trust-bar span { display: block; height: 100%; background: linear-gradient(90deg, #d8a13a, #2f7d4a); }
+.grove-note { font: 500 0.74rem/1.5 system-ui, sans-serif; color: #6a8478; margin: 10px 0 0; }
 
 /* ---- Virtual Meditation ---- */
 .med { position: fixed; inset: 0; z-index: 5; background: #1a2230; }

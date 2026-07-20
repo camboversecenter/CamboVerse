@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc -b",
+    "test": "vitest run",
     "cf-typegen": "wrangler types",
     "gen:model": "node scripts/generate-model.mjs",
     "gen:angkor": "node scripts/generate-angkor.mjs",
@@ -54,6 +55,7 @@
     "opentype.js": "^2.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.0",
+    "vitest": "^2.1.9",
     "wrangler": "^4.0.0"
   }
 }

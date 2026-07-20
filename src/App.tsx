@@ -11,6 +11,7 @@ import { MeditationView } from "./components/MeditationView";
 import { VillageView } from "./components/VillageView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
+import { GroveGardenView } from "./components/GroveGardenView";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -25,6 +26,7 @@ export function App() {
   const [villageOpen, setVillageOpen] = useState(false);
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
+  const [groveOpen, setGroveOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -76,6 +78,8 @@ export function App() {
         <FashionView onBackToMap={() => setFashionOpen(false)} />
       ) : sakYantOpen ? (
         <SakYantView onBackToMap={() => setSakYantOpen(false)} />
+      ) : groveOpen ? (
+        <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -89,6 +93,7 @@ export function App() {
           onOpenVillage={() => setVillageOpen(true)}
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
+          onOpenGrove={() => setGroveOpen(true)}
         />
       )}
 
