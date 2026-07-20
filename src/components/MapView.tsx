@@ -19,6 +19,7 @@ export function MapView({
   onOpenVillage,
   onOpenFashion,
   onOpenSakYant,
+  onOpenGrove,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -31,6 +32,7 @@ export function MapView({
   onOpenVillage: () => void;
   onOpenFashion: () => void;
   onOpenSakYant: () => void;
+  onOpenGrove: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -87,6 +89,7 @@ export function MapView({
         <button className="village-btn" onClick={onOpenVillage}>🏡 Khmer Village</button>
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
         <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
+        <button className="grove-btn" onClick={onOpenGrove}>🌱 Grove Garden</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>
