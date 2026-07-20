@@ -497,10 +497,13 @@ much richer:
 - **✍️ Author points of interest.** A site with no `pois` shows “not authored
   yet”. Add its points of interest (title, Khmer, a short description) so the
   province map — and the in-site tour — teaches the place.
-- **🇰🇭 Province identity.** Give each province a Khmer name, a one-line
-  description, and its emblem/known-for (temples, pepper, silk…), shown on the
-  province map. (The ADM1 names come from the boundary data; a couple read oddly
-  and are prettified in `src/spots.ts` — extend that as needed.)
+- **🇰🇭 Province identity.** All 25 provinces now carry a Khmer name, a
+  one-line identity, and known-for chips (temples, pepper, silk…) in
+  `src/provinces.ts`, shown on the province map. Help by **verifying and
+  refining** them — especially native-speaker review of the Khmer names — or
+  by proposing better emblems for a province you know well. (The ADM1 names
+  come from the boundary data; a couple read oddly and are prettified in
+  `src/spots.ts` — extend that as needed.)
 See `src/components/ProvinceView.tsx`, `src/cambodia-provinces.ts`, and
 `src/cambodia-districts.ts`.
 

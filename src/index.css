@@ -1661,6 +1661,14 @@ body,
 .prov-hint p { margin: 0 0 6px; font-size: 0.86rem; }
 .prov-hint p:last-child { margin: 0; }
 .prov-hint-sub { color: var(--muted, #a6ab97); }
+/* Province identity — the one-line identity + known-for chips (src/provinces.ts). */
+.prov-idn { font-size: 0.88rem; line-height: 1.45; color: #e3e7d8; }
+.prov-known { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.prov-chip {
+  padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; font-weight: 600;
+  background: rgba(200, 145, 46, 0.12); border: 1px solid rgba(200, 145, 46, 0.35);
+  color: #e9dcb8; white-space: nowrap;
+}
 
 .prov-detail {
   position: fixed;
@@ -1737,6 +1745,7 @@ body,
 .cls-top .backbtn { position: static; }
 .cls-top > * { pointer-events: auto; }
 .cls-title { font: 800 0.98rem system-ui, sans-serif; }
+.cls-title .khmer { font-size: 0.85em; opacity: 0.8; font-weight: 500; }
 .cls-vr { position: static; transform: none; }
 
 .cls-controls {
