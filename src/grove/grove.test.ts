@@ -3,6 +3,8 @@ import {
   verifyObservation, verifyAttestation, trustScore, estimateCarbon,
   type GardenObservation, type Attestation,
 } from "./grove";
+import { buildPlots } from "./garden";
+import type { VerifiedRecord } from "./client";
 import bundle from "./fixtures/grove-bundle.json";
 import observationRes from "./fixtures/observation.json";
 
@@ -68,5 +70,39 @@ describe("Grove verify (against real signed fixtures)", () => {
     // The first mango: dbh 16 cm, height 6 m, count 1.
     const { co2Kg } = estimateCarbon(observations[0].measure, observations[0].species);
     expect(co2Kg).toBeCloseTo(observations[0].co2Kg, 1);
+  });
+});
+
+/** A minimal verified record for exercising the physical→virtual mapping. */
+function rec(id: string, species: string, prev: string | null, at: string): VerifiedRecord {
+  return {
+    observation: {
+      v: 1, kind: "observation", device: "dev", plot: "home-garden-01", species, count: 1,
+      measure: { method: "dbh_height", dbh_cm: 5, height_m: 3 }, biomassKg: 1, co2Kg: 1,
+      gps: null, observedAt: at, photoHash: "", prev, note: "", id, sig: "",
+    },
+    attestations: [], trust: 20,
+  };
+}
+
+describe("Grove garden mapping (buildPlots)", () => {
+  it("splits a prev-chain that changes species into two plants (guava ≠ jackfruit)", () => {
+    // Mirrors a real exported bundle: a jackfruit whose `prev` points at an
+    // earlier guava in the same plot. They are different plants, not one growing.
+    const guava = rec("g", "guava", null, "2026-07-20T23:20:28.523Z");
+    const jack = rec("j", "jackfruit", "g", "2026-07-20T23:22:27.044Z");
+    const plots = buildPlots([guava, jack]);
+    expect(plots).toHaveLength(1); // same plot id
+    expect(plots[0].chains).toHaveLength(2); // two distinct plants
+    expect(plots[0].count).toBe(2); // both counted, not collapsed to one
+  });
+
+  it("keeps a same-species prev-chain as one plant growing over time", () => {
+    const y1 = rec("a", "mango", null, "2025-07-15T08:30:00.000Z");
+    const y2 = rec("b", "mango", "a", "2026-07-14T08:30:00.000Z");
+    const plots = buildPlots([y1, y2]);
+    expect(plots[0].chains).toHaveLength(1); // one growth chain
+    expect(plots[0].count).toBe(1); // one plant
+    expect(plots[0].timeline).toHaveLength(2); // observed twice
   });
 });
