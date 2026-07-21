@@ -22,6 +22,9 @@ export interface GrovePlot {
   id: string;
   /** Dominant species in the plot (the most-recent record's species). */
   species: string;
+  /** Per-species plant counts in the plot now — so a mixed plot (e.g. a guava
+   *  and a jackfruit) is labelled honestly, not just by the latest species. */
+  speciesCounts: { species: string; count: number }[];
   /** Distinct growth chains (a plot may hold several plantings). */
   chains: Chain[];
   /** Every record, sorted by observedAt ascending — the plot's timeline. */
@@ -112,9 +115,16 @@ export function buildPlots(
     const latest = timeline[timeline.length - 1];
     const totalCo2Kg = round(latestPerChain.reduce((s, r) => s + r.observation.co2Kg, 0), 2);
     const count = latestPerChain.reduce((s, r) => s + r.observation.count, 0);
+    // Per-species counts (from the current plant of each chain), latest species first.
+    const bySpecies = new Map<string, number>();
+    for (const r of latestPerChain) {
+      bySpecies.set(r.observation.species, (bySpecies.get(r.observation.species) ?? 0) + r.observation.count);
+    }
+    const speciesCounts = [...bySpecies.entries()].map(([species, c]) => ({ species, count: c }));
     plots.push({
       id,
       species: latest.observation.species,
+      speciesCounts,
       chains,
       timeline,
       latest,
