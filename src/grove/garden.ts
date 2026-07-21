@@ -60,6 +60,12 @@ function toChains(records: VerifiedRecord[]): Chain[] {
     while (curId && !seen.has(curId)) {
       const rec = byId.get(curId);
       if (!rec) break;
+      // A growth chain is one *plant* observed over time — so its species can't
+      // change. If a `prev` link points to a different species (e.g. a phone that
+      // auto-chained a jackfruit onto the plot's earlier guava), it's a different
+      // plant: stop here and let that record start its own chain. Leaving it
+      // unseen means the leftover pass below picks it up.
+      if (chain.length && rec.observation.species !== chain[chain.length - 1].observation.species) break;
       seen.add(curId);
       chain.push(rec);
       curId = rec.observation.prev;
