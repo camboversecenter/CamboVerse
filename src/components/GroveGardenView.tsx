@@ -239,19 +239,24 @@ function PlotParcel({
   const spacing = 4.2;
   const x = (index - (total - 1) / 2) * spacing;
 
-  // Trees to draw: for each chain, its plant(s) at the current growth stage.
-  const trees: { key: string; species: string; stage: number; opacity: number; n: number }[] = [];
+  // Flatten every plant in the plot (across all growth chains and their `count`)
+  // into one list, then lay them out so nothing overlaps — a plot may hold
+  // several separate plantings, not just one chain.
+  const trees: { key: string; species: string; stage: number; opacity: number }[] = [];
   plot.chains.forEach((chain, ci) => {
     const g = growthAt(chain, now);
     if (!g.record) return;
-    trees.push({
-      key: plot.id + ":" + ci,
-      species: g.record.observation.species,
-      stage: g.stage,
-      opacity: trustOpacity(g.record.trust),
-      n: Math.min(6, g.record.observation.count),
-    });
+    const n = Math.min(6, g.record.observation.count);
+    for (let k = 0; k < n; k++) {
+      trees.push({
+        key: `${ci}:${k}`,
+        species: g.record.observation.species,
+        stage: g.stage,
+        opacity: trustOpacity(g.record.trust),
+      });
+    }
   });
+  const spots = layoutSpots(trees.length);
 
   return (
     <group position={[x, 0, 0]}>
@@ -260,20 +265,10 @@ function PlotParcel({
         <cylinderGeometry args={[1.7, 1.8, 0.16, 28]} />
         <meshStandardMaterial color={selected ? "#8a6a3a" : "#7a5636"} roughness={1} />
       </mesh>
-      {/* trees, clustered */}
-      {trees.map((tr) => (
-        <group key={tr.key}>
-          {Array.from({ length: tr.n }).map((_, k) => {
-            const a = (k / Math.max(1, tr.n)) * Math.PI * 2;
-            const r = tr.n === 1 ? 0 : 0.9;
-            const tx = Math.cos(a) * r;
-            const tz = Math.sin(a) * r;
-            return (
-              <group key={k} position={[tx, 0.08, tz]}>
-                <Tree species={tr.species} stage={tr.stage} opacity={tr.opacity} seed={index * 7 + k} />
-              </group>
-            );
-          })}
+      {/* trees, spread across the pad */}
+      {trees.map((tr, i) => (
+        <group key={tr.key} position={[spots[i][0], 0.08, spots[i][1]]}>
+          <Tree species={tr.species} stage={tr.stage} opacity={tr.opacity} seed={index * 7 + i} />
         </group>
       ))}
       {/* floating label */}
@@ -285,6 +280,24 @@ function PlotParcel({
       </Billboard>
     </group>
   );
+}
+
+/** Positions for N trees on a plot pad so none overlap: one at centre, the rest
+ *  on a ring (with a second ring past six). Deterministic — no randomness. */
+function layoutSpots(n: number): [number, number][] {
+  if (n <= 0) return [];
+  if (n === 1) return [[0, 0]];
+  const spots: [number, number][] = [];
+  const ringCount = n <= 6 ? n : 6;
+  for (let i = 0; i < ringCount; i++) {
+    const a = (i / ringCount) * Math.PI * 2;
+    spots.push([Math.cos(a) * 1.05, Math.sin(a) * 1.05]);
+  }
+  for (let i = ringCount; i < n; i++) {
+    const a = ((i - ringCount) / Math.max(1, n - ringCount)) * Math.PI * 2 + 0.4;
+    spots.push([Math.cos(a) * 0.5, Math.sin(a) * 0.5]);
+  }
+  return spots;
 }
 
 /* ---------------- procedural trees ---------------- */
