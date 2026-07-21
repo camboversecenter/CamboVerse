@@ -86,8 +86,13 @@ export function buildPlots(
   records: VerifiedRecord[],
   coarseGps?: Map<string, { lat: number; lng: number }>,
 ): GrovePlot[] {
+  // Records are content-addressed: an identical `id` is the same signed record
+  // (e.g. a duplicate in an export). Keep one so it isn't double-counted.
+  const uniqueById = new Map<string, VerifiedRecord>();
+  for (const r of records) if (!uniqueById.has(r.observation.id)) uniqueById.set(r.observation.id, r);
+
   const byPlot = new Map<string, VerifiedRecord[]>();
-  for (const r of records) {
+  for (const r of uniqueById.values()) {
     const arr = byPlot.get(r.observation.plot) ?? [];
     arr.push(r);
     byPlot.set(r.observation.plot, arr);
