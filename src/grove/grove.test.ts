@@ -95,6 +95,9 @@ describe("Grove garden mapping (buildPlots)", () => {
     expect(plots).toHaveLength(1); // same plot id
     expect(plots[0].chains).toHaveLength(2); // two distinct plants
     expect(plots[0].count).toBe(2); // both counted, not collapsed to one
+    // labelled honestly as a mix, not just "jackfruit"
+    const species = plots[0].speciesCounts.map((s) => s.species).sort();
+    expect(species).toEqual(["guava", "jackfruit"]);
   });
 
   it("keeps a same-species prev-chain as one plant growing over time", () => {

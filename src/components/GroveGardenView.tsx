@@ -205,7 +205,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               <b>{sel.id}</b>
               <button className="grove-x" onClick={() => setSelected(null)}>✕</button>
             </div>
-            <div className="grove-row"><span>Species</span><b>{sel.species} · {sel.count}×</b></div>
+            <div className="grove-row"><span>Species</span><b>{sel.speciesCounts.map((sc) => `${sc.count}× ${sc.species}`).join(", ")}</b></div>
             <div className="grove-row"><span>Est. CO₂</span><b>≈ {fmt(sel.totalCo2Kg)} kg</b></div>
             <div className="grove-row">
               <span>Trust</span>
@@ -298,7 +298,7 @@ function PlotParcel({
       {/* floating label */}
       <Billboard position={[0, 3.6, 0]}>
         <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
-          <b>{plot.species}</b> ·{plot.count}
+          <b>{plot.speciesCounts.map((sc) => `${sc.species}·${sc.count}`).join(" · ")}</b>
           <span>≈{fmt(plot.totalCo2Kg)}kg</span>
         </div>
       </Billboard>
