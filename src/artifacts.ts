@@ -452,6 +452,138 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "angrut",
+  khmer: "អង្រុត",
+  name: "Angrut",
+  english: "Bamboo fish trap",
+  category: "Traditional tool",
+  blurb: "A woven bamboo plunge basket used by farmers to catch fish in shallow flooded fields.",
+  story: "The អង្រុត (angrut) is a classic plunge basket used for catching fish in shallow, muddy waters. Hand-woven from thinly sliced bamboo and rattan, it has a wide, open bottom and a narrow top opening. A fisher wades through knee-deep water and plunges the angrut down into the mud when they spot movement. If a fish is trapped inside the cone, they reach down through the top hole to grab it. It is an essential, sustainable tool of rural Cambodian life, perfectly adapted to the annual flooding of the Tonle Sap and the rice paddies.",
+  utilities: [
+    "Used to catch fish in shallow, muddy waters like flooded rice fields",
+    "Plunged over a fish to trap it against the mud",
+    "Hand-woven from flexible, durable bamboo strips",
+    "Lightweight and perfectly suited for the seasonal floods of Cambodia",
+  ],
+  origin: "Woven by farmers and fishermen in rural villages across Cambodia.",
+  model: "/models/angrut.glb",
+  pois: [
+    {
+      id: "top-opening",
+      title: "The top opening",
+      khmer: "មាត់អង្រុត",
+      info: "A reinforced circular opening at the top. Once a fish is trapped under the basket, the fisher reaches an arm down through this hole to secure the catch.",
+      target: [0, 1.2, 0],
+      camera: [1.5, 2.0, 1.5],
+    },
+    {
+      id: "bamboo-weave",
+      title: "The bamboo weave",
+      khmer: "តួអង្រុត",
+      info: "Thin bamboo strips are woven closely together. They are strong enough to withstand being repeatedly plunged into the mud, yet spaced just enough to let water flow through.",
+      target: [0, 0.6, 0.5],
+      camera: [1.5, 1.0, 2.0],
+    },
+    {
+      id: "wide-base",
+      title: "The wide base",
+      khmer: "បាតអង្រុត",
+      info: "The wide, open bottom covers a large area, increasing the chances of trapping a fish when plunged blindly into murky water.",
+      target: [0, 0, 0],
+      camera: [2.0, 0.5, 2.0],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "chapei",
+  khmer: "ចាប៉ីដងវែង",
+  name: "Chapei Dang Veng",
+  english: "Long-necked lute",
+  category: "Traditional instrument",
+  blurb: "A traditional two-stringed lute used to accompany poetic singing and storytelling.",
+  story: "The ចាប៉ីដងវែង (Chapei Dang Veng) is a traditional Cambodian two-stringed, long-necked lute. Plucked with a plectrum, it produces a deep, resonant twang. It is most famous for accompanying \"Chapei\" performances—a solo art form where a master musician sings poetic, improvised verses about morality, folklore, and daily life, punctuated by rhythmic instrumental interludes. Recognized by UNESCO as Intangible Cultural Heritage, the Chapei is not just an instrument, but a voice of Cambodian history, humor, and wisdom.",
+  utilities: [
+    "A two-stringed lute plucked with a plectrum",
+    "Features a very long neck and a round, hollow wooden resonator",
+    "Accompanies solo singing of poetry, moral tales, and folklore",
+    "Recognized by UNESCO as Intangible Cultural Heritage of Humanity",
+  ],
+  origin: "Used by master storytellers across Cambodia; deeply embedded in rural oral traditions.",
+  model: "/models/chapei.glb",
+  pois: [
+    {
+      id: "resonator",
+      title: "The resonator body",
+      khmer: "ប្រអប់សំនៀង",
+      info: "The body of the Chapei is usually crafted from a solid block of jackfruit or other hardwood, hollowed out to project its distinct, resonant sound.",
+      target: [0, 0.5, 0],
+      camera: [1.5, 1.0, 2.0],
+    },
+    {
+      id: "long-neck",
+      title: "The long neck",
+      khmer: "ដង",
+      info: "The iconic long neck allows for deep sliding notes and provides space for the frets. It is often elegantly carved and curved at the top.",
+      target: [0, 1.5, 0],
+      camera: [1.0, 2.0, 2.0],
+    },
+    {
+      id: "strings",
+      title: "The strings",
+      khmer: "ខ្សែ",
+      info: "Traditionally made of silk, though modern ones may use nylon. The two strings are plucked to create rhythmic and melodic accompaniments for the singer.",
+      target: [0, 1.0, 0.1],
+      camera: [0.5, 1.5, 1.5],
+    },
+  ],
+});
+
+ARTIFACTS.push({
+  id: "tbaal",
+  khmer: "ត្បាល់ក្ដឿង",
+  name: "Tbaal Kdouang",
+  english: "Foot-pedal rice pounder",
+  category: "Traditional tool",
+  blurb: "A large wooden foot-operated mortar and pestle used to husk rice in rural villages.",
+  story: "The ត្បាល់ក្ដឿង (Tbaal Kdouang) is a traditional foot-operated rice pounder. Before the arrival of modern milling machines, husking harvested rice was a laborious daily task. The Tbaal Kdouang uses a simple but ingenious lever system: a person steps on one end of a long wooden beam to lift a heavy pestle, then steps off to let it drop with immense force into a wooden mortar filled with unhusked rice. The rhythmic \"thud, thud\" of the Tbaal was once the quintessential heartbeat of a Cambodian village in the early morning.",
+  utilities: [
+    "Used to pound and husk harvested rice grains",
+    "Operated by foot using a lever system, saving upper-body energy",
+    "Constructed from heavy, durable local hardwoods",
+    "Often operated collectively, serving as a social gathering point in villages",
+  ],
+  origin: "A staple of traditional rural Khmer agriculture, built by village carpenters.",
+  model: "/models/tbaal.glb",
+  pois: [
+    {
+      id: "mortar",
+      title: "The mortar",
+      khmer: "ត្បាល់",
+      info: "A large, hollowed-out stump of hardwood. Unhusked rice is poured into the bowl to be pounded until the husks break away from the grain.",
+      target: [1.0, 0.5, 0],
+      camera: [2.5, 1.0, 1.5],
+    },
+    {
+      id: "pestle",
+      title: "The pestle",
+      khmer: "អង្រែ",
+      info: "The heavy wooden pestle drops repeatedly into the mortar. Its weight and gravity do the hard work of separating the rice husks.",
+      target: [1.0, 1.2, 0],
+      camera: [2.5, 1.5, 1.5],
+    },
+    {
+      id: "lever",
+      title: "The foot lever",
+      khmer: "ក្ដឿង",
+      info: "A long wooden beam acts as a lever. By stepping on the far end, the operator easily lifts the heavy pestle, relying on weight rather than muscle.",
+      target: [-1.0, 0.5, 0],
+      camera: [-2.0, 1.5, 2.0],
+    },
+  ],
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }
