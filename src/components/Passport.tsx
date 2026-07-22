@@ -82,6 +82,28 @@ function toStamp(c: Credential): Stamp {
       mood: "#5aa03a",
     };
   }
+  if (parts[0] === "fashion") {
+    const triedOn = parts[1] === "tried-it-on";
+    return {
+      key: c.id,
+      title: triedOn ? "Tried on Khmer dress" : "Khmer fashion through the ages",
+      khmer: "សម្លៀកបំពាក់",
+      where: triedOn ? "Khmer Fashion · Try it on" : "Khmer Traditional Fashion",
+      when,
+      mood: "#b0325a",
+    };
+  }
+  if (parts[0] === "sakyant") {
+    const triedOn = parts[1] === "tried-it-on";
+    return {
+      key: c.id,
+      title: triedOn ? "Previewed a Sak Yant" : "Learned about Sak Yant",
+      khmer: "សាក់យ័ន្ត",
+      where: "Sak Yant · Khmer sacred tattoo",
+      when,
+      mood: "#2b2018",
+    };
+  }
   if (parts[0] === "meditation") {
     return {
       key: c.id,

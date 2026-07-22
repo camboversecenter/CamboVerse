@@ -30,6 +30,9 @@ Cambodia online for the world, with your name on it.
 | 🎪 Add a traditional game | [Grow the Khmer Traditional Games](#grow-the-khmer-traditional-games) |
 | 🌾 Grow the Virtual Farm | [Grow the Virtual Farm](#grow-the-virtual-farm) |
 | 🧘 Add a meditation sanctuary | [Grow the Virtual Meditation](#grow-the-virtual-meditation) |
+| 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
+| 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
+| 🪷 Add a yant or a vetted master | [Grow Sak Yant](#grow-sak-yant) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -39,21 +42,23 @@ Cambodia online for the world, with your name on it.
 
 ## Site status — where the commons needs you most
 
-Two sites are "full" (photoreal 3D‑Gaussian‑Splatting capture **and** authored
-points of interest). The rest have a base model but **need a real capture and
-POIs** — these are the highest‑impact tasks right now.
+Every site now has authored points of interest, but only two are "full"
+(photoreal 3D‑Gaussian‑Splatting capture **and** POIs). What the commons needs
+most now is **real captures** — these are the highest‑impact tasks right now.
+(More POIs, and native‑speaker review of the existing ones, are always welcome.)
 
 | Site | Province | Photoreal (3DGS) | Points of interest | Needs |
 |---|---|:---:|:---:|---|
 | Angkor Wat | Siem Reap | ✅ | ✅ (6) | polish, more POIs |
 | Wat Phnom | Phnom Penh | ✅ | ✅ (5) | polish · [field guide](./docs/CAPTURE_WATPHNOM.md) |
-| **Bayon** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BAYON.md) |
-| **Ta Prohm** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_TAPROHM.md) |
-| **Banteay Srei** | Siem Reap | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
-| **Preah Vihear** | Preah Vihear | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
-| **Royal Palace** | Phnom Penh | ❌ | ❌ | **capture + POIs** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
-| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (3) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
-| _New sites_ | — | — | — | **propose one!** (e.g. Koh Ker, Silver Pagoda, Phnom Bakheng) |
+| **Bayon** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BAYON.md) |
+| **Ta Prohm** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_TAPROHM.md) |
+| **Banteay Srei** | Siem Reap | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_BANTEAYSREI.md) |
+| **Preah Vihear** | Preah Vihear | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_PREAHVIHEAR.md) |
+| **Royal Palace** | Phnom Penh | ❌ | ✅ (5) | **capture** · [field guide](./docs/CAPTURE_ROYALPALACE.md) |
+| **Sambor Prei Kuk** | Kampong Thom | ❌ | ✅ (4) | **capture** · [field guide](./docs/CAPTURE_SAMBORPREIKUK.md) |
+| **Koh Ker** | Preah Vihear | ❌ | ✅ (3) | **capture**, a field guide, more POIs |
+| _New sites_ | — | — | — | **propose one!** (e.g. Silver Pagoda, Phnom Bakheng, Neak Poan) |
 
 Each site above has a **site-specific field guide** (linked in the table) with
 what to shoot, when to go, access/consent notes, and hazards. Wat Phnom is in
@@ -102,10 +107,11 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) §3 for the asset schema and
 
 You don't need a camera to make a huge difference here.
 
-- **Points of interest (POIs):** the sites marked "needs POIs" above have no
-  places to walk to yet. Add a few — a title, a couple of true sentences, and
-  where the camera should look. Model them on the Angkor Wat / Wat Phnom POIs in
-  `src/spots.ts`.
+- **Points of interest (POIs):** every site now has a starter set of POIs in
+  `src/spots.ts` — grow them. Add a new one (a title, a couple of true
+  sentences, and where the camera should look), deepen an existing one, or —
+  especially valued — review the Khmer titles as a native speaker. Model new
+  POIs on the Angkor Wat / Wat Phnom entries.
 - **History & "Back in Time":** deepen the era stories, add per‑site notes, or
   write **quiz questions** for an era in `src/history.ts`. Passing a quiz earns a
   learning credential that shows up in the visitor's Heritage Passport.
@@ -114,11 +120,12 @@ You don't need a camera to make a huge difference here.
 
 ## Add a Khmer traditional tool (3D artifact)
 
-The **🏺 Khmer Tools** gallery lets visitors inspect everyday Khmer objects in
-3D and VR, learn their parts, and see how they're used. The two objects there
-now — **ក្អម** (water pot) and **ចង្ក្រាន** (clay stove) — are just **sample
-builds** to show the pattern. **Help fill the gallery** with the rich world of
-Khmer tools, instruments, and household objects.
+The **🏺 Khmer Life** gallery lets visitors inspect everyday Khmer objects in
+3D and VR, learn their parts, and see how they're used. Eleven objects live
+there now — from the **ក្អម** water pot and **ចង្ក្រាន** stove to the
+**នង្គ័ល** plough and the **ចាប៉ី** lute — all procedural stand-ins awaiting
+real captures. **Help fill the gallery** with the rich world of Khmer tools,
+instruments, and household objects — or recapture an existing one for real.
 
 Each artifact is a small, self-contained contribution — no server work, and it
 appears in the gallery **and** the Asset registry automatically.
@@ -136,6 +143,12 @@ appears in the gallery **and** the Asset registry automatically.
      (photogrammetry / 3DGS). See [`docs/CAPTURE.md`](./docs/CAPTURE.md) and
      [`docs/TRAIN_3DGS_KAGGLE.md`](./docs/TRAIN_3DGS_KAGGLE.md). Best of all — a
      real artifact, captured with a museum or artisan's consent.
+   - **One photo → 3D with AI** — the fastest on-ramp: run a single photo of the
+     object through **TripoSplat** (MIT, open weights) on a free GPU. See
+     [`docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md`](./docs/CAPTURE_ARTIFACT_TRIPOSPLAT.md).
+     These are labelled **🤖 AI-reconstructed** in the app — a plausible model,
+     not a measured record — so use it for engagement, and prefer a real capture
+     for anything authoritative.
 2. **Add an entry to `src/artifacts.ts`** — Khmer + romanized names, an English
    gloss, a short **educational story** (what it is and *how it works*), its
    **utilities** (bullet list), its **origin**, the `model` path, and a few
@@ -153,12 +166,13 @@ licence** (CC0 / CC‑BY / CC‑BY‑SA), **consent** for any real capture, and
 **Ideas to claim** (from daily life, crafts, music, and the kitchen):
 
 - **Kitchen & home:** ពាង (large water jar), ឆ្នាំង (clay cooking pot), ខ្ទះ
-  (wok / frying pan), ត្បាល់ & អង្រែ (mortar & pestle), កញ្ជើ / ល្អី (baskets),
-  ស្លាបព្រា (spoon), កន្ទេល (woven mat).
-- **Farm & craft:** នង្គ័ល (plough), កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom),
-  សំណាញ់ (fishing net), and woven bamboo fish traps.
-- **Music (Pinpeat / Mahori):** រនាត (roneat xylophone), គង (gong circle),
-  ស្គរ (drums), ទ្រ (tro fiddle), ខ្លុយ (flute), ចាប៉ី (chapei lute).
+  (wok / frying pan), កញ្ជើ / ល្អី (baskets), ស្លាបព្រា (spoon), កន្ទេល (woven
+  mat). *(ត្បាល់ & អង្រែ — mortar & pestle — is in the gallery.)*
+- **Farm & craft:** កណ្ដៀវ (sickle), កីតម្បាញ (weaving loom), សំណាញ់ (fishing
+  net), and woven bamboo fish traps. *(នង្គ័ល — the plough — is in the
+  gallery.)*
+- **Music (Pinpeat / Mahori):** គង (gong circle), ទ្រ (tro fiddle), ខ្លុយ
+  (flute). *(រនាត, ស្គរ and ចាប៉ី are in the gallery.)*
 - **Everyday:** ក្រមា (the iconic checkered krama scarf), សំពត់ (traditional
   cloth), ចង្កឹះ, កាំបិត.
 
@@ -279,6 +293,107 @@ Heritage Passport credential. Cambodia has many more — help add them:
 Accuracy and respect matter — these are living traditions. See `src/games.ts`,
 `src/components/GamesView.tsx`, and `src/components/GamePlay.tsx`.
 
+## Grow the Khmer Village
+
+The **🏡 Khmer Village** (ភូមិខ្មែរ) is a procedural, explorable Cambodian
+village — red-dirt roads, stilt houses on their posts, sugar palms, a pond, rice
+paddies, and the village **wat** as its landmark — built entirely from
+primitives with a deterministic layout (`src/components/VillageView.tsx`). It's a
+**reusable kit**; the same pieces can dress the Farm and Meditation scenes. Lots
+of ways to enrich it:
+
+- **🧩 More village pieces.** Add a market (ផ្សារ) with stalls, a school, a
+  well, fences, ox-carts (រទេះគោ), chickens/ducks/pigs, a spirit house
+  (ខ្ទមទេវតា), fruit trees (mango, banana, jackfruit), lotus in the pond.
+- **🏠 Better stilt houses & the wat.** Refine the roofs (Khmer hip roofs,
+  finials/ចុងស្លា), add windows/shutters, wooden textures, and a richer wat
+  (gopura, naga balustrades, boundary stones/សីមា).
+- **🗺️ Real layouts (open data).** Feed the generator a real commune's **roads
+  and building footprints from OpenStreetMap** (ODbL — attribute it) so a village
+  mirrors an actual place. This ties into the commune map tier.
+- **🎨 Open-licensed asset kits.** Where hand-building is slow, vendor **CC0**
+  low-poly props (Kenney, Quaternius, Poly Pizza) locally and restyle them Khmer.
+  Open licences only (CC0 / CC-BY / CC-BY-SA); credit the source; decimate for
+  the $150-phone / 4G budget.
+- **🌗 Life & seasons.** Day/night, cooking smoke, monks on morning alms round,
+  wet/dry-season paddies, sound (a distant temple bell, roosters).
+- **🚶 Wander mode.** First-person walking (reuse `WalkControls`) and VR
+  teleport locomotion to stroll the roads.
+- **♿ Performance.** Instance the houses/props (like the palms + paddy already
+  are) so bigger villages stay light on a low-end phone.
+
+Keep it authentically Khmer — the stilts, sugar palms, red dirt, and the wat are
+what make it Cambodia. See `src/components/VillageView.tsx`.
+
+## Grow the Khmer Traditional Fashion
+
+The **👗 Khmer Traditional Fashion** (សម្លៀកបំពាក់ប្រពៃណីខ្មែរ) dresses a
+procedural figure three ways: the **seven-day colour** custom (ពណ៌ប្រចាំថ្ងៃ),
+the **varieties** of garment (sbai, sampot chang kben, phamuong, av pak, krama),
+and how dress **changed through the ages** — tied to the "Back in Time" eras. The
+figure and every garment are built from primitives (`src/components/FashionView.tsx`),
+and the data lives in `src/fashion.ts`. Ways to grow it:
+
+- **🎨 Verify the seven-day colours.** The palette (`DAY_COLORS`) is a common
+  version, but sources vary by region and school. Confirm each day's colour with
+  **Khmer elders / dance teachers** and cite the source, so this becomes a
+  trustworthy reference rather than one of several.
+- **👚 Add garments (the "Varieties" TODO).** Grow `VARIETIES` — sampot hol
+  ( សំពត់ហូល, ikat), sampot tep apsara, the *av bam pot* wedding blouse, men's
+  formal wear, monastic robes (ចីវរ), regional and ethnic-minority dress. Give
+  each a Khmer name, a short history, and an accurate `Outfit`.
+- **🧵 Truer silhouettes & weave.** Refine the chang-kben wrap and the sbai
+  drape, and add **procedural textile patterns** (hol ikat, checks, gold thread)
+  as generated textures — no external image assets, keep it self-contained.
+- **⏳ Deepen the eras.** Add pre-Angkor (Funan/Chenla) and split the modern era;
+  base each on **bas-reliefs, museum pieces, and photographs** (open-licensed or
+  described), with citations. Handle the Khmer Rouge years with the same care.
+- **💃 Bring it to life.** A gentle idle animation, an apsara hand-pose, or let a
+  visitor **mix and match** (pick a sampot + top + colour) and save the look to
+  their Passport.
+- **🤳 Improve "Try it on".** The AR mirror (`FashionTryOn.tsx`) tracks the head
+  on-device with **MediaPipe FaceLandmarker** (Apache-2.0, vendored under
+  `public/mediapipe/`) and paints a mkot crown, earrings, collar, and sbai onto
+  the live selfie — nothing is uploaded. Grow it: add more headpieces and
+  jewellery, use **pose tracking** for a properly-draped sbai over the shoulders,
+  offer a men's look, and let visitors pick which garment to wear in the mirror.
+  Keep it on-device and consent-first — **no face data ever leaves the phone.**
+- **♿ Performance & consent.** Keep the figure light for the $150-phone / 4G
+  budget, and treat sacred/royal regalia with cultural consent and provenance.
+
+Keep it respectful and sourced — dress carries identity. See
+`src/fashion.ts` and `src/components/FashionView.tsx`.
+
+## Grow Sak Yant
+
+**🪷 Sak Yant** (សាក់យ័ន្ត) is the Khmer sacred tattoo. The hub teaches what it
+is and who applies it, shows the best-known yant (each **drawn procedurally** in
+`src/sakyant.ts` — Gao Yord, Hah Taew, Paed Tidt, Unalome, tiger, naga), lets a
+visitor **preview one on their own skin** with the on-device camera
+(`SakYantTryOn.tsx` — touch-place ink, nothing uploaded), and — the whole point
+— points them to a **genuine Khmer master** to receive a real, blessed one.
+Handle it with care: Sak Yant is sacred, not decoration.
+
+- **🧎 A vetted directory of masters.** This is the priority. The referral now
+  links the **Federation of Khmer Sakyantra**; `REFERRAL.studios` is left empty
+  on purpose. Work with the Federation and the community to add **real, consenting
+  masters and studios** (name, city, link) — never invent shop details. This is
+  how the feature supports Cambodia's living practitioners at the source.
+- **✍️ More yant, verified.** Add yant (twin tigers, Hanuman, Yant Kroh Petch,
+  the sacred script rows) with meanings **confirmed by a master** — lineages vary.
+  Improve the procedural drawings (the tiger especially) and the abstract script
+  so they evoke the forms respectfully without copying specific sacred inscriptions.
+- **🖐️ Better try-on.** Optional on-device **hand/pose tracking** so a yant wraps
+  the arm or shoulder naturally; more ink tones; a placement guide. Keep it
+  on-device and consent-first — **no image ever leaves the phone.**
+- **🌐 Language & respect.** Full Khmer localisation, and a short note on the
+  etiquette of receiving a Sak Yant. Confirm all wording with Khmer cultural and
+  religious authorities before it ships as guidance.
+
+Sources for the descriptions are open-web references (Wikipedia "Yantra
+tattooing", the Federation of Khmer Sakyantra, general Sak Yant guides); treat
+them as a starting point to be verified by masters. See `src/sakyant.ts`.
+
 ## Grow the Virtual Meditation
 
 The **🧘 Virtual Meditation** lets anyone in the world sit inside a serene Khmer
@@ -384,10 +499,13 @@ much richer:
 - **✍️ Author points of interest.** A site with no `pois` shows “not authored
   yet”. Add its points of interest (title, Khmer, a short description) so the
   province map — and the in-site tour — teaches the place.
-- **🇰🇭 Province identity.** Give each province a Khmer name, a one-line
-  description, and its emblem/known-for (temples, pepper, silk…), shown on the
-  province map. (The ADM1 names come from the boundary data; a couple read oddly
-  and are prettified in `src/spots.ts` — extend that as needed.)
+- **🇰🇭 Province identity.** All 25 provinces now carry a Khmer name, a
+  one-line identity, and known-for chips (temples, pepper, silk…) in
+  `src/provinces.ts`, shown on the province map. Help by **verifying and
+  refining** them — especially native-speaker review of the Khmer names — or
+  by proposing better emblems for a province you know well. (The ADM1 names
+  come from the boundary data; a couple read oddly and are prettified in
+  `src/spots.ts` — extend that as needed.)
 See `src/components/ProvinceView.tsx`, `src/cambodia-provinces.ts`, and
 `src/cambodia-districts.ts`.
 

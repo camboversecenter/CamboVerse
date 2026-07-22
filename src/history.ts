@@ -65,6 +65,10 @@ export const ERAS: Era[] = [
       { q: "Chenla is known for building the first…", choices: ["stone temples", "railways", "glass towers"], answer: 0 },
       { q: "Chenla's inscriptions were written in…", choices: ["Sanskrit", "Latin", "Chinese"], answer: 0 },
     ],
+    sites: {
+      "sambor-prei-kuk":
+        "You stand in Ishanapura at its height — King Ishanavarman I's capital in the early 7th century. Its brick towers are freshly raised, their walls carved with 'flying palaces', and the court receives envoys from distant kingdoms.",
+    },
   },
   {
     id: "angkor",
@@ -80,12 +84,26 @@ export const ERAS: Era[] = [
     quiz: [
       { q: "Who built Angkor Wat around 1113?", choices: ["Suryavarman II", "Jayavarman VII", "Lady Penh"], answer: 0 },
       { q: "The Bayon, with its serene stone faces, was built by…", choices: ["Jayavarman VII", "Suryavarman II", "the French"], answer: 0 },
+      { q: "Banteay Srei, the 'jewel of Khmer art', was consecrated in 967 by…", choices: ["a brahmin counselor, Yajnavaraha", "a French governor", "Lady Penh"], answer: 0 },
+      { q: "For a single generation (928–944) the empire's capital moved to…", choices: ["Koh Ker", "Phnom Penh", "Longvek"], answer: 0 },
     ],
     sites: {
       "angkor-wat":
         "You are standing at Angkor Wat's very birth: Suryavarman II raises it around 1113 as a temple to Vishnu, its towers gleaming with gilt and its galleries freshly carved.",
       "wat-phnom":
         "This hill by the Mekong is not yet a temple in the Angkor age — Phnom Penh's story is still centuries away.",
+      bayon:
+        "You stand in Jayavarman VII's brand-new capital. Around 1200 the Bayon rises at its exact centre, its face towers freshly cut — the empire at its most confident.",
+      "ta-prohm":
+        "Rajavihara in its glory: newly consecrated (1186) to the king's mother, humming with monks and students — its stele records thousands who serve here. The forest is still just a forest, beyond the walls.",
+      "banteay-srei":
+        "Consecrated in 967, more than a century before Angkor Wat — the brahmin Yajnavaraha's carvers are achieving a fineness in pink sandstone that will never be surpassed.",
+      "preah-vihear":
+        "Pilgrims climb the great stairway to Sikharesvara's clifftop sanctuary — kings from the 9th century onward keep building on the mountain, Suryavarman I and II above all.",
+      "koh-ker":
+        "For a single generation (928–944) this is the capital of the empire — Jayavarman IV raises the seven-tiered pyramid of Prasat Thom, the boldest structure of its age.",
+      "royal-palace":
+        "Phnom Penh is a riverside village in the Angkor age — the palace's story begins centuries later, in 1866.",
     },
   },
   {
@@ -108,6 +126,12 @@ export const ERAS: Era[] = [
         "Angkor Wat is never truly abandoned — Buddhist monks tend it, and it becomes a revered Theravada temple visited by pilgrims.",
       "wat-phnom":
         "Wat Phnom's story begins here: by legend, in 1372 Lady Penh finds sacred images in the river and raises a shrine on this hill — giving Phnom Penh (‘Penh's hill’) its name.",
+      bayon:
+        "The court has gone south; the forest closes gently over Angkor Thom. The Bayon's faces gaze out of the green — never forgotten, still visited by monks and pilgrims.",
+      "ta-prohm":
+        "The great monastery falls quiet, and the giant trees take root in its walls — the famous embrace of stone and forest begins in these centuries.",
+      "royal-palace":
+        "King Ponhea Yat brings the court to Phnom Penh in the 15th century — the city's first royal age. Capitals move between Longvek, Oudong and Phnom Penh; the present palace is still to come.",
     },
   },
   {
@@ -124,12 +148,17 @@ export const ERAS: Era[] = [
     quiz: [
       { q: "In which year did Cambodia become a French protectorate?", choices: ["1863", "1953", "1431"], answer: 0 },
       { q: "What happened to Angkor in this era?", choices: ["It was studied and restored", "It was demolished", "It was moved to France"], answer: 0 },
+      { q: "The first Angkor temple rebuilt stone-by-stone by anastylosis (1930s) was…", choices: ["Banteay Srei", "Angkor Wat", "the Bayon"], answer: 0 },
     ],
     sites: {
       "angkor-wat":
         "French explorers document Angkor Wat and clear the forest from its galleries; restoration begins and the temple's fame spreads around the world.",
       "wat-phnom":
         "The French lay out their capital around this hill, and Wat Phnom's great white stupa is rebuilt to its present form (1926) — the city literally centred on it.",
+      "banteay-srei":
+        "Rediscovered in 1914. After André Malraux is arrested in 1923 for removing its carvings, protection tightens — and in the 1930s it becomes the first Angkor temple rebuilt by anastylosis.",
+      "royal-palace":
+        "King Norodom moves the capital from Oudong in 1866 and raises this palace facing the four-armed river; the Throne Hall in its present form is inaugurated in 1919.",
     },
   },
   {
@@ -178,12 +207,21 @@ export const ERAS: Era[] = [
     quiz: [
       { q: "Angkor was named a UNESCO World Heritage Site in…", choices: ["1992", "1863", "1431"], answer: 0 },
       { q: "Today's generation carries Khmer heritage into…", choices: ["the digital age", "the stone age", "the ice age"], answer: 0 },
+      { q: "Preah Vihear was inscribed as a UNESCO World Heritage Site in…", choices: ["2008", "1992", "1953"], answer: 0 },
     ],
     sites: {
       "angkor-wat":
         "Angkor Wat becomes a UNESCO World Heritage Site (1992); careful conservation and millions of visitors return — and now you can walk it here, from anywhere on Earth.",
       "wat-phnom":
         "Wat Phnom remains a beloved landmark and gathering place at the heart of a fast-growing Phnom Penh — its flower clock ticking beside the modern skyline.",
+      bayon:
+        "Conservation teams from around the world care for the Bayon's faces within the Angkor World Heritage Site — smiling now at millions of visitors a year.",
+      "ta-prohm":
+        "Conservators stabilise Ta Prohm while deliberately keeping its famous trees; in 2001 Tomb Raider carries its image to screens around the world.",
+      "preah-vihear":
+        "The ICJ affirms the temple as Cambodia's in 1962, and in 2008 it is inscribed as a UNESCO World Heritage Site — the clifftop sanctuary a symbol of national pride.",
+      "royal-palace":
+        "With the monarchy restored in 1993, the palace is again the living centre of royal ceremony — and the Silver Pagoda's treasures welcome visitors from around the world.",
     },
   },
 ];

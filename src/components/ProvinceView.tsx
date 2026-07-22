@@ -5,6 +5,7 @@ import { Shape } from "three";
 import { CAMBODIA_PROVINCES } from "../cambodia-provinces";
 import { projectLatLng } from "../cambodia-outline";
 import { spotsInProvince, prettyProvince, type Spot } from "../spots";
+import { PROVINCE_INFO } from "../provinces";
 import { FARM_STAGES } from "../farm";
 import { listPlots, getPlot, type SharedPlot } from "../lib/farmShare";
 import type { District } from "../cambodia-districts";
@@ -133,6 +134,8 @@ export function ProvinceView({
   }
 
   const { shapes, boundaries, cx, cz, r } = geo;
+  // Province identity — Khmer name, one-line identity, known-for chips.
+  const info = PROVINCE_INFO[province.pcode];
   const camDist = r * 2.4 + 1.2;
   const markerScale = Math.max(0.12, r * 0.16);
 
@@ -357,7 +360,10 @@ export function ProvinceView({
       {/* ---- HUD ---- */}
       <div className="cls-top">
         <button className="backbtn" onClick={onBack}>← Cambodia</button>
-        <span className="cls-title">🗺️ {prettyProvince(province.name)}</span>
+        <span className="cls-title">
+          🗺️ {prettyProvince(province.name)}
+          {info && <span className="khmer"> {info.khmer}</span>}
+        </span>
       </div>
 
       {farm ? (
@@ -389,6 +395,14 @@ export function ProvinceView({
         />
       ) : (
         <div className="prov-hint">
+          {info && <p className="prov-idn">{info.tagline}</p>}
+          {info && (
+            <div className="prov-known">
+              {info.knownFor.map((k) => (
+                <span key={k} className="prov-chip">{k}</span>
+              ))}
+            </div>
+          )}
           <p>
             <b>{prettyProvince(province.name)}</b> ·{" "}
             {sites.length > 0

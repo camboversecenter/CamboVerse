@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc -b",
+    "test": "vitest run",
     "cf-typegen": "wrangler types",
     "gen:model": "node scripts/generate-model.mjs",
     "gen:angkor": "node scripts/generate-angkor.mjs",
@@ -27,12 +28,16 @@
     "gen:glyphs": "node scripts/generate-glyph-paths.mjs",
     "gen:roneat": "node scripts/generate-roneat.mjs",
     "gen:skor": "node scripts/generate-skor.mjs",
+    "gen:tbal": "node scripts/generate-tbal.mjs",
+    "gen:neangkoal": "node scripts/generate-neangkoal.mjs",
+    "gen:chapei": "node scripts/generate-chapei.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
     "gen:provinces": "node scripts/generate-provinces.mjs",
     "gen:districts": "node scripts/generate-districts.mjs",
     "gen:communes": "node scripts/generate-communes.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.18",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@react-three/xr": "^6.6.30",
@@ -50,6 +55,7 @@
     "opentype.js": "^2.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.0",
+    "vitest": "^2.1.9",
     "wrangler": "^4.0.0"
   }
 }
