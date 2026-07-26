@@ -108,6 +108,21 @@ export function PlaceView({ placeId, onBackToMap }: { placeId: string; onBackToM
         {/* A generated place should say that it is one, in the place itself and
             not only in a repository somebody will never open. */}
         <p className="place-prov">{place.provenance}</p>
+        {/* The invitation belongs HERE. Somebody standing in a generated place
+            is the person most likely to think "my school should be in this" —
+            and least likely to ever open the repository to find out how. */}
+        <p className="place-contrib">
+          🏛 <b>Add your own building.</b> One photograph of a school, commune hall
+          or market — from public ground — becomes fifteen numbers in a JSON file,
+          and the generator does the rest. No 3D skills needed.{" "}
+          <a
+            href="https://github.com/camboversecenter/CamboVerse/blob/main/docs/BUILDINGS.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            How to contribute →
+          </a>
+        </p>
       </div>
     </div>
   );

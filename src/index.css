@@ -3210,3 +3210,9 @@ select.farm-modal-note { appearance: none; }
   font: 500 0.72rem/1.55 system-ui, sans-serif; margin: 8px 0 0;
   color: #b8d8c6; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 8px;
 }
+.place-contrib {
+  font: 500 0.72rem/1.55 system-ui, sans-serif; margin: 8px 0 0;
+  color: #d8f0e2; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 8px;
+}
+.place-contrib a { color: #8fe3b0; text-decoration: none; font-weight: 700; white-space: nowrap; }
+.place-contrib a:hover { text-decoration: underline; }

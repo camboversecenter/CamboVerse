@@ -11,6 +11,10 @@
  * the scene draws one shared ground, and twenty baked forecourts overlapping is
  * both wrong and expensive.
  *
+ * ADDING ONE: docs/BUILDINGS.md is the contributor's path end to end — photo,
+ * spec, build, place entry. The map is driven off PLACES, so an entry here is
+ * all it takes for a new building to appear; no component needs editing.
+ *
  * Same honesty as the building specs themselves: a place is an INTERPRETATION.
  * The campus below is laid out plausibly around one photographed façade, not
  * surveyed. Nothing here identifies a real institution.
@@ -65,8 +69,11 @@ export interface Place {
 export const PLACES: Place[] = [
   {
     id: "institute-campus",
-    name: "Institute campus",
-    nameKm: "បរិវេណវិទ្យាស្ថាន",
+    // "Building", not the name of an institution. The spec behind it says in
+    // as many words that it is a TYPE and not an address; naming the place
+    // after a kind of institution quietly walked that back.
+    name: "Building",
+    nameKm: "អគារ",
     blurb:
       "A modern Cambodian public campus: a four-storey teaching block with a Khmer tile roof, " +
       "two annexes in the same architectural family, a paved forecourt and young planting.",

@@ -61,6 +61,13 @@ Reference issues where relevant (`Closes #12`).
 
 ## Good first contributions
 
+- **Add a public building to the Digital Twin** — see
+  [`docs/BUILDINGS.md`](./docs/BUILDINGS.md). Photograph a school, commune hall,
+  health centre or market from public ground, read fifteen numbers off the photo
+  into a JSON spec, and the generator turns it into something people can walk
+  around. No 3D skills required, and it is the single most useful thing a new
+  contributor can do: the twin is only as real as the number of ordinary places
+  in it.
 - UI/UX polish for the viewer HUD and information hotspots.
 - Performance work: DPR caps, LODs, texture compression, load timing.
 - Documentation, Khmer/English copy (flag Khmer text for native review).

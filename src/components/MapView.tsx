@@ -5,6 +5,7 @@ import { CambodiaMap } from "./CambodiaMap";
 import { Pin } from "./Pin";
 import { Passport } from "./Passport";
 import { SPOTS } from "../spots";
+import { PLACES } from "../places";
 
 /** The hub: an explorable map of Cambodia with a pin per heritage site. */
 export function MapView({
@@ -89,7 +90,14 @@ export function MapView({
         <button className="games-btn" onClick={onOpenGames}>🎪 Khmer Games</button>
         <button className="farm-btn" onClick={onOpenFarm}>🌾 Virtual Farm</button>
         <button className="village-btn" onClick={onOpenVillage}>🏡 Khmer Village</button>
-        <button className="village-btn" onClick={() => onOpenPlace("institute-campus")}>🏛 Institute campus</button>
+        {/* Driven off PLACES, not hardcoded: adding a building is then a spec
+            plus an entry in src/places.ts, and the map picks it up. See
+            docs/BUILDINGS.md. */}
+        {PLACES.map((pl) => (
+          <button key={pl.id} className="village-btn" onClick={() => onOpenPlace(pl.id)}>
+            🏛 {pl.name}
+          </button>
+        ))}
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
         <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
         <button className="grove-btn" onClick={onOpenGrove}>🌱 Grove Garden</button>
