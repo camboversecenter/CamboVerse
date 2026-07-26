@@ -416,27 +416,32 @@ function PlotParcel({
   const z = (Math.floor(index / cols) - (rows - 1) / 2) * spacing;
   const soil = useMemo(() => soilTexture(2), []);
 
-  // Flatten every plant in the plot (across all growth chains and their `count`)
-  // into one list, then lay them out so nothing overlaps — a plot may hold
-  // several separate plantings, not just one chain.
-  const trees: { key: string; species: string; heightM: number; opacity: number }[] = [];
-  plot.chains.forEach((chain, ci) => {
-    const g = growthAt(chain, now);
-    if (!g.record) return;
-    const n = Math.min(6, g.record.observation.count);
-    for (let k = 0; k < n; k++) {
-      trees.push({
-        key: `${ci}:${k}`,
-        species: g.record.observation.species,
-        heightM: measuredHeightM(g.record.observation),
+  // Each growth chain is one planting — its own plant(s), and its own label.
+  // A plot can hold several (a jackfruit and a guava side by side), so they are
+  // laid out separately and labelled separately rather than lumped together.
+  const plantings = plot.chains
+    .map((chain, ci) => {
+      const g = growthAt(chain, now);
+      if (!g.record) return null;
+      const obs = g.record.observation;
+      return {
+        ci,
+        species: obs.species,
+        count: obs.count,
+        shown: Math.min(6, obs.count),
+        heightM: measuredHeightM(obs),
         opacity: trustOpacity(g.record.trust),
-      });
-    }
-  });
-  const spots = layoutSpots(trees.length);
+        co2Kg: obs.co2Kg,
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
 
-  // Label sits above the tallest plant so it never buries itself in a canopy.
-  const labelY = 1.2 + Math.max(1.2, ...trees.map((t) => t.heightM));
+  // One spot per individual plant; remember which planting each spot belongs to.
+  const owners: number[] = [];
+  plantings.forEach((p, pi) => {
+    for (let k = 0; k < p.shown; k++) owners.push(pi);
+  });
+  const spots = layoutSpots(owners.length);
 
   return (
     <group position={[x, 0, z]}>
@@ -449,25 +454,33 @@ function PlotParcel({
       {mode === "ultra" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
 
       {/* the plants */}
-      {trees.map((tr, i) => (
-        <group key={tr.key} position={[spots[i][0], 0.08, spots[i][1]]}>
+      {owners.map((pi, i) => (
+        <group key={`${plantings[pi].ci}:${i}`} position={[spots[i][0], 0.08, spots[i][1]]}>
           <Plant
-            species={tr.species}
-            heightM={tr.heightM}
-            opacity={tr.opacity}
+            species={plantings[pi].species}
+            heightM={plantings[pi].heightM}
+            opacity={plantings[pi].opacity}
             seed={index * 7 + i}
             mode={mode}
           />
         </group>
       ))}
 
-      {/* floating label */}
-      <Billboard position={[0, labelY, 0]}>
-        <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
-          <b>{plot.speciesCounts.map((sc) => `${sc.species}·${sc.count}`).join(" · ")}</b>
-          <span>≈{fmt(plot.totalCo2Kg)}kg</span>
-        </div>
-      </Billboard>
+      {/* one label per planting, floating just above that plant's own crown */}
+      {plantings.map((p, pi) => {
+        const mine = spots.filter((_, i) => owners[i] === pi);
+        if (!mine.length) return null;
+        const cx = mine.reduce((s, sp) => s + sp[0], 0) / mine.length;
+        const cz = mine.reduce((s, sp) => s + sp[1], 0) / mine.length;
+        return (
+          <Billboard key={p.ci} position={[cx, p.heightM + 1, cz]}>
+            <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
+              <b>{p.species}{p.count > 1 ? `·${p.count}` : ""}</b>
+              <span>≈{fmt(p.co2Kg)}kg</span>
+            </div>
+          </Billboard>
+        );
+      })}
     </group>
   );
 }
