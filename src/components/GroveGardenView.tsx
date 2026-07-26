@@ -8,6 +8,10 @@ import { GroveClient, DEFAULT_NODE, type VerifiedRecord } from "../grove/client"
 import {
   buildPlots, gardenTotals, growthAt, measuredHeightM, trustOpacity, type GrovePlot,
 } from "../grove/garden";
+import {
+  CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
+  TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
+} from "../grove/csb";
 import { grassTexture, soilTexture } from "../lib/groundTexture";
 import {
   BroadleafPlant, PalmPlant, BananaPlant, PapayaPlant, Seedling,
@@ -58,6 +62,8 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
+  const [csbBase, setCsbBase] = useState(DEFAULT_CSB_BASE);
+  const [csb, setCsb] = useState<Map<string, CsbPlotStatus>>(new Map());
 
   const plots = useMemo(() => buildPlots(records, coarseGps), [records, coarseGps]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
@@ -151,7 +157,39 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
     }
   };
 
+  /**
+   * Ask CSB what it knows about the plots now on screen.
+   *
+   * Strictly additive: the garden is already drawn from records this device
+   * verified itself, and every one of these lookups can fail without changing a
+   * single plant. What it adds is the half a signature cannot carry — a
+   * consensus timestamp, and whether anyone with a licence to lose has actually
+   * been to look. Only `keccak256(plot)` leaves the browser; the plot's name
+   * does not.
+   */
+  useEffect(() => {
+    if (!plots.length || !csbBase.trim()) return;
+    let cancelled = false;
+    const client = new CsbClient(csbBase);
+    client.plotStatuses(plots.map((p) => p.id)).then((m) => {
+      if (!cancelled) setCsb(m);
+    });
+    return () => { cancelled = true; };
+  }, [plots, csbBase]);
+
   const sel = plots.find((p) => p.id === selected) ?? null;
+  const selCsb = sel ? csb.get(sel.id) : undefined;
+  /** Riel released, and riel still escrowed, across every plot on screen. */
+  const funding = useMemo(() => {
+    let paid = 0, held = 0, sponsored = 0;
+    for (const s of csb.values()) {
+      const p = paidOut(s.pledges), h = committed(s.pledges);
+      paid += p;
+      held += h;
+      if (s.pledges?.length) sponsored += 1;
+    }
+    return { paid, held, sponsored };
+  }, [csb]);
 
   return (
     <div className="grove">
@@ -179,6 +217,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               mode={mode}
               selected={p.id === selected}
               onSelect={() => setSelected(p.id === selected ? null : p.id)}
+              csb={csb.get(p.id)}
             />
           ))}
           {/* In VR, stand back on the ground and look along the row of plots. */}
@@ -226,6 +265,17 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           />
           <button onClick={loadNode}>Read node</button>
         </div>
+        {/* The chain is a second, independent source — and like the node, it is
+            whichever one you point at. Clear it and the garden still renders. */}
+        <div className="grove-node grove-chain-src">
+          <input
+            value={csbBase}
+            onChange={(e) => setCsbBase(e.target.value)}
+            spellCheck={false}
+            placeholder="CSB read endpoint (optional)"
+            aria-label="CSB read endpoint base URL"
+          />
+        </div>
       </div>
 
       {/* totals + timeline */}
@@ -234,6 +284,11 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           <span><b>{totals.plots}</b> plots</span>
           <span><b>{totals.plants}</b> plants</span>
           <span className="grove-co2">≈ {fmt(totals.co2Kg)} kg CO₂ <i>estimated</i></span>
+          {(funding.paid > 0 || funding.held > 0) && (
+            <span className="grove-funded" title="Released on proof of survival · still escrowed against future survival checks">
+              💚 {riel(String(funding.paid))} <i>paid</i> · {riel(String(funding.held))} <i>pledged</i>
+            </span>
+          )}
         </div>
         <div className="grove-timeline">
           <button className="grove-play" onClick={() => { if (t >= 1) setT(0); setPlaying((v) => !v); }}>
@@ -279,9 +334,134 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               itself — {sel.latest.attestations.length} attestation
               {sel.latest.attestations.length === 1 ? "" : "s"} checked.
             </p>
+            <CsbPanel status={selCsb} />
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ---------------- the chain's half of the twin ---------------- */
+
+const when = (secs: number) => new Date(secs * 1000).toISOString().slice(0, 10);
+
+/**
+ * What CSB adds to a plot the device already verified.
+ *
+ * Written to be readable by a visitor who has never heard of a blockchain, and
+ * to overclaim nothing. The three facts worth their attention, in order: has
+ * anyone with a licence been to look, when did the record demonstrably exist,
+ * and did sponsoring this grove actually reach a person.
+ */
+function CsbPanel({ status }: { status: CsbPlotStatus | undefined }) {
+  if (!status?.available) {
+    return (
+      <p className="grove-note grove-chain-note">
+        ⛓ Not checked against CSB — this garden is drawn from the signed records alone,
+        which is the whole of what a device signature can promise.
+      </p>
+    );
+  }
+  if (!status.anchored) {
+    return (
+      <p className="grove-note grove-chain-note">
+        ⛓ Never anchored on CSB. The record is genuine and signed; nobody has yet
+        committed it to a ledger, so its date rests on the phone's own clock.
+      </p>
+    );
+  }
+
+  const tier = provenanceTier(status);
+  const head = status.head;
+  const v = status.verifier;
+  const pledges = status.pledges ?? [];
+  const paid = paidOut(pledges);
+  const held = committed(pledges);
+
+  return (
+    <div className="grove-chain">
+      <div className="grove-chain-head" style={{ color: TIER_COLOR[tier] }}>
+        <b>{TIER_ICON[tier]} {provenanceLabel(status)}</b>
+      </div>
+
+      {head && (
+        <>
+          <div className="grove-row">
+            <span>On chain since</span>
+            <b>{when(head.anchoredAt)} <i>(block time, not the phone's)</i></b>
+          </div>
+          <div className="grove-row">
+            <span>Trees counted</span>
+            <b>
+              {head.liveCount}
+              {status.verifiedCount === 0 && <i> · unconfirmed</i>}
+            </b>
+          </div>
+          <div className="grove-row">
+            <span>Record chain</span>
+            <b>{status.records} anchored · {head.confirms} confirmed{head.disputes ? ` · ${head.disputes} disputed` : ""}</b>
+          </div>
+        </>
+      )}
+
+      {v ? (
+        <div className="grove-row">
+          <span>Verified by</span>
+          <b>
+            {v.label || v.classes.join(", ")}
+            <i> · licence {v.licenceRef.slice(0, 10)}… · {v.confirmations} checks</i>
+          </b>
+        </div>
+      ) : (
+        <p className="grove-note grove-chain-note">
+          No licensed verifier has confirmed this yet. Anyone can generate a key and
+          co-sign a record; only a licence someone can lose counts here.
+        </p>
+      )}
+
+      {status.title && (
+        <div className="grove-row">
+          <span>Grove title</span>
+          <b>
+            {status.title.supply} {status.title.symbol}
+            <i> · one share per verified living tree{status.title.inSync ? "" : " · out of sync"}</i>
+          </b>
+        </div>
+      )}
+
+      {pledges.length > 0 && (
+        <div className="grove-pledges">
+          {pledges.map((p) => (
+            <div key={p.id} className="grove-pledge">
+              <div className="grove-pledge-head">
+                <b>💚 {p.purpose || `Pledge #${p.id}`}</b>
+                <span>{p.status}</span>
+              </div>
+              {p.milestones.map((m) => (
+                <div key={m.index} className={`grove-ms grove-ms-${m.status}`}>
+                  <span>
+                    {m.status === "paid" ? "✓" : m.status === "reclaimed" ? "↩" : "◌"}{" "}
+                    {m.requiredCount} trees standing by {when(m.deadline)}
+                  </span>
+                  <b>{riel(m.growerAmount)} <i>+ {riel(m.verifierAmount)} to the verifier</i></b>
+                </div>
+              ))}
+            </div>
+          ))}
+          <p className="grove-note grove-chain-note">
+            {riel(String(paid))} already released, {riel(String(held))} still held against
+            future survival checks. Money moves only when a licensed verifier confirms the
+            trees are still standing — nobody is paid for planting day.
+          </p>
+        </div>
+      )}
+
+      <p className="grove-note grove-chain-note">
+        The chain records <b>trees</b>, not carbon. A signature proves who said something,
+        never that it is true; a licence makes someone accountable for having gone to look.
+        {status.chain && <> Checkable yourself at <code>{status.chain.contract.slice(0, 10)}…</code></>}
+      </p>
     </div>
   );
 }
@@ -405,7 +585,7 @@ function GardenControls() {
 /* ---------------- one plot parcel in the 3D world ---------------- */
 
 function PlotParcel({
-  plot, index, total, now, mode, selected, onSelect,
+  plot, index, total, now, mode, selected, onSelect, csb,
 }: {
   plot: GrovePlot;
   index: number;
@@ -414,7 +594,11 @@ function PlotParcel({
   mode: ViewMode;
   selected: boolean;
   onSelect: () => void;
+  /** Chain status for this plot, when a CSB endpoint is configured and reachable. */
+  csb?: CsbPlotStatus;
 }) {
+  const tier = provenanceTier(csb);
+  const tierTitle = provenanceLabel(csb);
   // Lay the parcels out as an orchard grid rather than one long row, so a
   // garden with many plots still frames in a single view.
   const spacing = 9.5; // real orchard spacing — full-grown crowns need room
@@ -485,6 +669,13 @@ function PlotParcel({
             <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
               <b>{p.species}{p.count > 1 ? `·${p.count}` : ""}</b>
               <span>≈{fmt(p.co2Kg)}kg</span>
+              {/* Provenance, at a glance and without a word of explanation: a
+                  green tick means somebody with a licence went and looked. */}
+              {tier !== "unanchored" && (
+                <span className="grove-tag-tier" style={{ color: TIER_COLOR[tier] }} title={tierTitle}>
+                  {TIER_ICON[tier]}
+                </span>
+              )}
             </div>
           </Billboard>
         );
