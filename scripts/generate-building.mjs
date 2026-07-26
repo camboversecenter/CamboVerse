@@ -4,6 +4,10 @@
  *
  *     node scripts/generate-building.mjs scripts/data/buildings/<name>.json
  *
+ * CONTRIBUTING A BUILDING: docs/BUILDINGS.md walks through the whole path —
+ * what to photograph, every spec field, the size budget, and the rules about
+ * not naming or badging a real institution. Read it before writing a spec.
+ *
  * WHY A SPEC AND NOT A MESH. The obvious approach to "make a building from a
  * photo" is photogrammetry or single-image reconstruction, and both are wrong
  * for this viewer: one needs a hundred overlapping photos, the other produces a

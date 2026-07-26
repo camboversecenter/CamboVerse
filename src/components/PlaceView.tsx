@@ -4,6 +4,7 @@ import { OrbitControls, Sky, useGLTF } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping, Object3D, type InstancedMesh, type Mesh } from "three";
 import { Palm } from "./Palm";
+import { grassTexture, pavingTexture, asphaltTexture, metresRepeat } from "../lib/groundTexture";
 import { placeById, type Place, type TreeRow } from "../places";
 
 /**
@@ -107,6 +108,21 @@ export function PlaceView({ placeId, onBackToMap }: { placeId: string; onBackToM
         {/* A generated place should say that it is one, in the place itself and
             not only in a repository somebody will never open. */}
         <p className="place-prov">{place.provenance}</p>
+        {/* The invitation belongs HERE. Somebody standing in a generated place
+            is the person most likely to think "my school should be in this" —
+            and least likely to ever open the repository to find out how. */}
+        <p className="place-contrib">
+          🏛 <b>Add your own building.</b> One photograph of a school, commune hall
+          or market — from public ground — becomes fifteen numbers in a JSON file,
+          and the generator does the rest. No 3D skills needed.{" "}
+          <a
+            href="https://github.com/camboversecenter/CamboVerse/blob/main/docs/BUILDINGS.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            How to contribute →
+          </a>
+        </p>
       </div>
     </div>
   );
@@ -145,21 +161,46 @@ function PlaceScene({ place, ultra }: { place: Place; ultra: boolean }) {
       {/* Ground, then the paving on top of it, then the lawns on top of that.
           Each sits a few centimetres higher than the last: coplanar surfaces
           z-fight, and the flicker reads as a broken renderer. */}
+      {/* Textures are drawn on a canvas at load and cached by key — no files,
+          nothing downloaded. Normal draws them at 256px, Ultra at 512: same
+          geometry, same scene, different budget. */}
       <mesh rotation-x={-Math.PI / 2} position-y={-0.05} receiveShadow={ultra}>
         <planeGeometry args={[place.ground.sizeM, place.ground.sizeM]} />
-        <meshStandardMaterial color={place.ground.color} roughness={1} />
+        {/* The material stays white: the texture already carries the colour,
+            and multiplying it by a second tint just darkens everything twice. */}
+        <meshStandardMaterial
+          map={grassTexture(Math.round(place.ground.sizeM / 6), { kind: "rough" })}
+          roughness={1}
+        />
       </mesh>
-      {place.paving.map((p, i) => (
-        <mesh key={`pv${i}`} rotation-x={-Math.PI / 2} position={[p.x, 0, p.z]} receiveShadow={ultra}>
-          <planeGeometry args={[p.w, p.d]} />
-          <meshStandardMaterial color={p.color ?? "#d3cfc6"} roughness={1} />
-        </mesh>
-      ))}
+      {place.paving.map((p, i) => {
+        // Slabs are sized in METRES, not in texture repeats — the same repeat
+        // on a 150 m apron and a 20 m footpath gives enormous slabs on one and
+        // tiny ones on the other, which is the tell that a texture was applied
+        // by eye. A 3 m slab means a 6 m tile: the tile holds a 2x2 grid.
+        const [rx, ry] = metresRepeat(p.w, p.d, p.surface === "asphalt" ? 8 : 6);
+        const detail = ultra ? 512 : 256;
+        return (
+          <mesh key={`pv${i}`} rotation-x={-Math.PI / 2} position={[p.x, 0, p.z]} receiveShadow={ultra}>
+            <planeGeometry args={[p.w, p.d]} />
+            <meshStandardMaterial
+              color={p.color ?? "#ffffff"}
+              map={p.surface === "asphalt"
+                ? asphaltTexture(rx, ry, { detail })
+                : pavingTexture(rx, ry, { detail })}
+              roughness={0.95}
+            />
+          </mesh>
+        );
+      })}
       {place.lawns.map((l, i) => (
         <group key={`lw${i}`}>
           <mesh rotation-x={-Math.PI / 2} position={[l.x, 0.03, l.z]} receiveShadow={ultra}>
             <planeGeometry args={[l.w, l.d]} />
-            <meshStandardMaterial color="#6f9c30" roughness={1} />
+            <meshStandardMaterial
+              map={grassTexture(Math.max(4, Math.round(Math.max(l.w, l.d) / 3)), { kind: "lawn" })}
+              roughness={1}
+            />
           </mesh>
           {l.kerb !== false && (
             <>
