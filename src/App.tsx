@@ -12,7 +12,9 @@ import { VillageView } from "./components/VillageView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
-import { NumCampusView } from "./components/NumCampusView";
+import { BuildingsView } from "./components/BuildingsView";
+import { BuildingView } from "./components/BuildingView";
+import { buildingById } from "./buildings";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -28,11 +30,13 @@ export function App() {
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
   const [groveOpen, setGroveOpen] = useState(false);
-  const [campusOpen, setCampusOpen] = useState(false);
+  const [buildingsOpen, setBuildingsOpen] = useState(false);
+  const [buildingId, setBuildingId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
   const spot = SPOTS.find((s) => s.id === spotId) ?? null;
+  const building = buildingId ? buildingById(buildingId) ?? null : null;
 
   // Teleport: cover the screen with a warp flash, run the scene swap hidden
   // underneath, then reveal. Guarded so taps can't overlap mid-transition.
@@ -82,8 +86,18 @@ export function App() {
         <SakYantView onBackToMap={() => setSakYantOpen(false)} />
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
-      ) : campusOpen ? (
-        <NumCampusView onBackToMap={() => setCampusOpen(false)} />
+      ) : building ? (
+        // A building's own page, opened by tapping it in the site.
+        <BuildingView
+          building={building}
+          onBack={() => setBuildingId(null)}
+          onBackToMap={() => { setBuildingId(null); setBuildingsOpen(false); }}
+        />
+      ) : buildingsOpen ? (
+        <BuildingsView
+          onBackToMap={() => setBuildingsOpen(false)}
+          onOpenBuilding={(id) => setBuildingId(id)}
+        />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -98,7 +112,7 @@ export function App() {
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
-          onOpenCampus={() => setCampusOpen(true)}
+          onOpenBuildings={() => setBuildingsOpen(true)}
         />
       )}
 
