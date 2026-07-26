@@ -4,7 +4,7 @@ import {
   type GardenObservation, type Attestation,
 } from "./grove";
 import { buildPlots } from "./garden";
-import type { VerifiedRecord } from "./client";
+import { GroveClient, type VerifiedRecord } from "./client";
 import bundle from "./fixtures/grove-bundle.json";
 import observationRes from "./fixtures/observation.json";
 
@@ -70,6 +70,63 @@ describe("Grove verify (against real signed fixtures)", () => {
     // The first mango: dbh 16 cm, height 6 m, count 1.
     const { co2Kg } = estimateCarbon(observations[0].measure, observations[0].species);
     expect(co2Kg).toBeCloseTo(observations[0].co2Kg, 1);
+  });
+});
+
+describe("GroveClient reading a node", () => {
+  const signed = observationRes.observation as GardenObservation;
+  /** A node that behaves like the real one: the feed coarsens GPS (so items do
+   *  NOT verify) and `/observation/:id` serves the exact signed bytes. */
+  const node = (log: string[] = []) => (url: string) => {
+    log.push(url.replace("https://node.test/api/grove", ""));
+    const path = url.split("/api/grove")[1] ?? "";
+    const json = (body: unknown, status = 200) =>
+      Promise.resolve({ ok: status < 400, status, json: async () => body } as Response);
+    if (path.startsWith("/feed")) {
+      if (Number(new URL(url).searchParams.get("limit")) > 50) return json({ error: "too big" }, 500);
+      const coarse = {
+        ...signed,
+        gps: signed.gps && { ...signed.gps, lat: Math.round(signed.gps.lat * 100) / 100, lng: Math.round(signed.gps.lng * 100) / 100 },
+      };
+      return json({ items: [coarse], cursor: "c1" });
+    }
+    if (path.startsWith("/observation/")) {
+      return json({ observation: signed, attestations: observationRes.attestations, trust: 63 });
+    }
+    return json({ error: "no route" }, 404);
+  };
+
+  it("verifies feed records via their exact signed bytes, not the coarsened copy", async () => {
+    const log: string[] = [];
+    const page = await new GroveClient("https://node.test/api/grove", node(log)).feed();
+    // The coarsened feed item alone can never verify — the client must go on to
+    // /observation/:id. Before this, every node record was silently dropped.
+    expect(page.records).toHaveLength(1);
+    expect(page.dropped).toBe(0);
+    expect(page.records[0].observation.id).toBe(signed.id);
+    expect(log.some((u) => u.startsWith("/observation/"))).toBe(true);
+    // …and the feed's privacy-coarsened coordinate is what public placement uses.
+    expect(page.coarseGps.get(signed.plot)).toEqual({ lat: 11.56, lng: 104.93 });
+  });
+
+  it("asks for a page size the node will serve (a too-large limit 500s)", async () => {
+    const log: string[] = [];
+    await new GroveClient("https://node.test/api/grove", node(log)).feed({ limit: 100 });
+    const feed = log.find((u) => u.startsWith("/feed"))!;
+    expect(Number(new URL("https://x" + feed).searchParams.get("limit"))).toBeLessThanOrEqual(50);
+  });
+
+  it("still drops a record whose signed bytes are forged", async () => {
+    const bad = { ...signed, co2Kg: 999999 };
+    const fetchImpl = (url: string) => {
+      const path = url.split("/api/grove")[1] ?? "";
+      const json = (body: unknown) => Promise.resolve({ ok: true, status: 200, json: async () => body } as Response);
+      if (path.startsWith("/feed")) return json({ items: [bad], cursor: null });
+      return json({ observation: bad, attestations: [], trust: 99 });
+    };
+    const page = await new GroveClient("https://node.test/api/grove", fetchImpl).feed();
+    expect(page.records).toHaveLength(0);
+    expect(page.dropped).toBe(1);
   });
 });
 

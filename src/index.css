@@ -2430,6 +2430,15 @@ body,
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 
+.grove-quality {
+  padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255, 246, 230, 0.35);
+  background: rgba(20, 32, 24, 0.6); color: #eafff2;
+  font: 700 12px system-ui, sans-serif; white-space: nowrap;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.grove-quality:hover { background: rgba(20, 32, 24, 0.8); }
+
 .grove-source {
   position: fixed; z-index: 15;
   top: calc(env(safe-area-inset-top, 0) + 88px); left: 50%; transform: translateX(-50%);
