@@ -113,8 +113,25 @@ export interface CsbPlotStatus {
   disclaimer?: string;
 }
 
-/** The reference CSB read endpoint. Any CSB app server exposes the same shape. */
-export const DEFAULT_CSB_BASE = "https://csb.iany.app";
+/**
+ * Where to read the chain from — set at build time, and **empty by default**.
+ *
+ * Empty means the chain layer is simply off: the garden renders from the signed
+ * records, exactly as it did before any of this existed. That is the right
+ * default for a viewer that must not depend on a chain, and it avoids the worse
+ * alternative of shipping a guessed hostname that every visitor's browser tries
+ * (and fails) to resolve once per plot.
+ *
+ * Point it at a CSB app server at deploy time:
+ *
+ *     VITE_CSB_BASE=https://csb.example npm run build
+ *
+ * Any CSB app server exposes the same public `/grove` endpoint. A visitor can
+ * also type one into the Grove Garden screen — federation is first-class here
+ * for the same reason it is for Grove nodes: a badge you can only check by
+ * asking the project that drew it is worth nothing.
+ */
+export const DEFAULT_CSB_BASE: string = import.meta.env?.VITE_CSB_BASE ?? "";
 
 export class CsbClient {
   readonly base: string;
