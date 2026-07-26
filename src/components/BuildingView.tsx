@@ -8,7 +8,7 @@ import {
   ConstructionBlock,
 } from "./CampusBuildings";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
-import { grassTexture } from "../lib/groundTexture";
+import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture } from "../lib/campusTexture";
 import type { Building } from "../buildings";
 
@@ -29,6 +29,9 @@ function detectViewMode(): ViewMode {
   const small = typeof window !== "undefined" && Math.min(window.screen.width, window.screen.height) < 500;
   return cores <= 4 || mem <= 3 || small ? "normal" : "ultra";
 }
+
+/** One paving tile-set per 8 m of ground → roughly 1 m slabs. */
+const PAVER_M = 8;
 
 const PALM_LOOK: PlantLook = { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" };
 
@@ -81,7 +84,7 @@ export function BuildingView({
     <div className="building">
       <Canvas
         dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [dist * 0.5, eye, dist], fov: 45, far: 1200 }}
+        camera={{ position: [dist * 0.5, eye, dist], fov: 45, near: 0.5, far: 900 }}
         gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
         shadows={mode === "ultra"}
         onCreated={({ gl }) => {
@@ -174,17 +177,21 @@ export function BuildingView({
 }
 
 function Ground() {
-  const grass = useMemo(() => grassTexture(60), []);
-  const pave = useMemo(() => paveTexture(24), []);
+  const grass = useMemo(() => grassTexture(30), []);
+  const pave = useMemo(() => paveTexture(metresRepeat(156, 156, PAVER_M)[0]), []);
   return (
     <>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.06, 0]} receiveShadow>
         <planeGeometry args={[900, 900]} />
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]} receiveShadow>
+      {/* the apron sits over the lawn — offset so the two can't fight for depth */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]} receiveShadow>
         <circleGeometry args={[78, 48]} />
-        <meshStandardMaterial map={pave} roughness={1} />
+        <meshStandardMaterial
+          map={pave} roughness={1}
+          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
+        />
       </mesh>
     </>
   );

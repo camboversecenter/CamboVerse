@@ -383,13 +383,19 @@ export function SportsField({
 }) {
   return (
     <group position={position}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.07, 0]} receiveShadow>
         <ringGeometry args={[Math.min(rx, rz) * 0.72, Math.min(rx, rz), 48]} />
-        <meshStandardMaterial color="#b0503a" roughness={1} />
+        <meshStandardMaterial
+          color="#b0503a" roughness={1}
+          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
+        />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]} receiveShadow>
         <circleGeometry args={[Math.min(rx, rz) * 0.73, 40]} />
-        <meshStandardMaterial color="#5f8f42" roughness={1} />
+        <meshStandardMaterial
+          color="#5f8f42" roughness={1}
+          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
+        />
       </mesh>
       {/* goals */}
       {[-1, 1].map((s) => (

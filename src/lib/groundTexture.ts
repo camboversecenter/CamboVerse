@@ -101,6 +101,11 @@ function grain(ctx: CanvasRenderingContext2D, size: number, rand: () => number, 
  * `metresRepeat` exists to avoid: a mown lawn is not a darker rough field, it
  * is a different surface. The material can then stay white and let the texture
  * carry the whole colour, instead of double-darkening it.
+ *
+ * Both palettes are kept deliberately low-frequency. Single-pixel blades and
+ * heavy per-texel grain look good up close but never resolve into a stable mip
+ * level, so at distance the ground boils as the camera moves. Wider, softer
+ * marks mip down cleanly.
  */
 export function grassTexture(repeat = 28, { kind = "lawn" }: { kind?: "lawn" | "rough" } = {}): Texture {
   const key = `grass:${repeat}:${kind}`;
@@ -123,28 +128,29 @@ export function grassTexture(repeat = 28, { kind = "lawn" }: { kind?: "lawn" | "
     lawn ? ["#a8b366", "#b4bd7033"] : ["#bcb87a", "#c8c08866"],
     lawn ? [[30, 16]] : [[70, 14], [26, 40]]);
 
-  // short blades, in the two dominant directions light would catch
-  for (let i = 0; i < (lawn ? 2600 : 1500); i++) {
+  // clumps of blades, wide enough to survive being mipped down
+  for (let i = 0; i < (lawn ? 900 : 560); i++) {
     const x = rand() * size;
     const y = rand() * size;
-    const len = 3 + rand() * 6;
-    const lean = (rand() - 0.5) * 3;
+    const len = 6 + rand() * 10;
+    const lean = (rand() - 0.5) * 5;
     ctx.strokeStyle = lawn
-      ? (rand() > 0.5 ? "rgba(168,205,112,0.5)" : "rgba(84,116,54,0.45)")
-      : (rand() > 0.5 ? "rgba(196,198,132,0.45)" : "rgba(104,116,66,0.4)");
-    ctx.lineWidth = 1;
+      ? (rand() > 0.5 ? "rgba(168,205,112,0.34)" : "rgba(84,116,54,0.3)")
+      : (rand() > 0.5 ? "rgba(196,198,132,0.3)" : "rgba(104,116,66,0.26)");
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineTo(x + lean, y - len);
     ctx.stroke();
   }
-  grain(ctx, size, rand, 16);
+  grain(ctx, size, rand, 5);
 
   const tex = new CanvasTexture(canvas);
   tex.colorSpace = SRGBColorSpace;
   tex.wrapS = tex.wrapT = RepeatWrapping;
   tex.repeat.set(repeat, repeat);
-  tex.anisotropy = 4;
+  tex.anisotropy = 16;
   cache.set(key, tex);
   return tex;
 }
@@ -177,13 +183,13 @@ export function soilTexture(repeat = 3): Texture {
     ctx.arc(x + r * 0.4, y + r * 0.5, r * 0.8, 0, Math.PI * 2);
     ctx.fill();
   }
-  grain(ctx, size, rand, 22);
+  grain(ctx, size, rand, 9);
 
   const tex = new CanvasTexture(canvas);
   tex.colorSpace = SRGBColorSpace;
   tex.wrapS = tex.wrapT = RepeatWrapping;
   tex.repeat.set(repeat, repeat);
-  tex.anisotropy = 4;
+  tex.anisotropy = 16;
   cache.set(key, tex);
   return tex;
 }

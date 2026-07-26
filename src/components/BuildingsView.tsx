@@ -10,7 +10,7 @@ import {
   ConstructionBlock, Props,
 } from "./CampusBuildings";
 import { PalmPlant, BroadleafPlant, type PlantLook, type TreeShape } from "./GrovePlants";
-import { grassTexture } from "../lib/groundTexture";
+import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
 import { BUILDINGS, NUM_SITE } from "../buildings";
 
@@ -67,6 +67,27 @@ function siteTrees() {
   return { palms, trees };
 }
 
+/**
+ * The ground is a stack of flat surfaces that overlap in plan — lawn, roads, car
+ * park apron, plazas. To a depth buffer they are effectively coplanar, and the
+ * winner flips from triangle to triangle as the camera moves: the jagged grey
+ * tears that made the concrete flicker.
+ *
+ * Two things stop it, and both are needed. Each layer sits a few centimetres
+ * above the last (invisible underfoot, plenty for the depth buffer at range),
+ * **and** each carries a distinct polygon offset, so the draw order is strictly
+ * decided rather than left to floating-point luck where two layers cross.
+ */
+const GROUND = { lawn: -0.08, road: 0.04, apron: 0.08, plaza: 0.12 };
+const LIFT = {
+  road: { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 },
+  apron: { polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 },
+  plaza: { polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 },
+};
+
+/** One paving tile-set per 8 m of ground → roughly 1 m slabs. */
+const PAVER_M = 8;
+
 const PALM_LOOK: PlantLook = { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" };
 const SHADE_SHAPE: TreeShape = { spread: 0.9, levels: 3, children: 3, trunkFrac: 0.38, girth: 1.1, clump: 2.6 };
 const SHADE_LOOK: PlantLook = {
@@ -109,7 +130,7 @@ export function BuildingsView({
     <div className="campus">
       <Canvas
         dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [30, 120, 320], fov: 45, far: 2400 }}
+        camera={{ position: [30, 120, 320], fov: 45, near: 0.5, far: 1600 }}
         gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
         shadows={mode === "ultra"}
         onCreated={({ gl }) => {
@@ -227,9 +248,9 @@ function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
 /* ---------------------------------------------------------------- world --- */
 
 function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding: (id: string) => void }) {
-  const grass = useMemo(() => grassTexture(90), []);
-  const pave = useMemo(() => paveTexture(40), []);
-  const road = useMemo(() => roadTexture(30), []);
+  const grass = useMemo(() => grassTexture(46), []);
+  const pave = useMemo(() => paveTexture(metresRepeat(104, 104, PAVER_M)[0]), []);
+  const road = useMemo(() => roadTexture(metresRepeat(120, 120, PAVER_M)[0]), []);
   const hedge = useMemo(() => hedgeTexture(), []);
   const { palms, trees } = useMemo(() => siteTrees(), []);
   const ultra = mode === "ultra";
@@ -292,42 +313,42 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       />
 
       {/* ground: lawn everywhere, then paving laid over it */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn, 0]} receiveShadow>
         <planeGeometry args={[1400, 1400]} />
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
 
       {/* entrance forecourt + avenue */}
       {/* entrance forecourt */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 152]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 152]} receiveShadow>
         <circleGeometry args={[30, 40]} />
-        <meshStandardMaterial map={pave} roughness={1} />
+        <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
       </mesh>
       {/* the road across the front of the monument, and the one east to the car park */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[20, 0.008, 138]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[20, GROUND.road, 138]} receiveShadow>
         <planeGeometry args={[260, 14]} />
-        <meshStandardMaterial map={road} roughness={1} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[112, 0.008, 74]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[112, GROUND.road, 74]} receiveShadow>
         <planeGeometry args={[14, 140]} />
-        <meshStandardMaterial map={road} roughness={1} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
       </mesh>
       {/* the great hall's plaza */}
       {/* the Great Hall's plaza */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[92, 0.012, 6]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[92, GROUND.plaza, 6]} receiveShadow>
         <planeGeometry args={[110, 96]} />
-        <meshStandardMaterial map={pave} roughness={1} />
+        <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
       </mesh>
       {/* ring road along the west + the car park apron */}
       {/* the tree-lined road up the west side */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-58, 0.009, 60]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-58, GROUND.road, 60]} receiveShadow>
         <planeGeometry args={[13, 190]} />
-        <meshStandardMaterial map={road} roughness={1} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
       </mesh>
       {/* the car park apron */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[94, 0.009, 74]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[94, GROUND.apron, 74]} receiveShadow>
         <planeGeometry args={[76, 84]} />
-        <meshStandardMaterial map={road} roughness={1} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.apron} />
       </mesh>
 
       {/* --- the buildings: tapping one opens its own page --- */}

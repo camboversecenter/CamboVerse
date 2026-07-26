@@ -19,7 +19,7 @@ function tex(key: string, size: number, draw: (ctx: CanvasRenderingContext2D, s:
   t.colorSpace = SRGBColorSpace;
   t.wrapS = t.wrapT = RepeatWrapping;
   t.repeat.set(repeat[0], repeat[1]);
-  t.anisotropy = 4;
+  t.anisotropy = 16;
   cache.set(key, t);
   return t;
 }
@@ -34,7 +34,14 @@ function rand(seed: number) {
   };
 }
 
-/** Grey stone plaza paving, laid in courses like the campus forecourt. */
+/**
+ * Grey stone plaza paving, laid in courses like the campus forecourt.
+ *
+ * `repeat` is how many times the 512-px tile-set (8 courses of slabs) wraps
+ * across the surface. Size it with `metresRepeat` from groundTexture so one
+ * repeat covers about 8 m, giving ~1 m slabs: repeating much tighter puts
+ * several slabs inside one screen pixel at distance and the paving shimmers.
+ */
 export function paveTexture(repeat = 12): Texture {
   return tex(`pave:${repeat}`, 512, (ctx, s) => {
     const r = rand(3);
@@ -64,7 +71,7 @@ export function paveTexture(repeat = 12): Texture {
   }, [repeat, repeat]);
 }
 
-/** Poured concrete / asphalt roadway. */
+/** Poured concrete / asphalt roadway. Same rule: about 8 m per repeat. */
 export function roadTexture(repeat = 10): Texture {
   return tex(`road:${repeat}`, 256, (ctx, s) => {
     const r = rand(11);
@@ -206,7 +213,7 @@ export function signTexture(
   }
   const t = new CanvasTexture(c);
   t.colorSpace = SRGBColorSpace;
-  t.anisotropy = 4;
+  t.anisotropy = 16;
   cache.set(key, t);
   return t;
 }
