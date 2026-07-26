@@ -9,6 +9,7 @@ import { GamesView } from "./components/GamesView";
 import { FarmView } from "./components/FarmView";
 import { MeditationView } from "./components/MeditationView";
 import { VillageView } from "./components/VillageView";
+import { PlaceView } from "./components/PlaceView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
@@ -24,6 +25,8 @@ export function App() {
   const [farmOpen, setFarmOpen] = useState(false);
   const [medOpen, setMedOpen] = useState(false);
   const [villageOpen, setVillageOpen] = useState(false);
+  // A generated place — buildings composed onto shared ground (src/places.ts).
+  const [placeId, setPlaceId] = useState<string | null>(null);
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
   const [groveOpen, setGroveOpen] = useState(false);
@@ -72,6 +75,8 @@ export function App() {
         <FarmView onBackToMap={() => setFarmOpen(false)} />
       ) : medOpen ? (
         <MeditationView onBackToMap={() => setMedOpen(false)} />
+      ) : placeId ? (
+        <PlaceView placeId={placeId} onBackToMap={() => setPlaceId(null)} />
       ) : villageOpen ? (
         <VillageView onBackToMap={() => setVillageOpen(false)} />
       ) : fashionOpen ? (
@@ -91,6 +96,7 @@ export function App() {
           onOpenFarm={() => setFarmOpen(true)}
           onOpenMeditation={() => setMedOpen(true)}
           onOpenVillage={() => setVillageOpen(true)}
+          onOpenPlace={(id) => setPlaceId(id)}
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}

@@ -17,6 +17,7 @@ export function MapView({
   onOpenFarm,
   onOpenMeditation,
   onOpenVillage,
+  onOpenPlace,
   onOpenFashion,
   onOpenSakYant,
   onOpenGrove,
@@ -30,6 +31,7 @@ export function MapView({
   onOpenFarm: () => void;
   onOpenMeditation: () => void;
   onOpenVillage: () => void;
+  onOpenPlace: (id: string) => void;
   onOpenFashion: () => void;
   onOpenSakYant: () => void;
   onOpenGrove: () => void;
@@ -87,6 +89,7 @@ export function MapView({
         <button className="games-btn" onClick={onOpenGames}>🎪 Khmer Games</button>
         <button className="farm-btn" onClick={onOpenFarm}>🌾 Virtual Farm</button>
         <button className="village-btn" onClick={onOpenVillage}>🏡 Khmer Village</button>
+        <button className="village-btn" onClick={() => onOpenPlace("institute-campus")}>🏛 Institute campus</button>
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
         <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
         <button className="grove-btn" onClick={onOpenGrove}>🌱 Grove Garden</button>

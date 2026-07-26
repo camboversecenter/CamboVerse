@@ -42,8 +42,15 @@ if (!specPath) {
   process.exit(1);
 }
 const spec = JSON.parse(readFileSync(resolve(specPath), "utf8"));
+// A building destined for a PLACE must not carry its own ground: the scene
+// draws one shared surface, and twenty baked aprons overlapping each other is
+// both wrong and expensive. `--bare` is what a composed world consumes; the
+// site-bearing build stays for the standalone hero render.
+const BARE = process.argv.includes("--bare");
+const stem = spec.id ?? basename(specPath, ".json");
+const explicit = process.argv[3] && !process.argv[3].startsWith("--") ? process.argv[3] : null;
 const OUT = resolve(
-  process.argv[3] ?? resolve(__dirname, `../public/models/${spec.id ?? basename(specPath, ".json")}.glb`),
+  explicit ?? resolve(__dirname, `../public/models/${stem}${BARE ? "-bare" : ""}.glb`),
 );
 
 /** #rrggbb → the linear-ish [r,g,b] triple the builder wants. */
@@ -241,7 +248,7 @@ if ((roof.kind ?? "hipped-tile").startsWith("hipped")) {
 //
 // This is geometry, not scenery dressing: it goes in the same glb, costs a few
 // hundred verts per tree, and needs no runtime, no textures and no downloads.
-if (spec.site) {
+if (spec.site && !BARE) {
   const s = spec.site;
   const SITE = {
     paving: rgb(s.palette?.paving, [0.82, 0.8, 0.75]),
