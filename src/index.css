@@ -3195,3 +3195,18 @@ select.farm-modal-note { appearance: none; }
   padding: 10px 14px; border-radius: 10px;
 }
 .grove-anchor-btn:hover { background: #176335; }
+
+/* ---- Place: generated buildings composed into somewhere to stand ---- */
+.place { position: fixed; inset: 0; background: #9ccbe8; }
+.place canvas { display: block; }
+.place-panel {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; z-index: 20;
+  width: min(680px, calc(100vw - 24px));
+  background: rgba(14, 26, 20, 0.82); color: #eafff2; border-radius: 14px;
+  padding: 12px 16px; backdrop-filter: blur(6px);
+}
+.place-blurb { font: 500 0.84rem/1.6 system-ui, sans-serif; margin: 0; }
+.place-prov {
+  font: 500 0.72rem/1.55 system-ui, sans-serif; margin: 8px 0 0;
+  color: #b8d8c6; border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 8px;
+}

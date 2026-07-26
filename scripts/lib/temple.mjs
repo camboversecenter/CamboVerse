@@ -38,8 +38,15 @@ export function createBuilder() {
     g.translate(x, y, z);
     push(g, color);
   }
-  function sphere(r, x, y, z, color = SAND, scaleY = 1) {
-    const g = new THREE.SphereGeometry(r, 10, 8).toNonIndexed();
+  /**
+   * @param seg Longitudinal segments (latitudinal is half). Default 10 is right
+   *        for a lotus finial you stand next to; a tree canopy thirty metres
+   *        away needs 5 and costs a quarter as much. toNonIndexed() triples
+   *        every vertex, so this multiplier is not academic — a forecourt of
+   *        thirty saplings at the default put a 327 KB model up to 2.9 MB.
+   */
+  function sphere(r, x, y, z, color = SAND, scaleY = 1, seg = 10) {
+    const g = new THREE.SphereGeometry(r, seg, Math.max(3, Math.round(seg / 2))).toNonIndexed();
     if (scaleY !== 1) g.scale(1, scaleY, 1);
     g.translate(x, y, z);
     push(g, color);
@@ -89,7 +96,15 @@ export function createBuilder() {
     cone(baseW * 0.06, 0.18, 6, cx, top + 0.82, cz, color); // tip
   }
 
-  function build(OUT, { scale = 1 } = {}) {
+  /**
+   * @param weathering How much the height-based grime gradient applies, 0–1.
+   *        1 is the temple default (dark at the base, bleached at the top),
+   *        which is right for aged sandstone and wrong for a building finished
+   *        last year — a new painted block reads as dirty rather than new.
+   *        Lower it for modern buildings; 0 keeps only the per-part tone jitter
+   *        that stops flat colour looking like a screenshot of a colour picker.
+   */
+  function build(OUT, { scale = 1, weathering = 1 } = {}) {
     const posChunks = parts.map((p) => p.geom.attributes.position.array);
     const normChunks = parts.map((p) => p.geom.attributes.normal.array);
     const vertCount = posChunks.reduce((n, a) => n + a.length / 3, 0);
@@ -108,7 +123,8 @@ export function createBuilder() {
       for (let v = 0; v < pos.length; v += 3) {
         const wy = pos[v + 1] * scale;
         // weathering: darker near the ground, lighter higher up
-        const shade = Math.max(0.62, Math.min(1.12, 0.74 + 0.05 * wy)) * tint;
+        const aged = Math.max(0.62, Math.min(1.12, 0.74 + 0.05 * wy));
+        const shade = (1 + (aged - 1) * weathering) * tint;
         color[o + v] = cr * shade;
         color[o + v + 1] = cg * shade;
         color[o + v + 2] = cb * shade;
