@@ -6,23 +6,24 @@ import { ACESFilmicToneMapping } from "three";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
 import {
-  GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField, Props,
+  GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
+  ConstructionBlock, Props,
 } from "./CampusBuildings";
 import { PalmPlant, BroadleafPlant, type PlantLook, type TreeShape } from "./GrovePlants";
 import { grassTexture } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
+import { BUILDINGS, NUM_SITE } from "../buildings";
 
 /**
- * 🎓 **NUM International Campus** — a walkable virtual twin of the National
- * University of Management's international campus: the entrance monument, the
- * great hall under its deep red roof, the teaching blocks, the Khmer shrine,
- * the parking canopies and the sports field, set in the surrounding Phnom Penh
- * fringe.
+ * 🏛️ **Buildings** — a walkable site of Cambodian buildings. The first set is
+ * the National University of Management's international campus: the entrance
+ * monument, the great hall under its deep red roof, the teaching blocks, the
+ * Khmer shrine, the parking canopies and the sports field.
  *
- * Built procedurally from primitives and canvas-drawn textures — nothing is
- * downloaded — and it follows CamboVerse's three view modes (AGENTS.md):
- * Normal for a low-end phone, Ultra for a capable device, and VR (which always
- * presents Ultra). You can orbit it from above or walk it in first person.
+ * Overview it from above or walk it in first person; **tap a building** to open
+ * its own page. Built procedurally from primitives and canvas-drawn textures —
+ * nothing is downloaded — and it follows CamboVerse's three view modes
+ * (AGENTS.md): Normal, Ultra, and VR (which always presents Ultra).
  */
 type ViewMode = "normal" | "ultra";
 type Nav = "orbit" | "walk";
@@ -37,49 +38,32 @@ function detectViewMode(): ViewMode {
 
 /* --------------------------------------------------------------- layout --- */
 
-/**
- * Landmarks a visitor can jump to. `at` is where they stand and `yaw` which way
- * they face, so arriving somewhere already looks at the thing you came to see
- * rather than at the back of it.
- */
-const PLACES = [
-  { id: "gate", name: "Main Entrance", khmer: "ច្រកចូល", at: [0, 1.6, 128] as [number, number, number], yaw: 0,
-    note: "The NUM International Campus monument, flanked by sugar palms — Cambodia's national tree." },
-  { id: "hall", name: "The Great Hall", khmer: "សាលធំ", at: [0, 1.6, 92] as [number, number, number], yaw: 0,
-    note: "The campus landmark: a glazed hall inside a colonnade, under a deep hipped roof crowned with a Khmer spire." },
-  { id: "teaching", name: "Teaching Block", khmer: "អគារសិក្សា", at: [-30, 1.6, 72] as [number, number, number], yaw: 0.71,
-    note: "Four floors of classrooms behind window bands, under the campus's signature red roof." },
-  { id: "shrine", name: "Campus Shrine", khmer: "ខ្ទមទេវតា", at: [34, 1.6, 58] as [number, number, number], yaw: 0,
-    note: "A Khmer shrine in the plaza — a place to leave an offering before an exam." },
-  { id: "field", name: "Sports Field", khmer: "ទីលានកីឡា", at: [-80, 1.6, 142] as [number, number, number], yaw: 0,
-    note: "The running track and football pitch on the campus's western side." },
-  { id: "parking", name: "Parking Canopies", khmer: "ចំណតរថយន្ត", at: [62, 1.6, 130] as [number, number, number], yaw: 0,
-    note: "Long shaded canopies over the car park — welcome relief in the Cambodian sun." },
-];
+/** The buildings standing on this site, in the order they're listed. */
+const PLACES = BUILDINGS.filter((b) => b.site === NUM_SITE);
 
 /** Sugar palms lining the entrance avenue, plus shade trees along the roads. */
 function siteTrees() {
   // Sugar palms flank the entrance avenue, stopping short of the plaza so the
   // Great Hall is framed rather than blocked.
+  // Sugar palms stand around the entrance forecourt, as in the entry photo.
   const palms: { pos: [number, number, number]; seed: number }[] = [];
-  for (let i = 0; i < 7; i++) {
-    const z = 122 - i * 9;
-    palms.push({ pos: [-17, 0, z], seed: i * 3 + 1 });
-    palms.push({ pos: [17, 0, z], seed: i * 3 + 2 });
+  for (let i = 0; i < 4; i++) {
+    palms.push({ pos: [-24 - i * 9, 0, 150 - i * 5], seed: i * 3 + 1 });
+    palms.push({ pos: [24 + i * 9, 0, 150 - i * 5], seed: i * 3 + 2 });
   }
   const trees: { pos: [number, number, number]; seed: number }[] = [];
-  // shade trees down the ring road and the plaza edges
-  for (let i = 0; i < 11; i++) {
-    trees.push({ pos: [-40, 0, 108 - i * 11], seed: 40 + i });
-    trees.push({ pos: [86, 0, 108 - i * 11], seed: 60 + i });
+  // the tree-lined road that runs up the west side of the lawn
+  for (let i = 0; i < 12; i++) trees.push({ pos: [-66, 0, 132 - i * 12], seed: 40 + i });
+  // both sides of the road east to the car park
+  for (let i = 0; i < 8; i++) {
+    trees.push({ pos: [46, 0, 132 - i * 13], seed: 60 + i });
+    trees.push({ pos: [128, 0, 120 - i * 13], seed: 70 + i });
   }
-  // forecourt row, split either side so nothing stands in the avenue
-  for (let i = 0; i < 4; i++) {
-    trees.push({ pos: [-46 + i * 9, 0, 118], seed: 80 + i });
-    trees.push({ pos: [22 + i * 9, 0, 118], seed: 90 + i });
-  }
-  for (let i = 0; i < 8; i++) trees.push({ pos: [-32 + i * 10, 0, -38], seed: 100 + i });
-  for (let i = 0; i < 5; i++) trees.push({ pos: [44, 0, 40 - i * 12], seed: 120 + i });
+  // between the parking bays, and along the hall's plaza
+  for (let i = 0; i < 6; i++) trees.push({ pos: [64, 0, 106 - i * 14], seed: 80 + i });
+  for (let i = 0; i < 6; i++) trees.push({ pos: [-40 + i * 16, 0, 30], seed: 100 + i });
+  // the far edge of the lawn, in front of the teaching block
+  for (let i = 0; i < 7; i++) trees.push({ pos: [-52 + i * 17, 0, 44], seed: 120 + i });
   return { palms, trees };
 }
 
@@ -91,15 +75,20 @@ const SHADE_LOOK: PlantLook = {
 
 /* ----------------------------------------------------------------- view --- */
 
-export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
+export function BuildingsView({
+  onBackToMap, onOpenBuilding,
+}: {
+  onBackToMap: () => void;
+  onOpenBuilding: (id: string) => void;
+}) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
   const [vrSupported, setVrSupported] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
   const [place, setPlace] = useState<string | null>(null);
   const input = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
-  const [start, setStart] = useState<[number, number, number]>(PLACES[0].at);
-  const [startYaw, setStartYaw] = useState(PLACES[0].yaw);
+  const [start, setStart] = useState<[number, number, number]>(PLACES[0].view.at);
+  const [startYaw, setStartYaw] = useState(PLACES[0].view.yaw);
 
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
@@ -111,8 +100,8 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
     const p = PLACES.find((x) => x.id === id);
     if (!p) return;
     setPlace(id);
-    setStart(p.at);
-    setStartYaw(p.yaw);
+    setStart(p.view.at);
+    setStartYaw(p.view.yaw);
     setNav("walk"); // arrive standing on the ground, already facing it
   };
 
@@ -120,7 +109,7 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
     <div className="campus">
       <Canvas
         dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [0, 78, 210], fov: 45, far: 2000 }}
+        camera={{ position: [30, 120, 320], fov: 45, far: 2400 }}
         gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
         shadows={mode === "ultra"}
         onCreated={({ gl }) => {
@@ -129,7 +118,7 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
         }}
       >
         <XR store={store}>
-          <CampusWorld mode={mode} />
+          <CampusWorld mode={mode} onOpenBuilding={onOpenBuilding} />
           <XROrigin position={[0, 0, 96]} />
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
@@ -141,7 +130,7 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
               maxDistance={420}
               maxPolarAngle={Math.PI / 2.12}
               enableDamping
-              target={[0, 6, 30]}
+              target={[24, 6, 70]}
             />
           )}
         </XR>
@@ -149,7 +138,7 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
 
       <div className="cls-top">
         <button className="backbtn" onClick={onBackToMap}>← Map</button>
-        <span className="cls-title">🎓 NUM International Campus</span>
+        <span className="cls-title">🏛️ Buildings · {NUM_SITE}</span>
         <button
           className="grove-quality"
           onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
@@ -191,7 +180,10 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
             <b>{selected.name}</b> <span className="khmer">{selected.khmer}</span>
             <button className="grove-x" onClick={() => setPlace(null)}>✕</button>
           </div>
-          <p>{selected.note}</p>
+          <p>{selected.english}</p>
+          <button className="campus-open" onClick={() => onOpenBuilding(selected.id)}>
+            Open building page →
+          </button>
         </div>
       )}
 
@@ -200,6 +192,28 @@ export function NumCampusView({ onBackToMap }: { onBackToMap: () => void }) {
         <div className="campus-hint">Drag to look · use the stick to walk</div>
       )}
     </div>
+  );
+}
+
+/**
+ * Makes a building tappable: a click anywhere on it opens that building's page,
+ * and hovering shows a pointer so it's discoverable on desktop. (Taps reach the
+ * canvas in Overview; in Walk mode the look-drag layer owns the screen, so the
+ * landmark list is the way in.)
+ */
+function Tappable({
+  id, onOpen, children,
+}: {
+  id: string; onOpen: (id: string) => void; children: React.ReactNode;
+}) {
+  return (
+    <group
+      onClick={(e) => { e.stopPropagation(); onOpen(id); }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; }}
+      onPointerOut={() => { document.body.style.cursor = ""; }}
+    >
+      {children}
+    </group>
   );
 }
 
@@ -212,7 +226,7 @@ function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
 
 /* ---------------------------------------------------------------- world --- */
 
-function CampusWorld({ mode }: { mode: ViewMode }) {
+function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding: (id: string) => void }) {
   const grass = useMemo(() => grassTexture(90), []);
   const pave = useMemo(() => paveTexture(40), []);
   const road = useMemo(() => roadTexture(30), []);
@@ -224,16 +238,16 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
   const bollards = useMemo(() => {
     const out: { pos: [number, number, number] }[] = [];
     for (let i = 0; i < 14; i++) {
-      out.push({ pos: [-13.5, 0.55, 122 - i * 6] });
-      out.push({ pos: [13.5, 0.55, 122 - i * 6] });
+      out.push({ pos: [-26 + i * 4, 0.55, 146] });
+      out.push({ pos: [-26 + i * 4, 0.55, 158] });
     }
     return out;
   }, []);
   const lamps = useMemo(() => {
     const out: { pos: [number, number, number] }[] = [];
     for (let i = 0; i < 9; i++) {
-      out.push({ pos: [-37, 2.6, 108 - i * 11] });
-      out.push({ pos: [83, 2.6, 108 - i * 11] });
+      out.push({ pos: [-58, 2.6, 130 - i * 13] });
+      out.push({ pos: [112, 2.6, 126 - i * 13] });
     }
     return out;
   }, []);
@@ -245,9 +259,9 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
     for (let ring = 0; ring < 3; ring++) {
       for (let i = 0; i < 26; i++) {
         const a = (i / 26) * Math.PI * 2 + ring * 0.12;
-        const r = 210 + ring * 34 + rnd() * 16;
+        const r = 250 + ring * 34 + rnd() * 16;
         out.push({
-          pos: [Math.cos(a) * r, 0, Math.sin(a) * r + 30],
+          pos: [Math.cos(a) * r + 20, 0, Math.sin(a) * r + 70],
           rot: a + Math.PI / 2,
           scale: 0.85 + rnd() * 0.5,
         });
@@ -284,39 +298,67 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
       </mesh>
 
       {/* entrance forecourt + avenue */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 100]} receiveShadow>
-        <circleGeometry args={[28, 40]} />
+      {/* entrance forecourt */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 152]} receiveShadow>
+        <circleGeometry args={[30, 40]} />
         <meshStandardMaterial map={pave} roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.008, 70]} receiveShadow>
-        <planeGeometry args={[24, 74]} />
+      {/* the road across the front of the monument, and the one east to the car park */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[20, 0.008, 138]} receiveShadow>
+        <planeGeometry args={[260, 14]} />
+        <meshStandardMaterial map={road} roughness={1} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[112, 0.008, 74]} receiveShadow>
+        <planeGeometry args={[14, 140]} />
         <meshStandardMaterial map={road} roughness={1} />
       </mesh>
       {/* the great hall's plaza */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[4, 0.012, 20]} receiveShadow>
-        <planeGeometry args={[150, 96]} />
+      {/* the Great Hall's plaza */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[92, 0.012, 6]} receiveShadow>
+        <planeGeometry args={[110, 96]} />
         <meshStandardMaterial map={pave} roughness={1} />
       </mesh>
       {/* ring road along the west + the car park apron */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-40, 0.009, 40]} receiveShadow>
-        <planeGeometry args={[14, 210]} />
+      {/* the tree-lined road up the west side */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-58, 0.009, 60]} receiveShadow>
+        <planeGeometry args={[13, 190]} />
         <meshStandardMaterial map={road} roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[62, 0.009, 84]} receiveShadow>
-        <planeGeometry args={[86, 62]} />
+      {/* the car park apron */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[94, 0.009, 74]} receiveShadow>
+        <planeGeometry args={[76, 84]} />
         <meshStandardMaterial map={road} roughness={1} />
       </mesh>
 
-      {/* --- the buildings --- */}
-      <EntranceMonument position={[0, 0, 104]} rotation={Math.PI} />
-      <GreatHall position={[0, 0, 10]} />
-      <TeachingBlock position={[-76, 0, 16]} rotation={Math.PI / 2} w={86} d={15} floors={4} />
-      <TeachingBlock position={[0, 0, -62]} rotation={0} w={70} d={14} floors={3} tower={false} />
-      <Shrine position={[34, 0, 36]} />
-      {[0, 1, 2].map((i) => (
-        <ParkingCanopy key={i} position={[62, 0, 66 + i * 16]} length={62} width={12} />
-      ))}
-      <SportsField position={[-80, 0, 92]} rx={42} rz={34} />
+      {/* --- the buildings: tapping one opens its own page --- */}
+      {/* 1 — you arrive here, looking north across the lawn */}
+      <Tappable id="gate" onOpen={onOpenBuilding}>
+        <EntranceMonument position={[0, 0, 152]} rotation={Math.PI} />
+      </Tappable>
+      {/* the teaching block closes the far side of the lawn, with the
+          part-built block beside it — the view from the entrance */}
+      <Tappable id="teaching" onOpen={onOpenBuilding}>
+        <TeachingBlock position={[-6, 0, 12]} rotation={0} w={86} d={16} floors={4} />
+      </Tappable>
+      <Tappable id="construction" onOpen={onOpenBuilding}>
+        <ConstructionBlock position={[-84, 0, 12]} w={46} d={18} floors={5} />
+      </Tappable>
+      {/* 2 — turn right and walk east: the car park */}
+      <Tappable id="parking" onOpen={onOpenBuilding}>
+        {[0, 1, 2].map((i) => (
+          <ParkingCanopy key={i} position={[74 + i * 19, 0, 74]} rotation={Math.PI / 2} length={64} width={13} />
+        ))}
+      </Tappable>
+      {/* 3 — and next to the car park, the Great Hall with its shrine */}
+      <Tappable id="hall" onOpen={onOpenBuilding}>
+        <GreatHall position={[96, 0, -6]} />
+      </Tappable>
+      <Tappable id="shrine" onOpen={onOpenBuilding}>
+        <Shrine position={[62, 0, 12]} />
+      </Tappable>
+      <Tappable id="field" onOpen={onOpenBuilding}>
+        <SportsField position={[-104, 0, 104]} rx={42} rz={36} />
+      </Tappable>
 
       {/* --- planting --- */}
       {palms.map((p) => (
@@ -348,7 +390,7 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
       </Props>
       {/* clipped hedges around the forecourt beds */}
       {[-1, 1].map((s) => (
-        <mesh key={s} position={[s * 19, 0.5, 92]} castShadow receiveShadow>
+        <mesh key={s} position={[s * 20, 0.5, 146]} castShadow receiveShadow>
           <boxGeometry args={[18, 1, 4]} />
           <meshStandardMaterial map={hedge} roughness={0.95} />
         </mesh>
@@ -365,8 +407,8 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
       </Props>
       {/* perimeter wall */}
       {[
-        { p: [0, 1.2, 150] as [number, number, number], w: 300 },
-        { p: [0, 1.2, -96] as [number, number, number], w: 300 },
+        { p: [20, 1.2, 178] as [number, number, number], w: 360 },
+        { p: [20, 1.2, -46] as [number, number, number], w: 360 },
       ].map((seg, i) => (
         <mesh key={i} position={seg.p} castShadow receiveShadow>
           <boxGeometry args={[seg.w, 2.4, 0.5]} />
@@ -374,8 +416,8 @@ function CampusWorld({ mode }: { mode: ViewMode }) {
         </mesh>
       ))}
       {[-1, 1].map((s) => (
-        <mesh key={s} position={[s * 150, 1.2, 27]} castShadow receiveShadow>
-          <boxGeometry args={[0.5, 2.4, 246]} />
+        <mesh key={s} position={[20 + s * 180, 1.2, 66]} castShadow receiveShadow>
+          <boxGeometry args={[0.5, 2.4, 224]} />
           <meshStandardMaterial color="#cdbfae" roughness={0.95} />
         </mesh>
       ))}

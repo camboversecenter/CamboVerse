@@ -2432,7 +2432,7 @@ body,
 }
 .campus-btn:hover { background: color-mix(in srgb, #b23a34 30%, rgba(20, 16, 10, 0.78)); }
 
-/* ---- NUM International Campus ---- */
+/* ---- Buildings (a walkable site) ---- */
 .campus { position: fixed; inset: 0; z-index: 5; background: #cfe0e8; }
 
 .campus-nav {
@@ -2476,6 +2476,51 @@ body,
 .campus-card-head b { font-size: 1.02rem; }
 .campus-card-head .grove-x { margin-left: auto; }
 .campus-card p { font: 400 0.88rem/1.5 system-ui, sans-serif; margin: 0; }
+
+.campus-open {
+  margin-top: 8px; padding: 7px 14px; border: none; border-radius: 999px; cursor: pointer;
+  background: #b23a34; color: #fff; font: 700 12px system-ui, sans-serif;
+}
+.campus-open:hover { filter: brightness(1.08); }
+
+/* ---- a single building's page ---- */
+.building { position: fixed; inset: 0; z-index: 5; background: #cfe0e8; }
+
+.bld-spin {
+  position: fixed; z-index: 15;
+  top: calc(env(safe-area-inset-top, 0) + 52px); left: 50%; transform: translateX(-50%);
+  padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(24, 32, 38, 0.6); color: #f2f6f8;
+  font: 700 12px system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
+.bld-panel {
+  position: fixed; z-index: 16; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 14px);
+  width: min(560px, calc(100vw - 20px)); max-height: 42vh; overflow-y: auto;
+  background: rgba(255, 253, 248, 0.95); color: #2c3236;
+  border: 1px solid rgba(60, 60, 60, 0.18); border-radius: 18px; padding: 14px 18px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.26);
+}
+.bld-head { display: flex; align-items: baseline; gap: 9px; }
+.bld-head b { font-size: 1.12rem; }
+.bld-sub { font: 600 0.8rem system-ui, sans-serif; color: #7d8a90; margin: 2px 0 8px; }
+.bld-about { font: 400 0.9rem/1.55 system-ui, sans-serif; margin: 0 0 8px; }
+.bld-facts { list-style: none; padding: 0; margin: 6px 0 0; }
+.bld-facts li {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 6px 0; border-top: 1px solid #e4eae7;
+  font: 400 0.86rem system-ui, sans-serif;
+}
+.bld-facts li span { color: #7d8a90; }
+.bld-note { font: 500 0.74rem/1.5 system-ui, sans-serif; color: #7d8a90; margin: 10px 0 0; }
+.bld-map {
+  margin-top: 10px; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #b23a34; background: transparent; color: #b23a34;
+  font: 700 12px system-ui, sans-serif;
+}
 
 .campus-hint {
   position: fixed; z-index: 22; left: 50%; transform: translateX(-50%);

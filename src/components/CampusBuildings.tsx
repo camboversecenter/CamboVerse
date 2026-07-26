@@ -410,6 +410,60 @@ export function SportsField({
   );
 }
 
+/**
+ * A **building under construction** — the bare concrete/steel frame standing
+ * next to the finished teaching block in the campus photographs. Columns, floor
+ * slabs and a part-clad top storey: the campus as it actually is today, still
+ * being built.
+ */
+export function ConstructionBlock({
+  w = 46, d = 18, floors = 5, position = [0, 0, 0] as [number, number, number], rotation = 0,
+}) {
+  const fh = 3.6;
+  const bays = Math.max(3, Math.round(w / 7));
+  const ribs = Math.max(2, Math.round(d / 7));
+  return (
+    <group position={position} rotation={[0, rotation, 0]}>
+      {/* floor slabs */}
+      {Array.from({ length: floors }).map((_, f) => (
+        <mesh key={f} position={[0, 0.4 + f * fh, 0]} castShadow receiveShadow>
+          <boxGeometry args={[w, 0.3, d]} />
+          <meshStandardMaterial color="#b8b4ac" roughness={1} />
+        </mesh>
+      ))}
+      {/* column grid */}
+      {Array.from({ length: bays }).map((_, i) =>
+        Array.from({ length: ribs }).map((_, j) => (
+          <mesh
+            key={`${i}-${j}`}
+            position={[
+              (i / (bays - 1) - 0.5) * (w - 3),
+              0.4 + (floors * fh) / 2,
+              (j / (ribs - 1) - 0.5) * (d - 3),
+            ]}
+            castShadow
+          >
+            <boxGeometry args={[0.5, floors * fh, 0.5]} />
+            <meshStandardMaterial color="#c3bfb6" roughness={1} />
+          </mesh>
+        )),
+      )}
+      {/* part-built top storey and a stub of cladding */}
+      <mesh position={[w * 0.22, 0.4 + floors * fh + 1.2, 0]} castShadow>
+        <boxGeometry args={[w * 0.42, 2.4, d * 0.9]} />
+        <meshStandardMaterial color="#9aa0a4" roughness={0.9} metalness={0.15} />
+      </mesh>
+      {/* scaffold rail along one edge */}
+      {Array.from({ length: floors }).map((_, f) => (
+        <mesh key={`r${f}`} position={[0, 0.4 + f * fh + 1.1, d / 2]} >
+          <boxGeometry args={[w, 0.08, 0.08]} />
+          <meshStandardMaterial color="#8a6a3a" roughness={1} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 /* ------------------------------------------------- instanced site props --- */
 
 type Placement = { pos: [number, number, number]; rot?: number; scale?: number };
