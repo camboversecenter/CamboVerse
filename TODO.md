@@ -33,6 +33,7 @@ Cambodia online for the world, with your name on it.
 | 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
 | 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
 | 🪷 Add a yant or a vetted master | [Grow Sak Yant](#grow-sak-yant) |
+| 🎓 Build out the NUM campus | [Grow the NUM International Campus](#grow-the-num-international-campus) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -393,6 +394,34 @@ Handle it with care: Sak Yant is sacred, not decoration.
 Sources for the descriptions are open-web references (Wikipedia "Yantra
 tattooing", the Federation of Khmer Sakyantra, general Sak Yant guides); treat
 them as a starting point to be verified by masters. See `src/sakyant.ts`.
+
+## Grow the NUM International Campus
+
+The **🎓 NUM International Campus** is a walkable virtual twin of the National
+University of Management's international campus — the entrance monument, the
+Great Hall under its deep red roof, the teaching blocks, the Khmer shrine, the
+parking canopies and the sports field. It is built procedurally from primitives
+and canvas-drawn textures (`src/components/CampusBuildings.tsx`,
+`src/lib/campusTexture.ts`, assembled in `NumCampusView.tsx`), so nothing is
+downloaded. You can orbit it or walk it in first person, and it follows the
+three view modes (Normal / Ultra / VR).
+
+- **📸 Ground truth.** The massing is modelled from photographs. If you study or
+  work at NUM, check it against the real campus: building positions, floor
+  counts, which way the Hall faces, what's actually where. Corrections are the
+  most valuable contribution here.
+- **🏛️ More of the campus.** Add the buildings still missing (library, canteen,
+  dormitories, the buildings under construction), interiors for the Great Hall
+  and a classroom, and signage on each block.
+- **🌳 Real planting & detail.** More accurate tree species and positions,
+  benches, bicycle racks, flagpoles, the covered walkways between blocks.
+- **🚶 Life.** Students walking, a bell, morning flag ceremony — and a guided
+  tour that walks a visitor between landmarks.
+- **♿ Performance.** Keep Normal mode within the $150-phone budget: instance
+  repeated props, and merge geometry rather than adding draw calls.
+
+Scale is metres, and the layout is laid out around the entrance axis — see the
+`PLACES` list in `NumCampusView.tsx` for the landmark viewpoints.
 
 ## Grow the Virtual Meditation
 

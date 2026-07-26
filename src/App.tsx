@@ -12,6 +12,7 @@ import { VillageView } from "./components/VillageView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
+import { NumCampusView } from "./components/NumCampusView";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -27,6 +28,7 @@ export function App() {
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
   const [groveOpen, setGroveOpen] = useState(false);
+  const [campusOpen, setCampusOpen] = useState(false);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -80,6 +82,8 @@ export function App() {
         <SakYantView onBackToMap={() => setSakYantOpen(false)} />
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
+      ) : campusOpen ? (
+        <NumCampusView onBackToMap={() => setCampusOpen(false)} />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -94,6 +98,7 @@ export function App() {
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
+          onOpenCampus={() => setCampusOpen(true)}
         />
       )}
 

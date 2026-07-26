@@ -2416,6 +2416,77 @@ body,
 .sy-slider span { width: 52px; }
 .sy-slider input { flex: 1; accent-color: #c8912e; }
 
+.campus-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 454px);
+  left: calc(env(safe-area-inset-left, 0) + 14px);
+  z-index: 20;
+  padding: 8px 15px;
+  border: 1px solid color-mix(in srgb, #b23a34 62%, transparent);
+  border-radius: 999px;
+  background: rgba(20, 16, 10, 0.78);
+  color: var(--ink);
+  font: 700 13px system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.campus-btn:hover { background: color-mix(in srgb, #b23a34 30%, rgba(20, 16, 10, 0.78)); }
+
+/* ---- NUM International Campus ---- */
+.campus { position: fixed; inset: 0; z-index: 5; background: #cfe0e8; }
+
+.campus-nav {
+  position: fixed; z-index: 22;
+  top: calc(env(safe-area-inset-top, 0) + 50px); left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.campus-mode {
+  padding: 7px 15px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(24, 32, 38, 0.62); color: #f2f6f8;
+  font: 700 12px system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.campus-mode.on { background: #f2f0ea; color: #2a2f33; border-color: #f2f0ea; }
+
+.campus-places {
+  position: fixed; z-index: 22; left: 50%; transform: translateX(-50%);
+  top: calc(env(safe-area-inset-top, 0) + 88px);
+  width: min(680px, calc(100vw - 20px));
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+}
+.campus-place {
+  padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(24, 32, 38, 0.55); color: #eef4f7;
+  font: 600 11.5px system-ui, sans-serif; white-space: nowrap;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.campus-place.on { background: #b23a34; border-color: #b23a34; color: #fff; }
+
+.campus-card {
+  position: fixed; z-index: 24; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 150px);
+  width: min(520px, calc(100vw - 24px));
+  background: rgba(255, 253, 248, 0.94); color: #2c3236;
+  border: 1px solid rgba(60, 60, 60, 0.18); border-radius: 16px; padding: 12px 16px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
+}
+.campus-card-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.campus-card-head b { font-size: 1.02rem; }
+.campus-card-head .grove-x { margin-left: auto; }
+.campus-card p { font: 400 0.88rem/1.5 system-ui, sans-serif; margin: 0; }
+
+.campus-hint {
+  position: fixed; z-index: 22; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+  bottom: calc(env(safe-area-inset-bottom, 0) + 118px);
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(24, 32, 38, 0.55); color: #eef4f7;
+  font: 600 0.74rem system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
 /* ---- Grove Garden (verified virtual twin) ---- */
 .grove { position: fixed; inset: 0; z-index: 5; background: #bfe0d6; }
 
