@@ -3188,3 +3188,10 @@ select.farm-modal-note { appearance: none; }
 .kun-fact h4 .khmer { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
 .kun-fact p { margin: 0; font-size: 0.85rem; line-height: 1.55; color: var(--ink); }
 .kun-credit { font-size: 0.74rem; color: var(--muted, #a6ab97); margin: 10px 0 0; line-height: 1.5; }
+.grove-chain-anchor { margin-top: 12px; }
+.grove-anchor-btn {
+  display: block; text-align: center; text-decoration: none;
+  background: #1d7a42; color: #fff; font: 700 0.86rem system-ui, sans-serif;
+  padding: 10px 14px; border-radius: 10px;
+}
+.grove-anchor-btn:hover { background: #176335; }

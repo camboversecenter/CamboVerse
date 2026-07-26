@@ -177,6 +177,18 @@ verified record showed the trees were still standing, and riel still escrowed
 against future checks. That is the answer to "did sponsoring this reach anyone",
 and it is a number, not a promise.
 
+**Configuring it at deploy time.** The endpoint is a build-time variable and is
+**empty by default**, which means the chain layer is simply off and the garden
+renders exactly as it did before any of this existed:
+
+```bash
+VITE_CSB_BASE=https://<csb-app-host> npm run deploy
+```
+
+Any CSB app server exposes the same public `/grove`; a visitor can also type one
+into the Grove Garden screen. Federation is first-class here for the same reason
+it is for Grove nodes.
+
 **Privacy is preserved end to end.** Only `keccak256(plot)` leaves the browser —
 the plot's name does not, and the chain never held it. Verifiers appear by
 licence label ("Commune agriculture officer"), never by name.

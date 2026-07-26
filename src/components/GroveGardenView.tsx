@@ -10,7 +10,7 @@ import {
 } from "../grove/garden";
 import {
   CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
-  TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
+  anchorCall, anchorLink, TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
 } from "../grove/csb";
 import { grassTexture, soilTexture } from "../lib/groundTexture";
 import {
@@ -334,7 +334,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               itself — {sel.latest.attestations.length} attestation
               {sel.latest.attestations.length === 1 ? "" : "s"} checked.
             </p>
-            <CsbPanel status={selCsb} />
+            <CsbPanel status={selCsb} plot={sel} csbBase={csbBase} />
           </div>
         </div>
       )}
@@ -354,7 +354,13 @@ const when = (secs: number) => new Date(secs * 1000).toISOString().slice(0, 10);
  * anyone with a licence been to look, when did the record demonstrably exist,
  * and did sponsoring this grove actually reach a person.
  */
-function CsbPanel({ status }: { status: CsbPlotStatus | undefined }) {
+function CsbPanel({
+  status, plot, csbBase,
+}: {
+  status: CsbPlotStatus | undefined;
+  plot: GrovePlot;
+  csbBase: string;
+}) {
   if (!status?.available) {
     return (
       <p className="grove-note grove-chain-note">
@@ -365,10 +371,13 @@ function CsbPanel({ status }: { status: CsbPlotStatus | undefined }) {
   }
   if (!status.anchored) {
     return (
-      <p className="grove-note grove-chain-note">
-        ⛓ Never anchored on CSB. The record is genuine and signed; nobody has yet
-        committed it to a ledger, so its date rests on the phone's own clock.
-      </p>
+      <>
+        <p className="grove-note grove-chain-note">
+          ⛓ Never anchored on CSB. The record is genuine and signed; nobody has yet
+          committed it to a ledger, so its date rests on the phone's own clock.
+        </p>
+        <AnchorAction status={status} plot={plot} csbBase={csbBase} />
+      </>
     );
   }
 
@@ -457,10 +466,85 @@ function CsbPanel({ status }: { status: CsbPlotStatus | undefined }) {
         </div>
       )}
 
+      <AnchorAction status={status} plot={plot} csbBase={csbBase} />
+
       <p className="grove-note grove-chain-note">
         The chain records <b>trees</b>, not carbon. A signature proves who said something,
         never that it is true; a licence makes someone accountable for having gone to look.
         {status.chain && <> Checkable yourself at <code>{status.chain.contract.slice(0, 10)}…</code></>}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * "Is this your garden?" — a link out to CSB's signing page, prefilled.
+ *
+ * This viewer never signs and never holds a key. It builds the calldata from a
+ * record it has already verified and hands it over; the grower reads what it
+ * commits and signs with their own wallet on CSB.
+ *
+ * The wording is careful on purpose. Anchoring a plot nobody has anchored makes
+ * you its steward, and Grove records are PUBLIC — so a stranger browsing this
+ * garden is one tap away from claiming stewardship of somebody else's plot.
+ * Neither the chain nor this page can tell whose garden it is, so the only
+ * honest thing to do is say so before the tap rather than after it.
+ */
+function AnchorAction({
+  status, plot, csbBase,
+}: {
+  status: CsbPlotStatus;
+  plot: GrovePlot;
+  csbBase: string;
+}) {
+  if (!csbBase.trim()) return null;
+
+  const latest = plot.latest.observation;
+  const headId = status.anchored ? status.head?.observationId ?? null : null;
+
+  // Nothing to do: the chain already holds this exact record.
+  if (headId && headId.replace(/^0x/, "") === latest.id) {
+    return (
+      <p className="grove-note grove-chain-note">
+        ✓ This plot's newest record is already on chain. What it needs next is a
+        licensed verifier, not another signature.
+      </p>
+    );
+  }
+
+  // `plot.count` is the plot's living total across growth chains — the number
+  // the chain reads as the whole grove, not this one record's own count.
+  const call = anchorCall(latest, plot.count, headId);
+  if (!call) return null;
+
+  const claimsStewardship = !status.anchored;
+  return (
+    <div className="grove-chain-anchor">
+      <a
+        className="grove-anchor-btn"
+        href={anchorLink(csbBase, call.data)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ⛓ Sign on CSB
+      </a>
+      <p className="grove-note grove-chain-note">
+        {claimsStewardship ? (
+          <>
+            <b>Only if this garden is yours.</b> Anchoring a plot for the first time
+            makes you its steward on chain, and afterwards only you can extend its
+            history. Anyone can read these records, so signing somebody else's would
+            be claiming their garden.
+          </>
+        ) : (
+          <>
+            Adds this plot's newest record ({call.liveCount} living {call.liveCount === 1 ? "plant" : "plants"}).
+            Only the plot's steward can complete it — CSB refuses an anchor from
+            anyone else, so a stranger's signature simply will not settle.
+          </>
+        )}
+        {" "}You sign it yourself on CSB; nothing is sent from here, and only the
+        hash travels.
       </p>
     </div>
   );
@@ -785,7 +869,18 @@ function Plant({
 /* A lightweight DOM billboard in 3D space via drei's Html. */
 function Billboard({ position, children }: { position: [number, number, number]; children: React.ReactNode }) {
   return (
-    <Html position={position} center distanceFactor={26} occlude={false} style={{ pointerEvents: "auto" }}>
+    // zIndexRange is capped deliberately. drei's default tops out around
+    // 16,777,271, which puts a floating plant label ABOVE the plot detail card
+    // and every other piece of page chrome — the label then prints straight
+    // through an open modal. These belong in the scene, under the interface.
+    <Html
+      position={position}
+      center
+      distanceFactor={26}
+      occlude={false}
+      zIndexRange={[20, 0]}
+      style={{ pointerEvents: "auto" }}
+    >
       {children}
     </Html>
   );

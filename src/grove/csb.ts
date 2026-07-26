@@ -24,7 +24,7 @@
  * Honest scope, unchanged: nothing on either side is a carbon credit. The chain
  * records TREES, which somebody can walk out and count.
  */
-import { plotKey } from "./keccak";
+import { keccak256, plotKey } from "./keccak";
 
 export interface CsbVerifier {
   address: string;
@@ -113,8 +113,31 @@ export interface CsbPlotStatus {
   disclaimer?: string;
 }
 
-/** The reference CSB read endpoint. Any CSB app server exposes the same shape. */
-export const DEFAULT_CSB_BASE = "https://csb.iany.app";
+/**
+ * Where to read the chain from — set at build time, and **empty by default**.
+ *
+ * Empty means the chain layer is simply off: the garden renders from the signed
+ * records, exactly as it did before any of this existed. That is the right
+ * default for a viewer that must not depend on a chain, and it avoids the worse
+ * alternative of shipping a guessed hostname that every visitor's browser tries
+ * (and fails) to resolve once per plot.
+ *
+ * Point it at a CSB app server at deploy time:
+ *
+ *     VITE_CSB_BASE=https://csb.example npm run build
+ *
+ * Any CSB app server exposes the same public `/grove` endpoint. A visitor can
+ * also type one into the Grove Garden screen — federation is first-class here
+ * for the same reason it is for Grove nodes: a badge you can only check by
+ * asking the project that drew it is worth nothing.
+ *
+ * Write it as the bare `import.meta.env.VITE_CSB_BASE` — that exact text is what
+ * Vite substitutes at build time. An earlier version used optional chaining
+ * (`import.meta.env?.VITE_CSB_BASE`), which is not the pattern Vite matches, so
+ * the value never reached the bundle: the documented deploy command appeared to
+ * work and silently shipped the chain layer switched off.
+ */
+export const DEFAULT_CSB_BASE: string = import.meta.env.VITE_CSB_BASE ?? "";
 
 export class CsbClient {
   readonly base: string;
@@ -156,6 +179,67 @@ export class CsbClient {
     const entries = await Promise.all(plots.map(async (p) => [p, await this.plotStatus(p)] as const));
     return new Map(entries);
   }
+}
+
+/* ------------------------------------------------------------- anchoring */
+
+/**
+ * Build the calldata that would anchor a record, so this viewer can hand a
+ * grower a one-tap link to CSB's signing page.
+ *
+ * CamboVerse never signs and never holds a key. It builds the bytes and links
+ * out; the grower reads what they commit and signs with their own wallet.
+ *
+ * @param liveCount The PLOT's living total (`GrovePlot.count`), not the single
+ *                  record's own count — the chain reads this as the whole
+ *                  grove, and it feeds a title's supply and a pledge's survival
+ *                  threshold.
+ */
+export function anchorCall(
+  obs: { id: string; plot: string; prev: string | null; species: string },
+  liveCount: number,
+  prevOnChain?: string | null,
+): { data: string; observationId: string; plotId: string; prevId: string; liveCount: number } | null {
+  const id = String(obs.id).replace(/^0x/, "").toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(id)) return null;
+
+  // `prev` must be the chain's CURRENT head, not this record's own predecessor:
+  // CSB refuses an anchor that would fork a plot's history, and the plot may
+  // have been anchored from a device this viewer has never seen.
+  const prev = (prevOnChain ?? null)?.replace(/^0x/, "").toLowerCase() ?? "0".repeat(64);
+  const plotId = plotKey(obs.plot);
+  const count = Math.max(0, Math.floor(liveCount));
+
+  const data =
+    // anchor(bytes32,bytes32,bytes32,uint32,bytes32)
+    keccak256("anchor(bytes32,bytes32,bytes32,uint32,bytes32)").slice(0, 10) +
+    id +
+    plotId.replace(/^0x/, "") +
+    prev.padStart(64, "0") +
+    count.toString(16).padStart(64, "0") +
+    tag32(obs.species);
+
+  return {
+    data,
+    observationId: "0x" + id,
+    plotId,
+    prevId: "0x" + prev.padStart(64, "0"),
+    liveCount: count,
+  };
+}
+
+/** A short species name as a right-padded bytes32, without the 0x. */
+function tag32(text: string): string {
+  const bytes = new TextEncoder().encode(text);
+  let hex = "";
+  // 31 bytes max, and never split a multi-byte character in half.
+  for (const b of bytes.slice(0, 31)) hex += b.toString(16).padStart(2, "0");
+  return hex.padEnd(64, "0");
+}
+
+/** The CSB page that decodes the calldata and signs it with the user's wallet. */
+export function anchorLink(base: string, data: string): string {
+  return `${base.replace(/\/+$/, "")}/anchor.html?data=${data}`;
 }
 
 /** What a visitor should be told, in one line, ordered strongest claim first. */
