@@ -52,6 +52,31 @@ technologies while doing it.
   public issues. "Open in name only" is a project-killing failure mode.
 - **Respect scope:** the v1 milestone is ONE temple. Resist expanding it.
 
+## The three view modes (how every scene renders)
+
+Every 3D experience in CamboVerse ships in **three view modes**. Build a new
+scene against all three; don't add a fourth tier.
+
+| # | Mode | For | Rule |
+|---|---|---|---|
+| 1 | **Normal** | A ~$150 Android on 4G — the hard baseline | Must always work. Cheap geometry, no shadows/post-processing, reduced pixel ratio. This is the mode the acceptance criterion is measured against. |
+| 2 | **Ultra (real 3D)** | A high-end phone, tablet, or desktop | The rich scene: full geometry detail, shadows, textures, tone mapping, ambient motion. |
+| 3 | **VR** (WebXR) | A headset | **Always renders at Ultra fidelity** — never the Normal tier. |
+
+- The mode is **auto-detected** from the device, and the visitor can **override**
+  it (a Normal/Ultra toggle in the scene header) — auto-detection is a guess, so
+  never make it the only option.
+- **Entering VR implies Ultra.** If a session starts while the view is in Normal,
+  raise it to Ultra for the duration.
+- Ultra is an *enhancement*, never a gate: everything a visitor can see, learn, or
+  earn must be reachable in Normal mode. (Same rule as VR — see hard constraints.)
+- Keep the tiers honest about cost: budget by **draw calls and geometry**, and
+  degrade detail, not content — a Normal-mode tree is the same species at the
+  same scale, just cheaper to draw.
+
+Reference implementation: `src/components/GroveGardenView.tsx` (mode detection +
+toggle) and `src/components/GrovePlants.tsx` (detail that scales with the mode).
+
 ## Decisions already made (v1)
 
 | Area | Decision |

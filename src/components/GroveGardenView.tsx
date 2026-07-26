@@ -16,18 +16,25 @@ import {
 import demoBundle from "../grove/fixtures/grove-bundle.json";
 
 /**
- * Render quality. Detected from the device, overridable by the visitor: a
- * $150 phone gets a lighter garden (fewer branch generations, no grass, no
- * contact shadows, no wind) while a laptop or headset gets the full scene.
+ * CamboVerse's view modes (see AGENTS.md → "The three view modes"):
+ *
+ *  • **normal** — the hard baseline, a ~$150 Android on 4G: fewer branch
+ *    generations, faceted foliage, no shadows, no grass, no wind, lower DPR.
+ *  • **ultra**  — a high-end phone, tablet or desktop: the full scene.
+ *  • **VR**     — not a third setting but a presentation of **ultra**; entering
+ *    a WebXR session raises the view to ultra for its duration.
+ *
+ * Auto-detected, always overridable by the visitor — detection is only a guess.
+ * The tiers change *detail, never content*: the same species at the same scale.
  */
-export type Quality = "low" | "high";
+export type ViewMode = "normal" | "ultra";
 
-function detectQuality(): Quality {
-  if (typeof navigator === "undefined") return "high";
+function detectViewMode(): ViewMode {
+  if (typeof navigator === "undefined") return "ultra";
   const cores = navigator.hardwareConcurrency ?? 4;
   const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
   const small = typeof window !== "undefined" && Math.min(window.screen.width, window.screen.height) < 500;
-  return cores <= 4 || mem <= 3 || small ? "low" : "high";
+  return cores <= 4 || mem <= 3 || small ? "normal" : "ultra";
 }
 
 /**
@@ -49,7 +56,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
-  const [quality, setQuality] = useState<Quality>(detectQuality);
+  const [mode, setMode] = useState<ViewMode>(detectViewMode);
 
   const plots = useMemo(() => buildPlots(records), [records]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
@@ -141,10 +148,10 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   return (
     <div className="grove">
       <Canvas
-        dpr={quality === "low" ? [1, 1.5] : [1, 2]}
+        dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
         camera={{ position: [0, 15, 46], fov: 45 }}
-        gl={{ antialias: quality === "high", powerPreference: "high-performance" }}
-        shadows={quality === "high"}
+        gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
+        shadows={mode === "ultra"}
         onCreated={({ gl }) => {
           // Filmic response + a touch under 1.0 keeps the tropical sun from
           // blowing out the foliage highlights.
@@ -153,7 +160,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
         }}
       >
         <XR store={store}>
-          <GardenSky quality={quality} />
+          <GardenSky mode={mode} />
           {plots.map((p, i) => (
             <PlotParcel
               key={p.id}
@@ -161,13 +168,14 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               index={i}
               total={plots.length}
               now={now}
-              quality={quality}
+              mode={mode}
               selected={p.id === selected}
               onSelect={() => setSelected(p.id === selected ? null : p.id)}
             />
           ))}
           {/* In VR, stand back on the ground and look along the row of plots. */}
           <XROrigin position={[0, 0, 8]} />
+          <VrImpliesUltra onEnter={() => setMode("ultra")} />
           <GardenControls />
         </XR>
       </Canvas>
@@ -177,12 +185,19 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
         <span className="cls-title">🌱 Grove Garden</span>
         <button
           className="grove-quality"
-          onClick={() => setQuality((q) => (q === "high" ? "low" : "high"))}
-          title="Detail level — drop to Lite if the garden runs slowly"
+          onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
+          title="View mode — Normal is the low-end baseline, Ultra is the full 3D scene"
         >
-          {quality === "high" ? "✨ Lush" : "🍃 Lite"}
+          {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        {vrSupported && <button className="vr-btn cls-vr" onClick={() => store.enterVR()}>🥽 VR</button>}
+        {vrSupported && (
+          <button
+            className="vr-btn cls-vr"
+            onClick={() => { setMode("ultra"); store.enterVR(); }}
+          >
+            🥽 VR
+          </button>
+        )}
       </div>
 
       {/* verification banner — the trust story, front and centre */}
@@ -272,8 +287,8 @@ const SUN: [number, number, number] = [18, 11, 8];
  * procedural — Preetham sky, a warm sun, cool sky-fill bounce, and a grass plane
  * whose texture is drawn on a canvas at runtime. No HDRI, nothing downloaded.
  */
-function GardenSky({ quality }: { quality: Quality }) {
-  const grass = useMemo(() => grassTexture(quality === "high" ? 64 : 40), [quality]);
+function GardenSky({ mode }: { mode: ViewMode }) {
+  const grass = useMemo(() => grassTexture(mode === "ultra" ? 64 : 40), [mode]);
   return (
     <>
       <Sky sunPosition={SUN} turbidity={6} rayleigh={1.1} mieCoefficient={0.006} mieDirectionalG={0.92} />
@@ -285,7 +300,7 @@ function GardenSky({ quality }: { quality: Quality }) {
         position={SUN}
         intensity={2.5}
         color="#fff1d6"
-        castShadow={quality === "high"}
+        castShadow={mode === "ultra"}
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0005}
         shadow-camera-near={0.5}
@@ -354,6 +369,14 @@ function GrassTufts({ count, radius, seed }: { count: number; radius: number; se
   );
 }
 
+/** VR always presents the Ultra scene — if a session starts while the view is in
+ *  Normal (headset "enter VR", a deep link), raise it for the session. */
+function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
+  const inXR = useXR((s) => s.session != null);
+  useEffect(() => { if (inXR) onEnter(); }, [inXR, onEnter]);
+  return null;
+}
+
 /** Orbit controls for the 2D view; disabled inside an immersive XR session
  *  (there the headset drives the camera and XROrigin places the viewer). */
 function GardenControls() {
@@ -374,13 +397,13 @@ function GardenControls() {
 /* ---------------- one plot parcel in the 3D world ---------------- */
 
 function PlotParcel({
-  plot, index, total, now, quality, selected, onSelect,
+  plot, index, total, now, mode, selected, onSelect,
 }: {
   plot: GrovePlot;
   index: number;
   total: number;
   now: number;
-  quality: Quality;
+  mode: ViewMode;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -423,7 +446,7 @@ function PlotParcel({
         <meshStandardMaterial map={soil} color={selected ? "#ffd9a8" : "#ffffff"} roughness={1} />
       </mesh>
       {/* a low rim of grass where the bed meets the lawn */}
-      {quality === "high" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
+      {mode === "ultra" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
 
       {/* the plants */}
       {trees.map((tr, i) => (
@@ -433,7 +456,7 @@ function PlotParcel({
             heightM={tr.heightM}
             opacity={tr.opacity}
             seed={index * 7 + i}
-            quality={quality}
+            mode={mode}
           />
         </group>
       ))}
@@ -525,13 +548,13 @@ function lookFor(species: string): PlantLook {
  * seedling — which is what a freshly planted sapling really looks like.
  */
 function Plant({
-  species, heightM, opacity, seed, quality,
+  species, heightM, opacity, seed, mode,
 }: {
-  species: string; heightM: number; opacity: number; seed: number; quality: Quality;
+  species: string; heightM: number; opacity: number; seed: number; mode: ViewMode;
 }) {
   const look = lookFor(species);
   const height = Math.max(0.35, heightM);
-  const wind = quality === "high" ? 1 : 0;
+  const wind = mode === "ultra" ? 1 : 0;
 
   if (height < 1.1) return <Seedling look={look} height={height} seed={seed} opacity={opacity} />;
   if (look.form === "palm") return <PalmPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
@@ -539,11 +562,11 @@ function Plant({
   if (look.form === "papaya") return <PapayaPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
 
   // On a low-end device, drop a branch generation: ~3x fewer limbs, same look.
-  const shape = quality === "high" ? look.shape! : { ...look.shape!, levels: 2, children: 3 };
+  const shape = mode === "ultra" ? look.shape! : { ...look.shape!, levels: 2, children: 3 };
   return (
     <BroadleafPlant
       look={{ ...look, shape }} height={height} seed={seed} opacity={opacity} wind={wind}
-      detail={quality === "high" ? 1 : 0}
+      detail={mode === "ultra" ? 1 : 0}
     />
   );
 }

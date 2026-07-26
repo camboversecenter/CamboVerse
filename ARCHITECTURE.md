@@ -192,6 +192,22 @@ world** (charter §10: shared world + rails).
 - Asset formats: **glTF/GLB** (models), **.splat** (Gaussian splats), audio for
   music/instruments, plus AR marker bindings for the textbook module.
 
+**The three view modes**
+
+Every scene renders in one of three modes. The mode is auto-detected from the
+device and overridable by the visitor; a scene must look right in all three.
+
+| Mode | Target | What it renders |
+|---|---|---|
+| **Normal** | ~$150 Android on 4G (the hard baseline) | Reduced geometry/LOD, no shadows or post-processing, lower pixel ratio, no ambient motion. |
+| **Ultra (real 3D)** | High-end phone, tablet, desktop | Full detail, shadows, tone mapping, runtime-generated textures, ambient motion. |
+| **VR** (WebXR) | Headset | The **Ultra** scene, presented immersively — VR never runs the Normal tier. |
+
+Rules: entering VR raises the view to Ultra for the session; Ultra is an
+enhancement only (all content, learning, and credentials must be reachable in
+Normal); and tiers degrade **detail, not content** — the same species, at the
+same scale, drawn more cheaply. Budget tiers by draw calls and geometry.
+
 **Endpoints** *(shipped)*
 - `GET /v1/scenes` — list scene descriptors (one per heritage site).
 - `GET /v1/scenes/:id` — a scene descriptor (`scene_<site>` or bare `<site>`),
