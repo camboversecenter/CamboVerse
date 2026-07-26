@@ -1,0 +1,58 @@
+{
+  "id": "institute-block",
+  "name": "Institutional block (modern Khmer public building)",
+  "kind": "institutional-block",
+  "_source": {
+    "from": "a single photograph, front three-quarter view from the forecourt",
+    "read_by": "written by hand from the photo; the same fields a vision model would fill",
+    "what_it_is_not": "This is a TYPE, not an address. It is not a survey of the building photographed, no institution is identified, and no name or emblem from the photograph is reproduced. A stylized, licence-clean stand-in in the manner of the other models here."
+  },
+  "dimensions": {
+    "widthM": 58,
+    "depthM": 14,
+    "storeyH": 3.6
+  },
+  "storeys": 4,
+  "bays": 14,
+  "pilasters": true,
+  "balustrade": true,
+  "ground": {
+    "arcade": true
+  },
+  "canopy": {
+    "level": 1,
+    "depthM": 1.9
+  },
+  "centrepiece": {
+    "bays": 3,
+    "projectM": 1.6,
+    "extraH": 3.4,
+    "pediment": true,
+    "emblem": true,
+    "spire": true
+  },
+  "roof": {
+    "kind": "hipped-tile",
+    "heightM": 2.8,
+    "eaveOverhangM": 1.0,
+    "courses": 11,
+    "finials": true
+  },
+  "palette": {
+    "wall": "#efeadd",
+    "trim": "#ffffff",
+    "roof": "#a8484a",
+    "glass": "#2b3a44",
+    "plinth": "#d8d4cb",
+    "accent": "#c9a227"
+  },
+  "weathering": 0.2,
+  "confidence": {
+    "depthM": "GUESSED. Only the façade and a sliver of the end wall are visible; 14 m is a normal double-loaded corridor block. Could be anything from 12 to 18.",
+    "widthM": "estimated from the bay rhythm against storey height, ±15%",
+    "bays": "counted from the façade at an oblique angle — the far end is foreshortened, so ±2",
+    "rear": "entirely unseen. Modelled plain on purpose rather than invented.",
+    "roof pitch": "read from the gable end; the eave line is partly hidden by trees",
+    "emblem and lettering": "present on the real pediment and deliberately NOT reproduced — a blank board and a plain disc stand in for them"
+  }
+}

@@ -89,7 +89,15 @@ export function createBuilder() {
     cone(baseW * 0.06, 0.18, 6, cx, top + 0.82, cz, color); // tip
   }
 
-  function build(OUT, { scale = 1 } = {}) {
+  /**
+   * @param weathering How much the height-based grime gradient applies, 0–1.
+   *        1 is the temple default (dark at the base, bleached at the top),
+   *        which is right for aged sandstone and wrong for a building finished
+   *        last year — a new painted block reads as dirty rather than new.
+   *        Lower it for modern buildings; 0 keeps only the per-part tone jitter
+   *        that stops flat colour looking like a screenshot of a colour picker.
+   */
+  function build(OUT, { scale = 1, weathering = 1 } = {}) {
     const posChunks = parts.map((p) => p.geom.attributes.position.array);
     const normChunks = parts.map((p) => p.geom.attributes.normal.array);
     const vertCount = posChunks.reduce((n, a) => n + a.length / 3, 0);
@@ -108,7 +116,8 @@ export function createBuilder() {
       for (let v = 0; v < pos.length; v += 3) {
         const wy = pos[v + 1] * scale;
         // weathering: darker near the ground, lighter higher up
-        const shade = Math.max(0.62, Math.min(1.12, 0.74 + 0.05 * wy)) * tint;
+        const aged = Math.max(0.62, Math.min(1.12, 0.74 + 0.05 * wy));
+        const shade = (1 + (aged - 1) * weathering) * tint;
         color[o + v] = cr * shade;
         color[o + v + 1] = cg * shade;
         color[o + v + 2] = cb * shade;
