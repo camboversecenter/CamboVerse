@@ -53,12 +53,13 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [records, setRecords] = useState<VerifiedRecord[]>([]);
   const [status, setStatus] = useState<string>("Verifying signed records…");
   const [nodeUrl, setNodeUrl] = useState(DEFAULT_NODE);
+  const [coarseGps, setCoarseGps] = useState<Map<string, { lat: number; lng: number }>>(new Map());
   const [selected, setSelected] = useState<string | null>(null);
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
 
-  const plots = useMemo(() => buildPlots(records), [records]);
+  const plots = useMemo(() => buildPlots(records, coarseGps), [records, coarseGps]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
   const span = useMemo(() => {
     const first = Math.min(...plots.map((p) => p.firstAt));
@@ -80,6 +81,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
       const imp = await importBundle(demoBundle);
       if (!live) return;
       setRecords(imp.records);
+      setCoarseGps(new Map());
       setStatus(
         `${imp.records.length}/${imp.total} records verified locally` +
           (imp.dropped ? ` · ${imp.dropped} dropped (failed verify)` : ""),
@@ -114,6 +116,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
     try {
       const imp = await importBundleFile(file);
       setRecords(imp.records);
+      setCoarseGps(new Map());
       setSelected(null);
       setT(1);
       setStatus(
@@ -129,15 +132,20 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
     setStatus("Reading node feed…");
     try {
       const client = new GroveClient(nodeUrl);
-      const page = await client.feed({ limit: 100 });
+      const page = await client.feed();
       setRecords(page.records);
+      setCoarseGps(page.coarseGps);
       setSelected(null);
       setT(1);
       setStatus(
         page.records.length
           ? `${page.records.length} verified from node` + (page.dropped ? ` · ${page.dropped} dropped` : "")
-          : "No records from node (or none verified).",
+          : "The node returned no records we could verify — showing the offline bundle.",
       );
+      if (!page.records.length) {
+        const imp = await importBundle(demoBundle);
+        setRecords(imp.records);
+      }
     } catch (err) {
       setStatus("Node unreachable: " + (err as Error).message + " — using the offline bundle instead.");
     }
