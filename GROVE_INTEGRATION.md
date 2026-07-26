@@ -138,10 +138,57 @@ records can be federated between nodes unchanged. With no node reachable, the
 garden falls back to the offline bundle, and a phone export can always be
 imported directly.
 
+## The chain's half — provenance, not plants
+
+A device signature proves **who signed a record**, and stops there. Two questions
+a visitor standing in a virtual grove actually has are outside what it can
+answer: *when did this record exist* (`observedAt` is the phone's own clock, set
+by the claimant) and *who says it is true* (Grove attestations come from device
+keys anyone can generate by the thousand).
+
+CamboVerse answers both by reading [CSB](https://github.com/sengtha/CSB)
+alongside the signed records — see [CSB `docs/grove.md`](https://github.com/sengtha/CSB/blob/main/docs/grove.md).
+
+| File | Role |
+|---|---|
+| [`src/grove/keccak.ts`](./src/grove/keccak.ts) | Keccak-256, vendored. CSB files a plot under `keccak256(plot)`, and Web Crypto has no Keccak — `SHA3-256` is the NIST variant, one padding byte different, and substituting it fails **silently** as "never anchored". |
+| [`src/grove/csb.ts`](./src/grove/csb.ts) | The read client and the provenance tiers. |
+| [`src/grove/keccak.test.ts`](./src/grove/keccak.test.ts) · [`csb.test.ts`](./src/grove/csb.test.ts) | Reference vectors either side of the 136-byte rate boundary; the client driven against a stub endpoint. |
+
+**Strictly additive, and it must stay that way.** The garden is drawn from
+records this device verified itself; every CSB lookup can fail without changing a
+single plant. No CSB endpoint configured, endpoint unreachable, plot never
+anchored — all three render exactly the garden that rendered before, claiming
+less. Nothing from the chain can make a plant appear.
+
+Four provenance tiers, shown as a mark on the floating plot label and in full in
+the detail card:
+
+| | Meaning |
+|---|---|
+| `○` unanchored | Signed on a device. The whole of what a signature promises. |
+| `⛓` anchored | On chain with a block timestamp, but nobody licensed has confirmed it. |
+| `✓` verified | A **licensed** field verifier — commune agriculture officer, agronomist, NGO — put a licence they can lose behind it. |
+| `!` disputed | A licensed verifier says it is wrong. A dispute outranks a confirmation rather than being outvoted. |
+
+The card also shows the grove's title (one share per verified living tree) and
+any **survival pledge**: riel that a sponsor released only when a fresh, licensed
+verified record showed the trees were still standing, and riel still escrowed
+against future checks. That is the answer to "did sponsoring this reach anyone",
+and it is a number, not a promise.
+
+**Privacy is preserved end to end.** Only `keccak256(plot)` leaves the browser —
+the plot's name does not, and the chain never held it. Verifiers appear by
+licence label ("Commune agriculture officer"), never by name.
+
+**Not a carbon credit, on either side.** CSB records **trees** — a count somebody
+can walk out and falsify. `co2Kg` remains what it always was here: a rendered
+estimate, never an asset.
+
 ## Run the test
 
 ```
-npm test        # vitest — verifies all 3 fixture observations + the attestation
+npm test        # vitest — 35 tests
 ```
 
 The test loads `src/grove/fixtures/grove-bundle.json` and `observation.json`,
