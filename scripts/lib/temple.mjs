@@ -38,8 +38,15 @@ export function createBuilder() {
     g.translate(x, y, z);
     push(g, color);
   }
-  function sphere(r, x, y, z, color = SAND, scaleY = 1) {
-    const g = new THREE.SphereGeometry(r, 10, 8).toNonIndexed();
+  /**
+   * @param seg Longitudinal segments (latitudinal is half). Default 10 is right
+   *        for a lotus finial you stand next to; a tree canopy thirty metres
+   *        away needs 5 and costs a quarter as much. toNonIndexed() triples
+   *        every vertex, so this multiplier is not academic — a forecourt of
+   *        thirty saplings at the default put a 327 KB model up to 2.9 MB.
+   */
+  function sphere(r, x, y, z, color = SAND, scaleY = 1, seg = 10) {
+    const g = new THREE.SphereGeometry(r, seg, Math.max(3, Math.round(seg / 2))).toNonIndexed();
     if (scaleY !== 1) g.scale(1, scaleY, 1);
     g.translate(x, y, z);
     push(g, color);

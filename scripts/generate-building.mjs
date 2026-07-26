@@ -233,6 +233,132 @@ if ((roof.kind ?? "hipped-tile").startsWith("hipped")) {
   }
 }
 
+// ---- the site: paving, lawn, kerbs, planting --------------------------------
+// A building alone floats. What makes the render read as a PLACE is the ground
+// it stands on — and in the photograph that ground is very specific: a wide
+// pale concrete apron, lawn strips edged with kerbs, and rows of young staked
+// trees that have obviously been in about a season.
+//
+// This is geometry, not scenery dressing: it goes in the same glb, costs a few
+// hundred verts per tree, and needs no runtime, no textures and no downloads.
+if (spec.site) {
+  const s = spec.site;
+  const SITE = {
+    paving: rgb(s.palette?.paving, [0.82, 0.8, 0.75]),
+    lawn: rgb(s.palette?.lawn, [0.42, 0.6, 0.2]),
+    kerb: rgb(s.palette?.kerb, [0.86, 0.85, 0.81]),
+    trunk: rgb(s.palette?.trunk, [0.4, 0.33, 0.25]),
+    leaf: rgb(s.palette?.leaf, [0.29, 0.47, 0.19]),
+    leafLight: rgb(s.palette?.leafLight, [0.4, 0.58, 0.24]),
+    stake: rgb(s.palette?.stake, [0.62, 0.55, 0.4]),
+  };
+
+  const apron = s.forecourtM ?? 40;
+  const across = s.widthM ?? W + 30;
+  // Paving sits a whisker below zero so it never z-fights the plinth.
+  b.box(across, 0.12, apron, 0, -0.06, D / 2 + apron / 2, SITE.paving);
+
+  if (s.lawn) {
+    const lz = D / 2 + (s.lawn.offsetM ?? 8);
+    const ld = s.lawn.depthM ?? 9;
+    const lw = s.lawn.widthM ?? across * 0.8;
+    b.box(lw, 0.1, ld, 0, 0.02, lz + ld / 2, SITE.lawn);
+    if (s.lawn.kerb !== false) {
+      // A kerb is two thin strips, and it is what stops a green rectangle
+      // reading as a bug in the ground plane.
+      b.box(lw + 0.4, 0.16, 0.25, 0, 0.05, lz - 0.1, SITE.kerb);
+      b.box(lw + 0.4, 0.16, 0.25, 0, 0.05, lz + ld + 0.1, SITE.kerb);
+    }
+  }
+
+  /**
+   * A young planted tree: slender trunk, a sparse canopy of clumps, and the
+   * stake it is still tied to.
+   *
+   * The stake matters more than it sounds. Every tree in a new Cambodian
+   * forecourt is staked, and leaving it off is what makes CGI planting look
+   * like it grew there on its own — the giveaway that nobody looked at a photo.
+   */
+  function tree(x, z, h, seed, kind = "young-broadleaf") {
+    // Deterministic jitter: same spec in, same model out, so a rebuild is a
+    // no-op in git rather than a diff of random numbers.
+    const r = (n) => 0.5 + 0.5 * Math.sin(seed * 12.9898 + n * 78.233);
+    const lean = (r(1) - 0.5) * 0.06;
+
+    // Honest limit: this produces a passable palm at distance and a spiky star
+    // up close, because a frond is a folded ribbon along a curve and all this
+    // vocabulary has is cones. src/components/GrovePlants.tsx already builds
+    // real fronds for the Grove Garden at runtime — for anything where a palm
+    // is in the foreground, place it from there rather than baking it here.
+    if (kind === "palm") {
+      const seg = 7;
+      for (let k = 0; k < seg; k++) {
+        const t = k / seg;
+        b.cyl(0.13 - t * 0.03, 0.16 - t * 0.03, h / seg + 0.04, 6,
+          x + lean * k, (k + 0.5) * (h / seg), z, SITE.trunk);
+      }
+      // Fronds DROOP. Radiating them flat off the top gives a pole with a disc
+      // on it — which is what a street lamp looks like, and was exactly what
+      // the first render produced. The tilt below the horizontal is the whole
+      // silhouette of a palm.
+      const fronds = 11;
+      for (let f = 0; f < fronds; f++) {
+        const a = (f / fronds) * Math.PI * 2 + r(f) * 0.3;
+        const len = h * 0.5 * (0.82 + r(f + 9) * 0.36);
+        const droop = 0.5 + r(f + 4) * 0.35;      // radians below horizontal
+        const reach = len * 0.45;
+        b.cone(0.34, len, 6,
+          x + Math.cos(a) * reach,
+          h + 0.2 - Math.sin(droop) * len * 0.34,
+          z + Math.sin(a) * reach,
+          f % 2 ? SITE.leaf : SITE.leafLight,
+          [Math.PI / 2 + droop, -a, 0]);
+      }
+      b.sphere(0.3, x, h + 0.25, z, SITE.trunk, 0.8, 5); // crown shaft
+      return;
+    }
+
+    // Young broadleaf — the staked sapling in the photograph.
+    b.cyl(0.07, 0.11, h * 0.62, 6, x, h * 0.31, z, SITE.trunk);
+    const cy = h * 0.62;
+    const clumps = 3;
+    for (let k = 0; k < clumps; k++) {
+      const a = (k / clumps) * Math.PI * 2 + r(k) * 0.9;
+      const rad = h * (0.13 + r(k + 5) * 0.07);
+      b.sphere(rad,
+        x + Math.cos(a) * h * 0.13, cy + h * (0.1 + r(k + 2) * 0.18), z + Math.sin(a) * h * 0.13,
+        k % 2 ? SITE.leaf : SITE.leafLight, 0.78, 5);
+    }
+    b.sphere(h * 0.16, x, cy + h * 0.24, z, SITE.leaf, 0.8, 6);
+    if (kind !== "unstaked") {
+      b.cyl(0.035, 0.035, h * 0.5, 5, x + 0.22, h * 0.25, z + 0.05, SITE.stake);
+      b.box(0.5, 0.05, 0.05, x + 0.11, h * 0.42, z + 0.03, SITE.stake); // the tie
+    }
+  }
+
+  for (const row of s.trees ?? []) {
+    const n = row.count ?? 8;
+    const sp = row.spacingM ?? 5;
+    const z = D / 2 + (row.offsetM ?? 10);
+    const x0 = (row.centreX ?? 0) - ((n - 1) * sp) / 2;
+    for (let i = 0; i < n; i++) {
+      const seed = (row.seed ?? 1) * 31 + i;
+      const jit = row.jitterM ?? 0;
+      const j = jit ? (0.5 + 0.5 * Math.sin(seed * 4.1)) * jit - jit / 2 : 0;
+      const h = (row.heightM ?? 4.5) * (0.85 + 0.3 * (0.5 + 0.5 * Math.sin(seed * 7.7)));
+      tree(x0 + i * sp + j, z + j * 0.5, h, seed, row.kind);
+    }
+  }
+
+  // Flagpoles — the other thing every institutional forecourt has.
+  for (let k = 0; k < (s.flagpoles ?? 0); k++) {
+    const fx = ((k - ((s.flagpoles ?? 1) - 1) / 2) * 3.5);
+    const fz = D / 2 + (s.flagpoleOffsetM ?? 16);
+    b.box(1.1, 0.35, 1.1, fx, 0.17, fz, SITE.kerb);
+    b.cyl(0.06, 0.08, 9, 6, fx, 4.6, fz, SITE.kerb);
+  }
+}
+
 b.build(OUT, { scale: spec.scale ?? 1, weathering: spec.weathering ?? 0.25 });
 console.log(`  ${spec.name ?? spec.id} — ${N} storeys, ${BAYS} bays, ${W} × ${D} m`);
 if (spec.confidence) {

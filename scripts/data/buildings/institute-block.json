@@ -53,6 +53,49 @@
     "bays": "counted from the façade at an oblique angle — the far end is foreshortened, so ±2",
     "rear": "entirely unseen. Modelled plain on purpose rather than invented.",
     "roof pitch": "read from the gable end; the eave line is partly hidden by trees",
-    "emblem and lettering": "present on the real pediment and deliberately NOT reproduced — a blank board and a plain disc stand in for them"
+    "emblem and lettering": "present on the real pediment and deliberately NOT reproduced — a blank board and a plain disc stand in for them",
+    "site": "The forecourt, lawn and tree rows are read from the photograph's foreground: young staked saplings about a season old, a kerbed lawn strip, wide pale paving. Positions are plausible, not surveyed."
+  },
+  "site": {
+    "forecourtM": 55,
+    "widthM": 110,
+    "lawn": {
+      "offsetM": 6.5,
+      "depthM": 13,
+      "widthM": 78,
+      "kerb": true
+    },
+    "flagpoles": 3,
+    "flagpoleOffsetM": 4.5,
+    "trees": [
+      {
+        "kind": "young-broadleaf",
+        "count": 16,
+        "spacingM": 4.4,
+        "offsetM": 9.5,
+        "heightM": 4.6,
+        "jitterM": 0.5,
+        "seed": 3
+      },
+      {
+        "kind": "young-broadleaf",
+        "count": 13,
+        "spacingM": 5.0,
+        "offsetM": 16,
+        "heightM": 4.1,
+        "jitterM": 0.7,
+        "seed": 11
+      }
+    ],
+    "palette": {
+      "paving": "#d3cfc6",
+      "lawn": "#6f9c30",
+      "kerb": "#e0ddd6",
+      "trunk": "#6b5a45",
+      "leaf": "#3f7024",
+      "leafLight": "#5b8c30",
+      "stake": "#a08a63"
+    },
+    "_no_palms": "Palms are deliberately absent. A frond is a folded ribbon along a curve and the baked-glb vocabulary here only has cones — three attempts produced something that read as a spiky star, which is worse than no palm. CamboVerse already renders proper fronds at runtime (src/components/GrovePlants.tsx, PalmPlant); palms belong on that path, placed by the scene, not baked into the model."
   }
 }
