@@ -43,9 +43,16 @@ export interface Place {
   blurb: string;
   /** Where the visitor starts, and what they are looking at. */
   camera: { position: [number, number, number]; target: [number, number, number] };
-  ground: { color: string; sizeM: number };
+  /** The rough field the place sits in. Its colour comes from the texture. */
+  ground: { sizeM: number };
   /** Paved areas: forecourts, roads, footpaths. */
-  paving: { x: number; z: number; w: number; d: number; color?: string }[];
+  paving: {
+    x: number; z: number; w: number; d: number;
+    /** Tints the texture. Leave unset to use the texture's own colour. */
+    color?: string;
+    /** "concrete" (default) lays slabs with expansion joints; "asphalt" is a road. */
+    surface?: "concrete" | "asphalt";
+  }[];
   lawns: { x: number; z: number; w: number; d: number; kerb?: boolean }[];
   buildings: PlacedBuilding[];
   treeRows: TreeRow[];
@@ -64,10 +71,10 @@ export const PLACES: Place[] = [
       "A modern Cambodian public campus: a four-storey teaching block with a Khmer tile roof, " +
       "two annexes in the same architectural family, a paved forecourt and young planting.",
     camera: { position: [-46, 8, 74], target: [0, 8, 6] },
-    ground: { color: "#8f9a6a", sizeM: 900 },
+    ground: { sizeM: 900 },
     paving: [
       { x: 0, z: 34, w: 150, d: 66 },              // the forecourt
-      { x: 0, z: 82, w: 150, d: 14, color: "#b9b4ab" }, // the road along the front
+      { x: 0, z: 82, w: 150, d: 14, surface: "asphalt" }, // the road along the front
       { x: -62, z: 20, w: 26, d: 40 },             // side yard, west
       { x: 62, z: 20, w: 26, d: 40 },              // side yard, east
     ],
