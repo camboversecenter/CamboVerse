@@ -1,13 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Html } from "@react-three/drei";
+import { OrbitControls, Html, Sky } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
+import { ACESFilmicToneMapping, Color, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
 import { importBundle, importBundleFile } from "../grove/bundle";
 import { GroveClient, DEFAULT_NODE, type VerifiedRecord } from "../grove/client";
 import {
-  buildPlots, gardenTotals, growthAt, trustOpacity, type GrovePlot,
+  buildPlots, gardenTotals, growthAt, measuredHeightM, trustOpacity, type GrovePlot,
 } from "../grove/garden";
+import { grassTexture, soilTexture } from "../lib/groundTexture";
+import {
+  BroadleafPlant, PalmPlant, BananaPlant, PapayaPlant, Seedling,
+  type PlantLook, type TreeShape,
+} from "./GrovePlants";
 import demoBundle from "../grove/fixtures/grove-bundle.json";
+
+/**
+ * Render quality. Detected from the device, overridable by the visitor: a
+ * $150 phone gets a lighter garden (fewer branch generations, no grass, no
+ * contact shadows, no wind) while a laptop or headset gets the full scene.
+ */
+export type Quality = "low" | "high";
+
+function detectQuality(): Quality {
+  if (typeof navigator === "undefined") return "high";
+  const cores = navigator.hardwareConcurrency ?? 4;
+  const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  const small = typeof window !== "undefined" && Math.min(window.screen.width, window.screen.height) < 500;
+  return cores <= 4 || mem <= 3 || small ? "low" : "high";
+}
 
 /**
  * 🌱 Grove Garden — CamboVerse's virtual twin of a real, device-signed garden.
@@ -28,6 +49,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
+  const [quality, setQuality] = useState<Quality>(detectQuality);
 
   const plots = useMemo(() => buildPlots(records), [records]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
@@ -118,18 +140,20 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
 
   return (
     <div className="grove">
-      <Canvas dpr={[1, 2]} camera={{ position: [0, 6, 13], fov: 45 }} gl={{ antialias: true }} shadows>
+      <Canvas
+        dpr={quality === "low" ? [1, 1.5] : [1, 2]}
+        camera={{ position: [0, 15, 46], fov: 45 }}
+        gl={{ antialias: quality === "high", powerPreference: "high-performance" }}
+        shadows={quality === "high"}
+        onCreated={({ gl }) => {
+          // Filmic response + a touch under 1.0 keeps the tropical sun from
+          // blowing out the foliage highlights.
+          gl.toneMapping = ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.18;
+        }}
+      >
         <XR store={store}>
-          <color attach="background" args={["#bfe0d6"]} />
-          <fog attach="fog" args={["#bfe0d6", 16, 34]} />
-          <ambientLight intensity={0.8} />
-          <hemisphereLight args={["#eaffe6", "#5a7a3a", 0.55]} />
-          <directionalLight position={[6, 12, 6]} intensity={1.1} castShadow shadow-mapSize={[1024, 1024]} />
-          {/* ground */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
-            <planeGeometry args={[60, 60]} />
-            <meshStandardMaterial color="#8bbf6a" roughness={1} />
-          </mesh>
+          <GardenSky quality={quality} />
           {plots.map((p, i) => (
             <PlotParcel
               key={p.id}
@@ -137,6 +161,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               index={i}
               total={plots.length}
               now={now}
+              quality={quality}
               selected={p.id === selected}
               onSelect={() => setSelected(p.id === selected ? null : p.id)}
             />
@@ -150,6 +175,13 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
       <div className="cls-top">
         <button className="backbtn" onClick={onBackToMap}>← Map</button>
         <span className="cls-title">🌱 Grove Garden</span>
+        <button
+          className="grove-quality"
+          onClick={() => setQuality((q) => (q === "high" ? "low" : "high"))}
+          title="Detail level — drop to Lite if the garden runs slowly"
+        >
+          {quality === "high" ? "✨ Lush" : "🍃 Lite"}
+        </button>
         {vrSupported && <button className="vr-btn cls-vr" onClick={() => store.enterVR()}>🥽 VR</button>}
       </div>
 
@@ -231,6 +263,97 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   );
 }
 
+/* ---------------- the world: sky, sun, ground ---------------- */
+
+const SUN: [number, number, number] = [18, 11, 8];
+
+/**
+ * A late-afternoon tropical sky and the light rig under it. Everything is
+ * procedural — Preetham sky, a warm sun, cool sky-fill bounce, and a grass plane
+ * whose texture is drawn on a canvas at runtime. No HDRI, nothing downloaded.
+ */
+function GardenSky({ quality }: { quality: Quality }) {
+  const grass = useMemo(() => grassTexture(quality === "high" ? 64 : 40), [quality]);
+  return (
+    <>
+      <Sky sunPosition={SUN} turbidity={6} rayleigh={1.1} mieCoefficient={0.006} mieDirectionalG={0.92} />
+      <fog attach="fog" args={["#cfe0e8", 70, 260]} />
+
+      <ambientLight intensity={0.5} />
+      <hemisphereLight args={["#cfe2ff", "#6b8a45", 0.85]} />
+      <directionalLight
+        position={SUN}
+        intensity={2.5}
+        color="#fff1d6"
+        castShadow={quality === "high"}
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0005}
+        shadow-camera-near={0.5}
+        shadow-camera-far={70}
+        shadow-camera-left={-24}
+        shadow-camera-right={24}
+        shadow-camera-top={24}
+        shadow-camera-bottom={-24}
+      />
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
+        <planeGeometry args={[400, 400]} />
+        <meshStandardMaterial map={grass} roughness={1} />
+      </mesh>
+    </>
+  );
+}
+
+/**
+ * Instanced grass blades around a plot — one draw call for the lot. They sell
+ * the ground far better than a flat texture alone, so they're the first thing
+ * dropped on a low-end device.
+ */
+function GrassTufts({ count, radius, seed }: { count: number; radius: number; seed: number }) {
+  const ref = useRef<InstancedMesh>(null);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    let t = seed >>> 0;
+    const rand = () => {
+      t += 0x6d2b79f5;
+      let x = Math.imul(t ^ (t >>> 15), 1 | t);
+      x ^= x + Math.imul(x ^ (x >>> 7), 61 | x);
+      return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+    };
+    const m = new Matrix4();
+    const q = new Quaternion();
+    const p = new Vector3();
+    const s = new Vector3();
+    const a = new Color("#6f9c46");
+    const b = new Color("#93ab52");
+    const c = new Color();
+    for (let i = 0; i < count; i++) {
+      // Denser at the pad's edge, thinning outward — how grass meets bare soil.
+      const ang = rand() * Math.PI * 2;
+      const r = radius * (0.85 + rand() * 0.9);
+      const h = 0.1 + rand() * 0.14;
+      const w = 0.03 + rand() * 0.035;
+      p.set(Math.cos(ang) * r, h / 2, Math.sin(ang) * r); // cone is centred — lift so the base sits on the ground
+      q.setFromAxisAngle(new Vector3(0, 1, 0), rand() * Math.PI);
+      s.set(w, h, w);
+      m.compose(p, q, s);
+      mesh.setMatrixAt(i, m);
+      c.copy(a).lerp(b, rand());
+      mesh.setColorAt(i, c);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [count, radius, seed]);
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, count]} position={[0, 0.02, 0]} castShadow>
+      <coneGeometry args={[1, 1, 3]} />
+      <meshStandardMaterial roughness={0.9} flatShading />
+    </instancedMesh>
+  );
+}
+
 /** Orbit controls for the 2D view; disabled inside an immersive XR session
  *  (there the headset drives the camera and XROrigin places the viewer). */
 function GardenControls() {
@@ -239,11 +362,11 @@ function GardenControls() {
   return (
     <OrbitControls
       enablePan={false}
-      minDistance={5}
-      maxDistance={22}
+      minDistance={4}
+      maxDistance={140}
       maxPolarAngle={Math.PI / 2.15}
       enableDamping
-      target={[0, 1.2, 0]}
+      target={[0, 5, 0]}
     />
   );
 }
@@ -251,22 +374,29 @@ function GardenControls() {
 /* ---------------- one plot parcel in the 3D world ---------------- */
 
 function PlotParcel({
-  plot, index, total, now, selected, onSelect,
+  plot, index, total, now, quality, selected, onSelect,
 }: {
   plot: GrovePlot;
   index: number;
   total: number;
   now: number;
+  quality: Quality;
   selected: boolean;
   onSelect: () => void;
 }) {
-  const spacing = 4.2;
-  const x = (index - (total - 1) / 2) * spacing;
+  // Lay the parcels out as an orchard grid rather than one long row, so a
+  // garden with many plots still frames in a single view.
+  const spacing = 9.5; // real orchard spacing — full-grown crowns need room
+  const cols = Math.ceil(Math.sqrt(total));
+  const rows = Math.ceil(total / cols);
+  const x = ((index % cols) - (cols - 1) / 2) * spacing;
+  const z = (Math.floor(index / cols) - (rows - 1) / 2) * spacing;
+  const soil = useMemo(() => soilTexture(2), []);
 
   // Flatten every plant in the plot (across all growth chains and their `count`)
   // into one list, then lay them out so nothing overlaps — a plot may hold
   // several separate plantings, not just one chain.
-  const trees: { key: string; species: string; stage: number; opacity: number }[] = [];
+  const trees: { key: string; species: string; heightM: number; opacity: number }[] = [];
   plot.chains.forEach((chain, ci) => {
     const g = growthAt(chain, now);
     if (!g.record) return;
@@ -275,28 +405,41 @@ function PlotParcel({
       trees.push({
         key: `${ci}:${k}`,
         species: g.record.observation.species,
-        stage: g.stage,
+        heightM: measuredHeightM(g.record.observation),
         opacity: trustOpacity(g.record.trust),
       });
     }
   });
   const spots = layoutSpots(trees.length);
 
+  // Label sits above the tallest plant so it never buries itself in a canopy.
+  const labelY = 1.2 + Math.max(1.2, ...trees.map((t) => t.heightM));
+
   return (
-    <group position={[x, 0, 0]}>
-      {/* soil pad */}
-      <mesh position={[0, 0, 0]} onClick={onSelect} receiveShadow>
-        <cylinderGeometry args={[1.7, 1.8, 0.16, 28]} />
-        <meshStandardMaterial color={selected ? "#8a6a3a" : "#7a5636"} roughness={1} />
+    <group position={[x, 0, z]}>
+      {/* turned soil bed */}
+      <mesh position={[0, 0.02, 0]} onClick={onSelect} receiveShadow>
+        <cylinderGeometry args={[2.4, 2.5, 0.16, 30]} />
+        <meshStandardMaterial map={soil} color={selected ? "#ffd9a8" : "#ffffff"} roughness={1} />
       </mesh>
-      {/* trees, spread across the pad */}
+      {/* a low rim of grass where the bed meets the lawn */}
+      {quality === "high" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
+
+      {/* the plants */}
       {trees.map((tr, i) => (
         <group key={tr.key} position={[spots[i][0], 0.08, spots[i][1]]}>
-          <Tree species={tr.species} stage={tr.stage} opacity={tr.opacity} seed={index * 7 + i} />
+          <Plant
+            species={tr.species}
+            heightM={tr.heightM}
+            opacity={tr.opacity}
+            seed={index * 7 + i}
+            quality={quality}
+          />
         </group>
       ))}
+
       {/* floating label */}
-      <Billboard position={[0, 3.6, 0]}>
+      <Billboard position={[0, labelY, 0]}>
         <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
           <b>{plot.speciesCounts.map((sc) => `${sc.species}·${sc.count}`).join(" · ")}</b>
           <span>≈{fmt(plot.totalCo2Kg)}kg</span>
@@ -315,221 +458,99 @@ function layoutSpots(n: number): [number, number][] {
   const ringCount = n <= 6 ? n : 6;
   for (let i = 0; i < ringCount; i++) {
     const a = (i / ringCount) * Math.PI * 2;
-    spots.push([Math.cos(a) * 1.05, Math.sin(a) * 1.05]);
+    spots.push([Math.cos(a) * 1.4, Math.sin(a) * 1.4]);
   }
   for (let i = ringCount; i < n; i++) {
     const a = ((i - ringCount) / Math.max(1, n - ringCount)) * Math.PI * 2 + 0.4;
-    spots.push([Math.cos(a) * 0.5, Math.sin(a) * 0.5]);
+    spots.push([Math.cos(a) * 0.65, Math.sin(a) * 0.65]);
   }
   return spots;
 }
 
-/* ---------------- procedural trees, by plant type ---------------- */
-
-/** How a broadleaf species is shaped — canopy silhouette, colours, fruit. */
-interface Broadleaf {
-  form: "broadleaf";
-  canopy: "round" | "oval" | "umbrella";
-  leaf: string;
-  leaf2: string;
-  trunk: string;
-  trunkThick: number;
-  fruit?: { color: string; size: number; where: "canopy" | "trunk"; count: number };
-}
-type Style = Broadleaf | { form: "palm" } | { form: "banana" } | { form: "papaya" };
+/* ---------------- species → how the plant is grown ---------------- */
 
 /**
- * A plant is drawn from its *species*, so a jackfruit (big fruit on the trunk),
- * a mango (dense round crown), a tamarind (wide feathery umbrella), a coconut
- * (palm), a banana and a papaya all read differently. Extend freely — the Grove
+ * How each species is built. `shape` drives the branch skeleton, so a mango's
+ * dense round crown, a jackfruit's upright oval with fruit straight off the
+ * trunk, and a tamarind's wide feathery umbrella all grow differently rather
+ * than being the same blob in different colours. Extend freely — Grove's
  * species list is open.
  */
-const PLANT_STYLES: Record<string, Style> = {
-  coconut: { form: "palm" },
-  palm: { form: "palm" },
-  banana: { form: "banana" },
-  papaya: { form: "papaya" },
-  mango: { form: "broadleaf", canopy: "round", leaf: "#2f6d2e", leaf2: "#3f8a34", trunk: "#6b4a2b", trunkThick: 1.1, fruit: { color: "#e0a52f", size: 0.12, where: "canopy", count: 6 } },
-  jackfruit: { form: "broadleaf", canopy: "oval", leaf: "#356b30", leaf2: "#4a8a3a", trunk: "#6f5233", trunkThick: 1.25, fruit: { color: "#9caa3a", size: 0.3, where: "trunk", count: 3 } },
-  tamarind: { form: "broadleaf", canopy: "umbrella", leaf: "#6f9a4a", leaf2: "#86ab5c", trunk: "#5f4630", trunkThick: 1.3 },
-  teak: { form: "broadleaf", canopy: "oval", leaf: "#4f8a3c", leaf2: "#6aa24a", trunk: "#7a5a38", trunkThick: 1.15 },
-  longan: { form: "broadleaf", canopy: "round", leaf: "#3c7a3a", leaf2: "#4f9a48", trunk: "#6b4a2b", trunkThick: 1, fruit: { color: "#b98a52", size: 0.08, where: "canopy", count: 8 } },
-  guava: { form: "broadleaf", canopy: "round", leaf: "#5a9a4a", leaf2: "#7ab35c", trunk: "#8a7050", trunkThick: 0.8, fruit: { color: "#cdd08a", size: 0.1, where: "canopy", count: 4 } },
-};
-const DEFAULT_STYLE: Broadleaf = {
-  form: "broadleaf", canopy: "round", leaf: "#4c8a3f", leaf2: "#579a48", trunk: "#6b4a2b", trunkThick: 1,
+const SHAPES: Record<string, TreeShape> = {
+  round:    { spread: 0.85, levels: 3, children: 3, trunkFrac: 0.42, girth: 1.0, clump: 1.0 },
+  oval:     { spread: 0.55, levels: 3, children: 3, trunkFrac: 0.5,  girth: 1.15, clump: 0.9 },
+  umbrella: { spread: 1.15, levels: 3, children: 3, trunkFrac: 0.38, girth: 1.3, clump: 1.15 },
+  bushy:    { spread: 0.95, levels: 3, children: 4, trunkFrac: 0.3,  girth: 0.8, clump: 0.85 },
 };
 
-function styleFor(species: string): Style {
+const PLANT_LOOKS: Record<string, PlantLook> = {
+  coconut: { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" },
+  palm: { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" },
+  banana: { form: "banana", leaf: "#4c9a3a", leaf2: "#63b04a", bark: "#5f8a3a" },
+  papaya: { form: "papaya", leaf: "#3f8a3f", leaf2: "#55a24d", bark: "#8a9a5a" },
+  mango: {
+    form: "broadleaf", leaf: "#2f6d2e", leaf2: "#437f33", bark: "#6b4a2b", shape: SHAPES.round,
+    fruit: { color: "#d99a34", size: 0.11, where: "canopy", count: 7 },
+  },
+  jackfruit: {
+    form: "broadleaf", leaf: "#356b30", leaf2: "#4a8a3a", bark: "#6f5233", shape: SHAPES.oval,
+    fruit: { color: "#9caa3a", size: 0.26, where: "trunk", count: 3 },
+  },
+  tamarind: { form: "broadleaf", leaf: "#6f9a4a", leaf2: "#87ad5e", bark: "#5f4630", shape: SHAPES.umbrella },
+  teak: { form: "broadleaf", leaf: "#4f8a3c", leaf2: "#6aa24a", bark: "#7a5a38", shape: SHAPES.oval },
+  longan: {
+    form: "broadleaf", leaf: "#3c7a3a", leaf2: "#4f9a48", bark: "#6b4a2b", shape: SHAPES.round,
+    fruit: { color: "#b98a52", size: 0.07, where: "canopy", count: 9 },
+  },
+  guava: {
+    form: "broadleaf", leaf: "#5a9a4a", leaf2: "#7ab35c", bark: "#8a7050", shape: SHAPES.bushy,
+    fruit: { color: "#cdd08a", size: 0.09, where: "canopy", count: 5 },
+  },
+};
+
+const DEFAULT_LOOK: PlantLook = {
+  form: "broadleaf", leaf: "#4c8a3f", leaf2: "#5fa04d", bark: "#6b4a2b", shape: SHAPES.round,
+};
+
+function lookFor(species: string): PlantLook {
   const s = species.toLowerCase();
-  if (PLANT_STYLES[s]) return PLANT_STYLES[s];
-  for (const key of Object.keys(PLANT_STYLES)) if (s.includes(key)) return PLANT_STYLES[key];
-  return DEFAULT_STYLE;
+  if (PLANT_LOOKS[s]) return PLANT_LOOKS[s];
+  for (const key of Object.keys(PLANT_LOOKS)) if (s.includes(key)) return PLANT_LOOKS[key];
+  return DEFAULT_LOOK;
 }
 
-function Tree({ species, stage, opacity, seed }: { species: string; stage: number; opacity: number; seed: number }) {
-  const style = styleFor(species);
-  if (style.form === "palm") return <CoconutPalm stage={stage} opacity={opacity} />;
-  if (style.form === "banana") return <BananaPlant stage={stage} opacity={opacity} />;
-  if (style.form === "papaya") return <PapayaPlant stage={stage} opacity={opacity} />;
-  return <BroadleafTree stage={stage} opacity={opacity} seed={seed} style={style} />;
-}
+/**
+ * Grow the right plant for a species, **at its measured height in metres**. Under
+ * about waist height nothing has made a trunk yet, so every species starts as a
+ * seedling — which is what a freshly planted sapling really looks like.
+ */
+function Plant({
+  species, heightM, opacity, seed, quality,
+}: {
+  species: string; heightM: number; opacity: number; seed: number; quality: Quality;
+}) {
+  const look = lookFor(species);
+  const height = Math.max(0.35, heightM);
+  const wind = quality === "high" ? 1 : 0;
 
-function mat(color: string, opacity: number, extra: Record<string, unknown> = {}) {
-  return <meshStandardMaterial color={color} roughness={0.85} transparent opacity={opacity} {...extra} />;
-}
+  if (height < 1.1) return <Seedling look={look} height={height} seed={seed} opacity={opacity} />;
+  if (look.form === "palm") return <PalmPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
+  if (look.form === "banana") return <BananaPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
+  if (look.form === "papaya") return <PapayaPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
 
-function BroadleafTree({ stage, opacity, seed, style }: { stage: number; opacity: number; seed: number; style: Broadleaf }) {
-  const h = 0.6 + stage * 2.6;
-  const canopy = 0.5 + stage * 1.0;
-  const wob = ((seed % 5) - 2) * 0.05;
-  // canopy silhouette per species
-  const scale: [number, number, number] =
-    style.canopy === "umbrella" ? [1.5, 0.55, 1.5] : style.canopy === "oval" ? [0.85, 1.3, 0.85] : [1, 1, 1];
-  const cy = h + canopy * (style.canopy === "umbrella" ? 0.15 : style.canopy === "oval" ? 0.5 : 0.3);
-
-  const fruitNodes = style.fruit ? fruitPositions(style.fruit, h, cy, canopy, scale, seed) : [];
-
+  // On a low-end device, drop a branch generation: ~3x fewer limbs, same look.
+  const shape = quality === "high" ? look.shape! : { ...look.shape!, levels: 2, children: 3 };
   return (
-    <group>
-      {/* trunk */}
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[(0.06 + stage * 0.1) * style.trunkThick, (0.09 + stage * 0.13) * style.trunkThick, h, 8]} />
-        {mat(style.trunk, opacity)}
-      </mesh>
-      {/* canopy */}
-      <mesh position={[wob, cy, 0]} scale={scale} castShadow>
-        <sphereGeometry args={[canopy, 12, 12]} />
-        {mat(style.leaf, opacity)}
-      </mesh>
-      <mesh position={[-wob * 0.8, cy + canopy * 0.35, wob]} scale={scale.map((v) => v * 0.7) as [number, number, number]} castShadow>
-        <sphereGeometry args={[canopy * 0.7, 12, 12]} />
-        {mat(style.leaf2, opacity)}
-      </mesh>
-      {/* fruit — clustered on the trunk (jackfruit) or scattered in the canopy */}
-      {fruitNodes.map((f, i) => (
-        <mesh key={i} position={f} scale={style.fruit!.where === "trunk" ? [1, 1.5, 1] : [1, 1, 1]} castShadow>
-          <sphereGeometry args={[style.fruit!.size, 8, 8]} />
-          {mat(style.fruit!.color, opacity)}
-        </mesh>
-      ))}
-    </group>
+    <BroadleafPlant
+      look={{ ...look, shape }} height={height} seed={seed} opacity={opacity} wind={wind}
+      detail={quality === "high" ? 1 : 0}
+    />
   );
 }
-
-/** Fruit placement: scattered in the canopy, or clustered on the trunk
- *  (jackfruit's cauliflory — its hallmark). */
-function fruitPositions(
-  fruit: NonNullable<Broadleaf["fruit"]>,
-  h: number, cy: number, canopy: number,
-  scale: [number, number, number], seed: number,
-): [number, number, number][] {
-  const out: [number, number, number][] = [];
-  for (let i = 0; i < fruit.count; i++) {
-    if (fruit.where === "trunk") {
-      const a = (i / fruit.count) * Math.PI * 2 + seed;
-      const ty = h * (0.25 + 0.5 * ((i % 2) / 1));
-      out.push([Math.cos(a) * 0.16, ty, Math.sin(a) * 0.16]);
-    } else {
-      const a = (i / fruit.count) * Math.PI * 2 + seed;
-      const rr = canopy * 0.85;
-      out.push([Math.cos(a) * rr * scale[0], cy + Math.sin(i * 1.7) * canopy * 0.4, Math.sin(a) * rr * scale[2]]);
-    }
-  }
-  return out;
-}
-
-function CoconutPalm({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 1 + stage * 3.4;
-  const fronds = 7;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.07, 0.12, h, 7]} />
-        {mat("#9a7b4a", opacity)}
-      </mesh>
-      <group position={[0, h, 0]}>
-        {Array.from({ length: fronds }).map((_, i) => {
-          const a = (i / fronds) * Math.PI * 2;
-          return (
-            <mesh key={i} position={[Math.cos(a) * 0.5, 0.1, Math.sin(a) * 0.5]} rotation={[0, -a, 0.9]} castShadow>
-              <boxGeometry args={[1.5 * (0.6 + stage * 0.5), 0.04, 0.28]} />
-              {mat("#3f8a44", opacity)}
-            </mesh>
-          );
-        })}
-        {/* coconuts */}
-        {[0, 1, 2].map((i) => (
-          <mesh key={i} position={[Math.cos(i * 2.1) * 0.14, -0.02, Math.sin(i * 2.1) * 0.14]}>
-            <sphereGeometry args={[0.1, 8, 8]} />
-            {mat("#7a5a2a", opacity)}
-          </mesh>
-        ))}
-      </group>
-    </group>
-  );
-}
-
-function PapayaPlant({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 0.8 + stage * 2.6;
-  const leaves = 7;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.06, 0.11, h, 7]} />
-        {mat("#8a9a5a", opacity)}
-      </mesh>
-      {/* fruit ring hugging the upper trunk */}
-      {Array.from({ length: 5 }).map((_, i) => {
-        const a = (i / 5) * Math.PI * 2;
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.13, h - 0.25, Math.sin(a) * 0.13]}>
-            <sphereGeometry args={[0.11, 8, 8]} />
-            {mat("#c9b23a", opacity)}
-          </mesh>
-        );
-      })}
-      {/* palmate leaf crown */}
-      <group position={[0, h, 0]}>
-        {Array.from({ length: leaves }).map((_, i) => {
-          const a = (i / leaves) * Math.PI * 2;
-          return (
-            <mesh key={i} position={[Math.cos(a) * 0.35, 0.05, Math.sin(a) * 0.35]} rotation={[0, -a, 0.6]} scale={[1, 0.12, 1]}>
-              <sphereGeometry args={[0.42 * (0.6 + stage * 0.5), 8, 8]} />
-              {mat("#3f8a3f", opacity)}
-            </mesh>
-          );
-        })}
-      </group>
-    </group>
-  );
-}
-
-function BananaPlant({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 0.5 + stage * 1.6;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.1, 0.14, h, 7]} />
-        {mat("#5f8a3a", opacity)}
-      </mesh>
-      {Array.from({ length: 5 }).map((_, i) => {
-        const a = (i / 5) * Math.PI * 2;
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.4, h, Math.sin(a) * 0.4]} rotation={[0, -a, 0.5]}>
-            <boxGeometry args={[1.1, 0.02, 0.4]} />
-            {mat("#4c9a3a", opacity)}
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
 /* A lightweight DOM billboard in 3D space via drei's Html. */
 function Billboard({ position, children }: { position: [number, number, number]; children: React.ReactNode }) {
   return (
-    <Html position={position} center distanceFactor={10} occlude={false} style={{ pointerEvents: "auto" }}>
+    <Html position={position} center distanceFactor={26} occlude={false} style={{ pointerEvents: "auto" }}>
       {children}
     </Html>
   );

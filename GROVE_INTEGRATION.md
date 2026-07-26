@@ -52,6 +52,37 @@ if the spec revises; keep the algorithm in lock-step with `SPEC.md`.
 size/age growth stage · `prev` chain → a growth-over-time timeline you can scrub
 or play.
 
+## The scene
+
+The garden renders **to scale**: a plant is drawn at its *measured* height
+(`measuredHeightM` — the recorded `height_m`, else the same H ≈ 3·√D fallback the
+Grove estimator uses), so a 12 m coconut stands 12 m and a newly planted sapling
+is a seedling. Plots are laid out as an orchard grid.
+
+Plants are grown procedurally per species in
+[`src/components/GrovePlants.tsx`](./src/components/GrovePlants.tsx): a seeded,
+recursively branched skeleton merged into one mesh, a canopy of instanced leaf
+clumps, and folded-ribbon fronds for palms/bananas/papayas — so a jackfruit
+(upright, fruit straight off the trunk), a tamarind (wide umbrella) and a coconut
+palm all read differently. Ground, soil and bark textures are drawn on a canvas
+at runtime ([`src/lib/groundTexture.ts`](./src/lib/groundTexture.ts)). **Nothing
+is downloaded** — no model files, no HDRI, no CDN — which keeps the whole thing
+inside the self-contained rule.
+
+Two detail tiers, auto-detected and switchable in the header (**✨ Lush** /
+**🍃 Lite**):
+
+| | Lush | Lite |
+|---|---|---|
+| Branch generations | 3 | 2 |
+| Leaf clumps | rounded (subdivided) | faceted |
+| Shadows · grass tufts · wind | yes | no |
+| Antialias · pixel ratio | on · up to 2× | off · up to 1.5× |
+
+A whole plant costs about **3–4 draw calls** (branches, instanced canopy,
+instanced fruit, merged fronds), so a full garden stays within a low-end phone's
+budget. VR works in both tiers.
+
 ## Honesty & privacy (BRIDGE.md §4–5)
 
 - **`co2Kg` is rendered as "≈ N kg CO₂ estimated"** — a conservative estimate
