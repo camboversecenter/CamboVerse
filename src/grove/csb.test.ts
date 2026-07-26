@@ -11,7 +11,7 @@
  */
 import { describe, it, expect, vi, afterEach } from "vitest";
 import {
-  CsbClient, provenanceTier, provenanceLabel, paidOut, committed, type CsbPlotStatus,
+  CsbClient, provenanceTier, provenanceLabel, paidOut, committed, anchorCall, anchorLink, type CsbPlotStatus,
 } from "./csb";
 import { plotKey } from "./keccak";
 
@@ -173,6 +173,52 @@ describe("provenance", () => {
   it("never claims verification from a chain it could not reach", () => {
     expect(provenanceTier(undefined)).toBe("unanchored");
     expect(provenanceTier({ available: false, plot: KEY, anchored: false })).toBe("unanchored");
+  });
+});
+
+describe("anchorCall", () => {
+  const obs = { id: "aa".repeat(32), plot: PLOT, prev: null, species: "jackfruit" };
+
+  it("encodes the call CSB's GroveAnchor expects", () => {
+    const c = anchorCall(obs, 3)!;
+    // Selector for anchor(bytes32,bytes32,bytes32,uint32,bytes32), confirmed
+    // against the deployed ABI. A wrong one would be accepted by a wallet and
+    // rejected by the chain with nothing useful to read.
+    expect(c.data.slice(0, 10)).toBe("0x764b5886");
+    expect(c.data.length).toBe(2 + 8 + 5 * 64);
+    expect(c.observationId).toBe("0x" + "aa".repeat(32));
+    expect(c.plotId).toBe(KEY);
+    expect(c.liveCount).toBe(3);
+    // Species is right-padded ASCII in the last word.
+    expect(c.data.slice(-64)).toBe(
+      Array.from("jackfruit", (ch) => ch.charCodeAt(0).toString(16).padStart(2, "0")).join("").padEnd(64, "0"),
+    );
+  });
+
+  it("takes the PLOT's living total, not one record's own count", () => {
+    // A jackfruit, a guava and a longan are three plants recorded three times.
+    // Passing the newest record's count would tell the chain the grove has one
+    // tree — and that number drives a title's supply and a pledge's threshold.
+    expect(anchorCall(obs, 3)!.liveCount).toBe(3);
+    expect(anchorCall(obs, 1)!.liveCount).toBe(1);
+  });
+
+  it("chains onto the chain's head, not the record's own predecessor", () => {
+    // CSB refuses an anchor that would fork a plot's history, and the plot may
+    // have been anchored from a device this viewer has never seen.
+    const head = "0x" + "bb".repeat(32);
+    expect(anchorCall({ ...obs, prev: "cc".repeat(32) }, 3, head)!.prevId).toBe(head);
+    expect(anchorCall({ ...obs, prev: "cc".repeat(32) }, 3, null)!.prevId).toBe("0x" + "0".repeat(64));
+  });
+
+  it("refuses a record whose id is not a Grove hash", () => {
+    expect(anchorCall({ ...obs, id: "nope" }, 3)).toBe(null);
+    expect(anchorCall({ ...obs, id: "" }, 3)).toBe(null);
+  });
+
+  it("builds a link to the signing page, never signing anything itself", () => {
+    const c = anchorCall(obs, 3)!;
+    expect(anchorLink("https://csb.example/", c.data)).toBe(`https://csb.example/anchor.html?data=${c.data}`);
   });
 });
 
