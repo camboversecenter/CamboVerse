@@ -2510,7 +2510,33 @@ body,
   border: 1px solid rgba(60, 60, 60, 0.18); border-radius: 18px; padding: 14px 18px;
   box-shadow: 0 14px 38px rgba(0, 0, 0, 0.26);
 }
+.bld-panel--hidden {
+  /* Kept in the DOM (and scroll position) but out of the way, so reopening is
+     instant and does not re-lay-out the page. */
+  opacity: 0; pointer-events: none;
+  transform: translate(-50%, 14px);
+}
+.bld-panel, .bld-panel--hidden { transition: opacity 0.16s ease, transform 0.16s ease; }
+
+.bld-show {
+  position: fixed; z-index: 16; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0) + 16px);
+  padding: 10px 18px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(24, 32, 38, 0.72); color: #f4f8fa;
+  font: 700 13px system-ui, sans-serif;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
 .bld-head { display: flex; align-items: baseline; gap: 9px; }
+.bld-hide {
+  margin-left: auto; align-self: flex-start; cursor: pointer;
+  width: 30px; height: 30px; border-radius: 999px; flex: 0 0 auto;
+  border: 1px solid rgba(60, 60, 60, 0.2); background: #eef1ef; color: #4a5155;
+  font: 700 14px system-ui, sans-serif; line-height: 1;
+}
+.bld-hide:hover { background: #e2e6e3; }
 .bld-head b { font-size: 1.12rem; }
 .bld-sub { font: 600 0.8rem system-ui, sans-serif; color: #7d8a90; margin: 2px 0 8px; }
 .bld-about { font: 400 0.9rem/1.55 system-ui, sans-serif; margin: 0 0 8px; }
