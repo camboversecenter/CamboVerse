@@ -5,7 +5,6 @@ import { CambodiaMap } from "./CambodiaMap";
 import { Pin } from "./Pin";
 import { Passport } from "./Passport";
 import { SPOTS } from "../spots";
-import { PLACES } from "../places";
 
 /** The hub: an explorable map of Cambodia with a pin per heritage site. */
 export function MapView({
@@ -18,7 +17,6 @@ export function MapView({
   onOpenFarm,
   onOpenMeditation,
   onOpenVillage,
-  onOpenPlace,
   onOpenFashion,
   onOpenSakYant,
   onOpenGrove,
@@ -33,7 +31,6 @@ export function MapView({
   onOpenFarm: () => void;
   onOpenMeditation: () => void;
   onOpenVillage: () => void;
-  onOpenPlace: (id: string) => void;
   onOpenFashion: () => void;
   onOpenSakYant: () => void;
   onOpenGrove: () => void;
@@ -92,18 +89,12 @@ export function MapView({
         <button className="games-btn" onClick={onOpenGames}>🎪 Khmer Games</button>
         <button className="farm-btn" onClick={onOpenFarm}>🌾 Virtual Farm</button>
         <button className="village-btn" onClick={onOpenVillage}>🏡 Khmer Village</button>
-        {/* Driven off PLACES, not hardcoded: adding a building is then a spec
-            plus an entry in src/places.ts, and the map picks it up. See
-            docs/BUILDINGS.md. */}
-        {PLACES.map((pl) => (
-          <button key={pl.id} className="village-btn" onClick={() => onOpenPlace(pl.id)}>
-            🏛 {pl.name}
-          </button>
-        ))}
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
         <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
         <button className="grove-btn" onClick={onOpenGrove}>🌱 Grove Garden</button>
-        <button className="campus-btn" onClick={onOpenBuildings}>🏛️ Buildings</button>
+        {/* One button, not one per building. Sites and buildings are listed on
+            the Buildings page itself (BuildingsHome). */}
+        <button className="campus-btn" onClick={onOpenBuildings}>🏛 Buildings</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>

@@ -9,13 +9,13 @@ import { GamesView } from "./components/GamesView";
 import { FarmView } from "./components/FarmView";
 import { MeditationView } from "./components/MeditationView";
 import { VillageView } from "./components/VillageView";
-import { PlaceView } from "./components/PlaceView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
+import { BuildingsHome } from "./components/BuildingsHome";
 import { BuildingsView } from "./components/BuildingsView";
 import { BuildingView } from "./components/BuildingView";
-import { buildingById } from "./buildings";
+import { buildingById, siteById } from "./buildings";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -28,18 +28,27 @@ export function App() {
   const [farmOpen, setFarmOpen] = useState(false);
   const [medOpen, setMedOpen] = useState(false);
   const [villageOpen, setVillageOpen] = useState(false);
-  // A generated place — buildings composed onto shared ground (src/places.ts).
-  const [placeId, setPlaceId] = useState<string | null>(null);
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
   const [groveOpen, setGroveOpen] = useState(false);
+  // 🏛 Buildings is three layers deep: the directory, a walkable site, and a
+  // single building's page. The map only ever opens the directory.
   const [buildingsOpen, setBuildingsOpen] = useState(false);
+  const [siteId, setSiteId] = useState<string | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
   const spot = SPOTS.find((s) => s.id === spotId) ?? null;
   const building = buildingId ? buildingById(buildingId) ?? null : null;
+  const site = siteId ? siteById(siteId) ?? null : null;
+
+  /** Leave the whole Buildings stack in one go, from any depth. */
+  const closeBuildings = () => {
+    setBuildingId(null);
+    setSiteId(null);
+    setBuildingsOpen(false);
+  };
 
   // Teleport: cover the screen with a warp flash, run the scene swap hidden
   // underneath, then reveal. Guarded so taps can't overlap mid-transition.
@@ -81,8 +90,6 @@ export function App() {
         <FarmView onBackToMap={() => setFarmOpen(false)} />
       ) : medOpen ? (
         <MeditationView onBackToMap={() => setMedOpen(false)} />
-      ) : placeId ? (
-        <PlaceView placeId={placeId} onBackToMap={() => setPlaceId(null)} />
       ) : villageOpen ? (
         <VillageView onBackToMap={() => setVillageOpen(false)} />
       ) : fashionOpen ? (
@@ -92,15 +99,24 @@ export function App() {
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
       ) : building ? (
-        // A building's own page, opened by tapping it in the site.
+        // A building's own page — reached from the directory, or by tapping it
+        // inside a site. Back goes wherever you came from.
         <BuildingView
           building={building}
           onBack={() => setBuildingId(null)}
-          onBackToMap={() => { setBuildingId(null); setBuildingsOpen(false); }}
+          onBackToMap={closeBuildings}
+          backLabel={siteId ? "← Site" : "← Buildings"}
+        />
+      ) : site ? (
+        <BuildingsView
+          site={site}
+          onBack={() => setSiteId(null)}
+          onOpenBuilding={(id) => setBuildingId(id)}
         />
       ) : buildingsOpen ? (
-        <BuildingsView
-          onBackToMap={() => setBuildingsOpen(false)}
+        <BuildingsHome
+          onBackToMap={closeBuildings}
+          onOpenSite={(id) => setSiteId(id)}
           onOpenBuilding={(id) => setBuildingId(id)}
         />
       ) : (
@@ -114,7 +130,6 @@ export function App() {
           onOpenFarm={() => setFarmOpen(true)}
           onOpenMeditation={() => setMedOpen(true)}
           onOpenVillage={() => setVillageOpen(true)}
-          onOpenPlace={(id) => setPlaceId(id)}
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
