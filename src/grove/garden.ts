@@ -154,6 +154,20 @@ export function growthAt(chain: Chain, t: number): { record: VerifiedRecord | nu
   return { record, stage: sizeStage(record.observation) };
 }
 
+/**
+ * The plant's real height in metres, as measured. Prefer the recorded height;
+ * otherwise fall back to the same height–diameter guess the Grove estimator
+ * uses (H ≈ 3·√D, capped). This is what the renderer draws, so a 12 m coconut
+ * stands 12 m in the virtual garden — the twin is to scale, not stylised.
+ */
+export function measuredHeightM(obs: GardenObservation): number {
+  const h = obs.measure.height_m;
+  if (h && h > 0) return Math.min(40, h);
+  const d = obs.measure.dbh_cm;
+  if (d && d > 0) return Math.min(30, 3 * Math.sqrt(d));
+  return 0.6;
+}
+
 /** Normalize a measurement to a 0–1 size stage (height ~15 m or DBH ~40 cm = mature). */
 export function sizeStage(obs: GardenObservation): number {
   const h = obs.measure.height_m;

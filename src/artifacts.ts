@@ -750,6 +750,94 @@ ARTIFACTS.push({
   ],
 });
 
+ARTIFACTS.push({
+  id: "kancheu",
+  khmer: "កញ្ជើ",
+  name: "Kancheu",
+  english: "Woven bamboo basket",
+  category: "Traditional tool",
+  blurb: "A versatile, wide-mouthed woven basket central to everyday rural Khmer life.",
+  story:
+    "The កញ្ជើ (kancheu) is one of the most ubiquitous tools in a Cambodian village — a shallow, round, woven bamboo or rattan basket with a sturdy reinforced rim. It is entirely made by hand, with the bamboo strips split, smoothed, and intricately woven to create a surprisingly durable vessel. It is used every day: for carrying harvested rice, washing vegetables at the well, measuring out grain, or carrying goods to the market on the hip or head. It represents the quiet, foundational craftsmanship of Khmer rural life.",
+  utilities: [
+    "Used to measure and carry harvested rice or grain",
+    "Essential for washing vegetables and preparing food",
+    "Carried to the market to hold produce",
+  ],
+  origin: "Woven by hand in villages across Cambodia using locally harvested bamboo or rattan.",
+  model: "/models/kancheu.glb",
+  pois: [
+    {
+      id: "woven-body",
+      title: "Woven Bamboo Body",
+      khmer: "តួអង្គកញ្ជើ",
+      info: "The body is woven tightly from split bamboo or rattan strips. A master weaver can make it strong enough to carry heavy loads while keeping it light enough to handle easily.",
+      target: [0, 0.3, 0.4],
+      camera: [1.2, 0.8, 1.5],
+    },
+    {
+      id: "reinforced-rim",
+      title: "Reinforced Rim",
+      khmer: "មាត់កញ្ជើ",
+      info: "The wide mouth is bound tightly with thick rattan or bamboo strips. This rigid edge holds the basket's shape open and gives the carrier a sturdy place to grip.",
+      target: [0, 0.64, -1.0],
+      camera: [-0.5, 1.2, -2.5],
+    },
+    {
+      id: "flat-base",
+      title: "The Base",
+      khmer: "បាតកញ្ជើ",
+      info: "The base is flat, often starting from a squared weave pattern that transitions into the round body. It allows the basket to sit securely on the ground without tipping.",
+      target: [0, 0.05, 0],
+      camera: [-1.2, 0.5, -0.8],
+    }
+  ]
+});
+
+ARTIFACTS.push({
+  id: "kantel",
+  khmer: "កន្ទេល",
+  name: "Kantel",
+  english: "Woven sleeping mat",
+  category: "Household item",
+  blurb: "The woven sedge-grass mat rolled out across Cambodia for sleeping, eating, and gathering.",
+  story:
+    "The កន្ទេល (Kantel) is the foundation of Cambodian hospitality and daily life. Woven by hand from dried sedge grass (កក់) or romchek (រំចេក), these mats are kept rolled up in the corner of the house until needed. When guests arrive, when food is served, or when it is time to sleep, the kantel is rolled out across the wooden floorboards. Often dyed in vibrant stripes of red, green, and natural yellow, it defines the social space of the home.",
+  utilities: [
+    "Rolled out on the floor to define a clean space for eating meals together",
+    "Used as a breathable, cool surface for sleeping in the tropical heat",
+    "Offered to guests as a seat of respect when they visit the home",
+  ],
+  origin: "Woven by women in villages, especially in provinces with abundant sedge grass along the rivers.",
+  model: "/models/kantel.glb",
+  pois: [
+    {
+      id: "woven-stripes",
+      title: "Dyed Stripes",
+      khmer: "ពណ៌ចម្រុះ",
+      info: "While many mats are left their natural pale color, the most striking kantel are woven with grass that has been dyed in deep reds and greens, creating beautiful striped patterns.",
+      target: [0, 0.05, 0],
+      camera: [1.2, 0.8, -0.4],
+    },
+    {
+      id: "the-roll",
+      title: "The Roll",
+      khmer: "រមូរ",
+      info: "When not in use, the mat is tightly rolled and tucked away, keeping the floor clear. Rolling out the mat is the first gesture of welcoming someone into the home.",
+      target: [0, 0.24, -0.5],
+      camera: [-1.4, 0.6, -1.0],
+    },
+    {
+      id: "sedge-grass",
+      title: "Sedge Grass",
+      khmer: "ដើមកក់",
+      info: "The grass must be harvested, sliced into thin strips, dried in the sun, and sometimes dyed before the slow process of weaving on a wooden loom can even begin.",
+      target: [0.5, 0.05, 0.4],
+      camera: [0.2, 0.6, 1.2],
+    }
+  ]
+});
+
 export function artifactById(id: string): Artifact | undefined {
   return ARTIFACTS.find((a) => a.id === id);
 }

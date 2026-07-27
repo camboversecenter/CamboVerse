@@ -15,9 +15,13 @@ export interface WalkInput {
 export function FirstPersonControls({
   input,
   start = [0, 1.5, 9.5],
+  startYaw = 0,
 }: {
   input: MutableRefObject<WalkInput>;
   start?: [number, number, number];
+  /** Which way the visitor faces on arrival (radians, 0 = looking down −Z).
+   *  Lets a scene drop someone in already looking at the thing they came for. */
+  startYaw?: number;
 }) {
   const camera = useThree((s) => s.camera);
   const scene = useThree((s) => s.scene);
@@ -36,9 +40,9 @@ export function FirstPersonControls({
   useEffect(() => {
     camera.rotation.order = "YXZ";
     camera.position.set(start[0], start[1], start[2]);
-    yaw.current = 0;
+    yaw.current = startYaw;
     pitch.current = -0.04;
-  }, [camera, start]);
+  }, [camera, start, startYaw]);
 
   useEffect(() => {
     const onDown = (e: KeyboardEvent) => {

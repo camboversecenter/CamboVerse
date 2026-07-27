@@ -20,6 +20,7 @@ export function MapView({
   onOpenFashion,
   onOpenSakYant,
   onOpenGrove,
+  onOpenBuildings,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -33,6 +34,7 @@ export function MapView({
   onOpenFashion: () => void;
   onOpenSakYant: () => void;
   onOpenGrove: () => void;
+  onOpenBuildings: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -90,6 +92,9 @@ export function MapView({
         <button className="fashion-btn" onClick={onOpenFashion}>👗 Khmer Fashion</button>
         <button className="sakyant-btn" onClick={onOpenSakYant}>🪷 Sak Yant</button>
         <button className="grove-btn" onClick={onOpenGrove}>🌱 Grove Garden</button>
+        {/* One button, not one per building. Sites and buildings are listed on
+            the Buildings page itself (BuildingsHome). */}
+        <button className="campus-btn" onClick={onOpenBuildings}>🏛 Buildings</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>

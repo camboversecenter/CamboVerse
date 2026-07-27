@@ -12,6 +12,10 @@ import { VillageView } from "./components/VillageView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
+import { BuildingsHome } from "./components/BuildingsHome";
+import { BuildingsView } from "./components/BuildingsView";
+import { BuildingView } from "./components/BuildingView";
+import { buildingById, siteById } from "./buildings";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -27,10 +31,24 @@ export function App() {
   const [fashionOpen, setFashionOpen] = useState(false);
   const [sakYantOpen, setSakYantOpen] = useState(false);
   const [groveOpen, setGroveOpen] = useState(false);
+  // 🏛 Buildings is three layers deep: the directory, a walkable site, and a
+  // single building's page. The map only ever opens the directory.
+  const [buildingsOpen, setBuildingsOpen] = useState(false);
+  const [siteId, setSiteId] = useState<string | null>(null);
+  const [buildingId, setBuildingId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
   const spot = SPOTS.find((s) => s.id === spotId) ?? null;
+  const building = buildingId ? buildingById(buildingId) ?? null : null;
+  const site = siteId ? siteById(siteId) ?? null : null;
+
+  /** Leave the whole Buildings stack in one go, from any depth. */
+  const closeBuildings = () => {
+    setBuildingId(null);
+    setSiteId(null);
+    setBuildingsOpen(false);
+  };
 
   // Teleport: cover the screen with a warp flash, run the scene swap hidden
   // underneath, then reveal. Guarded so taps can't overlap mid-transition.
@@ -80,6 +98,27 @@ export function App() {
         <SakYantView onBackToMap={() => setSakYantOpen(false)} />
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
+      ) : building ? (
+        // A building's own page — reached from the directory, or by tapping it
+        // inside a site. Back goes wherever you came from.
+        <BuildingView
+          building={building}
+          onBack={() => setBuildingId(null)}
+          onBackToMap={closeBuildings}
+          backLabel={siteId ? "← Site" : "← Buildings"}
+        />
+      ) : site ? (
+        <BuildingsView
+          site={site}
+          onBack={() => setSiteId(null)}
+          onOpenBuilding={(id) => setBuildingId(id)}
+        />
+      ) : buildingsOpen ? (
+        <BuildingsHome
+          onBackToMap={closeBuildings}
+          onOpenSite={(id) => setSiteId(id)}
+          onOpenBuilding={(id) => setBuildingId(id)}
+        />
       ) : (
         <MapView
           onEnter={(id) => go(id)}
@@ -94,6 +133,7 @@ export function App() {
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
+          onOpenBuildings={() => setBuildingsOpen(true)}
         />
       )}
 

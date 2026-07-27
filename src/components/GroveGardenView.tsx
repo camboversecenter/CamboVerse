@@ -1,13 +1,45 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Html } from "@react-three/drei";
+import { OrbitControls, Html, Sky } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
+import { ACESFilmicToneMapping, Color, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
 import { importBundle, importBundleFile } from "../grove/bundle";
 import { GroveClient, DEFAULT_NODE, type VerifiedRecord } from "../grove/client";
 import {
-  buildPlots, gardenTotals, growthAt, trustOpacity, type GrovePlot,
+  buildPlots, gardenTotals, growthAt, measuredHeightM, trustOpacity, type GrovePlot,
 } from "../grove/garden";
+import {
+  CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
+  anchorCall, anchorLink, TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
+} from "../grove/csb";
+import { grassTexture, soilTexture } from "../lib/groundTexture";
+import {
+  BroadleafPlant, PalmPlant, BananaPlant, PapayaPlant, Seedling,
+  type PlantLook, type TreeShape,
+} from "./GrovePlants";
 import demoBundle from "../grove/fixtures/grove-bundle.json";
+
+/**
+ * CamboVerse's view modes (see AGENTS.md → "The three view modes"):
+ *
+ *  • **normal** — the hard baseline, a ~$150 Android on 4G: fewer branch
+ *    generations, faceted foliage, no shadows, no grass, no wind, lower DPR.
+ *  • **ultra**  — a high-end phone, tablet or desktop: the full scene.
+ *  • **VR**     — not a third setting but a presentation of **ultra**; entering
+ *    a WebXR session raises the view to ultra for its duration.
+ *
+ * Auto-detected, always overridable by the visitor — detection is only a guess.
+ * The tiers change *detail, never content*: the same species at the same scale.
+ */
+export type ViewMode = "normal" | "ultra";
+
+function detectViewMode(): ViewMode {
+  if (typeof navigator === "undefined") return "ultra";
+  const cores = navigator.hardwareConcurrency ?? 4;
+  const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  const small = typeof window !== "undefined" && Math.min(window.screen.width, window.screen.height) < 500;
+  return cores <= 4 || mem <= 3 || small ? "normal" : "ultra";
+}
 
 /**
  * 🌱 Grove Garden — CamboVerse's virtual twin of a real, device-signed garden.
@@ -25,11 +57,15 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [records, setRecords] = useState<VerifiedRecord[]>([]);
   const [status, setStatus] = useState<string>("Verifying signed records…");
   const [nodeUrl, setNodeUrl] = useState(DEFAULT_NODE);
+  const [coarseGps, setCoarseGps] = useState<Map<string, { lat: number; lng: number }>>(new Map());
   const [selected, setSelected] = useState<string | null>(null);
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
+  const [mode, setMode] = useState<ViewMode>(detectViewMode);
+  const [csbBase, setCsbBase] = useState(DEFAULT_CSB_BASE);
+  const [csb, setCsb] = useState<Map<string, CsbPlotStatus>>(new Map());
 
-  const plots = useMemo(() => buildPlots(records), [records]);
+  const plots = useMemo(() => buildPlots(records, coarseGps), [records, coarseGps]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
   const span = useMemo(() => {
     const first = Math.min(...plots.map((p) => p.firstAt));
@@ -51,6 +87,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
       const imp = await importBundle(demoBundle);
       if (!live) return;
       setRecords(imp.records);
+      setCoarseGps(new Map());
       setStatus(
         `${imp.records.length}/${imp.total} records verified locally` +
           (imp.dropped ? ` · ${imp.dropped} dropped (failed verify)` : ""),
@@ -85,6 +122,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
     try {
       const imp = await importBundleFile(file);
       setRecords(imp.records);
+      setCoarseGps(new Map());
       setSelected(null);
       setT(1);
       setStatus(
@@ -100,36 +138,75 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
     setStatus("Reading node feed…");
     try {
       const client = new GroveClient(nodeUrl);
-      const page = await client.feed({ limit: 100 });
+      const page = await client.feed();
       setRecords(page.records);
+      setCoarseGps(page.coarseGps);
       setSelected(null);
       setT(1);
       setStatus(
         page.records.length
           ? `${page.records.length} verified from node` + (page.dropped ? ` · ${page.dropped} dropped` : "")
-          : "No records from node (or none verified).",
+          : "The node returned no records we could verify — showing the offline bundle.",
       );
+      if (!page.records.length) {
+        const imp = await importBundle(demoBundle);
+        setRecords(imp.records);
+      }
     } catch (err) {
       setStatus("Node unreachable: " + (err as Error).message + " — using the offline bundle instead.");
     }
   };
 
+  /**
+   * Ask CSB what it knows about the plots now on screen.
+   *
+   * Strictly additive: the garden is already drawn from records this device
+   * verified itself, and every one of these lookups can fail without changing a
+   * single plant. What it adds is the half a signature cannot carry — a
+   * consensus timestamp, and whether anyone with a licence to lose has actually
+   * been to look. Only `keccak256(plot)` leaves the browser; the plot's name
+   * does not.
+   */
+  useEffect(() => {
+    if (!plots.length || !csbBase.trim()) return;
+    let cancelled = false;
+    const client = new CsbClient(csbBase);
+    client.plotStatuses(plots.map((p) => p.id)).then((m) => {
+      if (!cancelled) setCsb(m);
+    });
+    return () => { cancelled = true; };
+  }, [plots, csbBase]);
+
   const sel = plots.find((p) => p.id === selected) ?? null;
+  const selCsb = sel ? csb.get(sel.id) : undefined;
+  /** Riel released, and riel still escrowed, across every plot on screen. */
+  const funding = useMemo(() => {
+    let paid = 0, held = 0, sponsored = 0;
+    for (const s of csb.values()) {
+      const p = paidOut(s.pledges), h = committed(s.pledges);
+      paid += p;
+      held += h;
+      if (s.pledges?.length) sponsored += 1;
+    }
+    return { paid, held, sponsored };
+  }, [csb]);
 
   return (
     <div className="grove">
-      <Canvas dpr={[1, 2]} camera={{ position: [0, 6, 13], fov: 45 }} gl={{ antialias: true }} shadows>
+      <Canvas
+        dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
+        camera={{ position: [0, 15, 46], fov: 45 }}
+        gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
+        shadows={mode === "ultra"}
+        onCreated={({ gl }) => {
+          // Filmic response + a touch under 1.0 keeps the tropical sun from
+          // blowing out the foliage highlights.
+          gl.toneMapping = ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.18;
+        }}
+      >
         <XR store={store}>
-          <color attach="background" args={["#bfe0d6"]} />
-          <fog attach="fog" args={["#bfe0d6", 16, 34]} />
-          <ambientLight intensity={0.8} />
-          <hemisphereLight args={["#eaffe6", "#5a7a3a", 0.55]} />
-          <directionalLight position={[6, 12, 6]} intensity={1.1} castShadow shadow-mapSize={[1024, 1024]} />
-          {/* ground */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
-            <planeGeometry args={[60, 60]} />
-            <meshStandardMaterial color="#8bbf6a" roughness={1} />
-          </mesh>
+          <GardenSky mode={mode} />
           {plots.map((p, i) => (
             <PlotParcel
               key={p.id}
@@ -137,12 +214,15 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               index={i}
               total={plots.length}
               now={now}
+              mode={mode}
               selected={p.id === selected}
               onSelect={() => setSelected(p.id === selected ? null : p.id)}
+              csb={csb.get(p.id)}
             />
           ))}
           {/* In VR, stand back on the ground and look along the row of plots. */}
           <XROrigin position={[0, 0, 8]} />
+          <VrImpliesUltra onEnter={() => setMode("ultra")} />
           <GardenControls />
         </XR>
       </Canvas>
@@ -150,7 +230,21 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
       <div className="cls-top">
         <button className="backbtn" onClick={onBackToMap}>← Map</button>
         <span className="cls-title">🌱 Grove Garden</span>
-        {vrSupported && <button className="vr-btn cls-vr" onClick={() => store.enterVR()}>🥽 VR</button>}
+        <button
+          className="grove-quality"
+          onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
+          title="View mode — Normal is the low-end baseline, Ultra is the full 3D scene"
+        >
+          {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
+        </button>
+        {vrSupported && (
+          <button
+            className="vr-btn cls-vr"
+            onClick={() => { setMode("ultra"); store.enterVR(); }}
+          >
+            🥽 VR
+          </button>
+        )}
       </div>
 
       {/* verification banner — the trust story, front and centre */}
@@ -171,6 +265,17 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           />
           <button onClick={loadNode}>Read node</button>
         </div>
+        {/* The chain is a second, independent source — and like the node, it is
+            whichever one you point at. Clear it and the garden still renders. */}
+        <div className="grove-node grove-chain-src">
+          <input
+            value={csbBase}
+            onChange={(e) => setCsbBase(e.target.value)}
+            spellCheck={false}
+            placeholder="CSB read endpoint (optional)"
+            aria-label="CSB read endpoint base URL"
+          />
+        </div>
       </div>
 
       {/* totals + timeline */}
@@ -179,6 +284,11 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           <span><b>{totals.plots}</b> plots</span>
           <span><b>{totals.plants}</b> plants</span>
           <span className="grove-co2">≈ {fmt(totals.co2Kg)} kg CO₂ <i>estimated</i></span>
+          {(funding.paid > 0 || funding.held > 0) && (
+            <span className="grove-funded" title="Released on proof of survival · still escrowed against future survival checks">
+              💚 {riel(String(funding.paid))} <i>paid</i> · {riel(String(funding.held))} <i>pledged</i>
+            </span>
+          )}
         </div>
         <div className="grove-timeline">
           <button className="grove-play" onClick={() => { if (t >= 1) setT(0); setPlaying((v) => !v); }}>
@@ -224,11 +334,319 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               itself — {sel.latest.attestations.length} attestation
               {sel.latest.attestations.length === 1 ? "" : "s"} checked.
             </p>
+            <CsbPanel status={selCsb} plot={sel} csbBase={csbBase} />
           </div>
         </div>
       )}
     </div>
   );
+}
+
+/* ---------------- the chain's half of the twin ---------------- */
+
+const when = (secs: number) => new Date(secs * 1000).toISOString().slice(0, 10);
+
+/**
+ * What CSB adds to a plot the device already verified.
+ *
+ * Written to be readable by a visitor who has never heard of a blockchain, and
+ * to overclaim nothing. The three facts worth their attention, in order: has
+ * anyone with a licence been to look, when did the record demonstrably exist,
+ * and did sponsoring this grove actually reach a person.
+ */
+function CsbPanel({
+  status, plot, csbBase,
+}: {
+  status: CsbPlotStatus | undefined;
+  plot: GrovePlot;
+  csbBase: string;
+}) {
+  if (!status?.available) {
+    return (
+      <p className="grove-note grove-chain-note">
+        ⛓ Not checked against CSB — this garden is drawn from the signed records alone,
+        which is the whole of what a device signature can promise.
+      </p>
+    );
+  }
+  if (!status.anchored) {
+    return (
+      <>
+        <p className="grove-note grove-chain-note">
+          ⛓ Never anchored on CSB. The record is genuine and signed; nobody has yet
+          committed it to a ledger, so its date rests on the phone's own clock.
+        </p>
+        <AnchorAction status={status} plot={plot} csbBase={csbBase} />
+      </>
+    );
+  }
+
+  const tier = provenanceTier(status);
+  const head = status.head;
+  const v = status.verifier;
+  const pledges = status.pledges ?? [];
+  const paid = paidOut(pledges);
+  const held = committed(pledges);
+
+  return (
+    <div className="grove-chain">
+      <div className="grove-chain-head" style={{ color: TIER_COLOR[tier] }}>
+        <b>{TIER_ICON[tier]} {provenanceLabel(status)}</b>
+      </div>
+
+      {head && (
+        <>
+          <div className="grove-row">
+            <span>On chain since</span>
+            <b>{when(head.anchoredAt)} <i>(block time, not the phone's)</i></b>
+          </div>
+          <div className="grove-row">
+            <span>Trees counted</span>
+            <b>
+              {head.liveCount}
+              {status.verifiedCount === 0 && <i> · unconfirmed</i>}
+            </b>
+          </div>
+          <div className="grove-row">
+            <span>Record chain</span>
+            <b>{status.records} anchored · {head.confirms} confirmed{head.disputes ? ` · ${head.disputes} disputed` : ""}</b>
+          </div>
+        </>
+      )}
+
+      {v ? (
+        <div className="grove-row">
+          <span>Verified by</span>
+          <b>
+            {v.label || v.classes.join(", ")}
+            <i> · licence {v.licenceRef.slice(0, 10)}… · {v.confirmations} checks</i>
+          </b>
+        </div>
+      ) : (
+        <p className="grove-note grove-chain-note">
+          No licensed verifier has confirmed this yet. Anyone can generate a key and
+          co-sign a record; only a licence someone can lose counts here.
+        </p>
+      )}
+
+      {status.title && (
+        <div className="grove-row">
+          <span>Grove title</span>
+          <b>
+            {status.title.supply} {status.title.symbol}
+            <i> · one share per verified living tree{status.title.inSync ? "" : " · out of sync"}</i>
+          </b>
+        </div>
+      )}
+
+      {pledges.length > 0 && (
+        <div className="grove-pledges">
+          {pledges.map((p) => (
+            <div key={p.id} className="grove-pledge">
+              <div className="grove-pledge-head">
+                <b>💚 {p.purpose || `Pledge #${p.id}`}</b>
+                <span>{p.status}</span>
+              </div>
+              {p.milestones.map((m) => (
+                <div key={m.index} className={`grove-ms grove-ms-${m.status}`}>
+                  <span>
+                    {m.status === "paid" ? "✓" : m.status === "reclaimed" ? "↩" : "◌"}{" "}
+                    {m.requiredCount} trees standing by {when(m.deadline)}
+                  </span>
+                  <b>{riel(m.growerAmount)} <i>+ {riel(m.verifierAmount)} to the verifier</i></b>
+                </div>
+              ))}
+            </div>
+          ))}
+          <p className="grove-note grove-chain-note">
+            {riel(String(paid))} already released, {riel(String(held))} still held against
+            future survival checks. Money moves only when a licensed verifier confirms the
+            trees are still standing — nobody is paid for planting day.
+          </p>
+        </div>
+      )}
+
+      <AnchorAction status={status} plot={plot} csbBase={csbBase} />
+
+      <p className="grove-note grove-chain-note">
+        The chain records <b>trees</b>, not carbon. A signature proves who said something,
+        never that it is true; a licence makes someone accountable for having gone to look.
+        {status.chain && <> Checkable yourself at <code>{status.chain.contract.slice(0, 10)}…</code></>}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * "Is this your garden?" — a link out to CSB's signing page, prefilled.
+ *
+ * This viewer never signs and never holds a key. It builds the calldata from a
+ * record it has already verified and hands it over; the grower reads what it
+ * commits and signs with their own wallet on CSB.
+ *
+ * The wording is careful on purpose. Anchoring a plot nobody has anchored makes
+ * you its steward, and Grove records are PUBLIC — so a stranger browsing this
+ * garden is one tap away from claiming stewardship of somebody else's plot.
+ * Neither the chain nor this page can tell whose garden it is, so the only
+ * honest thing to do is say so before the tap rather than after it.
+ */
+function AnchorAction({
+  status, plot, csbBase,
+}: {
+  status: CsbPlotStatus;
+  plot: GrovePlot;
+  csbBase: string;
+}) {
+  if (!csbBase.trim()) return null;
+
+  const latest = plot.latest.observation;
+  const headId = status.anchored ? status.head?.observationId ?? null : null;
+
+  // Nothing to do: the chain already holds this exact record.
+  if (headId && headId.replace(/^0x/, "") === latest.id) {
+    return (
+      <p className="grove-note grove-chain-note">
+        ✓ This plot's newest record is already on chain. What it needs next is a
+        licensed verifier, not another signature.
+      </p>
+    );
+  }
+
+  // `plot.count` is the plot's living total across growth chains — the number
+  // the chain reads as the whole grove, not this one record's own count.
+  const call = anchorCall(latest, plot.count, headId);
+  if (!call) return null;
+
+  const claimsStewardship = !status.anchored;
+  return (
+    <div className="grove-chain-anchor">
+      <a
+        className="grove-anchor-btn"
+        href={anchorLink(csbBase, call.data)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ⛓ Sign on CSB
+      </a>
+      <p className="grove-note grove-chain-note">
+        {claimsStewardship ? (
+          <>
+            <b>Only if this garden is yours.</b> Anchoring a plot for the first time
+            makes you its steward on chain, and afterwards only you can extend its
+            history. Anyone can read these records, so signing somebody else's would
+            be claiming their garden.
+          </>
+        ) : (
+          <>
+            Adds this plot's newest record ({call.liveCount} living {call.liveCount === 1 ? "plant" : "plants"}).
+            Only the plot's steward can complete it — CSB refuses an anchor from
+            anyone else, so a stranger's signature simply will not settle.
+          </>
+        )}
+        {" "}You sign it yourself on CSB; nothing is sent from here, and only the
+        hash travels.
+      </p>
+    </div>
+  );
+}
+
+/* ---------------- the world: sky, sun, ground ---------------- */
+
+const SUN: [number, number, number] = [18, 11, 8];
+
+/**
+ * A late-afternoon tropical sky and the light rig under it. Everything is
+ * procedural — Preetham sky, a warm sun, cool sky-fill bounce, and a grass plane
+ * whose texture is drawn on a canvas at runtime. No HDRI, nothing downloaded.
+ */
+function GardenSky({ mode }: { mode: ViewMode }) {
+  const grass = useMemo(() => grassTexture(mode === "ultra" ? 64 : 40), [mode]);
+  return (
+    <>
+      <Sky sunPosition={SUN} turbidity={6} rayleigh={1.1} mieCoefficient={0.006} mieDirectionalG={0.92} />
+      <fog attach="fog" args={["#cfe0e8", 70, 260]} />
+
+      <ambientLight intensity={0.5} />
+      <hemisphereLight args={["#cfe2ff", "#6b8a45", 0.85]} />
+      <directionalLight
+        position={SUN}
+        intensity={2.5}
+        color="#fff1d6"
+        castShadow={mode === "ultra"}
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0005}
+        shadow-camera-near={0.5}
+        shadow-camera-far={70}
+        shadow-camera-left={-24}
+        shadow-camera-right={24}
+        shadow-camera-top={24}
+        shadow-camera-bottom={-24}
+      />
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
+        <planeGeometry args={[400, 400]} />
+        <meshStandardMaterial map={grass} roughness={1} />
+      </mesh>
+    </>
+  );
+}
+
+/**
+ * Instanced grass blades around a plot — one draw call for the lot. They sell
+ * the ground far better than a flat texture alone, so they're the first thing
+ * dropped on a low-end device.
+ */
+function GrassTufts({ count, radius, seed }: { count: number; radius: number; seed: number }) {
+  const ref = useRef<InstancedMesh>(null);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    let t = seed >>> 0;
+    const rand = () => {
+      t += 0x6d2b79f5;
+      let x = Math.imul(t ^ (t >>> 15), 1 | t);
+      x ^= x + Math.imul(x ^ (x >>> 7), 61 | x);
+      return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+    };
+    const m = new Matrix4();
+    const q = new Quaternion();
+    const p = new Vector3();
+    const s = new Vector3();
+    const a = new Color("#6f9c46");
+    const b = new Color("#93ab52");
+    const c = new Color();
+    for (let i = 0; i < count; i++) {
+      // Denser at the pad's edge, thinning outward — how grass meets bare soil.
+      const ang = rand() * Math.PI * 2;
+      const r = radius * (0.85 + rand() * 0.9);
+      const h = 0.1 + rand() * 0.14;
+      const w = 0.03 + rand() * 0.035;
+      p.set(Math.cos(ang) * r, h / 2, Math.sin(ang) * r); // cone is centred — lift so the base sits on the ground
+      q.setFromAxisAngle(new Vector3(0, 1, 0), rand() * Math.PI);
+      s.set(w, h, w);
+      m.compose(p, q, s);
+      mesh.setMatrixAt(i, m);
+      c.copy(a).lerp(b, rand());
+      mesh.setColorAt(i, c);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [count, radius, seed]);
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, count]} position={[0, 0.02, 0]} castShadow>
+      <coneGeometry args={[1, 1, 3]} />
+      <meshStandardMaterial roughness={0.9} flatShading />
+    </instancedMesh>
+  );
+}
+
+/** VR always presents the Ultra scene — if a session starts while the view is in
+ *  Normal (headset "enter VR", a deep link), raise it for the session. */
+function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
+  const inXR = useXR((s) => s.session != null);
+  useEffect(() => { if (inXR) onEnter(); }, [inXR, onEnter]);
+  return null;
 }
 
 /** Orbit controls for the 2D view; disabled inside an immersive XR session
@@ -239,11 +657,11 @@ function GardenControls() {
   return (
     <OrbitControls
       enablePan={false}
-      minDistance={5}
-      maxDistance={22}
+      minDistance={4}
+      maxDistance={140}
       maxPolarAngle={Math.PI / 2.15}
       enableDamping
-      target={[0, 1.2, 0]}
+      target={[0, 5, 0]}
     />
   );
 }
@@ -251,57 +669,101 @@ function GardenControls() {
 /* ---------------- one plot parcel in the 3D world ---------------- */
 
 function PlotParcel({
-  plot, index, total, now, selected, onSelect,
+  plot, index, total, now, mode, selected, onSelect, csb,
 }: {
   plot: GrovePlot;
   index: number;
   total: number;
   now: number;
+  mode: ViewMode;
   selected: boolean;
   onSelect: () => void;
+  /** Chain status for this plot, when a CSB endpoint is configured and reachable. */
+  csb?: CsbPlotStatus;
 }) {
-  const spacing = 4.2;
-  const x = (index - (total - 1) / 2) * spacing;
+  const tier = provenanceTier(csb);
+  const tierTitle = provenanceLabel(csb);
+  // Lay the parcels out as an orchard grid rather than one long row, so a
+  // garden with many plots still frames in a single view.
+  const spacing = 9.5; // real orchard spacing — full-grown crowns need room
+  const cols = Math.ceil(Math.sqrt(total));
+  const rows = Math.ceil(total / cols);
+  const x = ((index % cols) - (cols - 1) / 2) * spacing;
+  const z = (Math.floor(index / cols) - (rows - 1) / 2) * spacing;
+  const soil = useMemo(() => soilTexture(2), []);
 
-  // Flatten every plant in the plot (across all growth chains and their `count`)
-  // into one list, then lay them out so nothing overlaps — a plot may hold
-  // several separate plantings, not just one chain.
-  const trees: { key: string; species: string; stage: number; opacity: number }[] = [];
-  plot.chains.forEach((chain, ci) => {
-    const g = growthAt(chain, now);
-    if (!g.record) return;
-    const n = Math.min(6, g.record.observation.count);
-    for (let k = 0; k < n; k++) {
-      trees.push({
-        key: `${ci}:${k}`,
-        species: g.record.observation.species,
-        stage: g.stage,
+  // Each growth chain is one planting — its own plant(s), and its own label.
+  // A plot can hold several (a jackfruit and a guava side by side), so they are
+  // laid out separately and labelled separately rather than lumped together.
+  const plantings = plot.chains
+    .map((chain, ci) => {
+      const g = growthAt(chain, now);
+      if (!g.record) return null;
+      const obs = g.record.observation;
+      return {
+        ci,
+        species: obs.species,
+        count: obs.count,
+        shown: Math.min(6, obs.count),
+        heightM: measuredHeightM(obs),
         opacity: trustOpacity(g.record.trust),
-      });
-    }
+        co2Kg: obs.co2Kg,
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  // One spot per individual plant; remember which planting each spot belongs to.
+  const owners: number[] = [];
+  plantings.forEach((p, pi) => {
+    for (let k = 0; k < p.shown; k++) owners.push(pi);
   });
-  const spots = layoutSpots(trees.length);
+  const spots = layoutSpots(owners.length);
 
   return (
-    <group position={[x, 0, 0]}>
-      {/* soil pad */}
-      <mesh position={[0, 0, 0]} onClick={onSelect} receiveShadow>
-        <cylinderGeometry args={[1.7, 1.8, 0.16, 28]} />
-        <meshStandardMaterial color={selected ? "#8a6a3a" : "#7a5636"} roughness={1} />
+    <group position={[x, 0, z]}>
+      {/* turned soil bed */}
+      <mesh position={[0, 0.02, 0]} onClick={onSelect} receiveShadow>
+        <cylinderGeometry args={[2.4, 2.5, 0.16, 30]} />
+        <meshStandardMaterial map={soil} color={selected ? "#ffd9a8" : "#ffffff"} roughness={1} />
       </mesh>
-      {/* trees, spread across the pad */}
-      {trees.map((tr, i) => (
-        <group key={tr.key} position={[spots[i][0], 0.08, spots[i][1]]}>
-          <Tree species={tr.species} stage={tr.stage} opacity={tr.opacity} seed={index * 7 + i} />
+      {/* a low rim of grass where the bed meets the lawn */}
+      {mode === "ultra" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
+
+      {/* the plants */}
+      {owners.map((pi, i) => (
+        <group key={`${plantings[pi].ci}:${i}`} position={[spots[i][0], 0.08, spots[i][1]]}>
+          <Plant
+            species={plantings[pi].species}
+            heightM={plantings[pi].heightM}
+            opacity={plantings[pi].opacity}
+            seed={index * 7 + i}
+            mode={mode}
+          />
         </group>
       ))}
-      {/* floating label */}
-      <Billboard position={[0, 3.6, 0]}>
-        <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
-          <b>{plot.speciesCounts.map((sc) => `${sc.species}·${sc.count}`).join(" · ")}</b>
-          <span>≈{fmt(plot.totalCo2Kg)}kg</span>
-        </div>
-      </Billboard>
+
+      {/* one label per planting, floating just above that plant's own crown */}
+      {plantings.map((p, pi) => {
+        const mine = spots.filter((_, i) => owners[i] === pi);
+        if (!mine.length) return null;
+        const cx = mine.reduce((s, sp) => s + sp[0], 0) / mine.length;
+        const cz = mine.reduce((s, sp) => s + sp[1], 0) / mine.length;
+        return (
+          <Billboard key={p.ci} position={[cx, p.heightM + 1, cz]}>
+            <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
+              <b>{p.species}{p.count > 1 ? `·${p.count}` : ""}</b>
+              <span>≈{fmt(p.co2Kg)}kg</span>
+              {/* Provenance, at a glance and without a word of explanation: a
+                  green tick means somebody with a licence went and looked. */}
+              {tier !== "unanchored" && (
+                <span className="grove-tag-tier" style={{ color: TIER_COLOR[tier] }} title={tierTitle}>
+                  {TIER_ICON[tier]}
+                </span>
+              )}
+            </div>
+          </Billboard>
+        );
+      })}
     </group>
   );
 }
@@ -315,221 +777,110 @@ function layoutSpots(n: number): [number, number][] {
   const ringCount = n <= 6 ? n : 6;
   for (let i = 0; i < ringCount; i++) {
     const a = (i / ringCount) * Math.PI * 2;
-    spots.push([Math.cos(a) * 1.05, Math.sin(a) * 1.05]);
+    spots.push([Math.cos(a) * 1.4, Math.sin(a) * 1.4]);
   }
   for (let i = ringCount; i < n; i++) {
     const a = ((i - ringCount) / Math.max(1, n - ringCount)) * Math.PI * 2 + 0.4;
-    spots.push([Math.cos(a) * 0.5, Math.sin(a) * 0.5]);
+    spots.push([Math.cos(a) * 0.65, Math.sin(a) * 0.65]);
   }
   return spots;
 }
 
-/* ---------------- procedural trees, by plant type ---------------- */
-
-/** How a broadleaf species is shaped — canopy silhouette, colours, fruit. */
-interface Broadleaf {
-  form: "broadleaf";
-  canopy: "round" | "oval" | "umbrella";
-  leaf: string;
-  leaf2: string;
-  trunk: string;
-  trunkThick: number;
-  fruit?: { color: string; size: number; where: "canopy" | "trunk"; count: number };
-}
-type Style = Broadleaf | { form: "palm" } | { form: "banana" } | { form: "papaya" };
+/* ---------------- species → how the plant is grown ---------------- */
 
 /**
- * A plant is drawn from its *species*, so a jackfruit (big fruit on the trunk),
- * a mango (dense round crown), a tamarind (wide feathery umbrella), a coconut
- * (palm), a banana and a papaya all read differently. Extend freely — the Grove
+ * How each species is built. `shape` drives the branch skeleton, so a mango's
+ * dense round crown, a jackfruit's upright oval with fruit straight off the
+ * trunk, and a tamarind's wide feathery umbrella all grow differently rather
+ * than being the same blob in different colours. Extend freely — Grove's
  * species list is open.
  */
-const PLANT_STYLES: Record<string, Style> = {
-  coconut: { form: "palm" },
-  palm: { form: "palm" },
-  banana: { form: "banana" },
-  papaya: { form: "papaya" },
-  mango: { form: "broadleaf", canopy: "round", leaf: "#2f6d2e", leaf2: "#3f8a34", trunk: "#6b4a2b", trunkThick: 1.1, fruit: { color: "#e0a52f", size: 0.12, where: "canopy", count: 6 } },
-  jackfruit: { form: "broadleaf", canopy: "oval", leaf: "#356b30", leaf2: "#4a8a3a", trunk: "#6f5233", trunkThick: 1.25, fruit: { color: "#9caa3a", size: 0.3, where: "trunk", count: 3 } },
-  tamarind: { form: "broadleaf", canopy: "umbrella", leaf: "#6f9a4a", leaf2: "#86ab5c", trunk: "#5f4630", trunkThick: 1.3 },
-  teak: { form: "broadleaf", canopy: "oval", leaf: "#4f8a3c", leaf2: "#6aa24a", trunk: "#7a5a38", trunkThick: 1.15 },
-  longan: { form: "broadleaf", canopy: "round", leaf: "#3c7a3a", leaf2: "#4f9a48", trunk: "#6b4a2b", trunkThick: 1, fruit: { color: "#b98a52", size: 0.08, where: "canopy", count: 8 } },
-  guava: { form: "broadleaf", canopy: "round", leaf: "#5a9a4a", leaf2: "#7ab35c", trunk: "#8a7050", trunkThick: 0.8, fruit: { color: "#cdd08a", size: 0.1, where: "canopy", count: 4 } },
-};
-const DEFAULT_STYLE: Broadleaf = {
-  form: "broadleaf", canopy: "round", leaf: "#4c8a3f", leaf2: "#579a48", trunk: "#6b4a2b", trunkThick: 1,
+const SHAPES: Record<string, TreeShape> = {
+  round:    { spread: 0.85, levels: 3, children: 3, trunkFrac: 0.42, girth: 1.0, clump: 1.0 },
+  oval:     { spread: 0.55, levels: 3, children: 3, trunkFrac: 0.5,  girth: 1.15, clump: 0.9 },
+  umbrella: { spread: 1.15, levels: 3, children: 3, trunkFrac: 0.38, girth: 1.3, clump: 1.15 },
+  bushy:    { spread: 0.95, levels: 3, children: 4, trunkFrac: 0.3,  girth: 0.8, clump: 0.85 },
 };
 
-function styleFor(species: string): Style {
+const PLANT_LOOKS: Record<string, PlantLook> = {
+  coconut: { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" },
+  palm: { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" },
+  banana: { form: "banana", leaf: "#4c9a3a", leaf2: "#63b04a", bark: "#5f8a3a" },
+  papaya: { form: "papaya", leaf: "#3f8a3f", leaf2: "#55a24d", bark: "#8a9a5a" },
+  mango: {
+    form: "broadleaf", leaf: "#2f6d2e", leaf2: "#437f33", bark: "#6b4a2b", shape: SHAPES.round,
+    fruit: { color: "#d99a34", size: 0.11, where: "canopy", count: 7 },
+  },
+  jackfruit: {
+    form: "broadleaf", leaf: "#356b30", leaf2: "#4a8a3a", bark: "#6f5233", shape: SHAPES.oval,
+    fruit: { color: "#9caa3a", size: 0.26, where: "trunk", count: 3 },
+  },
+  tamarind: { form: "broadleaf", leaf: "#6f9a4a", leaf2: "#87ad5e", bark: "#5f4630", shape: SHAPES.umbrella },
+  teak: { form: "broadleaf", leaf: "#4f8a3c", leaf2: "#6aa24a", bark: "#7a5a38", shape: SHAPES.oval },
+  longan: {
+    form: "broadleaf", leaf: "#3c7a3a", leaf2: "#4f9a48", bark: "#6b4a2b", shape: SHAPES.round,
+    fruit: { color: "#b98a52", size: 0.07, where: "canopy", count: 9 },
+  },
+  guava: {
+    form: "broadleaf", leaf: "#5a9a4a", leaf2: "#7ab35c", bark: "#8a7050", shape: SHAPES.bushy,
+    fruit: { color: "#cdd08a", size: 0.09, where: "canopy", count: 5 },
+  },
+};
+
+const DEFAULT_LOOK: PlantLook = {
+  form: "broadleaf", leaf: "#4c8a3f", leaf2: "#5fa04d", bark: "#6b4a2b", shape: SHAPES.round,
+};
+
+function lookFor(species: string): PlantLook {
   const s = species.toLowerCase();
-  if (PLANT_STYLES[s]) return PLANT_STYLES[s];
-  for (const key of Object.keys(PLANT_STYLES)) if (s.includes(key)) return PLANT_STYLES[key];
-  return DEFAULT_STYLE;
+  if (PLANT_LOOKS[s]) return PLANT_LOOKS[s];
+  for (const key of Object.keys(PLANT_LOOKS)) if (s.includes(key)) return PLANT_LOOKS[key];
+  return DEFAULT_LOOK;
 }
 
-function Tree({ species, stage, opacity, seed }: { species: string; stage: number; opacity: number; seed: number }) {
-  const style = styleFor(species);
-  if (style.form === "palm") return <CoconutPalm stage={stage} opacity={opacity} />;
-  if (style.form === "banana") return <BananaPlant stage={stage} opacity={opacity} />;
-  if (style.form === "papaya") return <PapayaPlant stage={stage} opacity={opacity} />;
-  return <BroadleafTree stage={stage} opacity={opacity} seed={seed} style={style} />;
-}
+/**
+ * Grow the right plant for a species, **at its measured height in metres**. Under
+ * about waist height nothing has made a trunk yet, so every species starts as a
+ * seedling — which is what a freshly planted sapling really looks like.
+ */
+function Plant({
+  species, heightM, opacity, seed, mode,
+}: {
+  species: string; heightM: number; opacity: number; seed: number; mode: ViewMode;
+}) {
+  const look = lookFor(species);
+  const height = Math.max(0.35, heightM);
+  const wind = mode === "ultra" ? 1 : 0;
 
-function mat(color: string, opacity: number, extra: Record<string, unknown> = {}) {
-  return <meshStandardMaterial color={color} roughness={0.85} transparent opacity={opacity} {...extra} />;
-}
+  if (height < 1.1) return <Seedling look={look} height={height} seed={seed} opacity={opacity} />;
+  if (look.form === "palm") return <PalmPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
+  if (look.form === "banana") return <BananaPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
+  if (look.form === "papaya") return <PapayaPlant look={look} height={height} seed={seed} opacity={opacity} wind={wind} />;
 
-function BroadleafTree({ stage, opacity, seed, style }: { stage: number; opacity: number; seed: number; style: Broadleaf }) {
-  const h = 0.6 + stage * 2.6;
-  const canopy = 0.5 + stage * 1.0;
-  const wob = ((seed % 5) - 2) * 0.05;
-  // canopy silhouette per species
-  const scale: [number, number, number] =
-    style.canopy === "umbrella" ? [1.5, 0.55, 1.5] : style.canopy === "oval" ? [0.85, 1.3, 0.85] : [1, 1, 1];
-  const cy = h + canopy * (style.canopy === "umbrella" ? 0.15 : style.canopy === "oval" ? 0.5 : 0.3);
-
-  const fruitNodes = style.fruit ? fruitPositions(style.fruit, h, cy, canopy, scale, seed) : [];
-
+  // On a low-end device, drop a branch generation: ~3x fewer limbs, same look.
+  const shape = mode === "ultra" ? look.shape! : { ...look.shape!, levels: 2, children: 3 };
   return (
-    <group>
-      {/* trunk */}
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[(0.06 + stage * 0.1) * style.trunkThick, (0.09 + stage * 0.13) * style.trunkThick, h, 8]} />
-        {mat(style.trunk, opacity)}
-      </mesh>
-      {/* canopy */}
-      <mesh position={[wob, cy, 0]} scale={scale} castShadow>
-        <sphereGeometry args={[canopy, 12, 12]} />
-        {mat(style.leaf, opacity)}
-      </mesh>
-      <mesh position={[-wob * 0.8, cy + canopy * 0.35, wob]} scale={scale.map((v) => v * 0.7) as [number, number, number]} castShadow>
-        <sphereGeometry args={[canopy * 0.7, 12, 12]} />
-        {mat(style.leaf2, opacity)}
-      </mesh>
-      {/* fruit — clustered on the trunk (jackfruit) or scattered in the canopy */}
-      {fruitNodes.map((f, i) => (
-        <mesh key={i} position={f} scale={style.fruit!.where === "trunk" ? [1, 1.5, 1] : [1, 1, 1]} castShadow>
-          <sphereGeometry args={[style.fruit!.size, 8, 8]} />
-          {mat(style.fruit!.color, opacity)}
-        </mesh>
-      ))}
-    </group>
+    <BroadleafPlant
+      look={{ ...look, shape }} height={height} seed={seed} opacity={opacity} wind={wind}
+      detail={mode === "ultra" ? 1 : 0}
+    />
   );
 }
-
-/** Fruit placement: scattered in the canopy, or clustered on the trunk
- *  (jackfruit's cauliflory — its hallmark). */
-function fruitPositions(
-  fruit: NonNullable<Broadleaf["fruit"]>,
-  h: number, cy: number, canopy: number,
-  scale: [number, number, number], seed: number,
-): [number, number, number][] {
-  const out: [number, number, number][] = [];
-  for (let i = 0; i < fruit.count; i++) {
-    if (fruit.where === "trunk") {
-      const a = (i / fruit.count) * Math.PI * 2 + seed;
-      const ty = h * (0.25 + 0.5 * ((i % 2) / 1));
-      out.push([Math.cos(a) * 0.16, ty, Math.sin(a) * 0.16]);
-    } else {
-      const a = (i / fruit.count) * Math.PI * 2 + seed;
-      const rr = canopy * 0.85;
-      out.push([Math.cos(a) * rr * scale[0], cy + Math.sin(i * 1.7) * canopy * 0.4, Math.sin(a) * rr * scale[2]]);
-    }
-  }
-  return out;
-}
-
-function CoconutPalm({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 1 + stage * 3.4;
-  const fronds = 7;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.07, 0.12, h, 7]} />
-        {mat("#9a7b4a", opacity)}
-      </mesh>
-      <group position={[0, h, 0]}>
-        {Array.from({ length: fronds }).map((_, i) => {
-          const a = (i / fronds) * Math.PI * 2;
-          return (
-            <mesh key={i} position={[Math.cos(a) * 0.5, 0.1, Math.sin(a) * 0.5]} rotation={[0, -a, 0.9]} castShadow>
-              <boxGeometry args={[1.5 * (0.6 + stage * 0.5), 0.04, 0.28]} />
-              {mat("#3f8a44", opacity)}
-            </mesh>
-          );
-        })}
-        {/* coconuts */}
-        {[0, 1, 2].map((i) => (
-          <mesh key={i} position={[Math.cos(i * 2.1) * 0.14, -0.02, Math.sin(i * 2.1) * 0.14]}>
-            <sphereGeometry args={[0.1, 8, 8]} />
-            {mat("#7a5a2a", opacity)}
-          </mesh>
-        ))}
-      </group>
-    </group>
-  );
-}
-
-function PapayaPlant({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 0.8 + stage * 2.6;
-  const leaves = 7;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.06, 0.11, h, 7]} />
-        {mat("#8a9a5a", opacity)}
-      </mesh>
-      {/* fruit ring hugging the upper trunk */}
-      {Array.from({ length: 5 }).map((_, i) => {
-        const a = (i / 5) * Math.PI * 2;
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.13, h - 0.25, Math.sin(a) * 0.13]}>
-            <sphereGeometry args={[0.11, 8, 8]} />
-            {mat("#c9b23a", opacity)}
-          </mesh>
-        );
-      })}
-      {/* palmate leaf crown */}
-      <group position={[0, h, 0]}>
-        {Array.from({ length: leaves }).map((_, i) => {
-          const a = (i / leaves) * Math.PI * 2;
-          return (
-            <mesh key={i} position={[Math.cos(a) * 0.35, 0.05, Math.sin(a) * 0.35]} rotation={[0, -a, 0.6]} scale={[1, 0.12, 1]}>
-              <sphereGeometry args={[0.42 * (0.6 + stage * 0.5), 8, 8]} />
-              {mat("#3f8a3f", opacity)}
-            </mesh>
-          );
-        })}
-      </group>
-    </group>
-  );
-}
-
-function BananaPlant({ stage, opacity }: { stage: number; opacity: number }) {
-  const h = 0.5 + stage * 1.6;
-  return (
-    <group>
-      <mesh position={[0, h / 2, 0]} castShadow>
-        <cylinderGeometry args={[0.1, 0.14, h, 7]} />
-        {mat("#5f8a3a", opacity)}
-      </mesh>
-      {Array.from({ length: 5 }).map((_, i) => {
-        const a = (i / 5) * Math.PI * 2;
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.4, h, Math.sin(a) * 0.4]} rotation={[0, -a, 0.5]}>
-            <boxGeometry args={[1.1, 0.02, 0.4]} />
-            {mat("#4c9a3a", opacity)}
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
 /* A lightweight DOM billboard in 3D space via drei's Html. */
 function Billboard({ position, children }: { position: [number, number, number]; children: React.ReactNode }) {
   return (
-    <Html position={position} center distanceFactor={10} occlude={false} style={{ pointerEvents: "auto" }}>
+    // zIndexRange is capped deliberately. drei's default tops out around
+    // 16,777,271, which puts a floating plant label ABOVE the plot detail card
+    // and every other piece of page chrome — the label then prints straight
+    // through an open modal. These belong in the scene, under the interface.
+    <Html
+      position={position}
+      center
+      distanceFactor={26}
+      occlude={false}
+      zIndexRange={[20, 0]}
+      style={{ pointerEvents: "auto" }}
+    >
       {children}
     </Html>
   );

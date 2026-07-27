@@ -33,6 +33,7 @@ Cambodia online for the world, with your name on it.
 | 🏡 Build out the Khmer Village | [Grow the Khmer Village](#grow-the-khmer-village) |
 | 👗 Add a garment or verify colours | [Grow the Khmer Traditional Fashion](#grow-the-khmer-traditional-fashion) |
 | 🪷 Add a yant or a vetted master | [Grow Sak Yant](#grow-sak-yant) |
+| 🏛️ Add or correct a building | [Grow the Buildings](#grow-the-buildings) |
 | 🗺️ Map provinces & districts | [Grow the province maps](#grow-the-province-maps) |
 | 🌏 Translate | [Translate & localise](#4-translate--localise) |
 | 💻 Write code | [Code & performance](#6-code--performance) |
@@ -393,6 +394,41 @@ Handle it with care: Sak Yant is sacred, not decoration.
 Sources for the descriptions are open-web references (Wikipedia "Yantra
 tattooing", the Federation of Khmer Sakyantra, general Sak Yant guides); treat
 them as a starting point to be verified by masters. See `src/sakyant.ts`.
+
+## Grow the Buildings
+
+**🏛️ Buildings** is a walkable site of Cambodian buildings — the first set being
+the National University of Management's international campus — the entrance monument, the
+Great Hall under its deep red roof, the teaching blocks, the Khmer shrine, the
+parking canopies and the sports field. It is built procedurally from primitives
+and canvas-drawn textures (`src/components/CampusBuildings.tsx`,
+`src/lib/campusTexture.ts`, assembled in `NumCampusView.tsx`), so nothing is
+downloaded. You can orbit it or walk it in first person, **tap any building to open its own
+page**, and it follows the three view modes (Normal / Ultra / VR). Each
+building's text lives in `src/buildings.ts`.
+
+- **📸 Ground truth.** The massing is modelled from photographs. If you study or
+  work at NUM, check it against the real campus: building positions, floor
+  counts, which way the Hall faces, what's actually where. Corrections are the
+  most valuable contribution here.
+- **🏛️ More of the campus.** Add the buildings still missing (library, canteen,
+  dormitories, the buildings under construction), interiors for the Great Hall
+  and a classroom, and signage on each block.
+- **🌳 Real planting & detail.** More accurate tree species and positions,
+  benches, bicycle racks, flagpoles, the covered walkways between blocks.
+- **🚶 Life.** Students walking, a bell, morning flag ceremony — and a guided
+  tour that walks a visitor between landmarks.
+- **♿ Performance.** Keep Normal mode within the $150-phone budget: instance
+  repeated props, and merge geometry rather than adding draw calls.
+
+Scale is metres. The layout follows the real walking route — in at the entrance
+looking north across the lawn to the teaching block (with the part-built block
+beside it), right and east to the car park, the Great Hall standing next to it,
+then back to the centre. Viewpoints live in `src/buildings.ts`.
+
+**Adding a building elsewhere** is the same job: add an entry to `BUILDINGS`,
+give it a `site`, and render it in that site's scene. The registry is not
+NUM-only.
 
 ## Grow the Virtual Meditation
 

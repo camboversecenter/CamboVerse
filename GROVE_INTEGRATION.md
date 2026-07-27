@@ -52,6 +52,38 @@ if the spec revises; keep the algorithm in lock-step with `SPEC.md`.
 size/age growth stage · `prev` chain → a growth-over-time timeline you can scrub
 or play.
 
+## The scene
+
+The garden renders **to scale**: a plant is drawn at its *measured* height
+(`measuredHeightM` — the recorded `height_m`, else the same H ≈ 3·√D fallback the
+Grove estimator uses), so a 12 m coconut stands 12 m and a newly planted sapling
+is a seedling. Plots are laid out as an orchard grid.
+
+Plants are grown procedurally per species in
+[`src/components/GrovePlants.tsx`](./src/components/GrovePlants.tsx): a seeded,
+recursively branched skeleton merged into one mesh, a canopy of instanced leaf
+clumps, and folded-ribbon fronds for palms/bananas/papayas — so a jackfruit
+(upright, fruit straight off the trunk), a tamarind (wide umbrella) and a coconut
+palm all read differently. Ground, soil and bark textures are drawn on a canvas
+at runtime ([`src/lib/groundTexture.ts`](./src/lib/groundTexture.ts)). **Nothing
+is downloaded** — no model files, no HDRI, no CDN — which keeps the whole thing
+inside the self-contained rule.
+
+It follows CamboVerse's **three view modes** (AGENTS.md → "The three view
+modes"), auto-detected and switchable in the header (**✨ Ultra** / **🍃 Normal**):
+
+| | Normal | Ultra | VR |
+|---|---|---|---|
+| Branch generations | 2 | 3 | 3 |
+| Leaf clumps | faceted | rounded | rounded |
+| Shadows · grass tufts · wind | no | yes | yes |
+| Antialias · pixel ratio | off · up to 1.5× | on · up to 2× | on |
+
+VR always presents the **Ultra** scene — entering a session raises the view mode
+for its duration. A whole plant costs about **3–4 draw calls** (branches,
+instanced canopy, instanced fruit, merged fronds), so a full garden stays within
+a low-end phone's budget.
+
 ## Honesty & privacy (BRIDGE.md §4–5)
 
 - **`co2Kg` is rendered as "≈ N kg CO₂ estimated"** — a conservative estimate
@@ -64,34 +96,117 @@ or play.
   per-observation `gps`; `device` is shown as a truncated **pseudonym**, never a
   name.
 
+## Reading a node: why the feed alone can't be verified
+
+The public `/feed` is a **discovery** surface, not a verifiable one. The node
+deliberately **coarsens each item's GPS to ~1 km** for privacy (BRIDGE.md §2) —
+which changes the observation's bytes, so a feed item no longer hashes to its
+signed `id`. Verifying feed items as-is therefore rejects *every* record.
+
+The contract's answer is `/observation/:id`, which returns the **exact signed
+bytes**. So `GroveClient.feed()`:
+
+1. `GET /feed?limit=…` — discovery (ids + the coarsened coordinates).
+2. For each item: verify it as-is (free — some nodes don't alter it); otherwise
+   `GET /observation/:id` and verify **those** bytes.
+3. Render only what verified, and place it on the map using the **feed's**
+   coarsened coordinate (BRIDGE.md §5), never the precise `gps` in the record.
+
+Two practical notes: the client asks for a modest page (`limit` ≤ 50 — a larger
+page can be rejected by a node), and falls back to the node's own default if an
+explicit `limit` is refused.
+
 ## Pointing at a different node
 
 The node base URL is configurable — federation is first-class.
 
 - **In the UI:** the Grove Garden screen has a node URL field (defaults to
-  `https://iany.app/api/grove`, the reference node — not deployed yet). Edit it
-  and press **Read node**.
+  `https://iany.app/api/grove`, the reference node). Edit it and press
+  **Read node**.
 - **In code:**
 
   ```ts
   import { GroveClient } from "./grove/client";
 
   const client = new GroveClient("https://my-node.example/api/grove");
-  const page = await client.feed({ limit: 100 }); // each item verified locally
+  const page = await client.feed();               // each record verified locally
   const stop = client.pollFeed((records) => addToGarden(records), { intervalMs: 30000 });
   ```
 
 Because records are **content-addressed and self-verifying**, any node works and
-records can be federated between nodes unchanged. Until a node is live, develop
-against the offline bundle (the default demo data) or import a phone export.
+records can be federated between nodes unchanged. With no node reachable, the
+garden falls back to the offline bundle, and a phone export can always be
+imported directly.
+
+## The chain's half — provenance, not plants
+
+A device signature proves **who signed a record**, and stops there. Two questions
+a visitor standing in a virtual grove actually has are outside what it can
+answer: *when did this record exist* (`observedAt` is the phone's own clock, set
+by the claimant) and *who says it is true* (Grove attestations come from device
+keys anyone can generate by the thousand).
+
+CamboVerse answers both by reading [CSB](https://github.com/sengtha/CSB)
+alongside the signed records — see [CSB `docs/grove.md`](https://github.com/sengtha/CSB/blob/main/docs/grove.md).
+
+| File | Role |
+|---|---|
+| [`src/grove/keccak.ts`](./src/grove/keccak.ts) | Keccak-256, vendored. CSB files a plot under `keccak256(plot)`, and Web Crypto has no Keccak — `SHA3-256` is the NIST variant, one padding byte different, and substituting it fails **silently** as "never anchored". |
+| [`src/grove/csb.ts`](./src/grove/csb.ts) | The read client and the provenance tiers. |
+| [`src/grove/keccak.test.ts`](./src/grove/keccak.test.ts) · [`csb.test.ts`](./src/grove/csb.test.ts) | Reference vectors either side of the 136-byte rate boundary; the client driven against a stub endpoint. |
+
+**Strictly additive, and it must stay that way.** The garden is drawn from
+records this device verified itself; every CSB lookup can fail without changing a
+single plant. No CSB endpoint configured, endpoint unreachable, plot never
+anchored — all three render exactly the garden that rendered before, claiming
+less. Nothing from the chain can make a plant appear.
+
+Four provenance tiers, shown as a mark on the floating plot label and in full in
+the detail card:
+
+| | Meaning |
+|---|---|
+| `○` unanchored | Signed on a device. The whole of what a signature promises. |
+| `⛓` anchored | On chain with a block timestamp, but nobody licensed has confirmed it. |
+| `✓` verified | A **licensed** field verifier — commune agriculture officer, agronomist, NGO — put a licence they can lose behind it. |
+| `!` disputed | A licensed verifier says it is wrong. A dispute outranks a confirmation rather than being outvoted. |
+
+The card also shows the grove's title (one share per verified living tree) and
+any **survival pledge**: riel that a sponsor released only when a fresh, licensed
+verified record showed the trees were still standing, and riel still escrowed
+against future checks. That is the answer to "did sponsoring this reach anyone",
+and it is a number, not a promise.
+
+**Configuring it at deploy time.** The endpoint is a build-time variable and is
+**empty by default**, which means the chain layer is simply off and the garden
+renders exactly as it did before any of this existed:
+
+```bash
+VITE_CSB_BASE=https://<csb-app-host> npm run deploy
+```
+
+Any CSB app server exposes the same public `/grove`; a visitor can also type one
+into the Grove Garden screen. Federation is first-class here for the same reason
+it is for Grove nodes.
+
+**Privacy is preserved end to end.** Only `keccak256(plot)` leaves the browser —
+the plot's name does not, and the chain never held it. Verifiers appear by
+licence label ("Commune agriculture officer"), never by name.
+
+**Not a carbon credit, on either side.** CSB records **trees** — a count somebody
+can walk out and falsify. `co2Kg` remains what it always was here: a rendered
+estimate, never an asset.
 
 ## Run the test
 
 ```
-npm test        # vitest — verifies all 3 fixture observations + the attestation
+npm test        # vitest — 35 tests
 ```
 
 The test loads `src/grove/fixtures/grove-bundle.json` and `observation.json`,
 confirms every record verifies, and asserts that a **tampered** record (inflated
 `co2Kg`) and a **forged** signature are both rejected — i.e. CamboVerse's trust
-comes from the math, not from iany.app.
+comes from the math, not from iany.app. It also drives `GroveClient` against a
+stub node that behaves like the real one (coarsened feed, exact bytes by id) to
+prove node records are verified through `/observation/:id` and not silently
+dropped.
