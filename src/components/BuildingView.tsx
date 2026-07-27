@@ -91,6 +91,10 @@ export function BuildingView({
   const [vrSupported, setVrSupported] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [spin, setSpin] = useState(true);
+  // The info sheet is most of a phone screen, and the building is the point of
+  // the page. It opens by default — you arrive wanting to know what this is —
+  // but it has to get out of the way in one tap.
+  const [info, setInfo] = useState(true);
 
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
@@ -114,7 +118,12 @@ export function BuildingView({
     return Math.max(forSpan, forHeight, 26);
   }, [building.spanM, building.heightM]);
   const eye = Math.max(4, building.heightM * 0.5);
-  const aim = Math.max(2.5, building.heightM * 0.7);
+  // The orbit target lands at the centre of the viewport, so everything ABOVE it
+  // in world space draws above centre. Aiming high therefore pushes the building
+  // DOWN the screen, straight behind the info sheet — the opposite of what the
+  // old comment here claimed. Aim low while the sheet is open so the building
+  // sits in the clear band above it, and re-centre when the sheet is dismissed.
+  const aim = Math.max(2.5, building.heightM * (info ? 0.34 : 0.5));
 
   return (
     <div className="building">
@@ -188,10 +197,24 @@ export function BuildingView({
         {spin ? "⏸ Stop turning" : "▶ Turn"}
       </button>
 
-      <div className="bld-panel">
+      {!info && (
+        <button className="bld-show" onClick={() => setInfo(true)}>
+          ℹ️ About this building
+        </button>
+      )}
+
+      <div className={`bld-panel${info ? "" : " bld-panel--hidden"}`} aria-hidden={!info}>
         <div className="bld-head">
           <b>{building.name}</b>
           <span className="khmer">{building.khmer}</span>
+          <button
+            className="bld-hide"
+            onClick={() => setInfo(false)}
+            aria-label="Hide the description and see the building"
+            title="Hide"
+          >
+            ✕
+          </button>
         </div>
         <div className="bld-sub">
           {building.english}{building.site ? ` · ${building.site}` : ""}
