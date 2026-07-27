@@ -12,13 +12,15 @@ import {
 import { PalmPlant, BroadleafPlant, type PlantLook, type TreeShape } from "./GrovePlants";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
-import { BUILDINGS, NUM_SITE } from "../buildings";
+import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
 
 /**
- * 🏛️ **Buildings** — a walkable site of Cambodian buildings. The first set is
- * the National University of Management's international campus: the entrance
- * monument, the great hall under its deep red roof, the teaching blocks, the
- * Khmer shrine, the parking canopies and the sports field.
+ * A **walkable site** — a group of buildings you can move between. Opened from
+ * the 🏛 Buildings directory (`BuildingsHome`), never straight off the map.
+ *
+ * The first site is the National University of Management's international
+ * campus: the entrance monument, the great hall under its deep red roof, the
+ * teaching block, the Khmer shrine, the parking canopies and the sports field.
  *
  * Overview it from above or walk it in first person; **tap a building** to open
  * its own page. Built procedurally from primitives and canvas-drawn textures —
@@ -38,8 +40,16 @@ function detectViewMode(): ViewMode {
 
 /* --------------------------------------------------------------- layout --- */
 
-/** The buildings standing on this site, in the order they're listed. */
-const PLACES = BUILDINGS.filter((b) => b.site === NUM_SITE);
+/**
+ * The buildings standing on this site, in the order they're listed (which is
+ * the order you meet them walking it).
+ *
+ * The ground plan below is the NUM campus specifically — the roads, lawns and
+ * tree rows are its layout, not a generic one — so this reads NUM_SITE rather
+ * than the `site` prop. A second walkable site needs its own scene component;
+ * what it shares with this one is the directory, not the geometry.
+ */
+const SITE_BUILDINGS = buildingsOfSite(NUM_SITE);
 
 /** Sugar palms lining the entrance avenue, plus shade trees along the roads. */
 function siteTrees() {
@@ -97,9 +107,11 @@ const SHADE_LOOK: PlantLook = {
 /* ----------------------------------------------------------------- view --- */
 
 export function BuildingsView({
-  onBackToMap, onOpenBuilding,
+  site, onBack, onOpenBuilding,
 }: {
-  onBackToMap: () => void;
+  site: Site;
+  /** Back to the Buildings directory, which is where the map exit lives. */
+  onBack: () => void;
   onOpenBuilding: (id: string) => void;
 }) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
@@ -108,17 +120,17 @@ export function BuildingsView({
   const [nav, setNav] = useState<Nav>("orbit");
   const [place, setPlace] = useState<string | null>(null);
   const input = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
-  const [start, setStart] = useState<[number, number, number]>(PLACES[0].view.at);
-  const [startYaw, setStartYaw] = useState(PLACES[0].view.yaw);
+  const [start, setStart] = useState<[number, number, number]>(SITE_BUILDINGS[0].view.at);
+  const [startYaw, setStartYaw] = useState(SITE_BUILDINGS[0].view.yaw);
 
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
     xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
   }, []);
 
-  const selected = PLACES.find((p) => p.id === place) ?? null;
+  const selected = SITE_BUILDINGS.find((p) => p.id === place) ?? null;
   const goTo = (id: string) => {
-    const p = PLACES.find((x) => x.id === id);
+    const p = SITE_BUILDINGS.find((x) => x.id === id);
     if (!p) return;
     setPlace(id);
     setStart(p.view.at);
@@ -158,8 +170,8 @@ export function BuildingsView({
       </Canvas>
 
       <div className="cls-top">
-        <button className="backbtn" onClick={onBackToMap}>← Map</button>
-        <span className="cls-title">🏛️ Buildings · {NUM_SITE}</span>
+        <button className="backbtn" onClick={onBack}>← Buildings</button>
+        <span className="cls-title">🏛 {site.name}</span>
         <button
           className="grove-quality"
           onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
@@ -184,7 +196,7 @@ export function BuildingsView({
 
       {/* jump to a landmark */}
       <div className="campus-places">
-        {PLACES.map((p) => (
+        {SITE_BUILDINGS.map((p) => (
           <button
             key={p.id}
             className={place === p.id ? "campus-place on" : "campus-place"}

@@ -1,12 +1,32 @@
 /**
  * The buildings of CamboVerse.
  *
- * A **building** is a place a visitor can walk up to in a scene and then open a
- * page of its own — its architecture, what happens inside, and why it looks the
- * way it does. The first set is the National University of Management's
- * international campus; the registry is deliberately open so other institutions,
- * schools and public buildings can be added beside them.
+ * A **building** is a place a visitor can walk up to and then open a page of
+ * its own — its architecture, what happens inside, and why it looks the way it
+ * does. A **site** is a group of buildings you can walk between: a campus, a
+ * commune centre, a market square.
+ *
+ * Both are listed on the 🏛 Buildings page (`BuildingsHome`), which is the only
+ * way in. The map carries one button, not one per building — the front page is
+ * a map of Cambodia, not a directory.
+ *
+ * A building may belong to a site or stand alone. A standalone building has no
+ * walkable scene; it just gets its page. Either way, adding one is an entry
+ * here — see `docs/BUILDINGS.md`.
  */
+
+export interface Site {
+  id: string;
+  /** Also the key `Building.site` matches on. */
+  name: string;
+  khmer: string;
+  /** One line under the title on the Buildings page. */
+  english: string;
+  /** A sentence or two on the directory card. */
+  blurb: string;
+  /** Said in the scene, because a reconstruction should admit that it is one. */
+  provenance: string;
+}
 
 export interface Building {
   id: string;
@@ -14,13 +34,20 @@ export interface Building {
   khmer: string;
   /** One line under the title. */
   english: string;
-  /** Which group of buildings this belongs to. */
-  site: string;
+  /**
+   * Which site this belongs to, matched against `Site.name`. `null` means it
+   * stands alone: it appears on the Buildings page and has its own page, but
+   * there is no walkable scene around it.
+   */
+  site: string | null;
   /** A couple of paragraphs for the building's page. */
   about: string[];
   /** Short labelled facts shown as a list. */
   facts: { label: string; value: string }[];
-  /** Where a visitor stands to see it in the site scene, and which way they face. */
+  /**
+   * Where a visitor stands to see it in the site scene, and which way they
+   * face. Ignored for a standalone building.
+   */
   view: { at: [number, number, number]; yaw: number };
   /**
    * Roughly how tall the building's *mass* is, so its page can frame it — the
@@ -30,9 +57,40 @@ export interface Building {
   heightM: number;
   /** Its widest plan dimension — framing needs the footprint, not just height. */
   spanM: number;
+  /**
+   * A glTF under `public/models/` (without the extension) to render instead of
+   * a hand-written component — the output of
+   * `scripts/generate-building.mjs`, which is the no-3D-skills route in
+   * `docs/BUILDINGS.md`. Landmarks are authored as components in
+   * `CampusBuildings.tsx` instead; this is for ordinary blocks.
+   */
+  model?: string;
 }
 
 export const NUM_SITE = "NUM International Campus";
+
+export const SITES: Site[] = [
+  {
+    id: "num",
+    name: NUM_SITE,
+    khmer: "សាកលវិទ្យាល័យជាតិគ្រប់គ្រង · បរិវេណអន្តរជាតិ",
+    english: "The National University of Management's new campus",
+    blurb:
+      "Walk in past the entrance monument, across the lawn to the teaching block, east to the " +
+      "car park and the Great Hall, then back to the shrine at the centre. Seven buildings.",
+    provenance:
+      "Rebuilt from the CamboVerse Center's own photographs of the campus. The massing and the " +
+      "walking route follow the photographs; distances between buildings are plausible rather " +
+      "than surveyed.",
+  },
+];
+
+export const siteByName = (name: string) => SITES.find((s) => s.name === name) ?? null;
+export const siteById = (id: string) => SITES.find((s) => s.id === id) ?? null;
+/** The buildings standing on a site, in registry order (= walking order). */
+export const buildingsOfSite = (name: string) => BUILDINGS.filter((b) => b.site === name);
+/** Buildings that belong to no site — a page, but no walkable scene. */
+export const standaloneBuildings = () => BUILDINGS.filter((b) => b.site === null);
 
 /**
  * Listed in the order you actually meet them walking the campus: in at the

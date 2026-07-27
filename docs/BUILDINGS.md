@@ -225,49 +225,54 @@ three times what you think.
 
 ## 5. Put it somewhere
 
-A building on its own is a model. A **place** is buildings positioned relative to
-each other on shared ground — the thing the map can teleport into and a visitor
-can stand inside of.
+Everything lives behind the single **🏛 Buildings** button on the map. That page
+([`BuildingsHome`](../src/components/BuildingsHome.tsx)) lists walkable **sites**
+and individual **buildings**; the map itself carries no per-building buttons.
 
-Add an entry to [`src/places.ts`](../src/places.ts):
+Add an entry to [`src/buildings.ts`](../src/buildings.ts):
 
 ```ts
 {
-  id: "health-centre-yard",
-  name: "Health centre",              // shown on the map button
-  nameKm: "មណ្ឌលសុខភាព",
-  blurb: "…",
-  camera: { position: [-30, 6, 50], target: [0, 6, 4] },
-  ground: { sizeM: 600 },
-  paving: [
-    { x: 0, z: 24, w: 90, d: 40 },                        // forecourt (concrete)
-    { x: 0, z: 52, w: 90, d: 12, surface: "asphalt" },    // road
+  id: "district-health-centre",
+  name: "District Health Centre",
+  khmer: "មណ្ឌលសុខភាពស្រុក",
+  english: "A rural referral clinic",
+  site: null,                          // null = stands alone, no walkable scene
+  about: [
+    "Two sentences on what it is and what happens inside.",
+    "A sentence on why it looks the way it does — the roof, the arcade, the orientation.",
   ],
-  lawns: [{ x: 0, z: 10, w: 40, d: 10, kerb: true }],
-  buildings: [{ model: "district-health-centre-bare", x: 0, z: 0 }],
-  treeRows: [{ from: [-24, 16], to: [24, 16], count: 10, heightM: 4.4, jitterM: 0.5, seed: 3 }],
-  palms: [{ x: -30, z: 6, scale: 1.1, spin: 0.4 }],
-  provenance: "Generated from a single photograph of the main block. …",
+  facts: [
+    { label: "Storeys", value: "Two" },
+    { label: "Roof", value: "Red hipped tile, deep eaves" },
+  ],
+  view: { at: [0, 1.6, 60], yaw: 0 },  // ignored when site is null
+  heightM: 11,                         // the roof ridge, NOT a finial tip
+  spanM: 34,                           // widest plan dimension
+  model: "district-health-centre",     // the .glb you just generated
 }
 ```
 
-The map button appears by itself — `MapView` is driven off `PLACES`, so you do
-not touch it.
+It appears on the Buildings page by itself. Nothing else needs editing.
 
-Notes on the fields that are easy to get wrong:
+Fields that are easy to get wrong:
 
-- **`paving` sizes are metres, and so are the textures.** Slab joints come out at
-  3 m whether the surface is a 150 m forecourt or a 20 m footpath, because
-  `metresRepeat()` derives the repeat from the real size. Do not hand-tune it.
-- **`surface: "asphalt"`** for roads, default concrete for everything else.
-- **`ground` has no colour** — the texture carries it.
-- **`provenance`** is shown in-scene. Same rule as `confidence`: say that the
-  place is plausible rather than surveyed, and that no real institution is
-  represented.
-- **Palms are placed here, not baked.** The runtime palm
-  (`src/components/GrovePlants.tsx`) has proper folded-ribbon fronds; the baked
-  vocabulary only has cones and three attempts at a baked palm produced a spiky
-  star. Use `palms: []` in the place.
+- **`model`** is the file under `public/models/` without `.glb`. Leave it out
+  only if you are hand-authoring a component in
+  [`CampusBuildings.tsx`](../src/components/CampusBuildings.tsx) instead — that
+  is the route for landmarks, and it is more work.
+- **`heightM` is the building's *mass*, not its tallest point.** The page aims
+  its camera at 0.7 × this, so counting a spire points it at empty sky.
+- **`spanM` decides the camera distance**, and on a portrait phone the
+  horizontal field of view is only ~29°. Get this wrong and the building hangs
+  off the edge of the frame on exactly the devices we care about.
+- **`site`** is `null` unless the building belongs to a group you can walk
+  between. A new walkable site needs a `Site` entry *and* a scene component; one
+  building on its own does not.
+- **Say what you assumed.** `about` and `facts` are read as fact by visitors.
+  Same rule as `confidence` in the spec: the massing is an informed
+  approximation, not survey data, and no real institution is represented unless
+  it has agreed to be.
 
 ---
 
@@ -276,7 +281,7 @@ Notes on the fields that are easy to get wrong:
 ```bash
 npm run typecheck     # must pass
 npm run build         # must succeed
-npm run dev           # then open the place from the map
+npm run dev           # then open it from 🏛 Buildings
 ```
 
 **Look at it in both view modes.** Normal is the ~$150-Android baseline and is
@@ -327,8 +332,13 @@ You are the contributor, not the model. The spec goes in under your name.
 
 - [`scripts/generate-building.mjs`](../scripts/generate-building.mjs) — the
   generator, and a long comment on why it works this way
-- [`src/places.ts`](../src/places.ts) — the places
-- [`src/components/PlaceView.tsx`](../src/components/PlaceView.tsx) — the scene
+- [`src/buildings.ts`](../src/buildings.ts) — the registry of sites and buildings
+- [`src/components/BuildingsHome.tsx`](../src/components/BuildingsHome.tsx) — the
+  🏛 Buildings directory, the only way in
+- [`src/components/BuildingView.tsx`](../src/components/BuildingView.tsx) — one
+  building's page, which renders your `.glb` or a hand-written component
+- [`src/components/BuildingsView.tsx`](../src/components/BuildingsView.tsx) — a
+  walkable site, if your building belongs to one
 - [`src/lib/groundTexture.ts`](../src/lib/groundTexture.ts) — runtime canvas
   ground, no files, nothing downloaded
 - [`AGENTS.md`](../AGENTS.md) — the three view modes and the hard constraints
