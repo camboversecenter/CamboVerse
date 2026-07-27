@@ -489,6 +489,50 @@ ARTIFACTS.push({
 });
 
 ARTIFACTS.push({
+  id: "angrut",
+  khmer: "អង្រុត",
+  name: "Angrut",
+  english: "Bamboo fish trap",
+  category: "Traditional tool",
+  blurb: "A woven bamboo plunge basket used by farmers to catch fish in shallow flooded fields.",
+  story: "The អង្រុត (angrut) is a classic plunge basket used for catching fish in shallow, muddy waters. Hand-woven from thinly sliced bamboo and rattan, it has a wide, open bottom and a narrow top opening. A fisher wades through knee-deep water and plunges the angrut down into the mud when they spot movement. If a fish is trapped inside the cone, they reach down through the top hole to grab it. It is an essential, sustainable tool of rural Cambodian life, perfectly adapted to the annual flooding of the Tonle Sap and the rice paddies.",
+  utilities: [
+    "Used to catch fish in shallow, muddy waters like flooded rice fields",
+    "Plunged over a fish to trap it against the mud",
+    "Hand-woven from flexible, durable bamboo strips",
+    "Lightweight and perfectly suited for the seasonal floods of Cambodia",
+  ],
+  origin: "Woven by farmers and fishermen in rural villages across Cambodia.",
+  model: "/models/angrut.glb",
+  pois: [
+    {
+      id: "top-opening",
+      title: "The top opening",
+      khmer: "មាត់អង្រុត",
+      info: "A reinforced circular opening at the top. Once a fish is trapped under the basket, the fisher reaches an arm down through this hole to secure the catch.",
+      target: [0, 1.2, 0],
+      camera: [1.5, 2.0, 1.5],
+    },
+    {
+      id: "bamboo-weave",
+      title: "The bamboo weave",
+      khmer: "តួអង្រុត",
+      info: "Thin bamboo strips are woven closely together. They are strong enough to withstand being repeatedly plunged into the mud, yet spaced just enough to let water flow through.",
+      target: [0, 0.6, 0.5],
+      camera: [1.5, 1.0, 2.0],
+    },
+    {
+      id: "wide-base",
+      title: "The wide base",
+      khmer: "បាតអង្រុត",
+      info: "The wide, open bottom covers a large area, increasing the chances of trapping a fish when plunged blindly into murky water.",
+      target: [0, 0, 0],
+      camera: [2.0, 0.5, 2.0],
+    },
+  ],
+});
+
+ARTIFACTS.push({
   id: "tbal",
   khmer: "ត្បាល់ និង អង្រែ",
   name: "Tbal & Angre",
@@ -600,6 +644,50 @@ ARTIFACTS.push({
 });
 
 ARTIFACTS.push({
+  id: "tbaal",
+  khmer: "ត្បាល់ក្ដឿង",
+  name: "Tbaal Kdouang",
+  english: "Foot-pedal rice pounder",
+  category: "Traditional tool",
+  blurb: "A large wooden foot-operated mortar and pestle used to husk rice in rural villages.",
+  story: "The ត្បាល់ក្ដឿង (Tbaal Kdouang) is a traditional foot-operated rice pounder. Before the arrival of modern milling machines, husking harvested rice was a laborious daily task. The Tbaal Kdouang uses a simple but ingenious lever system: a person steps on one end of a long wooden beam to lift a heavy pestle, then steps off to let it drop with immense force into a wooden mortar filled with unhusked rice. The rhythmic \"thud, thud\" of the Tbaal was once the quintessential heartbeat of a Cambodian village in the early morning.",
+  utilities: [
+    "Used to pound and husk harvested rice grains",
+    "Operated by foot using a lever system, saving upper-body energy",
+    "Constructed from heavy, durable local hardwoods",
+    "Often operated collectively, serving as a social gathering point in villages",
+  ],
+  origin: "A staple of traditional rural Khmer agriculture, built by village carpenters.",
+  model: "/models/tbaal.glb",
+  pois: [
+    {
+      id: "mortar",
+      title: "The mortar",
+      khmer: "ត្បាល់",
+      info: "A large, hollowed-out stump of hardwood. Unhusked rice is poured into the bowl to be pounded until the husks break away from the grain.",
+      target: [1.0, 0.5, 0],
+      camera: [2.5, 1.0, 1.5],
+    },
+    {
+      id: "pestle",
+      title: "The pestle",
+      khmer: "អង្រែ",
+      info: "The heavy wooden pestle drops repeatedly into the mortar. Its weight and gravity do the hard work of separating the rice husks.",
+      target: [1.0, 1.2, 0],
+      camera: [2.5, 1.5, 1.5],
+    },
+    {
+      id: "lever",
+      title: "The foot lever",
+      khmer: "ក្ដឿង",
+      info: "A long wooden beam acts as a lever. By stepping on the far end, the operator easily lifts the heavy pestle, relying on weight rather than muscle.",
+      target: [-1.0, 0.5, 0],
+      camera: [-2.0, 1.5, 2.0],
+    },
+  ],
+});
+
+ARTIFACTS.push({
   id: "chapei",
   khmer: "ចាប៉ីដងវែង",
   name: "Chapei Dong Veng",
@@ -660,6 +748,94 @@ ARTIFACTS.push({
       camera: [2.6, 1.4, 3.2],
     },
   ],
+});
+
+ARTIFACTS.push({
+  id: "kancheu",
+  khmer: "កញ្ជើ",
+  name: "Kancheu",
+  english: "Woven bamboo basket",
+  category: "Traditional tool",
+  blurb: "A versatile, wide-mouthed woven basket central to everyday rural Khmer life.",
+  story:
+    "The កញ្ជើ (kancheu) is one of the most ubiquitous tools in a Cambodian village — a shallow, round, woven bamboo or rattan basket with a sturdy reinforced rim. It is entirely made by hand, with the bamboo strips split, smoothed, and intricately woven to create a surprisingly durable vessel. It is used every day: for carrying harvested rice, washing vegetables at the well, measuring out grain, or carrying goods to the market on the hip or head. It represents the quiet, foundational craftsmanship of Khmer rural life.",
+  utilities: [
+    "Used to measure and carry harvested rice or grain",
+    "Essential for washing vegetables and preparing food",
+    "Carried to the market to hold produce",
+  ],
+  origin: "Woven by hand in villages across Cambodia using locally harvested bamboo or rattan.",
+  model: "/models/kancheu.glb",
+  pois: [
+    {
+      id: "woven-body",
+      title: "Woven Bamboo Body",
+      khmer: "តួអង្គកញ្ជើ",
+      info: "The body is woven tightly from split bamboo or rattan strips. A master weaver can make it strong enough to carry heavy loads while keeping it light enough to handle easily.",
+      target: [0, 0.3, 0.4],
+      camera: [1.2, 0.8, 1.5],
+    },
+    {
+      id: "reinforced-rim",
+      title: "Reinforced Rim",
+      khmer: "មាត់កញ្ជើ",
+      info: "The wide mouth is bound tightly with thick rattan or bamboo strips. This rigid edge holds the basket's shape open and gives the carrier a sturdy place to grip.",
+      target: [0, 0.64, -1.0],
+      camera: [-0.5, 1.2, -2.5],
+    },
+    {
+      id: "flat-base",
+      title: "The Base",
+      khmer: "បាតកញ្ជើ",
+      info: "The base is flat, often starting from a squared weave pattern that transitions into the round body. It allows the basket to sit securely on the ground without tipping.",
+      target: [0, 0.05, 0],
+      camera: [-1.2, 0.5, -0.8],
+    }
+  ]
+});
+
+ARTIFACTS.push({
+  id: "kantel",
+  khmer: "កន្ទេល",
+  name: "Kantel",
+  english: "Woven sleeping mat",
+  category: "Household item",
+  blurb: "The woven sedge-grass mat rolled out across Cambodia for sleeping, eating, and gathering.",
+  story:
+    "The កន្ទេល (Kantel) is the foundation of Cambodian hospitality and daily life. Woven by hand from dried sedge grass (កក់) or romchek (រំចេក), these mats are kept rolled up in the corner of the house until needed. When guests arrive, when food is served, or when it is time to sleep, the kantel is rolled out across the wooden floorboards. Often dyed in vibrant stripes of red, green, and natural yellow, it defines the social space of the home.",
+  utilities: [
+    "Rolled out on the floor to define a clean space for eating meals together",
+    "Used as a breathable, cool surface for sleeping in the tropical heat",
+    "Offered to guests as a seat of respect when they visit the home",
+  ],
+  origin: "Woven by women in villages, especially in provinces with abundant sedge grass along the rivers.",
+  model: "/models/kantel.glb",
+  pois: [
+    {
+      id: "woven-stripes",
+      title: "Dyed Stripes",
+      khmer: "ពណ៌ចម្រុះ",
+      info: "While many mats are left their natural pale color, the most striking kantel are woven with grass that has been dyed in deep reds and greens, creating beautiful striped patterns.",
+      target: [0, 0.05, 0],
+      camera: [1.2, 0.8, -0.4],
+    },
+    {
+      id: "the-roll",
+      title: "The Roll",
+      khmer: "រមូរ",
+      info: "When not in use, the mat is tightly rolled and tucked away, keeping the floor clear. Rolling out the mat is the first gesture of welcoming someone into the home.",
+      target: [0, 0.24, -0.5],
+      camera: [-1.4, 0.6, -1.0],
+    },
+    {
+      id: "sedge-grass",
+      title: "Sedge Grass",
+      khmer: "ដើមកក់",
+      info: "The grass must be harvested, sliced into thin strips, dried in the sun, and sometimes dyed before the slow process of weaving on a wooden loom can even begin.",
+      target: [0.5, 0.05, 0.4],
+      camera: [0.2, 0.6, 1.2],
+    }
+  ]
 });
 
 export function artifactById(id: string): Artifact | undefined {

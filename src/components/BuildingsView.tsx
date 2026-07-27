@@ -9,7 +9,6 @@ import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
   ConstructionBlock, Props,
 } from "./CampusBuildings";
-import { PalmPlant, BroadleafPlant, type PlantLook, type TreeShape } from "./GrovePlants";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
@@ -51,32 +50,6 @@ function detectViewMode(): ViewMode {
  */
 const SITE_BUILDINGS = buildingsOfSite(NUM_SITE);
 
-/** Sugar palms lining the entrance avenue, plus shade trees along the roads. */
-function siteTrees() {
-  // Sugar palms flank the entrance avenue, stopping short of the plaza so the
-  // Great Hall is framed rather than blocked.
-  // Sugar palms stand around the entrance forecourt, as in the entry photo.
-  const palms: { pos: [number, number, number]; seed: number }[] = [];
-  for (let i = 0; i < 4; i++) {
-    palms.push({ pos: [-24 - i * 9, 0, 150 - i * 5], seed: i * 3 + 1 });
-    palms.push({ pos: [24 + i * 9, 0, 150 - i * 5], seed: i * 3 + 2 });
-  }
-  const trees: { pos: [number, number, number]; seed: number }[] = [];
-  // the tree-lined road that runs up the west side of the lawn
-  for (let i = 0; i < 12; i++) trees.push({ pos: [-66, 0, 132 - i * 12], seed: 40 + i });
-  // both sides of the road east to the car park
-  for (let i = 0; i < 8; i++) {
-    trees.push({ pos: [46, 0, 132 - i * 13], seed: 60 + i });
-    trees.push({ pos: [128, 0, 120 - i * 13], seed: 70 + i });
-  }
-  // between the parking bays, and along the hall's plaza
-  for (let i = 0; i < 6; i++) trees.push({ pos: [64, 0, 106 - i * 14], seed: 80 + i });
-  for (let i = 0; i < 6; i++) trees.push({ pos: [-40 + i * 16, 0, 30], seed: 100 + i });
-  // the far edge of the lawn, in front of the teaching block
-  for (let i = 0; i < 7; i++) trees.push({ pos: [-52 + i * 17, 0, 44], seed: 120 + i });
-  return { palms, trees };
-}
-
 /**
  * The ground is a stack of flat surfaces that overlap in plan — lawn, roads, car
  * park apron, plazas. To a depth buffer they are effectively coplanar, and the
@@ -97,12 +70,6 @@ const LIFT = {
 
 /** One paving tile-set per 8 m of ground → roughly 1 m slabs. */
 const PAVER_M = 8;
-
-const PALM_LOOK: PlantLook = { form: "palm", leaf: "#3f8a44", leaf2: "#57a052", bark: "#9a7b4a" };
-const SHADE_SHAPE: TreeShape = { spread: 0.9, levels: 3, children: 3, trunkFrac: 0.38, girth: 1.1, clump: 2.6 };
-const SHADE_LOOK: PlantLook = {
-  form: "broadleaf", leaf: "#3f7a34", leaf2: "#55953f", bark: "#6b5340", shape: SHADE_SHAPE,
-};
 
 /* ----------------------------------------------------------------- view --- */
 
@@ -264,7 +231,6 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
   const pave = useMemo(() => paveTexture(metresRepeat(104, 104, PAVER_M)[0]), []);
   const road = useMemo(() => roadTexture(metresRepeat(120, 120, PAVER_M)[0]), []);
   const hedge = useMemo(() => hedgeTexture(), []);
-  const { palms, trees } = useMemo(() => siteTrees(), []);
   const ultra = mode === "ultra";
 
   // Street furniture, instanced.
@@ -330,20 +296,88 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
 
-      {/* entrance forecourt + avenue */}
       {/* entrance forecourt */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 152]} receiveShadow>
         <circleGeometry args={[30, 40]} />
         <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
       </mesh>
-      {/* the road across the front of the monument, and the one east to the car park */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[20, GROUND.road, 138]} receiveShadow>
-        <planeGeometry args={[260, 14]} />
+      
+      {/* Central Entrance Avenue (1) */}
+      <group position={[0, 0, 123]}>
+        {/* The central dark road */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.road, 0]} receiveShadow>
+          <planeGeometry args={[8, 58]} />
+          <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+        </mesh>
+        {/* Left and Right grass strips */}
+        {[-5, 5].map((x) => (
+          <mesh key={x} rotation={[-Math.PI / 2, 0, 0]} position={[x, GROUND.lawn + 0.01, 0]} receiveShadow>
+            <planeGeometry args={[2, 58]} />
+            <meshStandardMaterial map={grass} roughness={1} />
+          </mesh>
+        ))}
+        {/* Left and Right outer walkways */}
+        {[-7, 7].map((x) => (
+          <mesh key={x} rotation={[-Math.PI / 2, 0, 0]} position={[x, GROUND.plaza, 0]} receiveShadow>
+            <planeGeometry args={[2, 58]} />
+            <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
+          </mesh>
+        ))}
+      </group>
+
+
+      {/* --- Perimeter Ring Road --- */}
+      {/* South Perimeter Road (3) - main cross road at the front */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2.5, GROUND.road, 112]} receiveShadow>
+        <planeGeometry args={[259, 14]} />
         <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[112, GROUND.road, 74]} receiveShadow>
-        <planeGeometry args={[14, 140]} />
+      
+      {/* East Perimeter Road - down the side of the car park & Great Hall */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[125, GROUND.road, 36]} receiveShadow>
+        <planeGeometry args={[14, 166]} />
         <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* West Perimeter Road - up the left side of the football field */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-120, GROUND.road, 36]} receiveShadow>
+        <planeGeometry args={[14, 166]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* North Perimeter Road - running behind the teaching blocks */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2.5, GROUND.road, -40]} receiveShadow>
+        <planeGeometry args={[259, 14]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* --- Internal Road Grid --- */}
+      {/* Middle Horizontal Road - separating front zone from central complex */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2.5, GROUND.road, 24]} receiveShadow>
+        <planeGeometry args={[259, 14]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* West Internal Vertical Road - separating ponds/courts from central complex */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-50, GROUND.road, -8]} receiveShadow>
+        <planeGeometry args={[14, 64]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* East Internal Vertical Road - separating Great Hall & Parking from central complex */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[70, GROUND.road, 36]} receiveShadow>
+        <planeGeometry args={[14, 152]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* Small monument plaza (2) at the end of the avenue */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 94]} receiveShadow>
+        <planeGeometry args={[22, 22]} />
+        <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza + 0.01, 94]} receiveShadow>
+        <circleGeometry args={[8, 32]} />
+        <meshStandardMaterial color="#f4f4f1" roughness={1} />
       </mesh>
       {/* the great hall's plaza */}
       {/* the Great Hall's plaza */}
@@ -351,17 +385,49 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <planeGeometry args={[110, 96]} />
         <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
       </mesh>
-      {/* ring road along the west + the car park apron */}
-      {/* the tree-lined road up the west side */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-58, GROUND.road, 60]} receiveShadow>
-        <planeGeometry args={[13, 190]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
+
       {/* the car park apron */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[94, GROUND.apron, 74]} receiveShadow>
         <planeGeometry args={[76, 84]} />
         <meshStandardMaterial map={road} roughness={1} {...LIFT.apron} />
       </mesh>
+
+      {/* Internal Road in front of Teaching Blocks (7 & 8) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2.5, GROUND.road, -10]} receiveShadow>
+        <planeGeometry args={[231, 10]} />
+        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
+      </mesh>
+
+      {/* Rear Garden / Courtyard (15) */}
+      <group position={[-46, 0, 10]}>
+        {/* Grass area */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn + 0.02, 0]} receiveShadow>
+          <planeGeometry args={[120, 26]} />
+          <meshStandardMaterial color="#6a9b4a" roughness={1} />
+        </mesh>
+        
+        {/* Central paved path connecting central complex to back road */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 0]} receiveShadow>
+          <planeGeometry args={[6, 26]} />
+          <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
+        </mesh>
+
+
+
+        {/* Small garden seating areas (red pavilions/squares from map) */}
+        {[-30, 30].map((px) => (
+          <group key={`seat-${px}`}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[px, GROUND.plaza + 0.03, 0]} receiveShadow>
+              <planeGeometry args={[10, 10]} />
+              <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
+            </mesh>
+            <mesh position={[px, 0.4, 0]}>
+              <boxGeometry args={[4, 0.8, 4]} />
+              <meshStandardMaterial color="#c94b36" roughness={0.8} />
+            </mesh>
+          </group>
+        ))}
+      </group>
 
       {/* --- the buildings: tapping one opens its own page --- */}
       {/* 1 — you arrive here, looking north across the lawn */}
@@ -371,10 +437,10 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       {/* the teaching block closes the far side of the lawn, with the
           part-built block beside it — the view from the entrance */}
       <Tappable id="teaching" onOpen={onOpenBuilding}>
-        <TeachingBlock position={[-6, 0, 12]} rotation={0} w={86} d={16} floors={4} />
+        <TeachingBlock position={[-16, 0, -23.5]} rotation={0} floors={4} />
       </Tappable>
       <Tappable id="construction" onOpen={onOpenBuilding}>
-        <ConstructionBlock position={[-84, 0, 12]} w={46} d={18} floors={5} />
+        <ConstructionBlock position={[-84, 0, -22]} w={46} d={18} floors={5} />
       </Tappable>
       {/* 2 — turn right and walk east: the car park */}
       <Tappable id="parking" onOpen={onOpenBuilding}>
@@ -390,27 +456,33 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <Shrine position={[62, 0, 12]} />
       </Tappable>
       <Tappable id="field" onOpen={onOpenBuilding}>
-        <SportsField position={[-104, 0, 104]} rx={42} rz={36} />
+        <SportsField position={[-50, 0, 68]} w={120} d={75} />
       </Tappable>
 
+      {/* 10 — The Reflecting Ponds (West side) */}
+      <group position={[-85, 0, 0]}>
+        {/* Top Pond */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, -24]} receiveShadow>
+          <planeGeometry args={[50, 14]} />
+          <meshStandardMaterial color="#c2c3c0" roughness={0.9} {...LIFT.plaza} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza + 0.01, -24]} receiveShadow>
+          <planeGeometry args={[48.5, 12.5]} />
+          <meshStandardMaterial color="#1f4b66" roughness={0.1} metalness={0.8} />
+        </mesh>
+        {/* Bottom Pond */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 7]} receiveShadow>
+          <planeGeometry args={[50, 20]} />
+          <meshStandardMaterial color="#c2c3c0" roughness={0.9} {...LIFT.plaza} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza + 0.01, 7]} receiveShadow>
+          <planeGeometry args={[48.5, 18.5]} />
+          <meshStandardMaterial color="#1f4b66" roughness={0.1} metalness={0.8} />
+        </mesh>
+      </group>
+
       {/* --- planting --- */}
-      {palms.map((p) => (
-        <group key={`p${p.pos[0]}-${p.pos[2]}`} position={p.pos}>
-          <PalmPlant look={PALM_LOOK} height={11} seed={p.seed} opacity={1} wind={ultra ? 1 : 0} />
-        </group>
-      ))}
-      {trees.map((t) => (
-        <group key={`t${t.pos[0]}-${t.pos[2]}`} position={t.pos}>
-          <BroadleafPlant
-            look={SHADE_LOOK}
-            height={7.5}
-            seed={t.seed}
-            opacity={1}
-            wind={ultra ? 1 : 0}
-            detail={ultra ? 1 : 0}
-          />
-        </group>
-      ))}
+      {/* Trees temporarily removed as requested */}
 
       {/* --- site furniture --- */}
       <Props items={bollards}>

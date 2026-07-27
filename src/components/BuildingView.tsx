@@ -57,7 +57,7 @@ function TheBuilding({ id, model }: { id: string; model?: string }) {
   if (model) return <GeneratedBuilding model={model} />;
   switch (id) {
     case "hall": return <GreatHall position={[0, 0, 0]} />;
-    case "teaching": return <TeachingBlock position={[0, 0, 0]} w={86} d={15} floors={4} />;
+    case "teaching": return <TeachingBlock position={[0, 0, 0]} w={45} d={15} floors={4} />;
     case "gate": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
     case "shrine": return <Shrine position={[0, 0, 0]} />;
     case "construction": return <ConstructionBlock position={[0, 0, 0]} w={46} d={18} floors={5} />;
@@ -157,8 +157,8 @@ export function BuildingView({
           />
           <Ground />
           <TheBuilding id={building.id} model={building.model} />
-          {/* a pair of palms for scale */}
-          {[-1, 1].map((s) => (
+          {/* a pair of palms for scale, hidden for teaching block to avoid clipping */}
+          {building.id !== "teaching" && [-1, 1].map((s) => (
             <group key={s} position={[s * (dist * 0.42), 0, dist * 0.18]}>
               <PalmPlant look={PALM_LOOK} height={11} seed={s + 3} opacity={1} wind={mode === "ultra" ? 1 : 0} />
             </group>
@@ -231,7 +231,10 @@ export function BuildingView({
           Modelled from photographs of the real building — the massing is an informed
           approximation, not survey data. Corrections welcome.
         </p>
-        <button className="bld-map" onClick={onBackToMap}>← Back to the map</button>
+        <div className="bld-actions">
+          <button className="bld-map" onClick={onBackToMap}>← Back to the map</button>
+          <button className="bld-hide-btn" onClick={() => setInfo(false)}>Hide</button>
+        </div>
       </div>
     </div>
   );

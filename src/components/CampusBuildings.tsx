@@ -4,7 +4,7 @@ import {
   Matrix4, Quaternion, Vector3,
 } from "three";
 import {
-  paveTexture, facadeTexture, glazingTexture, roofTexture, signTexture, hedgeTexture,
+  paveTexture, facadeTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, roomFacadeTexture
 } from "../lib/campusTexture";
 
 /**
@@ -105,7 +105,7 @@ function Finial({ height = 4, color = "#f2efe6" }: { height?: number; color?: st
  * whole hall costs roughly a dozen draw calls instead of fifty.
  */
 export function GreatHall({
-  w = 50, d = 32, wall = 10.5, clear = 4.5, roof = 8,
+  w = 32, d = 50, wall = 10.5, clear = 4.5, roof = 8,
   position = [0, 0, 0] as [number, number, number], rotation = 0,
 }) {
   const glass = useMemo(() => glazingTexture(28), []);
@@ -256,52 +256,121 @@ export function GreatHall({
  * central pediment and stair tower.
  */
 export function TeachingBlock({
-  w = 84, d = 15, floors = 4, position = [0, 0, 0] as [number, number, number], rotation = 0, tower = true,
+  w = 60, d = 15, floors = 4, position = [0, 0, 0] as [number, number, number], rotation = 0, tower = true,
 }) {
   const fh = 3.5;
-  const h = floors * fh;
-  const facade = useMemo(() => facadeTexture(floors, Math.round(w / 5)), [floors, w]);
-  const facadeEnd = useMemo(() => facadeTexture(floors, Math.max(2, Math.round(d / 5))), [floors, d]);
+  const upperFloors = floors - 1;
+  const upperH = upperFloors * fh;
+  
+  const frontFacade = useMemo(() => roomFacadeTexture(upperFloors, 7, "front"), [upperFloors]);
+  const backFacade = useMemo(() => roomFacadeTexture(upperFloors, 7, "back"), [upperFloors]);
   const roofTex = useMemo(() => roofTexture("#b23a34", 40, [10, 3]), []);
   const roofGeo = useMemo(() => hippedRoofGeometry(w, d, 4.2, 1.4), [w, d]);
   const gable = useMemo(() => gableGeometry(9, 3.2), []);
+  const glass = useMemo(() => glazingTexture(10), []);
+
+  const roomW = w / 7;
 
   return (
     <group position={position} rotation={[0, rotation, 0]}>
+      {/* Plinth */}
       <mesh position={[0, 0.25, 0]} receiveShadow>
         <boxGeometry args={[w + 2.4, 0.5, d + 2.4]} />
         <meshStandardMaterial color="#cfcbc2" roughness={1} />
       </mesh>
-      {/* body: long faces carry the window bands, ends a narrower band */}
-      <mesh position={[0, 0.5 + h / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial map={facade} roughness={0.85} />
+
+      {/* --- GROUND FLOOR (3 equal sections) --- */}
+      {/* Left Wing (Administration): 1/3 width */}
+      <mesh position={[-w / 2 + (w / 3) / 2, 0.5 + fh / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[w / 3 - 0.2, fh, d - 0.2]} />
+        <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
       </mesh>
-      <mesh position={[0, 0.5 + h / 2, 0]} castShadow>
-        <boxGeometry args={[w - 0.1, h, d + 0.02]} />
-        <meshStandardMaterial map={facadeEnd} roughness={0.85} transparent opacity={0} />
+
+      {/* Middle (Open Space): 1/3 width. Colonnade support at the boundaries. */}
+      {[-w / 2 + w / 3, w / 2 - w / 3].map((cx) => (
+        <group key={`col-gf-${cx}`}>
+          <mesh position={[cx, 0.5 + fh / 2, d / 2 - 0.5]} castShadow>
+            <boxGeometry args={[0.5, fh, 0.5]} />
+            <meshStandardMaterial color="#cfcbc2" roughness={1} />
+          </mesh>
+          <mesh position={[cx, 0.5 + fh / 2, -d / 2 + 0.5]} castShadow>
+            <boxGeometry args={[0.5, fh, 0.5]} />
+            <meshStandardMaterial color="#cfcbc2" roughness={1} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Right Wing (CamboVerse Center): 1/3 width */}
+      <mesh position={[w / 2 - (w / 3) / 2, 0.5 + fh / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[w / 3 - 0.2, fh, d - 0.2]} />
+        <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
       </mesh>
+
+      {/* Ground Floor Canopy (Front only) */}
+      <mesh position={[0, 0.5 + fh, d / 2 + 1]} rotation={[-0.15, 0, 0]} castShadow>
+        <boxGeometry args={[w + 0.5, 0.2, 2.4]} />
+        <meshStandardMaterial map={roofTex} roughness={0.7} />
+      </mesh>
+
+      {/* --- UPPER FLOORS --- */}
+      {/* body: front faces have 1 window+door, back has 2 windows, sides are plain */}
+      <mesh position={[0, 0.5 + fh + upperH / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[w, upperH, d]} />
+        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-0" /> {/* right */}
+        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-1" /> {/* left */}
+        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-2" /> {/* top */}
+        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-3" /> {/* bottom */}
+        <meshStandardMaterial map={frontFacade} roughness={0.85} attach="material-4" /> {/* front */}
+        <meshStandardMaterial map={backFacade} roughness={0.85} attach="material-5" /> {/* back */}
+      </mesh>
+
+      {/* Vertical columns to demarcate the 7 bays visually on the upper floors */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        const cx = -w / 2 + i * roomW;
+        return (
+          <group key={`pilaster-${i}`}>
+            <mesh position={[cx, 0.5 + fh + upperH / 2, d / 2 + 0.05]} castShadow>
+              <boxGeometry args={[0.5, upperH, 0.2]} />
+              <meshStandardMaterial color="#e6e3da" roughness={1} />
+            </mesh>
+            <mesh position={[cx, 0.5 + fh + upperH / 2, -d / 2 - 0.05]} castShadow>
+              <boxGeometry args={[0.5, upperH, 0.2]} />
+              <meshStandardMaterial color="#e6e3da" roughness={1} />
+            </mesh>
+          </group>
+        );
+      })}
+
       {/* eave band + hipped roof */}
-      <mesh position={[0, 0.5 + h + 0.25, 0]} castShadow>
+      <mesh position={[0, 0.5 + fh + upperH + 0.25, 0]} castShadow>
         <boxGeometry args={[w + 2.8, 0.5, d + 2.8]} />
         <meshStandardMaterial color="#f6f4ee" roughness={0.75} />
       </mesh>
-      <mesh geometry={roofGeo} position={[0, 0.5 + h + 0.5, 0]} castShadow receiveShadow>
+      <mesh geometry={roofGeo} position={[0, 0.5 + fh + upperH + 0.5, 0]} castShadow receiveShadow>
         <meshStandardMaterial map={roofTex} roughness={0.62} side={DoubleSide} />
       </mesh>
 
-      {/* central pediment + stair tower */}
+      {/* Roof Finials (Chofa) at the 4 corners of the eave */}
+      {[
+        [-1, -1, Math.PI / 4],
+        [1, -1, -Math.PI / 4],
+        [-1, 1, 3 * Math.PI / 4],
+        [1, 1, -3 * Math.PI / 4]
+      ].map(([sx, sz, rot], i) => (
+        <mesh key={`finial-${i}`} position={[(w / 2 + 1.2) * sx, 0.5 + fh + upperH + 1.2, (d / 2 + 1.2) * sz]} rotation={[0, rot, -0.3]} castShadow>
+          <coneGeometry args={[0.15, 1.8, 4]} />
+          <meshStandardMaterial color="#f6f4ee" roughness={0.8} />
+        </mesh>
+      ))}
+
+      {/* central pediment (sitting on the roof) */}
       {tower && (
-        <group position={[0, 0, d / 2]}>
-          <mesh position={[0, 0.5 + h * 0.5, 0.5]} castShadow>
-            <boxGeometry args={[11, h + 1.6, 1.6]} />
-            <meshStandardMaterial color="#f4f2ec" roughness={0.8} />
-          </mesh>
-          <mesh geometry={gable} position={[0, 0.5 + h + 1.6, 1.35]} castShadow>
+        <group position={[0, 0.5 + fh + upperH + 0.5, d / 2 - 0.5]}>
+          <mesh geometry={gable} scale={[0.6, 0.6, 0.6]} position={[0, 0.8, 0]} castShadow>
             <meshStandardMaterial color="#f4f2ec" roughness={0.75} side={DoubleSide} />
           </mesh>
-          <mesh position={[0, 0.5 + h * 0.72, 1.4]}>
-            <circleGeometry args={[1.15, 20]} />
+          <mesh position={[0, 0.8, 0.4]}>
+            <circleGeometry args={[0.6, 20]} />
             <meshStandardMaterial color="#d8b24a" roughness={0.5} metalness={0.35} />
           </mesh>
         </group>
@@ -409,35 +478,76 @@ export function ParkingCanopy({
 
 /** The athletics track and its infield. */
 export function SportsField({
-  position = [0, 0, 0] as [number, number, number], rx = 46, rz = 30,
+  position = [0, 0, 0] as [number, number, number], w = 120, d = 75,
 }) {
+  const lineW = 0.3; // width of painted lines
   return (
     <group position={position}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.07, 0]} receiveShadow>
-        <ringGeometry args={[Math.min(rx, rz) * 0.72, Math.min(rx, rz), 48]} />
-        <meshStandardMaterial
-          color="#b0503a" roughness={1}
-          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
-        />
+      {/* Paved border */}
+      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[w + 14, d + 14]} />
+        <meshStandardMaterial color="#b3b0a8" roughness={1} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]} receiveShadow>
-        <circleGeometry args={[Math.min(rx, rz) * 0.73, 40]} />
-        <meshStandardMaterial
-          color="#5f8f42" roughness={1}
-          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
-        />
+
+      {/* Grass pitch */}
+      <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[w + 4, d + 4]} />
+        <meshStandardMaterial color="#4a7c32" roughness={1} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
       </mesh>
-      {/* goals */}
+
+      {/* White lines */}
+      <group position={[0, 0.06, 0]}>
+        {/* Outer boundary */}
+        <mesh position={[0, 0, d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh position={[0, 0, -d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh position={[w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh position={[-w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
+
+        {/* Center line and circle */}
+        <mesh position={[0, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh rotation={[-Math.PI/2, 0, 0]}><ringGeometry args={[9.15 - lineW/2, 9.15 + lineW/2, 32]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.5, 16]}/><meshBasicMaterial color="white"/></mesh>
+
+        {/* Penalty and goal boxes */}
+        {[-1, 1].map((s) => (
+          <group key={s} position={[s * (w/2 - 16.5/2), 0, 0]}>
+            {/* Penalty box (16.5m deep, 40.3m wide) */}
+            <mesh position={[0, 0, 40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[0, 0, -40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[-s * 16.5/2, 0, 0]}><boxGeometry args={[lineW, 0.02, 40.3]}/><meshBasicMaterial color="white"/></mesh>
+            {/* Goal area (5.5m deep, 18.3m wide) */}
+            <mesh position={[s * (16.5/2 - 5.5/2), 0, 18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[s * (16.5/2 - 5.5/2), 0, -18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[s * (16.5/2 - 5.5), 0, 0]}><boxGeometry args={[lineW, 0.02, 18.3]}/><meshBasicMaterial color="white"/></mesh>
+            {/* Penalty mark (11m from goal line) */}
+            <mesh position={[s * (16.5/2 - 11), 0, 0]} rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.3, 16]}/><meshBasicMaterial color="white"/></mesh>
+            {/* Penalty arc */}
+            <mesh position={[s * (16.5/2 - 11), 0, 0]} rotation={[-Math.PI/2, 0, 0]}>
+              <ringGeometry args={[9.15 - lineW/2, 9.15 + lineW/2, 16, 1, s === 1 ? Math.PI - Math.acos(5.5/9.15) : -Math.acos(5.5/9.15), 2 * Math.acos(5.5/9.15)]}/>
+              <meshBasicMaterial color="white"/>
+            </mesh>
+          </group>
+        ))}
+      </group>
+
+      {/* Goals (standard 7.32m x 2.44m) */}
       {[-1, 1].map((s) => (
-        <group key={s} position={[0, 0, s * Math.min(rx, rz) * 0.55]}>
-          <mesh position={[0, 1.2, 0]}>
-            <boxGeometry args={[7.4, 0.16, 0.16]} />
+        <group key={s} position={[s * w/2, 0, 0]} rotation={[0, s === 1 ? -Math.PI/2 : Math.PI/2, 0]}>
+          <mesh position={[0, 2.44, 0]}>
+            <boxGeometry args={[7.32 + 0.12, 0.12, 0.12]} />
             <meshStandardMaterial color="#eceae4" roughness={0.8} />
           </mesh>
-          {[-3.6, 3.6].map((x) => (
-            <mesh key={x} position={[x, 0.6, 0]}>
-              <boxGeometry args={[0.16, 1.2, 0.16]} />
+          {[-3.66, 3.66].map((x) => (
+            <mesh key={x} position={[x, 1.22, 0]}>
+              <boxGeometry args={[0.12, 2.44, 0.12]} />
               <meshStandardMaterial color="#eceae4" roughness={0.8} />
+            </mesh>
+          ))}
+          {/* Back nets support */}
+          {[-3.66, 3.66].map((x) => (
+            <mesh key={`net-${x}`} position={[x, 0.6, -1]} rotation={[0.5, 0, 0]}>
+              <boxGeometry args={[0.06, 2.8, 0.06]} />
+              <meshStandardMaterial color="#dcdad4" roughness={0.8} />
             </mesh>
           ))}
         </group>

@@ -136,6 +136,72 @@ export function facadeTexture(floors = 4, bays = 16): Texture {
   }, [1, 1]);
 }
 
+/** Specific layout for 7-bay teaching block (5 classrooms + 2 stairwells) */
+export function roomFacadeTexture(floors = 3, rooms = 7, type: "front" | "back" = "front"): Texture {
+  const key = `roomFacade:${floors}:${rooms}:${type}`;
+  const hit = cache.get(key);
+  return tex(key, 1024, (ctx, s) => { // increased resolution to 1024 for sharper details
+    ctx.fillStyle = "#f2f0ea";
+    ctx.fillRect(0, 0, s, s);
+    const fh = s / floors;
+    for (let f = 0; f < floors; f++) {
+      const y = f * fh;
+      // floor slab band
+      ctx.fillStyle = "#e6e3da";
+      ctx.fillRect(0, y + fh * 0.86, s, fh * 0.14);
+      
+      const rw = s / rooms;
+      for (let r = 0; r < rooms; r++) {
+        const x = r * rw;
+        
+        if (r === 0 || r === rooms - 1) {
+          // Louvered ends (stairwells)
+          // Draw a block with horizontal louver lines
+          ctx.fillStyle = "#8a96a3";
+          ctx.fillRect(x + rw * 0.1, y + fh * 0.1, rw * 0.8, fh * 0.7);
+          ctx.fillStyle = "#707f8e";
+          for (let ly = y + fh * 0.1; ly < y + fh * 0.8; ly += 4) {
+            ctx.fillRect(x + rw * 0.1, ly, rw * 0.8, 1.5);
+          }
+        } else {
+          // Classrooms
+          if (type === "front") {
+            // Front: Wide bank of 4 windows with small louvers above
+            // Louvers above
+            ctx.fillStyle = "#8a96a3";
+            ctx.fillRect(x + rw * 0.1, y + fh * 0.15, rw * 0.8, fh * 0.1);
+            ctx.fillStyle = "#707f8e";
+            for (let ly = y + fh * 0.15; ly < y + fh * 0.25; ly += 3) {
+              ctx.fillRect(x + rw * 0.1, ly, rw * 0.8, 1);
+            }
+            // 4 Window panes
+            const pw = (rw * 0.8 - (3 * rw * 0.04)) / 4; // pane width, with spacing
+            for (let p = 0; p < 4; p++) {
+              const px = x + rw * 0.1 + p * (pw + rw * 0.04);
+              ctx.fillStyle = "#40566b";
+              ctx.fillRect(px, y + fh * 0.3, pw, fh * 0.5);
+              // Glass highlight
+              ctx.fillStyle = "rgba(200,225,245,0.45)";
+              ctx.fillRect(px, y + fh * 0.3, pw, fh * 0.16);
+            }
+          } else {
+            // Back: 2 windows
+            ctx.fillStyle = "#40566b";
+            ctx.fillRect(x + rw * 0.15, y + fh * 0.24, rw * 0.3, fh * 0.5);
+            ctx.fillStyle = "rgba(200,225,245,0.45)";
+            ctx.fillRect(x + rw * 0.15, y + fh * 0.24, rw * 0.3, fh * 0.16);
+            
+            ctx.fillStyle = "#40566b";
+            ctx.fillRect(x + rw * 0.55, y + fh * 0.24, rw * 0.3, fh * 0.5);
+            ctx.fillStyle = "rgba(200,225,245,0.45)";
+            ctx.fillRect(x + rw * 0.55, y + fh * 0.24, rw * 0.3, fh * 0.16);
+          }
+        }
+      }
+    }
+  }, [1, 1]);
+}
+
 /** The great hall's full-height glazing: tall mullions over dark glass. */
 export function glazingTexture(bays = 18): Texture {
   return tex(`glaze:${bays}`, 512, (ctx, s) => {

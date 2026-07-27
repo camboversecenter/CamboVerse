@@ -19,6 +19,22 @@ const MEKONG: [number, number][] = [
 const TONLE_SAP_RIVER: [number, number][] = [
   [12.55, 104.45], [11.98, 104.68], [11.57, 104.93],
 ];
+const TONLE_SAP_POLY: [number, number][] = [
+  [13.18, 103.65],
+  [13.26, 103.78],
+  [13.23, 103.86],
+  [13.15, 104.00],
+  [13.05, 104.16],
+  [12.86, 104.30],
+  [12.70, 104.40],
+  [12.55, 104.45],
+  [12.50, 104.38],
+  [12.56, 104.25],
+  [12.68, 104.05],
+  [12.85, 103.82],
+  [13.00, 103.66],
+  [13.10, 103.61],
+];
 
 const toWorld = (pts: [number, number][], y: number) =>
   pts.map(([lat, lng]) => {
@@ -108,7 +124,15 @@ export function CambodiaMap({ onSelectProvince }: { onSelectProvince?: (name: st
     [],
   );
 
-  const [lx, lz] = projectLatLng(12.85, 104.08); // Tonlé Sap, approx center
+  const tonleSapShape = useMemo(() => {
+    const s = new Shape();
+    TONLE_SAP_POLY.forEach(([lat, lng], i) => {
+      const [x, z] = projectLatLng(lat, lng);
+      i === 0 ? s.moveTo(x, -z) : s.lineTo(x, -z);
+    });
+    s.closePath();
+    return s;
+  }, []);
 
   return (
     <group>
@@ -130,8 +154,8 @@ export function CambodiaMap({ onSelectProvince }: { onSelectProvince?: (name: st
       <Line points={coast} color="#e9e2c8" lineWidth={2} transparent opacity={0.85} />
 
       {/* Tonlé Sap lake */}
-      <mesh position={[lx, 0.02, lz]} rotation={[-Math.PI / 2, 0, -0.7]} scale={[1.45, 0.78, 1]}>
-        <circleGeometry args={[1, 48]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <shapeGeometry args={[tonleSapShape]} />
         <meshStandardMaterial color="#2f5d84" roughness={0.8} />
       </mesh>
 

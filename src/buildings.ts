@@ -133,7 +133,7 @@ export const BUILDINGS: Building[] = [
     ],
     view: { at: [-6, 1.6, 96], yaw: 0 },
     heightM: 19,
-    spanM: 90,
+    spanM: 50,
   },
   {
     id: "construction",

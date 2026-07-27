@@ -31,6 +31,8 @@
     "gen:tbal": "node scripts/generate-tbal.mjs",
     "gen:neangkoal": "node scripts/generate-neangkoal.mjs",
     "gen:chapei": "node scripts/generate-chapei.mjs",
+    "gen:kancheu": "node scripts/generate-kancheu.mjs",
+    "gen:kantel": "node scripts/generate-kantel.mjs",
     "gen:map": "node scripts/generate-map-outline.mjs",
     "gen:provinces": "node scripts/generate-provinces.mjs",
     "gen:districts": "node scripts/generate-districts.mjs",
