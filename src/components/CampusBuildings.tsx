@@ -89,129 +89,159 @@ function Finial({ height = 4, color = "#f2efe6" }: { height?: number; color?: st
 }
 
 /**
- * The **Great Hall** — the campus's landmark: a glazed hall inside a colonnade,
- * under a very deep hipped roof, with a Khmer gable and spire riding the ridge
- * and a glass canopy over the entrance.
+ * The **Great Hall** — the campus's landmark.
+ *
+ * Re-measured from the Center's drone photographs (July 2026). Two corrections
+ * to the earlier version, both of which change how the building reads:
+ *
+ * - The glazed box does **not** run the full height. It stops at `wall`, and
+ *   above it is an open, shaded storey (`clear`) you see straight through
+ *   between the colonnade posts. Previously the glass went all the way up to
+ *   the soffit, which flattened the facade.
+ * - The eave cantilevers about **6 m** past the glass, not 4.5 — the deep white
+ *   fascia floating well clear of the wall is the building's signature.
+ *
+ * The 34 colonnade posts and the 6 rooftop plant units are instanced, so the
+ * whole hall costs roughly a dozen draw calls instead of fifty.
  */
 export function GreatHall({
-  w = 54, d = 40, wall = 9, roof = 9, position = [0, 0, 0] as [number, number, number], rotation = 0,
+  w = 50, d = 32, wall = 10.5, clear = 4.5, roof = 8,
+  position = [0, 0, 0] as [number, number, number], rotation = 0,
 }) {
-  const glass = useMemo(() => glazingTexture(20), []);
-  const roofTex = useMemo(() => roofTexture("#b23a34", 44, [8, 4]), []);
-  const roofGeo = useMemo(() => hippedRoofGeometry(w, d, roof, 4.5), [w, d, roof]);
-  const gable = useMemo(() => gableGeometry(7, 5.5), []);
-  const cols = 14;
+  const glass = useMemo(() => glazingTexture(28), []);
+  const roofTex = useMemo(() => roofTexture("#b23a34", 52, [8, 4]), []);
+  const over = 6;                       // eave cantilever past the glazed box
+  const post = wall + clear;            // colonnade posts run the full height
+  const roofGeo = useMemo(() => hippedRoofGeometry(w, d, roof, over), [w, d, roof]);
+  const gable = useMemo(() => gableGeometry(9, 6.2), []);
+  const eaveY = 0.7 + post;
+
+  // Posts stand outboard of the glass on a 2.9 m rhythm, so the glazed box is
+  // read *behind* a colonnade rather than flush with it.
+  const colonnade = useMemo(() => {
+    const bay = 2.9;
+    const cx = w / 2 + 2.2;
+    const cz = d / 2 + 2.2;
+    const nx = Math.round((cx * 2) / bay);
+    const nz = Math.round((cz * 2) / bay);
+    const items: Placement[] = [];
+    for (let i = 0; i <= nx; i++) {
+      const x = -cx + (i * cx * 2) / nx;
+      items.push({ pos: [x, 0.7 + post / 2, cz] }, { pos: [x, 0.7 + post / 2, -cz] });
+    }
+    for (let i = 1; i < nz; i++) {
+      const z = -cz + (i * cz * 2) / nz;
+      items.push({ pos: [cx, 0.7 + post / 2, z] }, { pos: [-cx, 0.7 + post / 2, z] });
+    }
+    return items;
+  }, [w, d, post]);
+
+  // Six plant enclosures in the offset cross the photographs show.
+  const plant = useMemo<Placement[]>(() => {
+    const y = 0.7 + post + 1.9;
+    return [
+      { pos: [-6.5, y, 4.5] }, { pos: [0, y, 4.5] }, { pos: [6.5, y, 4.5] },
+      { pos: [-3.2, y, 8.4] }, { pos: [3.2, y, 8.4] }, { pos: [0, y, 0.6] },
+    ];
+  }, [post]);
 
   return (
     <group position={position} rotation={[0, rotation, 0]}>
-      {/* plinth */}
+      {/* plinth, with the bright turf apron that rings the glass */}
       <mesh position={[0, 0.35, 0]} receiveShadow castShadow>
-        <boxGeometry args={[w + 9, 0.7, d + 9]} />
+        <boxGeometry args={[w + 11, 0.7, d + 11]} />
         <meshStandardMaterial color="#cdc9c0" roughness={1} />
       </mesh>
+      <mesh position={[0, 0.72, 0]} receiveShadow>
+        <boxGeometry args={[w + 5.5, 0.06, d + 5.5]} />
+        <meshStandardMaterial color="#5f8e44" roughness={1} />
+      </mesh>
 
-      {/* glazed volume */}
+      {/* glazed volume — stops well short of the soffit */}
       <mesh position={[0, 0.7 + wall / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[w, wall, d]} />
-        <meshStandardMaterial map={glass} roughness={0.24} metalness={0.35} />
+        <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
       </mesh>
 
-      {/* white colonnade carrying the overhang */}
-      {Array.from({ length: cols }).map((_, i) => {
-        const t = (i / (cols - 1) - 0.5) * (w + 8);
-        return (
-          <group key={i}>
-            {[-1, 1].map((s) => (
-              <mesh key={s} position={[t, 0.7 + wall / 2, (s * (d + 8)) / 2]} castShadow>
-                <boxGeometry args={[0.34, wall, 0.34]} />
-                <meshStandardMaterial color="#f4f2ec" roughness={0.75} />
-              </mesh>
-            ))}
-          </group>
-        );
-      })}
-      {[-1, 1].map((s) => (
-        <group key={s}>
-          {Array.from({ length: 9 }).map((_, i) => {
-            const t = (i / 8 - 0.5) * (d + 8);
-            return (
-              <mesh key={i} position={[(s * (w + 8)) / 2, 0.7 + wall / 2, t]} castShadow>
-                <boxGeometry args={[0.34, wall, 0.34]} />
-                <meshStandardMaterial color="#f4f2ec" roughness={0.75} />
-              </mesh>
-            );
-          })}
-        </group>
-      ))}
-
-      {/* fascia band, then the deep hipped roof */}
-      <mesh position={[0, 0.7 + wall + 0.3, 0]} castShadow>
-        <boxGeometry args={[w + 9.6, 0.6, d + 9.6]} />
-        <meshStandardMaterial color="#f6f4ee" roughness={0.7} />
-      </mesh>
-      <mesh geometry={roofGeo} position={[0, 0.7 + wall + 0.6, 0]} castShadow receiveShadow>
-        <meshStandardMaterial map={roofTex} roughness={0.62} metalness={0.12} side={DoubleSide} />
+      {/* the open shaded storey above it, seen through the colonnade */}
+      <mesh position={[0, 0.7 + wall + clear / 2, 0]}>
+        <boxGeometry args={[w - 1.2, clear, d - 1.2]} />
+        <meshStandardMaterial color="#1c2022" roughness={0.95} />
       </mesh>
 
-      {/* roof-top plant enclosures, as in the photographs */}
-      {[-1, 0, 1].map((i) => (
-        <mesh key={i} position={[i * 4.2, 0.7 + wall + 2.4, -1.5]} castShadow>
-          <boxGeometry args={[3.2, 1.1, 2.6]} />
-          <meshStandardMaterial color="#e8e6df" roughness={0.8} />
-        </mesh>
-      ))}
+      {/* white colonnade carrying the overhang — one draw call */}
+      <Props items={colonnade}>
+        <boxGeometry args={[0.36, post, 0.36]} />
+        <meshStandardMaterial color="#f4f2ec" roughness={0.7} />
+      </Props>
 
-      {/* Khmer gable + spire on the ridge */}
-      <group position={[0, 0.7 + wall + roof - 0.6, 0]}>
-        <mesh position={[0, 1.6, 0]} castShadow>
-          <boxGeometry args={[8.4, 3.2, 8.4]} />
-          <meshStandardMaterial color="#b23a34" roughness={0.6} />
-        </mesh>
-        {[0, Math.PI / 2].map((r, i) => (
-          <group key={i} rotation={[0, r, 0]}>
-            {[-1, 1].map((s) => (
-              <mesh key={s} geometry={gable} position={[0, 3.2, s * 4.25]} rotation={[0, s > 0 ? 0 : Math.PI, 0]} castShadow>
-                <meshStandardMaterial color="#f4f2ec" roughness={0.7} side={DoubleSide} />
-              </mesh>
-            ))}
-          </group>
+      {/* fascia band, then the very deep hipped roof */}
+      <mesh position={[0, eaveY + 0.55, 0]} castShadow>
+        <boxGeometry args={[w + over * 2 + 0.6, 1.1, d + over * 2 + 0.6]} />
+        <meshStandardMaterial color="#f6f4ee" roughness={0.65} />
+      </mesh>
+      <mesh geometry={roofGeo} position={[0, eaveY + 1.1, 0]} castShadow receiveShadow>
+        <meshStandardMaterial map={roofTex} roughness={0.55} metalness={0.16} side={DoubleSide} />
+      </mesh>
+
+      {/* roof-top plant enclosures — one draw call */}
+      <Props items={plant}>
+        <boxGeometry args={[2.8, 0.95, 1.8]} />
+        <meshStandardMaterial color="#e8e6df" roughness={0.8} />
+      </Props>
+
+      {/* Khmer gable astride the ridge: red roof planes, white pierced tympanum,
+          needle finial. It sits across the ridge, not as a pyramid cap. */}
+      <group position={[0, eaveY + 1.1 + roof - 1.4, 0]}>
+        {[-1, 1].map((s) => (
+          <mesh key={s} position={[s * 2.3, 3.1, 0]} rotation={[0, 0, s * 0.42]} castShadow>
+            <boxGeometry args={[0.3, 7.2, 5.6]} />
+            <meshStandardMaterial color="#b23a34" roughness={0.6} />
+          </mesh>
         ))}
-        <mesh position={[0, 5.4, 0]} castShadow>
-          <coneGeometry args={[5.2, 4.6, 4]} />
-          <meshStandardMaterial color="#b23a34" roughness={0.6} />
+        {[-1, 1].map((s) => (
+          <mesh key={s} geometry={gable} position={[0, 0.2, s * 2.6]} rotation={[0, s > 0 ? 0 : Math.PI, 0]} castShadow>
+            <meshStandardMaterial color="#f4f2ec" roughness={0.7} side={DoubleSide} />
+          </mesh>
+        ))}
+        {/* the pierced tympanum face — the real Khmer motif is below the
+            resolution of every reference view, so this stands in for it */}
+        <mesh position={[0, 2.2, 2.72]}>
+          <ringGeometry args={[0.5, 1.15, 6]} />
+          <meshStandardMaterial color="#c9713a" roughness={0.7} side={DoubleSide} />
         </mesh>
-        <group position={[0, 7.4, 0]}><Finial height={5} /></group>
+        <group position={[0, 6.4, 0]}><Finial height={5.5} /></group>
       </group>
 
-      {/* entrance: stone portal, glass canopy, flanking guardian pedestals */}
-      <group position={[0, 0, d / 2 + 4.6]}>
-        <mesh position={[0, 0.7 + wall * 0.55, 0]} castShadow>
-          <boxGeometry args={[8.5, wall * 1.1, 1.2]} />
-          <meshStandardMaterial color="#7d6a63" roughness={0.85} />
+      {/* entrance: polished stone portal, gridded glass canopy, guardians */}
+      <group position={[0, 0, d / 2 + 1.1]}>
+        <mesh position={[0, 0.7 + wall * 0.62, 0]} castShadow>
+          <boxGeometry args={[9.5, wall * 1.24, 1.7]} />
+          <meshStandardMaterial color="#6d4a42" roughness={0.42} metalness={0.15} />
         </mesh>
-        <mesh position={[0, 0.7 + 2.6, 0.1]}>
-          <boxGeometry args={[4.6, 5.2, 0.4]} />
-          <meshStandardMaterial color="#2f3a40" roughness={0.3} metalness={0.4} />
+        <mesh position={[0, 0.7 + 2.7, 0.5]}>
+          <boxGeometry args={[4.6, 5.4, 0.4]} />
+          <meshStandardMaterial color="#2f3a40" roughness={0.28} metalness={0.4} />
         </mesh>
-        <mesh position={[0, 0.7 + 5.6, 1.9]} castShadow>
-          <boxGeometry args={[9, 0.22, 4.2]} />
-          <meshStandardMaterial color="#a9c6d4" transparent opacity={0.55} roughness={0.15} metalness={0.5} />
+        <mesh position={[0, 0.7 + 5.6, 3.2]} castShadow>
+          <boxGeometry args={[11, 0.24, 5]} />
+          <meshStandardMaterial color="#a9c6d4" transparent opacity={0.5} roughness={0.12} metalness={0.5} />
         </mesh>
         {[-1, 1].map((s) => (
-          <group key={s} position={[s * 6.2, 0.7, 1.6]}>
+          <group key={s} position={[s * 6.4, 0.7, 3]}>
             <mesh position={[0, 0.6, 0]} castShadow>
-              <boxGeometry args={[1.2, 1.2, 1.2]} />
+              <boxGeometry args={[1.1, 1.2, 1.1]} />
               <meshStandardMaterial color="#8d8078" roughness={0.9} />
             </mesh>
-            <mesh position={[0, 1.9, 0]} castShadow>
-              <capsuleGeometry args={[0.42, 1.1, 4, 8]} />
+            <mesh position={[0, 1.85, 0]} castShadow>
+              <capsuleGeometry args={[0.4, 1.05, 4, 8]} />
               <meshStandardMaterial color="#9a8d84" roughness={0.9} />
             </mesh>
           </group>
         ))}
         {/* steps down to the plaza */}
         {[0, 1, 2].map((i) => (
-          <mesh key={i} position={[0, 0.55 - i * 0.18, 2.4 + i * 0.9]} receiveShadow>
+          <mesh key={i} position={[0, 0.55 - i * 0.18, 4.2 + i * 0.9]} receiveShadow>
             <boxGeometry args={[12 + i * 1.5, 0.2, 1.1]} />
             <meshStandardMaterial color="#b9b4ab" roughness={1} />
           </mesh>

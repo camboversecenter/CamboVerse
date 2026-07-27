@@ -22,7 +22,11 @@ export interface Building {
   facts: { label: string; value: string }[];
   /** Where a visitor stands to see it in the site scene, and which way they face. */
   view: { at: [number, number, number]; yaw: number };
-  /** Roughly how tall the building is, so its page can frame it. */
+  /**
+   * Roughly how tall the building's *mass* is, so its page can frame it — the
+   * roof ridge, not the tip of a finial or an aerial. Framing aims the camera
+   * at 0.7 × this, so counting a thin spike points it at empty sky.
+   */
   heightM: number;
   /** Its widest plan dimension — framing needs the footprint, not just height. */
   spanM: number;
@@ -116,17 +120,18 @@ export const BUILDINGS: Building[] = [
     english: "Ceremonial hall and auditorium",
     site: NUM_SITE,
     about: [
-      "The campus landmark: a fully glazed hall standing inside a white colonnade, sheltered by a very deep hipped roof whose overhang throws the walls into shade — the oldest trick in tropical architecture, done at scale.",
-      "A Khmer gable and a tiered spire ride the ridge, so a thoroughly modern steel-and-glass building still reads unmistakably as Cambodian. Guardian figures flank the stone entrance portal under its glass canopy.",
+      "The campus landmark: a glazed hall standing inside a white colonnade, sheltered by a hipped roof whose eaves cantilever some six metres past the walls and throw them into shade — the oldest trick in tropical architecture, done at scale.",
+      "The glazing stops short of the soffit, leaving an open shaded storey you can see straight through between the columns, so the great roof appears to float above the building rather than sit on it.",
+      "A Khmer gable and a slender spire ride the ridge, so a thoroughly modern steel-and-glass building still reads unmistakably as Cambodian. Guardian figures flank the stone entrance portal under its glass canopy.",
     ],
     facts: [
       { label: "Use", value: "Graduations, assemblies, guests of honour" },
-      { label: "Roof", value: "Deep hipped roof with a Khmer spire" },
-      { label: "Walls", value: "Full-height glazing behind a colonnade" },
+      { label: "Roof", value: "Hipped, ~6 m overhang, Khmer spire on the ridge" },
+      { label: "Walls", value: "Glazing set back behind a colonnade" },
     ],
     view: { at: [96, 1.6, 74], yaw: 0 },
-    heightM: 26,
-    spanM: 64,
+    heightM: 25,
+    spanM: 62,
   },
   {
     id: "shrine",

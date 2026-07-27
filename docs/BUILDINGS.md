@@ -91,6 +91,36 @@ picture:
 Count the bays twice. At an angle the far end foreshortens and it is the number
 people get wrong most.
 
+### Read the photo before you write anything
+
+Adopted from [`img2threejs`](https://github.com/img2threejs/img2threejs) after we
+evaluated it on the NUM Great Hall (see
+[`EVAL_IMG2THREEJS.md`](./EVAL_IMG2THREEJS.md)). We did not adopt its code — only
+this discipline, which caught two real errors in a building we thought we already
+understood. Work it in order, and write the answers down before you touch JSON.
+
+1. **Observe before you infer.** Say what is in the pixels. Not "it has a nice
+   entrance" — "a polished dark red-brown stone frame stands about 0.5 m proud of
+   the glass, roughly 9 m wide, running from the plinth to the eave."
+2. **Decompose big to small.** Macro (the masses: base, body, roof), then meso
+   (the parts: fascia band, portal, canopy), then micro (the details: finial,
+   guardian figures, rooftop plant). Do not jump to details.
+3. **Name three identity-defining features** — the ones that, if you got them
+   wrong, would stop a local recognising the building. For the Great Hall they
+   are the ~6 m eave cantilever, the colonnade rhythm with the glass set back
+   behind it, and the Khmer gable on the ridge. Everything else is negotiable.
+4. **Write down what one photo cannot show.** The back elevation, the soffit, the
+   true depth. These become `assumptions`, not silent guesses — and they are what
+   a reviewer checks first.
+5. **Overlay a coordinate grid on the photo and re-read it.** Cheap, and it is
+   where both of our Great Hall errors surfaced: what looked like a flush glazed
+   wall turned out to be a colonnade with the glass set back, and the eave was
+   half again as deep as the first estimate.
+
+The point of step 4 is honesty. A reconstruction from one photograph is an
+informed approximation. Saying so is not a weakness of the model — it is what
+makes it usable as public data.
+
 ---
 
 ## 3. Write the spec

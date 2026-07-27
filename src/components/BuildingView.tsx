@@ -76,7 +76,19 @@ export function BuildingView({
   // Frame from the footprint, not just the height — a long low block needs far
   // more room than a tall narrow one. Keep the eye low so we read the facade
   // rather than the roof, and aim high so the info sheet doesn't cover it.
-  const dist = Math.max(building.spanM * 1.25, building.heightM * 3, 26);
+  //
+  // The distance has to come off the *horizontal* field of view, which on a
+  // portrait phone is far narrower than the 45° vertical one: at a 0.64 aspect
+  // it is only ~29°. Sizing off height alone put a 62 m building half outside
+  // the frame on a phone while looking fine on a laptop.
+  const dist = useMemo(() => {
+    const aspect = Math.min(2.2, Math.max(0.45, window.innerWidth / window.innerHeight));
+    const halfV = Math.tan((45 * Math.PI) / 360);
+    const halfH = Math.atan(halfV * aspect);
+    const forSpan = (building.spanM * 0.5) / Math.tan(halfH) * 1.12;
+    const forHeight = (building.heightM * 0.6) / halfV;
+    return Math.max(forSpan, forHeight, 26);
+  }, [building.spanM, building.heightM]);
   const eye = Math.max(4, building.heightM * 0.5);
   const aim = Math.max(2.5, building.heightM * 0.7);
 
