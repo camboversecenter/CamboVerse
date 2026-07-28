@@ -268,7 +268,7 @@ function ClassroomInterior({ roomW, d, fh }: { roomW: number, d: number, fh: num
   return (
     <group>
       {/* Floor & Ceiling */}
-      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#c2b092" roughness={0.7} /></mesh>
+      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#c2b092" roughness={0.7} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
       <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[roomW, 0.2, d]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
       
       {/* Side walls (Solid) */}
@@ -304,7 +304,7 @@ function OfficeInterior({ roomW, d, fh }: { roomW: number, d: number, fh: number
   return (
     <group>
       {/* Floor & Ceiling */}
-      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#9ea6a2" roughness={0.8} /></mesh>
+      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#9ea6a2" roughness={0.8} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
       <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[roomW, 0.2, d]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
       
       {/* Side walls (Solid) */}
@@ -376,15 +376,8 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles). Nudged up so its top clears the plinth top rather
-            than sitting exactly on it — two coplanar up-faces at y=0.5 z-fight,
-            which is what made the ground-floor floor flicker. The lift buries the
-            plinth top under this slab; the polygon offset decides the draw order
-            at the seam for good measure. */}
-        <mesh position={[0, 0.27, 0]} receiveShadow>
-          <boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} />
-          <meshStandardMaterial color="#d4c9b8" roughness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
-        </mesh>
+        {/* Floor (Tan tiles) — raised 0.01 m above plinth top so they never Z-fight */}
+        <mesh position={[0, 0.26, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#d4c9b8" roughness={0.7} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
         {/* Ceiling (White) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
         {/* Back Wall */}
@@ -411,9 +404,10 @@ export function TeachingBlock({
 
         {/* Furniture: Reception Desk (Wood and White) */}
         <group position={[0, 0, -3.5]}>
-          {/* Main Desk */}
-          <mesh position={[0, 1.0, 0]} castShadow receiveShadow><boxGeometry args={[5, 1.0, 1.2]} /><meshStandardMaterial color="#ffffff" roughness={0.4} /></mesh>
-          <mesh position={[0, 1.05, 0.5]} castShadow receiveShadow><boxGeometry args={[5.2, 1.1, 0.2]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
+          {/* Main Desk body */}
+          <mesh position={[0, 1.01, 0]} castShadow receiveShadow><boxGeometry args={[5, 1.0, 1.2]} /><meshStandardMaterial color="#ffffff" roughness={0.4} /></mesh>
+          {/* Front fascia — starts 0.05 m higher than the body bottom to avoid co-planar Z-fight */}
+          <mesh position={[0, 1.08, 0.5]} castShadow receiveShadow><boxGeometry args={[5.2, 1.06, 0.2]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
           {/* Computer Monitors */}
           {[-1.2, 1.2].map(x => (
             <group key={x} position={[x, 1.6, 0]}>
@@ -455,10 +449,10 @@ export function TeachingBlock({
           </group>
         </group>
 
-        {/* Coffee Table */}
+        {/* Coffee Table — tabletop sits 0.03 m clear of the base top to avoid co-planar Z-fight */}
         <group position={[0, 0, 3]}>
-          <mesh position={[0, 0.7, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#3a4046" roughness={0.35} metalness={0.2} /></mesh>
-          <mesh position={[0, 0.35, 0]} castShadow receiveShadow><boxGeometry args={[2.0, 0.7, 1.0]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
+          <mesh position={[0, 0.73, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#111" roughness={0.2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
+          <mesh position={[0, 0.35, 0]} castShadow receiveShadow><boxGeometry args={[2.0, 0.66, 1.0]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
         </group>
 
         {/* Potted Plant */}
@@ -561,12 +555,8 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles). Lifted clear of the plinth top so the two aren't
-            coplanar at y=0.5 — see the Administration floor above. */}
-        <mesh position={[0, 0.27, 0]} receiveShadow>
-          <boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} />
-          <meshStandardMaterial color="#c2b092" roughness={0.5} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
-        </mesh>
+        {/* Floor (Tan tiles) — raised 0.01 m above plinth top so they never Z-fight */}
+        <mesh position={[0, 0.26, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#c2b092" roughness={0.5} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
         {/* Ceiling (Dark Industrial) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#3a3a3a" roughness={0.9} /></mesh>
         
