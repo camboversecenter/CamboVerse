@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Sky } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
+import { Vector3 } from "three";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
   ConstructionBlock,
@@ -53,11 +54,11 @@ function GeneratedBuilding({ model }: { model: string }) {
 }
 
 /** Draw just this building, centred on the origin. */
-function TheBuilding({ id, model }: { id: string; model?: string }) {
+function TheBuilding({ id, model, onRoomClick }: { id: string; model?: string; onRoomClick?: (r: string) => void }) {
   if (model) return <GeneratedBuilding model={model} />;
   switch (id) {
     case "hall": return <GreatHall position={[0, 0, 0]} />;
-    case "teaching": return <TeachingBlock position={[0, 0, 0]} w={45} d={15} floors={4} />;
+    case "teaching": return <TeachingBlock position={[0, 0, 0]} w={45} d={15} floors={4} onRoomClick={onRoomClick} />;
     case "gate": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
     case "shrine": return <Shrine position={[0, 0, 0]} />;
     case "construction": return <ConstructionBlock position={[0, 0, 0]} w={46} d={18} floors={5} />;
@@ -69,15 +70,75 @@ function TheBuilding({ id, model }: { id: string; model?: string }) {
           ))}
         </>
       );
-    case "field": return <SportsField position={[0, 0, 0]} rx={42} rz={34} />;
+    case "field": return <SportsField position={[0, 0, 0]} w={84} d={68} />;
     default: return null;
   }
 }
 
+function CameraAnimator({ room, aim, dist, eye }: { room: string | null; aim: number; dist: number; eye: number }) {
+  const { camera } = useThree();
+  const controls = useThree((s) => s.controls) as any;
+  const done = useRef(false);
+
+  let tx = 15;
+  let ty = 1.5;
+  
+  if (room === 'admin') tx = -15;
+  else if (room === 'middle') tx = 0;
+  else if (room === 'camboverse') tx = 15;
+  else if (room && (room.startsWith('class-') || room.startsWith('office-'))) {
+    const parts = room.split('-'); // e.g. ['office', '2', '4']
+    const fIdx = parseInt(parts[1], 10);
+    const bayIdx = parseInt(parts[2], 10);
+    const roomW = 60 / 7;
+    tx = -30 + roomW / 2 + bayIdx * roomW;
+    ty = 1.5 + fIdx * 3.5; // elevated by floor count
+  }
+
+  // Place the camera at z=5 and the target 0.1m deeper (z=4.9) for first-person pivot
+  const posVec = useMemo(() => room ? new Vector3(tx, ty, 5) : new Vector3(dist * 0.5, eye, dist), [room, tx, ty, dist, eye]);
+  const targetVec = useMemo(() => room ? new Vector3(tx, ty, 4.9) : new Vector3(0, aim, 0), [room, tx, ty, aim]);
+
+  useEffect(() => {
+    done.current = false;
+    if (controls) {
+      controls.enabled = false;
+      // Failsafe: force re-enable after 1.5s in case lerp gets stuck
+      const timer = setTimeout(() => {
+        done.current = true;
+        controls.enabled = true;
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [room, controls]);
+
+  useFrame(() => {
+    if (!controls || done.current) return;
+    
+    controls.target.lerp(targetVec, 0.08);
+    camera.position.lerp(posVec, 0.08);
+    controls.update();
+
+    if (camera.position.distanceTo(posVec) < 0.2) {
+      done.current = true;
+      controls.enabled = true; // hand back control
+    }
+  });
+
+  return null;
+}
+
 export function BuildingView({
-  building, onBack, onBackToMap, backLabel = "← Back",
+  building,
+  initialRoom = null,
+  onRoomChange,
+  onBack,
+  onBackToMap,
+  backLabel = "← Back",
 }: {
   building: Building;
+  initialRoom?: string | null;
+  onRoomChange?: (room: string | null) => void;
   onBack: () => void;
   onBackToMap: () => void;
   /**
@@ -90,11 +151,18 @@ export function BuildingView({
   const store = useMemo(() => createXRStore({ emulate: false }), []);
   const [vrSupported, setVrSupported] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
-  const [spin, setSpin] = useState(true);
+  // We initialize spin based on whether a room was pre-selected.
+  const [spin, setSpin] = useState(!initialRoom);
   // The info sheet is most of a phone screen, and the building is the point of
   // the page. It opens by default — you arrive wanting to know what this is —
   // but it has to get out of the way in one tap.
   const [info, setInfo] = useState(true);
+  const [room, _setRoom] = useState<string | null>(initialRoom);
+  
+  const setRoom = (r: string | null) => {
+    _setRoom(r);
+    onRoomChange?.(r);
+  };
 
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
@@ -156,9 +224,10 @@ export function BuildingView({
             shadow-camera-bottom={-90}
           />
           <Ground />
-          <TheBuilding id={building.id} model={building.model} />
-          {/* a pair of palms for scale, hidden for teaching block to avoid clipping */}
-          {building.id !== "teaching" && [-1, 1].map((s) => (
+          <TheBuilding id={building.id} model={building.model} onRoomClick={(r) => { setRoom(r); setSpin(false); }} />
+          <CameraAnimator room={room} aim={aim} dist={dist} eye={eye} />
+          {/* a pair of palms for scale, hidden for teaching block and hall to avoid clipping */}
+          {building.id !== "teaching" && building.id !== "hall" && [-1, 1].map((s) => (
             <group key={s} position={[s * (dist * 0.42), 0, dist * 0.18]}>
               <PalmPlant look={PALM_LOOK} height={11} seed={s + 3} opacity={1} wind={mode === "ultra" ? 1 : 0} />
             </group>
@@ -166,12 +235,12 @@ export function BuildingView({
           <XROrigin position={[0, 0, dist * 0.8]} />
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           <OrbitControls
+            makeDefault
             enablePan={false}
-            minDistance={Math.max(12, building.spanM * 0.5)}
+            minDistance={0.1}
             maxDistance={dist * 2.6}
             maxPolarAngle={Math.PI / 2.12}
             enableDamping
-            target={[0, aim, 0]}
             autoRotate={spin}
             autoRotateSpeed={0.5}
           />
@@ -179,7 +248,15 @@ export function BuildingView({
       </Canvas>
 
       <div className="cls-top">
-        <button className="backbtn" onClick={onBack}>{backLabel}</button>
+        <button className="backbtn" onClick={() => {
+          if (room) {
+            setRoom(null);
+          } else {
+            onBack();
+          }
+        }}>
+          {room ? "← Building" : backLabel}
+        </button>
         <span className="cls-title">🏛️ {building.name}</span>
         <button
           className="grove-quality"
@@ -232,6 +309,7 @@ export function BuildingView({
           approximation, not survey data. Corrections welcome.
         </p>
         <div className="bld-actions">
+          {room && <button className="bld-map" onClick={() => setRoom(null)}>← Zoom out</button>}
           <button className="bld-map" onClick={onBackToMap}>← Back to the map</button>
           <button className="bld-hide-btn" onClick={() => setInfo(false)}>Hide</button>
         </div>

@@ -139,7 +139,6 @@ export function facadeTexture(floors = 4, bays = 16): Texture {
 /** Specific layout for 7-bay teaching block (5 classrooms + 2 stairwells) */
 export function roomFacadeTexture(floors = 3, rooms = 7, type: "front" | "back" = "front"): Texture {
   const key = `roomFacade:${floors}:${rooms}:${type}`;
-  const hit = cache.get(key);
   return tex(key, 1024, (ctx, s) => { // increased resolution to 1024 for sharper details
     ctx.fillStyle = "#f2f0ea";
     ctx.fillRect(0, 0, s, s);
@@ -267,14 +266,30 @@ export function signTexture(
   ctx.textBaseline = "middle";
   if (line2) {
     ctx.fillStyle = opts.fg ?? "#d8b24a";
-    ctx.font = "800 108px Georgia, 'Times New Roman', serif";
+    let f1 = 108;
+    ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line1).width > W * 0.94) {
+      f1 = Math.floor(f1 * (W * 0.94) / ctx.measureText(line1).width);
+      ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line1, W / 2, H * 0.36);
+
     ctx.fillStyle = opts.sub ?? "#f0efe9";
-    ctx.font = "600 52px Georgia, 'Times New Roman', serif";
+    let f2 = 52;
+    ctx.font = `600 ${f2}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line2).width > W * 0.94) {
+      f2 = Math.floor(f2 * (W * 0.94) / ctx.measureText(line2).width);
+      ctx.font = `600 ${f2}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line2, W / 2, H * 0.74);
   } else {
     ctx.fillStyle = opts.fg ?? "#d8b24a";
-    ctx.font = "800 128px Georgia, 'Times New Roman', serif";
+    let f1 = 128;
+    ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line1).width > W * 0.94) {
+      f1 = Math.floor(f1 * (W * 0.94) / ctx.measureText(line1).width);
+      ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line1, W / 2, H / 2);
   }
   const t = new CanvasTexture(c);
