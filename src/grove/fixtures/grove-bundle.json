@@ -79,6 +79,32 @@
       "note": "",
       "id": "dda040b45ba83fd7802592a0a4b262d99be558dfa1d834282e9b05ef96941f4b",
       "sig": "sa9weXkBEM45K-Zk0wCNz6nzIBRay1ylFPvLkS4ScFyFGef-z9befKgksgvZQ6LaEWn9ZFx5YQvsrMaALf1l-w"
+    },
+    {
+      "v": 1,
+      "kind": "observation",
+      "device": "BD9OgGFtm2gS5E4k7I8FT5HevbX-9CYGUUu0Vx20c_QAsiki4_QsOJWepkydKhnsjhdOw63_QrY2p6SLGDjLdjo",
+      "plot": "university Garden",
+      "species": "teak",
+      "count": 5,
+      "measure": {
+        "method": "dbh_height",
+        "dbh_cm": 0.5,
+        "height_m": 5
+      },
+      "biomassKg": 0.25,
+      "co2Kg": 0.4,
+      "gps": {
+        "lat": 11.52301,
+        "lng": 104.96587,
+        "acc": 124
+      },
+      "observedAt": "2026-07-28T04:26:13.568Z",
+      "photoHash": "68bb2c4ae630ab87ac1a83afe578dd46f1938ba66fc7c65e5cf62d5a1e1a91e2",
+      "prev": null,
+      "note": "",
+      "id": "4b2f5a9eb42ab24748c7e8895d1045029ebcc1a328a5f589652e3bfdb2b75489",
+      "sig": "Es9eIh5LzqPuiVINWVD0SS6LqhrLf-e8MnQBuP4k6L1663xBqiVH6_meu-myHxwP7ngiq92w-k-475vVz_zcwg"
     }
   ]
 }

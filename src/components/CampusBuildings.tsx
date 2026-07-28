@@ -3,8 +3,9 @@ import {
   BufferGeometry, DoubleSide, Float32BufferAttribute, InstancedMesh,
   Matrix4, Quaternion, Vector3,
 } from "three";
+import { Text, Instances, Instance } from "@react-three/drei";
 import {
-  paveTexture, facadeTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, roomFacadeTexture
+  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, roomFacadeTexture
 } from "../lib/campusTexture";
 
 /**
@@ -251,23 +252,111 @@ export function GreatHall({
   );
 }
 
+function ClassroomInterior({ roomW, d, fh }: { roomW: number, d: number, fh: number }) {
+  const desks = useMemo(() => {
+    const arr = [];
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
+        const x = -roomW / 2 + 2.5 + row * 1.2;
+        const z = -d / 2 + 4.5 + col * 2;
+        arr.push([x, 0.7, z]);
+      }
+    }
+    return arr;
+  }, [roomW, d]);
+
+  return (
+    <group>
+      {/* Floor & Ceiling */}
+      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#c2b092" roughness={0.7} /></mesh>
+      <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[roomW, 0.2, d]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
+      
+      {/* Side walls (Solid) */}
+      <mesh position={[-roomW / 2 + 0.2, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d]} /><meshStandardMaterial color="#f2f0ea" roughness={0.85} /></mesh>
+      <mesh position={[roomW / 2 - 0.2, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d]} /><meshStandardMaterial color="#f2f0ea" roughness={0.85} /></mesh>
+
+      {/* Whiteboard on the left wall */}
+      <mesh position={[-roomW / 2 + 0.45, 1.5, 0]} rotation={[0, Math.PI / 2, 0]} castShadow>
+        <boxGeometry args={[5, 1.2, 0.05]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.2} metalness={0.1} />
+      </mesh>
+      {/* Teacher's Desk */}
+      <mesh position={[-roomW / 2 + 1.5, 0.7, 0]} castShadow receiveShadow><boxGeometry args={[0.8, 0.8, 2.5]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
+
+      {/* Student Desks (Instanced) */}
+      <Instances limit={20} castShadow receiveShadow>
+        <boxGeometry args={[0.8, 0.05, 1.2]} />
+        <meshStandardMaterial color="#e6d5b8" roughness={0.7} />
+        {desks.map((pos, i) => <Instance key={`desk-${i}`} position={pos as [number, number, number]} />)}
+      </Instances>
+      
+      {/* Student Chairs (Instanced) */}
+      <Instances limit={20} castShadow receiveShadow>
+        <boxGeometry args={[0.4, 0.4, 0.4]} />
+        <meshStandardMaterial color="#444" roughness={0.8} />
+        {desks.map((pos, i) => <Instance key={`chair-${i}`} position={[pos[0] + 0.8, 0.4, pos[2]] as [number, number, number]} />)}
+      </Instances>
+    </group>
+  );
+}
+
+function OfficeInterior({ roomW, d, fh }: { roomW: number, d: number, fh: number }) {
+  return (
+    <group>
+      {/* Floor & Ceiling */}
+      <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[roomW, 0.5, d]} /><meshStandardMaterial color="#9ea6a2" roughness={0.8} /></mesh>
+      <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[roomW, 0.2, d]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
+      
+      {/* Side walls (Solid) */}
+      <mesh position={[-roomW / 2 + 0.2, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d]} /><meshStandardMaterial color="#f2f0ea" roughness={0.85} /></mesh>
+      <mesh position={[roomW / 2 - 0.2, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d]} /><meshStandardMaterial color="#f2f0ea" roughness={0.85} /></mesh>
+
+      {/* Executive Desk */}
+      <mesh position={[-roomW / 2 + 2.5, 0.75, -2]} castShadow receiveShadow><boxGeometry args={[1.8, 0.8, 0.9]} /><meshStandardMaterial color="#5c3f22" roughness={0.6} /></mesh>
+      {/* Executive Chair */}
+      <mesh position={[-roomW / 2 + 1.2, 0.6, -2]} castShadow receiveShadow><boxGeometry args={[0.6, 1.2, 0.6]} /><meshStandardMaterial color="#1a1a1a" roughness={0.8} /></mesh>
+
+      {/* Bookshelf */}
+      <mesh position={[roomW / 2 - 0.8, 1.2, -d / 2 + 1.5]} castShadow receiveShadow><boxGeometry args={[0.8, 2.4, 3]} /><meshStandardMaterial color="#5c3f22" roughness={0.7} /></mesh>
+
+      {/* Small Meeting Table */}
+      <mesh position={[1, 0.7, 3]} castShadow receiveShadow>
+        <cylinderGeometry args={[1.2, 1.2, 0.1, 16]} />
+        <meshStandardMaterial color="#e0dfdb" roughness={0.5} />
+      </mesh>
+      <mesh position={[1, 0.35, 3]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.2, 0.2, 0.7, 8]} />
+        <meshStandardMaterial color="#666" roughness={0.7} />
+      </mesh>
+
+      {/* Chairs around meeting table */}
+      {[-1, 1].map((cx, i) => (
+        <mesh key={`meet-c-${i}`} position={[1 + cx * 1.8, 0.45, 3]} castShadow receiveShadow>
+          <boxGeometry args={[0.5, 0.9, 0.5]} />
+          <meshStandardMaterial color="#2d5236" roughness={0.8} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+
 /**
  * A **teaching block** — the long white buildings with red hipped roofs, a
  * central pediment and stair tower.
  */
 export function TeachingBlock({
   w = 60, d = 15, floors = 4, position = [0, 0, 0] as [number, number, number], rotation = 0, tower = true,
-}) {
+  onRoomClick
+}: any) {
   const fh = 3.5;
-  const upperFloors = floors - 1;
-  const upperH = upperFloors * fh;
+  const totalUpperH = (floors - 1) * fh;
   
-  const frontFacade = useMemo(() => roomFacadeTexture(upperFloors, 7, "front"), [upperFloors]);
-  const backFacade = useMemo(() => roomFacadeTexture(upperFloors, 7, "back"), [upperFloors]);
   const roofTex = useMemo(() => roofTexture("#b23a34", 40, [10, 3]), []);
   const roofGeo = useMemo(() => hippedRoofGeometry(w, d, 4.2, 1.4), [w, d]);
   const gable = useMemo(() => gableGeometry(9, 3.2), []);
   const glass = useMemo(() => glazingTexture(10), []);
+  const fdeSignTex = useMemo(() => signTexture("មហាវិទ្យាល័យសេដ្ឋកិច្ចឌីជីថល", "FACULTY OF DIGITAL ECONOMY", { fg: "#ffffff", sub: "#ffffff" }), []);
 
   const roomW = w / 7;
 
@@ -280,13 +369,110 @@ export function TeachingBlock({
       </mesh>
 
       {/* --- GROUND FLOOR (3 equal sections) --- */}
-      {/* Left Wing (Administration): 1/3 width */}
-      <mesh position={[-w / 2 + (w / 3) / 2, 0.5 + fh / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[w / 3 - 0.2, fh, d - 0.2]} />
-        <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
-      </mesh>
+      {/* Left Wing (Administration Room) */}
+      <group 
+        position={[-w / 2 + (w / 3) / 2, 0, 0]} 
+        onClick={(e) => { e.stopPropagation(); onRoomClick?.('admin'); }}
+        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+      >
+        {/* Floor (Tan tiles) */}
+        <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#d4c9b8" roughness={0.7} /></mesh>
+        {/* Ceiling (White) */}
+        <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
+        {/* Back Wall */}
+        <mesh position={[0, 0.5 + fh / 2, -d / 2 + 0.3]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, fh, 0.4]} /><meshStandardMaterial color="#e8e5df" roughness={0.5} /></mesh>
+        
+        {/* Left Side Wall (Solid Outer) */}
+        <mesh position={[-w / 6 + 0.3, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d - 0.2]} /><meshStandardMaterial color="#e0dfdb" roughness={0.9} /></mesh>
+        
+        {/* Right Side Wall (Inner, with Doorway facing corridor) */}
+        <mesh position={[w / 6 - 0.3, 0.5 + fh / 2, -4.3]} castShadow receiveShadow><boxGeometry args={[0.4, fh, 6.2]} /><meshStandardMaterial color="#e0dfdb" roughness={0.9} /></mesh>
+        <mesh position={[w / 6 - 0.3, 0.5 + fh / 2, 4.3]} castShadow receiveShadow><boxGeometry args={[0.4, fh, 6.2]} /><meshStandardMaterial color="#e0dfdb" roughness={0.9} /></mesh>
+        <mesh position={[w / 6 - 0.3, fh - 0.4, 0]} castShadow receiveShadow><boxGeometry args={[0.4, 0.8, 2.4]} /><meshStandardMaterial color="#e0dfdb" roughness={0.9} /></mesh>
+        
+        {/* Front Glass Wall (Solid) */}
+        <mesh position={[0, 0.5 + fh / 2, d / 2 - 0.2]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.4, fh, 0.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+        
+        {/* Hanging Ceiling Lights */}
+        {[-4, 4].map(lx => (
+          <group key={`light-${lx}`} position={[lx, fh - 0.1, 0]}>
+            <mesh position={[0, -0.2, 0]}><boxGeometry args={[0.1, 0.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
+            <mesh position={[0, -0.4, 0]}><boxGeometry args={[4, 0.1, 0.8]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={0.8} /></mesh>
+          </group>
+        ))}
 
-      {/* Middle (Open Space): 1/3 width. Colonnade support at the boundaries. */}
+        {/* Furniture: Reception Desk (Wood and White) */}
+        <group position={[0, 0, -3.5]}>
+          {/* Main Desk */}
+          <mesh position={[0, 1.0, 0]} castShadow receiveShadow><boxGeometry args={[5, 1.0, 1.2]} /><meshStandardMaterial color="#ffffff" roughness={0.4} /></mesh>
+          <mesh position={[0, 1.05, 0.5]} castShadow receiveShadow><boxGeometry args={[5.2, 1.1, 0.2]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
+          {/* Computer Monitors */}
+          {[-1.2, 1.2].map(x => (
+            <group key={x} position={[x, 1.6, 0]}>
+              <mesh position={[0, 0, -0.2]} castShadow><boxGeometry args={[0.8, 0.5, 0.05]} /><meshStandardMaterial color="#111" roughness={0.3} /></mesh>
+              <mesh position={[0, -0.3, -0.3]} castShadow><boxGeometry args={[0.2, 0.3, 0.2]} /><meshStandardMaterial color="#222" /></mesh>
+            </group>
+          ))}
+          {/* Office Chairs behind desk */}
+          {[-1.2, 1.2].map(x => (
+            <group key={`chair-${x}`} position={[x, 0.9, -1]}>
+              <mesh position={[0, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.6, 0.1, 0.6]} /><meshStandardMaterial color="#222" roughness={0.8} /></mesh>
+              <mesh position={[0, 0.4, -0.25]} castShadow receiveShadow><boxGeometry args={[0.6, 0.8, 0.1]} /><meshStandardMaterial color="#222" roughness={0.8} /></mesh>
+              <mesh position={[0, -0.3, 0]} castShadow receiveShadow><cylinderGeometry args={[0.05, 0.05, 0.6]} /><meshStandardMaterial color="#555" metalness={0.8} /></mesh>
+            </group>
+          ))}
+        </group>
+
+        {/* Accent Panel behind desk */}
+        <mesh position={[0, 2.0, -d / 2 + 0.52]} castShadow><boxGeometry args={[6, 2.5, 0.1]} /><meshStandardMaterial color="#2b3b5c" roughness={0.7} /></mesh>
+
+        {/* Waiting Area: Sofas and Coffee Table */}
+        <group position={[-5, 0, 3]}>
+          {/* Sofa 1 (Facing center) */}
+          <group position={[0, 0.7, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <mesh position={[0, 0, 0]} castShadow receiveShadow><boxGeometry args={[3, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[0, 0.5, -0.4]} castShadow receiveShadow><boxGeometry args={[3, 0.8, 0.4]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[-1.4, 0.3, 0]} castShadow receiveShadow><boxGeometry args={[0.2, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[1.4, 0.3, 0]} castShadow receiveShadow><boxGeometry args={[0.2, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+          </group>
+        </group>
+        
+        <group position={[5, 0, 3]}>
+          {/* Sofa 2 (Facing center) */}
+          <group position={[0, 0.7, 0]} rotation={[0, -Math.PI / 2, 0]}>
+            <mesh position={[0, 0, 0]} castShadow receiveShadow><boxGeometry args={[3, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[0, 0.5, -0.4]} castShadow receiveShadow><boxGeometry args={[3, 0.8, 0.4]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[-1.4, 0.3, 0]} castShadow receiveShadow><boxGeometry args={[0.2, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+            <mesh position={[1.4, 0.3, 0]} castShadow receiveShadow><boxGeometry args={[0.2, 0.4, 1.2]} /><meshStandardMaterial color="#4a5d4e" roughness={0.8} /></mesh>
+          </group>
+        </group>
+
+        {/* Coffee Table */}
+        <group position={[0, 0, 3]}>
+          <mesh position={[0, 0.7, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#111" roughness={0.2} /></mesh>
+          <mesh position={[0, 0.35, 0]} castShadow receiveShadow><boxGeometry args={[2.0, 0.7, 1.0]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
+        </group>
+
+        {/* Potted Plant */}
+        <group position={[7, 0.5, -5]}>
+          <mesh position={[0, 0.3, 0]} castShadow receiveShadow><cylinderGeometry args={[0.4, 0.3, 0.6]} /><meshStandardMaterial color="#cfcfcf" roughness={0.8} /></mesh>
+          <mesh position={[0, 1.2, 0]} castShadow receiveShadow><sphereGeometry args={[0.7, 8, 8]} /><meshStandardMaterial color="#3f7a33" roughness={0.9} /></mesh>
+        </group>
+        <group position={[-7, 0.5, -5]}>
+          <mesh position={[0, 0.3, 0]} castShadow receiveShadow><cylinderGeometry args={[0.4, 0.3, 0.6]} /><meshStandardMaterial color="#cfcfcf" roughness={0.8} /></mesh>
+          <mesh position={[0, 1.2, 0]} castShadow receiveShadow><sphereGeometry args={[0.7, 8, 8]} /><meshStandardMaterial color="#3f7a33" roughness={0.9} /></mesh>
+        </group>
+
+        {/* Sign: Administration Room (inside facing out) */}
+        <mesh position={[0, fh - 0.5, d / 2 - 0.05]}>
+          <boxGeometry args={[4.4, 0.8, 0.1]} />
+          <meshStandardMaterial color="#2b3b5c" roughness={0.8} />
+          <Text position={[0, 0, 0.06]} fontSize={0.35} color="white" anchorX="center" anchorY="middle">Administration</Text>
+        </mesh>
+      </group>
+
+      {/* Middle (Open Space): 1/3 width. */}
       {[-w / 2 + w / 3, w / 2 - w / 3].map((cx) => (
         <group key={`col-gf-${cx}`}>
           <mesh position={[cx, 0.5 + fh / 2, d / 2 - 0.5]} castShadow>
@@ -300,11 +486,147 @@ export function TeachingBlock({
         </group>
       ))}
 
-      {/* Right Wing (CamboVerse Center): 1/3 width */}
-      <mesh position={[w / 2 - (w / 3) / 2, 0.5 + fh / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[w / 3 - 0.2, fh, d - 0.2]} />
-        <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
-      </mesh>
+      {/* Faculty of Digital Economy Stage and Slatted Wall */}
+      <group 
+        position={[0, 0, -d / 2 + 3]}
+        onClick={(e) => { e.stopPropagation(); onRoomClick?.('middle'); }}
+        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+      >
+        {/* Stage Platform */}
+        <mesh position={[0, 0.4, 0]} receiveShadow castShadow>
+          <boxGeometry args={[w / 3 - 1, 0.8, 4]} />
+          <meshStandardMaterial color="#8a8d8f" roughness={0.9} />
+        </mesh>
+        {/* Steps */}
+        <mesh position={[0, 0.2, 2.5]} receiveShadow castShadow>
+          <boxGeometry args={[w / 3 - 1, 0.4, 1]} />
+          <meshStandardMaterial color="#8a8d8f" roughness={0.9} />
+        </mesh>
+
+        {/* Slatted Wooden Backdrop */}
+        <group position={[0, 0.8 + (fh - 0.8) / 2, -1.8]}>
+          {/* Base backing (optional, to block light slightly or give depth) */}
+          <mesh position={[0, 0, -0.1]} castShadow receiveShadow>
+            <boxGeometry args={[w / 3 - 1.5, fh - 0.8, 0.1]} />
+            <meshStandardMaterial color="#222222" roughness={0.9} />
+          </mesh>
+          {/* Individual wooden slats */}
+          {Array.from({ length: 90 }).map((_, i) => {
+            const sx = -(w / 3 - 1.5) / 2 + 0.1 + i * 0.2;
+            return (
+              <mesh key={`slat-${i}`} position={[sx, 0, 0]} castShadow receiveShadow>
+                <boxGeometry args={[0.08, fh - 0.8, 0.1]} />
+                <meshStandardMaterial color="#d4a36a" roughness={0.7} />
+              </mesh>
+            );
+          })}
+
+          {/* Signage: Logo and Text */}
+          <group position={[0, 0.5, 0.15]}>
+            {/* Simple Logo Placeholder */}
+            <mesh position={[-4, 0, 0]}>
+              <cylinderGeometry args={[0.6, 0.6, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+              <meshStandardMaterial color="#3b5998" />
+            </mesh>
+            <mesh position={[-4, 0, 0.03]}>
+              <cylinderGeometry args={[0.5, 0.5, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+              <meshStandardMaterial color="#d8b24a" />
+            </mesh>
+            <mesh position={[-4, 0, 0.06]}>
+              <cylinderGeometry args={[0.4, 0.4, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+              <meshStandardMaterial color="#b23a34" />
+            </mesh>
+            
+            {/* Faculty Text (Rendered as texture to avoid woff2 font loading errors) */}
+            <mesh position={[0.5, 0, 0]}>
+              <planeGeometry args={[7, 1.8]} />
+              <meshStandardMaterial map={fdeSignTex} transparent />
+            </mesh>
+          </group>
+        </group>
+      </group>
+
+      {/* Right Wing (CamboVerse Center) */}
+      <group 
+        position={[w / 2 - (w / 3) / 2, 0, 0]} 
+        onClick={(e) => { e.stopPropagation(); onRoomClick?.('camboverse'); }}
+        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+      >
+        {/* Floor (Tan tiles) */}
+        <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#c2b092" roughness={0.5} /></mesh>
+        {/* Ceiling (Dark Industrial) */}
+        <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#3a3a3a" roughness={0.9} /></mesh>
+        
+        {/* Back Wall (White Marble) */}
+        <mesh position={[0, 0.5 + fh / 2, -d / 2 + 0.3]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, fh, 0.4]} /><meshStandardMaterial color="#f5f5f5" roughness={0.3} metalness={0.1} /></mesh>
+        {/* Presentation Screen on Back Wall */}
+        <mesh position={[0, 2.0, -d / 2 + 0.52]} castShadow><boxGeometry args={[8, 2.0, 0.1]} /><meshStandardMaterial color="#111111" roughness={0.2} /></mesh>
+
+        {/* Left Side Wall (Inner, with Doorway facing corridor) */}
+        <mesh position={[-w / 6 + 0.3, 0.5 + fh / 2, -4.3]} castShadow receiveShadow><boxGeometry args={[0.4, fh, 6.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+        <mesh position={[-w / 6 + 0.3, 0.5 + fh / 2, 4.3]} castShadow receiveShadow><boxGeometry args={[0.4, fh, 6.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+        <mesh position={[-w / 6 + 0.3, fh - 0.4, 0]} castShadow receiveShadow><boxGeometry args={[0.4, 0.8, 2.4]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+
+        {/* Right Side Wall (Outer Glass) */}
+        <mesh position={[w / 6 - 0.3, 0.5 + fh / 2, 0]} castShadow receiveShadow><boxGeometry args={[0.4, fh, d - 0.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+        
+        {/* Front Glass Wall (Solid) */}
+        <mesh position={[0, 0.5 + fh / 2, d / 2 - 0.2]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.4, fh, 0.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+
+        {/* Hanging Ceiling Lights */}
+        {[-5, 0, 5].map(lx => (
+          <group key={`light-${lx}`}>
+            {[-3, 3].map(lz => (
+              <mesh key={`light-${lx}-${lz}`} position={[lx, fh - 0.2, lz]}><boxGeometry args={[1.8, 0.1, 0.4]} /><meshStandardMaterial color="#111" emissive="#fff" emissiveIntensity={1} /></mesh>
+            ))}
+          </group>
+        ))}
+        
+        {/* Left Side: Tiered Wooden Seating (Bleachers) */}
+        <group position={[-w / 6 + 1.1, 0.5, 1]}>
+          <mesh position={[0, 0.2, 0]} castShadow receiveShadow><boxGeometry args={[1.6, 0.4, 8]} /><meshStandardMaterial color="#a88c67" roughness={0.8} /></mesh>
+          <mesh position={[-0.4, 0.6, 0]} castShadow receiveShadow><boxGeometry args={[0.8, 0.4, 8]} /><meshStandardMaterial color="#a88c67" roughness={0.8} /></mesh>
+        </group>
+
+        {/* Right Side: Low Wooden Cabinets */}
+        <mesh position={[w / 6 - 0.8, 0.7, 1]} castShadow receiveShadow><boxGeometry args={[1, 0.6, 8]} /><meshStandardMaterial color="#d4b88a" roughness={0.7} /></mesh>
+
+        {/* Center: U-Shaped Meeting Tables */}
+        <group position={[0, 0.8, 0]}>
+          <mesh position={[-2.5, 0, 1]} castShadow receiveShadow><boxGeometry args={[1, 0.6, 6]} /><meshStandardMaterial color="#ffffff" roughness={0.5} /></mesh>
+          <mesh position={[2.5, 0, 1]} castShadow receiveShadow><boxGeometry args={[1, 0.6, 6]} /><meshStandardMaterial color="#ffffff" roughness={0.5} /></mesh>
+          <mesh position={[0, 0, -2.5]} castShadow receiveShadow><boxGeometry args={[6, 0.6, 1]} /><meshStandardMaterial color="#ffffff" roughness={0.5} /></mesh>
+        </group>
+
+        {/* Office Chairs around tables */}
+        {[-1, 1, 3].map((cz, i) => (
+           <group key={`chair-l-${i}`} position={[-3.5, 0.7, cz]} rotation={[0, Math.PI / 2, 0]}>
+             <mesh position={[0, -0.1, 0]} castShadow><boxGeometry args={[0.5, 0.1, 0.5]} /><meshStandardMaterial color="#333" /></mesh>
+             <mesh position={[0, 0.15, -0.2]} castShadow><boxGeometry args={[0.5, 0.4, 0.05]} /><meshStandardMaterial color="#555" /></mesh>
+           </group>
+        ))}
+        {[-1, 1, 3].map((cz, i) => (
+           <group key={`chair-r-${i}`} position={[3.5, 0.7, cz]} rotation={[0, -Math.PI / 2, 0]}>
+             <mesh position={[0, -0.1, 0]} castShadow><boxGeometry args={[0.5, 0.1, 0.5]} /><meshStandardMaterial color="#333" /></mesh>
+             <mesh position={[0, 0.15, -0.2]} castShadow><boxGeometry args={[0.5, 0.4, 0.05]} /><meshStandardMaterial color="#555" /></mesh>
+           </group>
+        ))}
+        {[-1.5, 0, 1.5].map((cx, i) => (
+           <group key={`chair-t-${i}`} position={[cx, 0.7, -1.6]} rotation={[0, 0, 0]}>
+             <mesh position={[0, -0.1, 0]} castShadow><boxGeometry args={[0.5, 0.1, 0.5]} /><meshStandardMaterial color="#333" /></mesh>
+             <mesh position={[0, 0.15, -0.2]} castShadow><boxGeometry args={[0.5, 0.4, 0.05]} /><meshStandardMaterial color="#555" /></mesh>
+           </group>
+        ))}
+        
+        {/* Sign: CamboVerse Center */}
+        <mesh position={[0, fh - 0.5, d / 2 - 0.05]}>
+          <boxGeometry args={[4.8, 0.8, 0.1]} />
+          <meshStandardMaterial color="#2d5236" roughness={0.8} />
+          <Text position={[0, 0, 0.06]} fontSize={0.35} color="white" anchorX="center" anchorY="middle">CamboVerse Center</Text>
+        </mesh>
+      </group>
 
       {/* Ground Floor Canopy (Front only) */}
       <mesh position={[0, 0.5 + fh, d / 2 + 1]} rotation={[-0.15, 0, 0]} castShadow>
@@ -312,29 +634,46 @@ export function TeachingBlock({
         <meshStandardMaterial map={roofTex} roughness={0.7} />
       </mesh>
 
-      {/* --- UPPER FLOORS --- */}
-      {/* body: front faces have 1 window+door, back has 2 windows, sides are plain */}
-      <mesh position={[0, 0.5 + fh + upperH / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[w, upperH, d]} />
-        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-0" /> {/* right */}
-        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-1" /> {/* left */}
-        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-2" /> {/* top */}
-        <meshStandardMaterial color="#f2f0ea" roughness={0.85} attach="material-3" /> {/* bottom */}
-        <meshStandardMaterial map={frontFacade} roughness={0.85} attach="material-4" /> {/* front */}
-        <meshStandardMaterial map={backFacade} roughness={0.85} attach="material-5" /> {/* back */}
-      </mesh>
+      {/* --- ALL UPPER FLOORS (Fully Modeled) --- */}
+      {Array.from({ length: floors - 1 }).map((_, f) => {
+        const floorIdx = f + 1; // 1, 2, 3...
+        const isOffice = floorIdx % 2 === 0;
+        const typePrefix = isOffice ? 'office' : 'class';
+        
+        return Array.from({ length: 7 }).map((_, i) => {
+          const cx = -w / 2 + roomW / 2 + i * roomW;
+          return (
+            <group 
+              key={`${typePrefix}-${floorIdx}-${i}`} 
+              position={[cx, 0.5 + floorIdx * fh, 0]}
+              onClick={(e) => { e.stopPropagation(); onRoomClick?.(`${typePrefix}-${floorIdx}-${i}`); }}
+              onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+              onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+            >
+              {isOffice ? (
+                <OfficeInterior roomW={roomW} d={d} fh={fh} />
+              ) : (
+                <ClassroomInterior roomW={roomW} d={d} fh={fh} />
+              )}
+              {/* Front & Back Glass Windows */}
+              <mesh position={[0, fh / 2, d / 2 - 0.2]} castShadow receiveShadow><boxGeometry args={[roomW - 0.4, fh, 0.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+              <mesh position={[0, fh / 2, -d / 2 + 0.2]} castShadow receiveShadow><boxGeometry args={[roomW - 0.4, fh, 0.2]} /><meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} transparent opacity={0.6} /></mesh>
+            </group>
+          );
+        });
+      })}
 
       {/* Vertical columns to demarcate the 7 bays visually on the upper floors */}
       {Array.from({ length: 8 }).map((_, i) => {
         const cx = -w / 2 + i * roomW;
         return (
           <group key={`pilaster-${i}`}>
-            <mesh position={[cx, 0.5 + fh + upperH / 2, d / 2 + 0.05]} castShadow>
-              <boxGeometry args={[0.5, upperH, 0.2]} />
+            <mesh position={[cx, 0.5 + fh + totalUpperH / 2, d / 2 + 0.05]} castShadow>
+              <boxGeometry args={[0.5, totalUpperH, 0.2]} />
               <meshStandardMaterial color="#e6e3da" roughness={1} />
             </mesh>
-            <mesh position={[cx, 0.5 + fh + upperH / 2, -d / 2 - 0.05]} castShadow>
-              <boxGeometry args={[0.5, upperH, 0.2]} />
+            <mesh position={[cx, 0.5 + fh + totalUpperH / 2, -d / 2 - 0.05]} castShadow>
+              <boxGeometry args={[0.5, totalUpperH, 0.2]} />
               <meshStandardMaterial color="#e6e3da" roughness={1} />
             </mesh>
           </group>
@@ -342,11 +681,11 @@ export function TeachingBlock({
       })}
 
       {/* eave band + hipped roof */}
-      <mesh position={[0, 0.5 + fh + upperH + 0.25, 0]} castShadow>
+      <mesh position={[0, 0.5 + fh + totalUpperH + 0.25, 0]} castShadow>
         <boxGeometry args={[w + 2.8, 0.5, d + 2.8]} />
         <meshStandardMaterial color="#f6f4ee" roughness={0.75} />
       </mesh>
-      <mesh geometry={roofGeo} position={[0, 0.5 + fh + upperH + 0.5, 0]} castShadow receiveShadow>
+      <mesh geometry={roofGeo} position={[0, 0.5 + fh + totalUpperH + 0.5, 0]} castShadow receiveShadow>
         <meshStandardMaterial map={roofTex} roughness={0.62} side={DoubleSide} />
       </mesh>
 
@@ -357,7 +696,7 @@ export function TeachingBlock({
         [-1, 1, 3 * Math.PI / 4],
         [1, 1, -3 * Math.PI / 4]
       ].map(([sx, sz, rot], i) => (
-        <mesh key={`finial-${i}`} position={[(w / 2 + 1.2) * sx, 0.5 + fh + upperH + 1.2, (d / 2 + 1.2) * sz]} rotation={[0, rot, -0.3]} castShadow>
+        <mesh key={`finial-${i}`} position={[(w / 2 + 1.2) * sx, 0.5 + fh + totalUpperH + 1.2, (d / 2 + 1.2) * sz]} rotation={[0, rot, -0.3]} castShadow>
           <coneGeometry args={[0.15, 1.8, 4]} />
           <meshStandardMaterial color="#f6f4ee" roughness={0.8} />
         </mesh>
@@ -365,7 +704,7 @@ export function TeachingBlock({
 
       {/* central pediment (sitting on the roof) */}
       {tower && (
-        <group position={[0, 0.5 + fh + upperH + 0.5, d / 2 - 0.5]}>
+        <group position={[0, 0.5 + fh + totalUpperH + 0.5, d / 2 - 0.5]}>
           <mesh geometry={gable} scale={[0.6, 0.6, 0.6]} position={[0, 0.8, 0]} castShadow>
             <meshStandardMaterial color="#f4f2ec" roughness={0.75} side={DoubleSide} />
           </mesh>
@@ -378,6 +717,119 @@ export function TeachingBlock({
     </group>
   );
 }
+
+/**
+ * The **main gate**: a traditional Khmer roofed structure spanning the entrance
+ * avenue, featuring a large central gable, side pavilions for pedestrians, and
+ * ornate white pillars, matching the architectural render.
+ */
+export function MainGate({ position = [0, 0, 0] as [number, number, number], rotation = 0 }) {
+  const roofTex = useMemo(() => roofTexture("#b23a34", 32, [6, 3]), []);
+  const signTex = useMemo(() => signTexture("សាកលវិទ្យាល័យ ជាតិគ្រប់គ្រង", "National University of Management", { fg: "#ffffff", sub: "#e0ded5", bg: "#555b63" }), []);
+  
+  const mainRoofGeo = useMemo(() => hippedRoofGeometry(15, 6, 5, 1.5), []);
+  const sideRoofGeo = useMemo(() => hippedRoofGeometry(4, 4, 2.5, 1), []);
+  const mainGable = useMemo(() => gableGeometry(16, 9), []);
+  const sideGable = useMemo(() => gableGeometry(4.5, 2.5), []);
+  
+  return (
+    <group position={position} rotation={[0, rotation, 0]}>
+      {/* --- Central Span --- */}
+      {/* Inner Main Pillars */}
+      {[-7.5, 7.5].map((x) => (
+        <group key={`inner-${x}`} position={[x, 0, 0]}>
+          <mesh position={[0, 4, 0]} castShadow receiveShadow>
+            <boxGeometry args={[2, 8, 2.5]} />
+            <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+          </mesh>
+          {/* Pillar Capital/Base */}
+          <mesh position={[0, 8.2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[2.4, 0.6, 2.9]} />
+            <meshStandardMaterial color="#e8e5dc" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
+            <boxGeometry args={[2.4, 0.8, 2.9]} />
+            <meshStandardMaterial color="#e8e5dc" roughness={0.9} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Central Crossbeam */}
+      <mesh position={[0, 8.7, 0]} castShadow receiveShadow>
+        <boxGeometry args={[18, 1, 3]} />
+        <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+      </mesh>
+
+      {/* Hanging Sign */}
+      <mesh position={[0, 7.6, 0]} castShadow>
+        <boxGeometry args={[11, 1.6, 0.2]} />
+        <meshStandardMaterial color="#555b63" roughness={0.6} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={`sign-${s}`} position={[0, 7.6, s * 0.11]} rotation={[0, s > 0 ? 0 : Math.PI, 0]}>
+          <planeGeometry args={[10.8, 1.4]} />
+          <meshStandardMaterial map={signTex} roughness={0.4} metalness={0.1} />
+        </mesh>
+      ))}
+
+      {/* Main Roof */}
+      <mesh position={[0, 9.2, 0]} castShadow>
+        <primitive object={mainRoofGeo} attach="geometry" />
+        <meshStandardMaterial map={roofTex} roughness={0.9} />
+      </mesh>
+
+      {/* Main Front/Back Gables */}
+      {[-1, 1].map((s) => (
+        <mesh key={`main-gable-${s}`} position={[0, 9.2, s * 4.4]} rotation={[0, s > 0 ? 0 : Math.PI, 0]} castShadow>
+          <primitive object={mainGable} attach="geometry" />
+          <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+        </mesh>
+      ))}
+      <group position={[0, 18.2, 0]}><Finial height={3.5} /></group>
+
+      {/* --- Side Spans (Pedestrian Gates) --- */}
+      {[-11.5, 11.5].map((x) => (
+        <group key={`side-${x}`} position={[x, 0, 0]}>
+          {/* Outer Pillar */}
+          <mesh position={[0, 3, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.5, 6, 2]} />
+            <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, 6.2, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.8, 0.4, 2.3]} />
+            <meshStandardMaterial color="#e8e5dc" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.8, 0.6, 2.3]} />
+            <meshStandardMaterial color="#e8e5dc" roughness={0.9} />
+          </mesh>
+
+          {/* Side Crossbeam */}
+          <mesh position={[x > 0 ? -2 : 2, 6.6, 0]} castShadow receiveShadow>
+            <boxGeometry args={[4, 0.8, 2]} />
+            <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+          </mesh>
+
+          {/* Side Roof */}
+          <mesh position={[x > 0 ? -1.5 : 1.5, 7, 0]} castShadow>
+            <primitive object={sideRoofGeo} attach="geometry" />
+            <meshStandardMaterial map={roofTex} roughness={0.9} />
+          </mesh>
+
+          {/* Side Gables */}
+          {[-1, 1].map((s) => (
+            <mesh key={`side-gable-${s}`} position={[x > 0 ? -1.5 : 1.5, 7, s * 2.4]} rotation={[0, s > 0 ? 0 : Math.PI, 0]} castShadow>
+              <primitive object={sideGable} attach="geometry" />
+              <meshStandardMaterial color="#f2f0ea" roughness={0.9} />
+            </mesh>
+          ))}
+          <group position={[x > 0 ? -1.5 : 1.5, 9.5, 0]}><Finial height={2} /></group>
+        </group>
+      ))}
+    </group>
+  );
+}
+
 
 /**
  * The **entrance monument**: gold NUM lettering on a dark plinth, on its curved
@@ -545,11 +997,19 @@ export function SportsField({
           ))}
           {/* Back nets support */}
           {[-3.66, 3.66].map((x) => (
-            <mesh key={`net-${x}`} position={[x, 0.6, -1]} rotation={[0.5, 0, 0]}>
-              <boxGeometry args={[0.06, 2.8, 0.06]} />
-              <meshStandardMaterial color="#dcdad4" roughness={0.8} />
+            <mesh key={`net-${x}`} position={[x, 1.22, s * -1]} rotation={[Math.PI / 8 * s, 0, 0]}>
+              <cylinderGeometry args={[0.02, 0.02, 2.6]} />
+              <meshStandardMaterial color="#eceae4" roughness={0.8} />
             </mesh>
           ))}
+        </group>
+      ))}
+      
+      {/* Corner flags */}
+      {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sz], i) => (
+        <group key={`flag-${i}`} position={[sx * w/2, 0, sz * d/2]}>
+          <mesh position={[0, 0.75, 0]} castShadow><cylinderGeometry args={[0.02, 0.02, 1.5]} /><meshStandardMaterial color="white" /></mesh>
+          <mesh position={[0.15, 1.35, 0]} castShadow><planeGeometry args={[0.3, 0.2]} /><meshStandardMaterial color="#e04c38" side={DoubleSide} /></mesh>
         </group>
       ))}
     </group>

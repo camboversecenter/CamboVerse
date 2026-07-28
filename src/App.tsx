@@ -36,6 +36,7 @@ export function App() {
   const [buildingsOpen, setBuildingsOpen] = useState(false);
   const [siteId, setSiteId] = useState<string | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -46,8 +47,14 @@ export function App() {
   /** Leave the whole Buildings stack in one go, from any depth. */
   const closeBuildings = () => {
     setBuildingId(null);
+    setRoomId(null);
     setSiteId(null);
     setBuildingsOpen(false);
+  };
+
+  const openBuilding = (id: string, room: string | null = null) => {
+    setBuildingId(id);
+    setRoomId(room);
   };
 
   // Teleport: cover the screen with a warp flash, run the scene swap hidden
@@ -103,7 +110,9 @@ export function App() {
         // inside a site. Back goes wherever you came from.
         <BuildingView
           building={building}
-          onBack={() => setBuildingId(null)}
+          initialRoom={roomId}
+          onRoomChange={(r) => setRoomId(r)}
+          onBack={() => { setBuildingId(null); setRoomId(null); }}
           onBackToMap={closeBuildings}
           backLabel={siteId ? "← Site" : "← Buildings"}
         />
@@ -111,13 +120,13 @@ export function App() {
         <BuildingsView
           site={site}
           onBack={() => setSiteId(null)}
-          onOpenBuilding={(id) => setBuildingId(id)}
+          onOpenBuilding={openBuilding}
         />
       ) : buildingsOpen ? (
         <BuildingsHome
           onBackToMap={closeBuildings}
           onOpenSite={(id) => setSiteId(id)}
-          onOpenBuilding={(id) => setBuildingId(id)}
+          onOpenBuilding={openBuilding}
         />
       ) : (
         <MapView
