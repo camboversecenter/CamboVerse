@@ -376,8 +376,15 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles) */}
-        <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#d4c9b8" roughness={0.7} /></mesh>
+        {/* Floor (Tan tiles). Nudged up so its top clears the plinth top rather
+            than sitting exactly on it — two coplanar up-faces at y=0.5 z-fight,
+            which is what made the ground-floor floor flicker. The lift buries the
+            plinth top under this slab; the polygon offset decides the draw order
+            at the seam for good measure. */}
+        <mesh position={[0, 0.27, 0]} receiveShadow>
+          <boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} />
+          <meshStandardMaterial color="#d4c9b8" roughness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
+        </mesh>
         {/* Ceiling (White) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
         {/* Back Wall */}
@@ -554,8 +561,12 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles) */}
-        <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#c2b092" roughness={0.5} /></mesh>
+        {/* Floor (Tan tiles). Lifted clear of the plinth top so the two aren't
+            coplanar at y=0.5 — see the Administration floor above. */}
+        <mesh position={[0, 0.27, 0]} receiveShadow>
+          <boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} />
+          <meshStandardMaterial color="#c2b092" roughness={0.5} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
+        </mesh>
         {/* Ceiling (Dark Industrial) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#3a3a3a" roughness={0.9} /></mesh>
         
