@@ -5,7 +5,7 @@ import {
 } from "three";
 import { Text, Instances, Instance } from "@react-three/drei";
 import {
-  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, roomFacadeTexture
+  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture
 } from "../lib/campusTexture";
 
 /**
@@ -374,7 +374,7 @@ export function TeachingBlock({
         position={[-w / 2 + (w / 3) / 2, 0, 0]} 
         onClick={(e) => { e.stopPropagation(); onRoomClick?.('admin'); }}
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
         {/* Floor (Tan tiles) */}
         <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#d4c9b8" roughness={0.7} /></mesh>
@@ -491,7 +491,7 @@ export function TeachingBlock({
         position={[0, 0, -d / 2 + 3]}
         onClick={(e) => { e.stopPropagation(); onRoomClick?.('middle'); }}
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
         {/* Stage Platform */}
         <mesh position={[0, 0.4, 0]} receiveShadow castShadow>
@@ -525,16 +525,16 @@ export function TeachingBlock({
           {/* Signage: Logo and Text */}
           <group position={[0, 0.5, 0.15]}>
             {/* Simple Logo Placeholder */}
-            <mesh position={[-4, 0, 0]}>
-              <cylinderGeometry args={[0.6, 0.6, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+            <mesh position={[-4, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.6, 0.6, 0.05]} />
               <meshStandardMaterial color="#3b5998" />
             </mesh>
-            <mesh position={[-4, 0, 0.03]}>
-              <cylinderGeometry args={[0.5, 0.5, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+            <mesh position={[-4, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.5, 0.5, 0.05]} />
               <meshStandardMaterial color="#d8b24a" />
             </mesh>
-            <mesh position={[-4, 0, 0.06]}>
-              <cylinderGeometry args={[0.4, 0.4, 0.05]} rotation={[Math.PI / 2, 0, 0]} />
+            <mesh position={[-4, 0, 0.06]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.4, 0.4, 0.05]} />
               <meshStandardMaterial color="#b23a34" />
             </mesh>
             
@@ -552,7 +552,7 @@ export function TeachingBlock({
         position={[w / 2 - (w / 3) / 2, 0, 0]} 
         onClick={(e) => { e.stopPropagation(); onRoomClick?.('camboverse'); }}
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
         {/* Floor (Tan tiles) */}
         <mesh position={[0, 0.25, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#c2b092" roughness={0.5} /></mesh>
@@ -648,7 +648,7 @@ export function TeachingBlock({
               position={[cx, 0.5 + floorIdx * fh, 0]}
               onClick={(e) => { e.stopPropagation(); onRoomClick?.(`${typePrefix}-${floorIdx}-${i}`); }}
               onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-              onPointerOut={(e) => { document.body.style.cursor = 'auto'; }}
+              onPointerOut={() => { document.body.style.cursor = 'auto'; }}
             >
               {isOffice ? (
                 <OfficeInterior roomW={roomW} d={d} fh={fh} />
