@@ -1,10 +1,10 @@
 /* Embedded Khmer fonts (Google Fonts, OFL-1.1) — see public/fonts/README.md. */
 @font-face {
-  font-family: "Noto Sans Khmer";
+  font-family: "Siemreap";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/NotoSansKhmer-Khmer.woff2") format("woff2");
+  src: url("/fonts/Siemreap-Khmer.woff2") format("woff2");
 }
 @font-face {
   font-family: "Moul";
@@ -35,7 +35,7 @@ body,
   background: var(--bg);
   color: var(--ink);
   font-family:
-    system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Khmer", sans-serif;
+    system-ui, -apple-system, "Segoe UI", Roboto, "Siemreap", sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
@@ -1948,12 +1948,24 @@ body,
 }
 .write-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 520px;
   background: var(--panel, #1b1e16);
   border: 1px solid var(--accent);
   border-radius: 18px;
   padding: 16px;
 }
+.write-stagerow { display: flex; gap: 10px; align-items: stretch; }
+.write-model {
+  flex: 0 0 30%;
+  background: #efe4cb;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.write-model-svg { width: 78%; height: 78%; }
+.write-model-none { font-size: 2.4rem; }
 .write-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .write-title { font: 700 0.9rem system-ui, sans-serif; }
 .write-title b { color: var(--accent); }
@@ -1962,6 +1974,8 @@ body,
   border: 1px solid var(--line, #33372a); background: transparent; color: var(--ink); cursor: pointer;
 }
 .write-stage {
+  flex: 1;
+  min-width: 0;
   background: #efe4cb;
   border-radius: 14px;
   display: grid; place-items: center;
@@ -1973,8 +1987,7 @@ body,
 .write-fill.on { opacity: 1; }
 .write-pen { filter: drop-shadow(0 0 3px rgba(200, 145, 46, 0.7)); transition: opacity 0.2s; }
 .write-none { font-size: 5rem; color: #241606; }
-.write-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
-.write-shape { display: flex; gap: 6px; }
+.write-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 14px; }
 .write-replay {
   padding: 9px 16px;
   border: 1px solid var(--accent);
@@ -2037,7 +2050,7 @@ body,
 .ls-note { color: var(--muted, #a6ab97); font-size: 0.82rem; margin-top: 2px; }
 
 /* Render Khmer script with the embedded font wherever the .khmer helper is used. */
-.khmer { font-family: "Noto Sans Khmer", system-ui, sans-serif; }
+.khmer { font-family: "Siemreap", system-ui, sans-serif; }
 
 /* ---- Kun Khmer Dojo ---- */
 .kun-btn {
