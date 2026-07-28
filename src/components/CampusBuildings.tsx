@@ -457,7 +457,7 @@ export function TeachingBlock({
 
         {/* Coffee Table */}
         <group position={[0, 0, 3]}>
-          <mesh position={[0, 0.7, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#111" roughness={0.2} /></mesh>
+          <mesh position={[0, 0.7, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#3a4046" roughness={0.35} metalness={0.2} /></mesh>
           <mesh position={[0, 0.35, 0]} castShadow receiveShadow><boxGeometry args={[2.0, 0.7, 1.0]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
         </group>
 

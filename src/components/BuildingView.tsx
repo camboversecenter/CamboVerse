@@ -95,9 +95,13 @@ function CameraAnimator({ room, aim, dist, eye }: { room: string | null; aim: nu
     ty = 1.5 + fIdx * 3.5; // elevated by floor count
   }
 
-  // Place the camera at z=5 and the target 0.1m deeper (z=4.9) for first-person pivot
-  const posVec = useMemo(() => room ? new Vector3(tx, ty, 5) : new Vector3(dist * 0.5, eye, dist), [room, tx, ty, dist, eye]);
-  const targetVec = useMemo(() => room ? new Vector3(tx, ty, 4.9) : new Vector3(0, aim, 0), [room, tx, ty, aim]);
+  // Stand just inside the room's front wall (z≈6.9) and look in and slightly
+  // down toward the back (z=-4), rather than pivoting on the spot at z=5. The old
+  // spot dropped you right on top of the waiting-area furniture, so a dark table
+  // filled the lower half of the view and read as a black floor. From here the
+  // whole room reads and nothing sits against the lens.
+  const posVec = useMemo(() => room ? new Vector3(tx, ty + 0.4, 6.9) : new Vector3(dist * 0.5, eye, dist), [room, tx, ty, dist, eye]);
+  const targetVec = useMemo(() => room ? new Vector3(tx, ty - 0.4, -4) : new Vector3(0, aim, 0), [room, tx, ty, aim]);
 
   useEffect(() => {
     done.current = false;
