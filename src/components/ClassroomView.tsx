@@ -4,7 +4,7 @@ import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import { LetterTile } from "./LetterTile";
 import { LetterQuiz } from "./LetterQuiz";
-import { WriteAnimation } from "./WriteAnimation";
+import { WriteAnimation, NEEDS_SHAPED_RENDER } from "./WriteAnimation";
 import { LetterSpace } from "./LetterSpace";
 import { makeGlyphTexture } from "../lib/glyphTexture";
 import { getIdentity, earnedAchievements } from "../lib/identity";
@@ -49,7 +49,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
   useEffect(() => {
     let live = true;
     Promise.all([
-      document.fonts.load('64px "Noto Sans Khmer"', "ក០"),
+      document.fonts.load('64px "Siemreap"', "ក០"),
       document.fonts.load('64px "Moul"', "ក"),
     ])
       .then(() => document.fonts.ready)
@@ -180,13 +180,13 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
           </button>
           <div className="cls-shapes">
             <div className="cls-shape-cell">
-              <span className="cls-glyph" style={{ fontFamily: "'Noto Sans Khmer', serif" }}>
+              <span className="cls-glyph" style={{ fontFamily: "'Siemreap', serif" }}>
                 {selected.display}
               </span>
               <span className="cls-shape-name">Normal · អក្សរធម្មតា</span>
             </div>
             <div className="cls-shape-cell">
-              <span className="cls-glyph" style={{ fontFamily: "'Moul', 'Noto Sans Khmer', serif" }}>
+              <span className="cls-glyph" style={{ fontFamily: "'Moul', 'Siemreap', serif" }}>
                 {selected.display}
               </span>
               <span className="cls-shape-name">Moul · អក្សរមូល</span>
@@ -195,7 +195,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
           <div className="cls-meta">
             <div className="cls-roman">{selected.roman}</div>
             {selected.name && (
-              <div className="cls-name" style={{ fontFamily: "'Noto Sans Khmer', serif" }}>
+              <div className="cls-name" style={{ fontFamily: "'Siemreap', serif" }}>
                 {selected.name}
               </div>
             )}
@@ -209,7 +209,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
               <button className="cls-use-btn" onClick={() => setSpaceFor(selected)}>
                 📖 Learn to use
               </button>
-              {GLYPH_PATHS[selected.char] && (
+              {(GLYPH_PATHS[selected.char] || NEEDS_SHAPED_RENDER.has(selected.char)) && (
                 <button className="cls-write-btn" onClick={() => setWriteFor(selected)}>
                   ✍️ How to write
                 </button>
@@ -228,7 +228,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
         </div>
       )}
 
-      {writeFor && <WriteAnimation letter={writeFor} initialShape={shape} onClose={() => setWriteFor(null)} />}
+      {writeFor && <WriteAnimation letter={writeFor} onClose={() => setWriteFor(null)} />}
 
       {!ready && <div className="cls-loading">Loading Khmer fonts…</div>}
     </div>
