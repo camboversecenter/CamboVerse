@@ -925,6 +925,11 @@ export function ParkingCanopy({
         <boxGeometry args={[length, 0.25, width]} />
         <meshStandardMaterial color="#f4f4f1" roughness={0.55} metalness={0.15} />
       </mesh>
+      {/* Solar panel array in the middle of the roof */}
+      <mesh position={[0, height + 0.35, 0]} rotation={[0.06, 0, 0]} castShadow>
+        <boxGeometry args={[length * 0.7, 0.1, width * 0.7]} />
+        <meshStandardMaterial color="#1f2c3d" roughness={0.3} metalness={0.8} />
+      </mesh>
     </group>
   );
 }
@@ -951,33 +956,33 @@ export function SportsField({
       {/* White lines */}
       <group position={[0, 0.06, 0]}>
         {/* Outer boundary */}
-        <mesh position={[0, 0, d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-        <mesh position={[0, 0, -d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-        <mesh position={[w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
-        <mesh position={[-w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh position={[0, 0, d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+        <mesh position={[0, 0, -d/2]}><boxGeometry args={[w, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+        <mesh position={[w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+        <mesh position={[-w/2, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
 
         {/* Center line and circle */}
-        <mesh position={[0, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white"/></mesh>
-        <mesh rotation={[-Math.PI/2, 0, 0]}><ringGeometry args={[9.15 - lineW/2, 9.15 + lineW/2, 32]}/><meshBasicMaterial color="white"/></mesh>
-        <mesh rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.5, 16]}/><meshBasicMaterial color="white"/></mesh>
+        <mesh position={[0, 0, 0]}><boxGeometry args={[lineW, 0.02, d]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+        <mesh rotation={[-Math.PI/2, 0, 0]}><ringGeometry args={[9.15 - lineW/2, 9.15 + lineW/2, 32]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+        <mesh rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.5, 16]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
 
         {/* Penalty and goal boxes */}
         {[-1, 1].map((s) => (
           <group key={s} position={[s * (w/2 - 16.5/2), 0, 0]}>
             {/* Penalty box (16.5m deep, 40.3m wide) */}
-            <mesh position={[0, 0, 40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-            <mesh position={[0, 0, -40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-            <mesh position={[-s * 16.5/2, 0, 0]}><boxGeometry args={[lineW, 0.02, 40.3]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[0, 0, 40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+            <mesh position={[0, 0, -40.3/2]}><boxGeometry args={[16.5, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+            <mesh position={[-s * 16.5/2, 0, 0]}><boxGeometry args={[lineW, 0.02, 40.3]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
             {/* Goal area (5.5m deep, 18.3m wide) */}
-            <mesh position={[s * (16.5/2 - 5.5/2), 0, 18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-            <mesh position={[s * (16.5/2 - 5.5/2), 0, -18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white"/></mesh>
-            <mesh position={[s * (16.5/2 - 5.5), 0, 0]}><boxGeometry args={[lineW, 0.02, 18.3]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[s * (16.5/2 - 5.5/2), 0, 18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+            <mesh position={[s * (16.5/2 - 5.5/2), 0, -18.3/2]}><boxGeometry args={[5.5, 0.02, lineW]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
+            <mesh position={[s * (16.5/2 - 5.5), 0, 0]}><boxGeometry args={[lineW, 0.02, 18.3]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
             {/* Penalty mark (11m from goal line) */}
-            <mesh position={[s * (16.5/2 - 11), 0, 0]} rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.3, 16]}/><meshBasicMaterial color="white"/></mesh>
+            <mesh position={[s * (16.5/2 - 11), 0, 0]} rotation={[-Math.PI/2, 0, 0]}><circleGeometry args={[0.3, 16]}/><meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/></mesh>
             {/* Penalty arc */}
             <mesh position={[s * (16.5/2 - 11), 0, 0]} rotation={[-Math.PI/2, 0, 0]}>
               <ringGeometry args={[9.15 - lineW/2, 9.15 + lineW/2, 16, 1, s === 1 ? Math.PI - Math.acos(5.5/9.15) : -Math.acos(5.5/9.15), 2 * Math.acos(5.5/9.15)]}/>
-              <meshBasicMaterial color="white"/>
+              <meshBasicMaterial color="white" polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3}/>
             </mesh>
           </group>
         ))}

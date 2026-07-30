@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sky } from "@react-three/drei";
-import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
+import { createXRStore, XR, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
+import { VRRig } from "./VRRig";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
   ConstructionBlock, Props, MainGate,
@@ -12,7 +13,10 @@ import {
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
-import { Forest, type TreeDef } from "./Forest";
+
+import { MangoForest, type MangoDef } from "./MangoTree";
+import { BananaForest, type BananaDef } from "./BananaTree";
+import campusTreesData from "../data/campusTrees.json";
 import { Palm } from "./Palm";
 
 /**
@@ -121,10 +125,17 @@ export function BuildingsView({
       >
         <XR store={store}>
           <CampusWorld mode={mode} onOpenBuilding={onOpenBuilding} />
-          <XROrigin position={[0, 0, 96]} />
+          {/* VR locomotion rig: left stick = walk, right stick = snap-turn 30°.
+              Spawns at the campus entrance facing the monument. Works on any
+              WebXR device; optimised for Meta Quest 3. */}
+          <VRRig position={[0, 0, 96]} />
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
-            <FirstPersonControls input={input} start={start} startYaw={startYaw} />
+            <FirstPersonControls 
+              input={input} 
+              start={start} 
+              startYaw={startYaw} 
+            />
           ) : (
             <OrbitControls
               enablePan
@@ -148,9 +159,14 @@ export function BuildingsView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        {vrSupported && (
-          <button className="vr-btn cls-vr" onClick={() => { setMode("ultra"); store.enterVR(); }}>🥽 VR</button>
-        )}
+        <button
+          className="vr-btn cls-vr"
+          style={!vrSupported ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
+          title={vrSupported ? "Enter VR — works on Meta Quest 3 and any WebXR headset" : "VR not detected — open this page on a Meta Quest browser or connect a headset via Air Link"}
+          onClick={() => { if (vrSupported) { setMode("ultra"); store.enterVR(); } }}
+        >
+          🥽 VR
+        </button>
       </div>
 
       {/* orbit ⇄ walk */}
@@ -191,7 +207,9 @@ export function BuildingsView({
 
       {nav === "walk" && <WalkControls input={input} />}
       {nav === "walk" && (
-        <div className="campus-hint">Drag to look · use the stick to walk</div>
+        <div className="campus-hint">
+          Drag to look · use the stick to walk · tap space to jump
+        </div>
       )}
     </div>
   );
@@ -253,38 +271,49 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
     return out;
   }, []);
 
-  const trees = useMemo<TreeDef[]>(() => {
-    const list: TreeDef[] = [];
+  const { mangoTrees, bananaTrees } = useMemo(() => {
+    const mangoes: MangoDef[] = [];
+    const bananas: BananaDef[] = [];
     let s = 12;
     const rnd = (min: number, max: number) => {
       s = (s * 1103515245 + 12345) & 0x7fffffff;
       return min + (s / 0x7fffffff) * (max - min);
     };
     
+    // Add a tree to one of the arrays randomly (stable based on sequence)
+    const addTree = (x: number, z: number) => {
+      // 30% chance to be a banana tree
+      if (rnd(0, 1) < 0.3) {
+        bananas.push({ x, z });
+      } else {
+        mangoes.push({ x, z });
+      }
+    };
+
     // Perimeter trees
     for (let x = -170; x <= 130; x += 15) {
-      if (Math.abs(x + 40) > 15) list.push({ x: x + rnd(-2, 2), z: 133 + rnd(-2, 2), s: rnd(7, 13), c: "#4a783c" });
-      list.push({ x: x + rnd(-2, 2), z: -53 + rnd(-2, 2), s: rnd(7, 13), c: "#4a783c" });
+      if (Math.abs(x + 40) > 15) addTree(x + rnd(-2, 2), 133 + rnd(-2, 2));
+      addTree(x + rnd(-2, 2), -53 + rnd(-2, 2));
     }
     for (let z = -40; z <= 120; z += 15) {
-      list.push({ x: -173 + rnd(-2, 2), z: z + rnd(-2, 2), s: rnd(7, 13), c: "#4a783c" });
-      list.push({ x: 133 + rnd(-2, 2), z: z + rnd(-2, 2), s: rnd(7, 13), c: "#4a783c" });
+      addTree(-173 + rnd(-2, 2), z + rnd(-2, 2));
+      addTree(133 + rnd(-2, 2), z + rnd(-2, 2));
     }
     
     // Internal road trees
     for (let x = -170; x <= 130; x += 18) {
       if (Math.abs(x + 40) > 15) {
-        list.push({ x: x + rnd(-1, 1), z: 33 + rnd(-1, 1), s: rnd(6, 10), c: "#4a783c" });
-        list.push({ x: x + rnd(-1, 1), z: 47 + rnd(-1, 1), s: rnd(6, 10), c: "#4a783c" });
+        addTree(x + rnd(-1, 1), 33 + rnd(-1, 1));
+        addTree(x + rnd(-1, 1), 47 + rnd(-1, 1));
       }
     }
     for (let z = -40; z <= 120; z += 18) {
       if (Math.abs(z - 40) > 15) {
-        list.push({ x: -48 + rnd(-1, 1), z: z + rnd(-1, 1), s: rnd(6, 10), c: "#4a783c" });
-        list.push({ x: -32 + rnd(-1, 1), z: z + rnd(-1, 1), s: rnd(6, 10), c: "#4a783c" });
+        addTree(-48 + rnd(-1, 1), z + rnd(-1, 1));
+        addTree(-32 + rnd(-1, 1), z + rnd(-1, 1));
       }
     }
-    return list;
+    return { mangoTrees: mangoes, bananaTrees: bananas };
   }, []);
 
   const palms = useMemo(() => {
@@ -296,18 +325,25 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
     return list;
   }, []);
 
-  // The neighbourhood the campus sits in: rows of pitched-roof houses.
+  // The neighbourhood the campus sits in: rows of pitched-roof houses in a grid.
   const houses = useMemo(() => {
     const out: { pos: [number, number, number]; rot: number; scale: number }[] = [];
     let s = 7;
     const rnd = () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
-    for (let ring = 0; ring < 3; ring++) {
-      for (let i = 0; i < 26; i++) {
-        const a = (i / 26) * Math.PI * 2 + ring * 0.12;
-        const r = 250 + ring * 34 + rnd() * 16;
+    
+    for (let x = -400; x <= 400; x += 35) {
+      for (let z = -350; z <= 450; z += 45) {
+        // Skip the main campus footprint so houses don't spawn on the lawn
+        if (x > -220 && x < 180 && z > -120 && z < 280) continue;
+        
+        // Add a little organic jitter to the grid
+        const px = x + rnd() * 8;
+        const pz = z + rnd() * 12;
+        
         out.push({
-          pos: [Math.cos(a) * r + 20, 0, Math.sin(a) * r + 70],
-          rot: a + Math.PI / 2,
+          pos: [px, 0, pz],
+          // Align houses to the grid (0 or 90 degrees)
+          rot: rnd() > 0.5 ? 0 : Math.PI / 2,
           scale: 0.85 + rnd() * 0.5,
         });
       }
@@ -417,6 +453,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       <Tappable id="gate" onOpen={onOpenBuilding}>
         <MainGate position={[-40, 0, 240]} rotation={Math.PI} />
       </Tappable>
+      
       {/* The NUM Monument sign at the forecourt circle */}
       <EntranceMonument position={[-40, 0, 140]} rotation={Math.PI} />
       {/* Quadrant 1 (Top Left): Teaching and Construction Site */}
@@ -445,7 +482,16 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       </Tappable>
 
       {/* --- planting --- */}
-      <Forest trees={trees} />
+      <MangoForest
+        trees={mangoTrees}
+        height_m={campusTreesData.observations[0].measure.height_m}
+        dbh_cm={campusTreesData.observations[0].measure.dbh_cm}
+      />
+      <BananaForest
+        trees={bananaTrees}
+        height_m={campusTreesData.observations[0].measure.height_m}
+        dbh_cm={campusTreesData.observations[0].measure.dbh_cm}
+      />
       {palms.map((p, i) => <Palm key={`palm-${i}`} position={p} scale={1.1} spin={i * 2.3} />)}
 
       {/* --- site furniture --- */}
