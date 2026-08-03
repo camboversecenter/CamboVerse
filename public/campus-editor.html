@@ -132,6 +132,9 @@ const BUILDING_KINDS = [
 ];
 const POOL_KIND = { kind: "pool", label: "Pool", w: 30, d: 18, resizable: true, fixedRot: false, isPool: true };
 
+/** Default height for a new boundary wall, in metres. */
+const WALL_HEIGHT_M = 4;
+
 // Positions/sizes read off the NUM master-plan board, calibrated on the
 // football pitch (~105 x 68 m). The board is an oblique render, so depth is
 // foreshortened ~0.77x versus width — corrected for here. The site is a
@@ -147,33 +150,34 @@ const INITIAL_BUILDINGS = [
   { id: "hall",         kind: "great-hall",         label: "The Great Hall",       x: 63.2,  z: -49.4, rotation: 0,       w: 50.3,  d: 76.8, resizable: true },
   { id: "shrine",       kind: "shrine",             label: "Campus Shrine",        x: 83.8,  z: 6.3,   rotation: 0, fixedRot: true, w: 8,     d: 8,  resizable: false },
   { id: "field",        kind: "sports-field",       label: "Sports Field",         x: -55.7, z: 79,    rotation: 0, fixedRot: true, w: 120.4, d: 66, resizable: true },
-  { id: "teaching-block-khmgey", kind: "teaching-block", label: "Sport Bathroom", x: -64.4, z: 158.5, rotation: 0,       w: 12,    d: 6,    resizable: true, added: true },
-  { id: "pool-ani4gy",  kind: "pool",               label: "Pool",                 x: -116.2, z: -24.7, rotation: 0,      w: 30,    d: 93.8, resizable: true, isPool: true, added: true },
+  { id: "teaching-block-khmgey", kind: "teaching-block", label: "Sport Bathroom", x: -56.2, z: 158,  rotation: 0,     w: 38.6,  d: 8,    resizable: true, added: true },
+  { id: "main-gate-dj2hjk", kind: "main-gate",      label: "West Gate",            x: -128.5, z: 34.6, rotation: -1.58, w: 15,   d: 6,    resizable: false, added: true },
+  { id: "pool-ani4gy",  kind: "pool",               label: "Pool",                 x: -117.2, z: -21.1, rotation: 0,    w: 30,    d: 93.8, resizable: true, isPool: true, added: true },
 ];
 
 const INITIAL_ROADS = [
-  { id: "avenue-lane-out", kind: "road",    widthM: 18,   x1: -10,    z1: 152,    x2: -3,    z2: 249 },
-  { id: "avenue-walk-l",   kind: "walkway", widthM: 2.3,  x1: -20,    z1: 152.7,  x2: -13,   z2: 249.7 },
-  { id: "avenue-walk-r",   kind: "walkway", widthM: 2.3,  x1: 0,      z1: 151.3,  x2: 7,     z2: 248.3 },
-  { id: "south-perimeter", kind: "road",    widthM: 14,   x1: -140.1, z1: 147.4,  x2: 178.7, z2: 144.4 },
-  { id: "north-perimeter", kind: "road",    widthM: 14,   x1: -138.5, z1: -113,   x2: 128.2, z2: -129.9 },
-  { id: "west-perimeter",  kind: "road",    widthM: 14,   x1: -139,   z1: -119.6, x2: -138.5, z2: 154.1 },
-  { id: "east-perimeter",  kind: "road",    widthM: 14,   x1: 121.7,  z1: -137.6, x2: 173,   z2: 150.5 },
-  { id: "middle-horiz",    kind: "road",    widthM: 14,   x1: -131.9, z1: 33.5,   x2: 147.3, z2: 33.5 },
-  { id: "central-vert",    kind: "road",    widthM: 14,   x1: 20.5,   z1: -118.2, x2: 21.5,  z2: 141.3 },
-  { id: "road-jcrjrw",     kind: "road",    widthM: 11.5, x1: 14.3,   z1: -69.5,  x2: -90.5, z2: -69 },
+  { id: "avenue-lane-out", kind: "road",    widthM: 14,   x1: -10,    z1: 152,    x2: -3,    z2: 249 },
+  { id: "avenue-walk-l",   kind: "walkway", widthM: 2.3,  x1: -18,    z1: 152.7,  x2: -11,   z2: 249.7 },
+  { id: "avenue-walk-r",   kind: "walkway", widthM: 2.3,  x1: -3.1,   z1: 151.3,  x2: 3.9,   z2: 248.3 },
+  { id: "south-perimeter", kind: "road",    widthM: 10,   x1: -140.1, z1: 148.9,  x2: 178.7, z2: 145.9 },
+  { id: "north-perimeter", kind: "road",    widthM: 10,   x1: -138.5, z1: -115.6, x2: 128.2, z2: -132.5 },
+  { id: "west-perimeter",  kind: "road",    widthM: 9.5,  x1: -139,   z1: -119.6, x2: -138.5, z2: 154.1 },
+  { id: "east-perimeter",  kind: "road",    widthM: 10,   x1: 122.7,  z1: -138.1, x2: 174,   z2: 150 },
+  { id: "middle-horiz",    kind: "road",    widthM: 10,   x1: -135.5, z1: 35,     x2: 150.4, z2: 34.5 },
+  { id: "central-vert",    kind: "road",    widthM: 10,   x1: 20.5,   z1: -118.2, x2: 21.5,  z2: 142.8 },
+  { id: "road-jcrjrw",     kind: "road",    widthM: 10,   x1: 16.9,   z1: -69.5,  x2: -90.5, z2: -69 },
   { id: "road-b14lw1",     kind: "road",    widthM: 10,   x1: -95,    z1: 33,     x2: -95,   z2: -112 },
-  { id: "road-upcm9l",     kind: "road",    widthM: 10,   x1: 101,    z1: 39,     x2: 101,   z2: 148 },
-  { id: "road-xlueh9",     kind: "road",    widthM: 10,   x1: 16.9,   z1: -39.2,  x2: -90.6, z2: -39.6, added: true },
-  // Boundary walls. `wall-4u4f9r` from the export is dropped: its start and end
-  // points were identical (a double-click), so it had no length to draw.
-  { id: "wall-ubcfdu", kind: "wall", widthM: 0.5, heightM: 2.4, x1: -20,    z1: 162.7,  x2: -15.3, z2: 250.8, added: true },
-  { id: "wall-upehtn", kind: "wall", widthM: 0.5, heightM: 2.4, x1: 2.1,    z1: 162.8,  x2: 8.7,   z2: 248.6, added: true },
-  { id: "wall-38v12i", kind: "wall", widthM: 0.5, heightM: 2.4, x1: 0.9,    z1: 163.2,  x2: 183.2, z2: 161.6, added: true },
-  { id: "wall-gzpyay", kind: "wall", widthM: 0.5, heightM: 2.4, x1: 182.7,  z1: 161.7,  x2: 129,   z2: -137.8, added: true },
-  { id: "wall-vsoh40", kind: "wall", widthM: 0.5, heightM: 2.4, x1: -131,   z1: -119.9, x2: 130,   z2: -138.3, added: true },
-  { id: "wall-v939fs", kind: "wall", widthM: 0.5, heightM: 2.4, x1: -145.4, z1: 163.7,  x2: -145.9, z2: -118.9, added: true },
-  { id: "wall-psu6uu", kind: "wall", widthM: 0.5, heightM: 2.4, x1: -144.9, z1: 164.2,  x2: -19.4, z2: 164.2, added: true },
+  { id: "road-upcm9l",     kind: "road",    widthM: 10,   x1: 101,    z1: 39,     x2: 102.5, z2: 142.4 },
+  { id: "road-xlueh9",     kind: "road",    widthM: 10,   x1: 17.4,   z1: -39.2,  x2: -90.1, z2: -39.6, added: true },
+  // Boundary walls. `wall-4u4f9r` from an earlier export is dropped: its start
+  // and end points were identical (a double-click), so it had no length to draw.
+  { id: "wall-ubcfdu", kind: "wall", widthM: 0.5, heightM: 4, x1: -19,    z1: 162.7,  x2: -12.8, z2: 250.3, added: true },
+  { id: "wall-upehtn", kind: "wall", widthM: 0.5, heightM: 4, x1: -0.5,   z1: 162.8,  x2: 6.1,   z2: 248.6, added: true },
+  { id: "wall-38v12i", kind: "wall", widthM: 0.5, heightM: 4, x1: -1.1,   z1: 163.2,  x2: 183.2, z2: 161.6, added: true },
+  { id: "wall-gzpyay", kind: "wall", widthM: 0.5, heightM: 4, x1: 182.7,  z1: 161.7,  x2: 129,   z2: -137.8, added: true },
+  { id: "wall-vsoh40", kind: "wall", widthM: 0.5, heightM: 4, x1: -131,   z1: -119.9, x2: 130,   z2: -138.3, added: true },
+  { id: "wall-v939fs", kind: "wall", widthM: 0.5, heightM: 4, x1: -144.9, z1: 164.7,  x2: -145.4, z2: -117.9, added: true },
+  { id: "wall-psu6uu", kind: "wall", widthM: 0.5, heightM: 4, x1: -144.9, z1: 164.2,  x2: -19.4, z2: 164.2, added: true },
 ];
 
 let buildings = structuredClone(INITIAL_BUILDINGS);
@@ -923,7 +927,7 @@ svg.addEventListener("click", (e) => {
   snapshot(); // state *before* the push, so undo removes it again
   roads.push({
     id, kind: placeMode.kind, widthM: isWall ? 0.5 : 10,
-    ...(isWall ? { heightM: 2.4 } : {}),
+    ...(isWall ? { heightM: WALL_HEIGHT_M } : {}),
     x1: pendingPoint.x, z1: pendingPoint.z, x2: x, z2: z, added: true,
   });
   clearPlaceMode();
@@ -1112,13 +1116,13 @@ function drawSelPanel() {
     panel.appendChild(selectField("Kind", r.kind, ["road", "walkway", "wall"], (v) => {
       r.kind = v;
       // A wall needs a height to extrude; a road/walkway is flat and has none.
-      if (v === "wall" && r.heightM == null) r.heightM = 2.4;
+      if (v === "wall" && r.heightM == null) r.heightM = WALL_HEIGHT_M;
       if (v !== "wall") delete r.heightM;
       redraw();
     }));
     panel.appendChild(numberField(r.kind === "wall" ? "Thickness (m)" : "Width (m)", r.widthM, (v) => { r.widthM = v; redraw(); }, 0.5));
     if (r.kind === "wall") {
-      panel.appendChild(numberField("Height (m)", r.heightM ?? 2.4, (v) => { r.heightM = Math.max(0.2, v); redraw(); }, 0.2));
+      panel.appendChild(numberField("Height (m)", r.heightM ?? WALL_HEIGHT_M, (v) => { r.heightM = Math.max(0.2, v); redraw(); }, 0.2));
     }
     panel.appendChild(numberField("X1 (m)", r.x1, (v) => { r.x1 = v; redraw(); }));
     panel.appendChild(numberField("Z1 (m)", r.z1, (v) => { r.z1 = v; redraw(); }));
@@ -1207,7 +1211,7 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   });
   const asSegment = (r) => ({
     id: r.id, kind: r.kind, widthM: r.widthM,
-    ...(r.kind === "wall" ? { heightM: r.heightM ?? 2.4 } : {}),
+    ...(r.kind === "wall" ? { heightM: r.heightM ?? WALL_HEIGHT_M } : {}),
     from: [r.x1, r.z1], to: [r.x2, r.z2],
     ...(r.added ? { added: true } : {}),
   });
@@ -1251,7 +1255,7 @@ document.getElementById("loadBtn").addEventListener("click", () => {
     if (segs.length) {
       roads = segs.map((r) => ({
         id: r.id, kind: r.kind || "road", widthM: r.widthM,
-        ...(r.kind === "wall" ? { heightM: r.heightM ?? 2.4 } : {}),
+        ...(r.kind === "wall" ? { heightM: r.heightM ?? WALL_HEIGHT_M } : {}),
         x1: r.from[0], z1: r.from[1], x2: r.to[0], z2: r.to[1], added: !!r.added,
       }));
     }

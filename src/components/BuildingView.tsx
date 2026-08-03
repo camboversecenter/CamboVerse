@@ -6,13 +6,14 @@ import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
-  ConstructionBlock,
+  ConstructionBlock, MainGate,
 } from "./CampusBuildings";
 import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture } from "../lib/campusTexture";
 import type { Building } from "../buildings";
+import { layoutById, membersOf, sizeOf } from "../campusLayout";
 
 /**
  * A single **building's page** — the building on its own, turning slowly on a
@@ -53,24 +54,80 @@ function GeneratedBuilding({ model }: { model: string }) {
   return <primitive object={copy} />;
 }
 
-/** Draw just this building, centred on the origin. */
+/**
+ * Draw just this building, centred on the origin — at the same size it stands
+ * on the campus. Sizes come from `campusLayout.ts` rather than being typed
+ * again here, so a page can't quietly show a different building from the one
+ * you just walked up to.
+ */
 function TheBuilding({ id, model, onRoomClick }: { id: string; model?: string; onRoomClick?: (r: string) => void }) {
   if (model) return <GeneratedBuilding model={model} />;
+  const parts = membersOf(id);
+  const dims = (layoutId: string): [number, number] => {
+    const b = layoutById(layoutId);
+    return b ? sizeOf(b) : [10, 10];
+  };
   switch (id) {
-    case "hall": return <GreatHall position={[0, 0, 0]} />;
-    case "teaching": return <TeachingBlock position={[0, 0, 0]} w={45} d={15} floors={4} onRoomClick={onRoomClick} />;
+    case "hall": {
+      const [w, d] = dims("hall");
+      return <GreatHall position={[0, 0, 0]} w={w} d={d} />;
+    }
+    case "teaching": {
+      const [w, d] = dims("teaching");
+      return <TeachingBlock position={[0, 0, 0]} w={w} d={d} floors={4} onRoomClick={onRoomClick} />;
+    }
     case "gate": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
     case "shrine": return <Shrine position={[0, 0, 0]} />;
-    case "construction": return <ConstructionBlock position={[0, 0, 0]} w={46} d={18} floors={5} />;
-    case "parking":
+    case "construction": {
+      const [w, d] = dims("construction");
+      return <ConstructionBlock position={[0, 0, 0]} w={w} d={d} floors={5} />;
+    }
+    case "parking": {
+      // Laid out left-to-right in the order they stand on the ground, keeping
+      // their real spacing so the page shows the actual car park.
+      const xs = parts.map((p) => p.position[0]);
+      const mid = (Math.min(...xs) + Math.max(...xs)) / 2;
       return (
         <>
-          {[-1, 0, 1].map((i) => (
-            <ParkingCanopy key={i} position={[i * 19, 0, 0]} rotation={Math.PI / 2} length={64} width={13} />
-          ))}
+          {parts.map((p) => {
+            const [len, wid] = sizeOf(p);
+            return (
+              <ParkingCanopy
+                key={p.id}
+                position={[p.position[0] - mid, 0, 0]}
+                rotation={Math.PI / 2}
+                length={len}
+                width={wid}
+              />
+            );
+          })}
         </>
       );
-    case "field": return <SportsField position={[0, 0, 0]} w={84} d={68} />;
+    }
+    case "field": {
+      const [w, d] = dims("field");
+      return <SportsField position={[0, 0, 0]} w={w} d={d} />;
+    }
+    case "sport-bathroom": {
+      const [w, d] = dims("teaching-block-khmgey");
+      return <TeachingBlock position={[0, 0, 0]} w={w} d={d} floors={1} tower={false} />;
+    }
+    case "west-gate": return <MainGate position={[0, 0, 0]} rotation={Math.PI} />;
+    case "pool": {
+      const [w, d] = dims("pool-ani4gy");
+      return (
+        <group>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
+            <planeGeometry args={[w + 3, d + 3]} />
+            <meshStandardMaterial color="#cfc9bd" roughness={1} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]} receiveShadow>
+            <planeGeometry args={[w, d]} />
+            <meshStandardMaterial color="#3d7f96" roughness={0.14} metalness={0.5} />
+          </mesh>
+        </group>
+      );
+    }
     default: return null;
   }
 }

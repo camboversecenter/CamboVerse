@@ -12,6 +12,10 @@ import {
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
+import {
+  CAMPUS_BUILDINGS, CAMPUS_POOLS, CAMPUS_ROADS, CAMPUS_WALLS,
+  sizeOf, type LayoutRect, type LayoutSegment,
+} from "../campusLayout";
 import { Forest, type TreeDef } from "./Forest";
 import { Palm } from "./Palm";
 
@@ -74,78 +78,42 @@ const LIFT = {
 const PAVER_M = 8;
 
 /**
- * The road network — edited visually in `public/campus-editor.html` (drag
- * buildings/roads, export JSON, paste the result here). Each segment is just
- * two endpoints and a width, so it can point any direction, not only along
- * the X/Z axes — `RoadSegment` below turns that into an oriented plane.
+ * How tall the campus trees stand, in metres.
+ *
+ * `Forest` takes an overall *scale*, not a height: a tree's crown tops out at
+ * 1.95 × that scale (the highest canopy blob sits at 1.15 + 0.5 with a 0.6
+ * radius, all × scale). So converting metres → scale keeps the number here
+ * meaningful instead of an arbitrary multiplier.
  */
-type RoadDef = { id: string; kind: "road" | "walkway"; widthM: number; from: [number, number]; to: [number, number] };
-const ROADS: RoadDef[] = [
-  { id: "avenue-lane-out", kind: "road", widthM: 14, from: [-10, 152], to: [-3, 249] },
-  { id: "avenue-walk-l", kind: "walkway", widthM: 2.3, from: [-18, 152.7], to: [-11, 249.7] },
-  { id: "avenue-walk-r", kind: "walkway", widthM: 2.3, from: [-3.1, 151.3], to: [3.9, 248.3] },
-  { id: "south-perimeter", kind: "road", widthM: 10, from: [-140.1, 148.9], to: [178.7, 145.9] },
-  { id: "north-perimeter", kind: "road", widthM: 10, from: [-138.5, -115.6], to: [128.2, -132.5] },
-  { id: "west-perimeter", kind: "road", widthM: 9.5, from: [-139, -119.6], to: [-138.5, 154.1] },
-  { id: "east-perimeter", kind: "road", widthM: 10, from: [122.7, -138.1], to: [174, 150] },
-  { id: "middle-horiz", kind: "road", widthM: 10, from: [-135.5, 35], to: [150.4, 34.5] },
-  { id: "central-vert", kind: "road", widthM: 10, from: [20.5, -118.2], to: [21.5, 142.8] },
-  { id: "road-jcrjrw", kind: "road", widthM: 10, from: [16.9, -69.5], to: [-90.5, -69] },
-  { id: "road-b14lw1", kind: "road", widthM: 10, from: [-95, 33], to: [-95, -112] },
-  { id: "road-upcm9l", kind: "road", widthM: 10, from: [101, 39], to: [102.5, 142.4] },
-  { id: "road-xlueh9", kind: "road", widthM: 10, from: [17.4, -39.2], to: [-90.1, -39.6] },
-];
+const TREE_HEIGHT_M = 5.5;
+const TREE_CROWN_PER_SCALE = 1.95;
+const TREE_SCALE = TREE_HEIGHT_M / TREE_CROWN_PER_SCALE;
 
 /**
- * Boundary walls. Same two-endpoint shape as a road — a wall is a road that
- * stands up — plus the height to extrude it to.
+ * The ground plan lives in `campusLayout.ts` — see the note there. These are
+ * just local aliases so the rendering code below reads the same as before.
  */
-type WallDef = { id: string; widthM: number; heightM: number; from: [number, number]; to: [number, number] };
-const WALLS: WallDef[] = [
-  { id: "wall-ubcfdu", widthM: 0.5, heightM: 2.4, from: [-20, 162.7], to: [-15.3, 250.8] },
-  { id: "wall-upehtn", widthM: 0.5, heightM: 2.4, from: [2.1, 162.8], to: [8.7, 248.6] },
-  { id: "wall-38v12i", widthM: 0.5, heightM: 2.4, from: [0.9, 163.2], to: [183.2, 161.6] },
-  { id: "wall-gzpyay", widthM: 0.5, heightM: 2.4, from: [182.7, 161.7], to: [129, -137.8] },
-  { id: "wall-vsoh40", widthM: 0.5, heightM: 2.4, from: [-131, -119.9], to: [130, -138.3] },
-  { id: "wall-v939fs", widthM: 0.5, heightM: 2.4, from: [-145.4, 163.7], to: [-145.9, -118.9] },
-  { id: "wall-psu6uu", widthM: 0.5, heightM: 2.4, from: [-144.9, 164.2], to: [-19.4, 164.2] },
-];
-
-/** Water. Position/rotation/size come straight from the editor's footprint. */
-type PoolDef = { id: string; position: [number, number]; rotation: number; size: [number, number] };
-const POOLS: PoolDef[] = [
-  { id: "pool-ani4gy", position: [-116.2, -24.7], rotation: 0, size: [30, 93.8] },
-];
+const ROADS = CAMPUS_ROADS;
+const WALLS = CAMPUS_WALLS;
+const POOLS = CAMPUS_POOLS;
+type RoadDef = LayoutSegment;
+type WallDef = LayoutSegment;
 
 /**
- * Every solid thing's plan footprint, so planting can be kept off it. Mirrors
- * the buildings placed in the scene below (plus the pool) — when you move a
- * building, move its footprint too, and the trees re-flow around it instead of
- * being left standing inside a wall.
+ * Every solid thing's plan footprint, so planting can be kept off it — read
+ * straight off the shared layout, so moving a building in the editor moves
+ * the keep-out with it and the trees re-flow instead of standing in a wall.
  */
-type Footprint = { x: number; z: number; w: number; d: number; rot: number };
-const FOOTPRINTS: Footprint[] = [
-  { x: -3, z: 249, w: 15, d: 6, rot: 3.07 },            // gate
-  { x: -12, z: 126.5, w: 6, d: 6, rot: 3.142 },         // monument
-  { x: -16, z: -90.1, w: 53, d: 16.1, rot: 0 },         // teaching
-  { x: -66, z: -89.5, w: 42, d: 16.1, rot: 0 },         // construction
-  { x: 40.1, z: 91.2, w: 92.5, d: 12.4, rot: 1.567 },   // canopy 1
-  { x: 59.9, z: 90.2, w: 79.2, d: 12.5, rot: 1.567 },   // canopy 2
-  { x: 81.5, z: 89.7, w: 86.4, d: 12.5, rot: 1.567 },   // canopy 3
-  { x: 63.2, z: -49.4, w: 50.3, d: 76.8, rot: 0 },      // great hall
-  { x: 83.8, z: 6.3, w: 8, d: 8, rot: 0 },              // shrine
-  { x: -55.7, z: 79, w: 120.4, d: 66, rot: 0 },         // sports field
-  { x: -64.4, z: 158.5, w: 12, d: 6, rot: 0 },          // sport bathroom
-  { x: -116.2, z: -24.7, w: 30, d: 93.8, rot: 0 },      // pool
-];
+const FOOTPRINTS: LayoutRect[] = [...CAMPUS_BUILDINGS, ...CAMPUS_POOLS];
 
 /** Is (px,pz) inside a footprint, allowing `margin` metres of clearance? */
-function insideFootprint(px: number, pz: number, f: Footprint, margin: number): boolean {
-  const c = Math.cos(f.rot), s = Math.sin(f.rot);
-  const dx = px - f.x, dz = pz - f.z;
+function insideFootprint(px: number, pz: number, f: LayoutRect, margin: number): boolean {
+  const [w, d] = sizeOf(f);
+  const c = Math.cos(f.rotation), s = Math.sin(f.rotation);
+  const dx = px - f.position[0], dz = pz - f.position[2];
   const lx = dx * c + dz * s;   // world → the footprint's own frame
   const lz = -dx * s + dz * c;
-  return Math.abs(lx) <= f.w / 2 + margin && Math.abs(lz) <= f.d / 2 + margin;
+  return Math.abs(lx) <= w / 2 + margin && Math.abs(lz) <= d / 2 + margin;
 }
 
 /** Shortest distance from (px,pz) to the segment a→b. */
@@ -191,7 +159,7 @@ function RoadSegment({
  * accidental double-click in the editor) would make degenerate geometry, so
  * they are skipped rather than drawn.
  */
-function WallSegment({ from, to, widthM, heightM }: WallDef) {
+function WallSegment({ from, to, widthM, heightM = 4 }: WallDef) {
   const dx = to[0] - from[0];
   const dz = to[1] - from[1];
   const length = Math.hypot(dx, dz);
@@ -218,10 +186,10 @@ function WallSegment({ from, to, widthM, heightM }: WallDef) {
  * plane's z-fight. Kept to plain materials — no reflection pass — so it stays
  * inside the low-end-phone budget.
  */
-function Pool({ position, rotation, size }: PoolDef) {
-  const [w, d] = size;
+function Pool({ position, rotation, size }: LayoutRect) {
+  const [w, d] = size ?? [10, 10];
   return (
-    <group position={[position[0], 0, position[1]]} rotation={[0, rotation, 0]}>
+    <group position={[position[0], 0, position[2]]} rotation={[0, rotation, 0]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.apron, 0]} receiveShadow>
         <planeGeometry args={[w + 3, d + 3]} />
         <meshStandardMaterial color="#cfc9bd" roughness={1} {...LIFT.apron} />
@@ -424,7 +392,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
           const x = r.from[0] + ux * t + nx * off * side + rnd(-1.5, 1.5);
           const z = r.from[1] + uz * t + nz * off * side + rnd(-1.5, 1.5);
           if (isObstructed(x, z)) continue;
-          list.push({ x, z, s: rnd(6, 11), c: "#4a783c" });
+          list.push({ x, z, s: TREE_SCALE, c: "#4a783c" });
         }
       }
     }
@@ -534,7 +502,9 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <RoadSegment key={r.id} {...r} roadTex={road} walkTex={pave} />
       ))}
       {POOLS.map((p) => (
-        <Pool key={p.id} {...p} />
+        <Tappable key={p.id} id="pool" onOpen={onOpenBuilding}>
+          <Pool {...p} />
+        </Tappable>
       ))}
       {WALLS.map((w) => (
         <WallSegment key={w.id} {...w} />
@@ -566,12 +536,17 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       <Tappable id="field" onOpen={onOpenBuilding}>
         <SportsField position={[-55.7, 0, 79]} w={120.4} d={66} />
       </Tappable>
-      {/* Sport Bathroom — a toilet block by the sports field. Added in the
-          editor, so it has no entry in src/buildings.ts and no page of its own
-          yet; drawn as scenery rather than made tappable. It borrows the
-          TeachingBlock component (the closest thing that exists) at
-          single-storey, bathroom scale. */}
-      <TeachingBlock position={[-64.4, 0, 158.5]} w={12} d={6} floors={1} tower={false} />
+      {/* Added in the editor and since registered in src/buildings.ts, so these
+          have their own pages and landmark buttons like everything else. The
+          bathroom borrows the TeachingBlock component — the closest thing that
+          exists — at single-storey scale. */}
+      <Tappable id="sport-bathroom" onOpen={onOpenBuilding}>
+        <TeachingBlock position={[-56.2, 0, 158]} w={38.6} d={8} floors={1} tower={false} />
+      </Tappable>
+      {/* A second gate, where the middle road meets the western boundary. */}
+      <Tappable id="west-gate" onOpen={onOpenBuilding}>
+        <MainGate position={[-128.5, 0, 34.6]} rotation={-1.58} />
+      </Tappable>
 
       {/* --- planting --- */}
       <Forest trees={trees} />
