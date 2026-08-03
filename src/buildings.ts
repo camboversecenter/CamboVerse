@@ -13,7 +13,12 @@
  * A building may belong to a site or stand alone. A standalone building has no
  * walkable scene; it just gets its page. Either way, adding one is an entry
  * here — see `docs/BUILDINGS.md`.
+ *
+ * Where each one *stands* is not repeated here: `view` and `spanM` are derived
+ * from `campusLayout.ts`, the single source of truth for the ground plan. Move
+ * a building in the editor and its landmark viewpoint follows automatically.
  */
+import { viewpointFor, spanOf } from "./campusLayout";
 
 export interface Site {
   id: string;
@@ -112,9 +117,9 @@ export const BUILDINGS: Building[] = [
       { label: "Marks", value: "The head of the entrance avenue" },
       { label: "Planting", value: "Sugar palms, clipped hedge beds" },
     ],
-    view: { at: [-40, 1.6, 280], yaw: 0 },
+    view: viewpointFor("gate"),
     heightM: 3,
-    spanM: 26,
+    spanM: spanOf("gate"),
   },
   {
     id: "teaching",
@@ -131,9 +136,9 @@ export const BUILDINGS: Building[] = [
       { label: "Use", value: "Lecture rooms and seminar rooms" },
       { label: "Roof", value: "Red hipped roof, deep eaves" },
     ],
-    view: { at: [-100, 8, -30], yaw: 0.1 },
+    view: viewpointFor("teaching"),
     heightM: 19,
-    spanM: 50,
+    spanM: spanOf("teaching"),
   },
   {
     id: "construction",
@@ -149,9 +154,9 @@ export const BUILDINGS: Building[] = [
       { label: "Status", value: "Structure up, cladding started" },
       { label: "Floors", value: "Five" },
     ],
-    view: { at: [-155, 8, -30], yaw: -0.2 },
+    view: viewpointFor("construction"),
     heightM: 20,
-    spanM: 48,
+    spanM: spanOf("construction"),
   },
   {
     id: "parking",
@@ -167,9 +172,9 @@ export const BUILDINGS: Building[] = [
       { label: "Canopies", value: "Three, about 60 m each" },
       { label: "Structure", value: "Steel posts, single-slope roof" },
     ],
-    view: { at: [70, 1.6, 150], yaw: 0 },
+    view: viewpointFor("parking"),
     heightM: 5,
-    spanM: 64,
+    spanM: spanOf("parking"),
   },
   {
     id: "hall",
@@ -187,9 +192,9 @@ export const BUILDINGS: Building[] = [
       { label: "Roof", value: "Hipped, ~6 m overhang, Khmer spire on the ridge" },
       { label: "Walls", value: "Glazing set back behind a colonnade" },
     ],
-    view: { at: [70, 1.6, 60], yaw: 0 },
+    view: viewpointFor("hall"),
     heightM: 25,
-    spanM: 62,
+    spanM: spanOf("hall"),
   },
   {
     id: "shrine",
@@ -205,9 +210,9 @@ export const BUILDINGS: Building[] = [
       { label: "Khmer", value: "ខ្ទមទេវតា — a spirit house" },
       { label: "Offerings", value: "Incense, flowers, fruit" },
     ],
-    view: { at: [25, 1.6, 40], yaw: Math.PI },
+    view: viewpointFor("shrine"),
     heightM: 8,
-    spanM: 6,
+    spanM: spanOf("shrine"),
   },
   {
     id: "field",
@@ -223,9 +228,63 @@ export const BUILDINGS: Building[] = [
       { label: "Track", value: "Six lanes around the pitch" },
       { label: "Use", value: "Football, athletics, ceremonies" },
     ],
-    view: { at: [-110, 1.6, 160], yaw: 0 },
+    view: viewpointFor("field"),
     heightM: 3,
-    spanM: 88,
+    spanM: spanOf("field"),
+  },
+  {
+    id: "sport-bathroom",
+    name: "Sport Bathroom",
+    khmer: "បង្គន់កីឡា",
+    english: "Changing rooms and toilets by the pitch",
+    site: NUM_SITE,
+    about: [
+      "A low single-storey block on the south side of the sports field: toilets and changing rooms for anyone using the pitch and the running track.",
+      "It is the least photographed building on any campus and one of the most used. A pitch without one is a pitch people leave early.",
+    ],
+    facts: [
+      { label: "Floors", value: "One" },
+      { label: "Serves", value: "The sports field and running track" },
+    ],
+    view: viewpointFor("sport-bathroom"),
+    heightM: 4,
+    spanM: spanOf("sport-bathroom"),
+  },
+  {
+    id: "pool",
+    name: "Swimming Pool",
+    khmer: "អាងហែលទឹក",
+    english: "The campus pool",
+    site: NUM_SITE,
+    about: [
+      "A long pool on the western edge of the campus, set in a paved surround between the boundary road and the western buildings.",
+      "Its length runs north–south, so lanes sit along the site's grain rather than across it.",
+    ],
+    facts: [
+      { label: "Orientation", value: "Lanes run north–south" },
+      { label: "Surround", value: "Paved coping on all four sides" },
+    ],
+    view: viewpointFor("pool"),
+    heightM: 2,
+    spanM: spanOf("pool"),
+  },
+  {
+    id: "west-gate",
+    name: "West Gate",
+    khmer: "ច្រកចូលខាងលិច",
+    english: "The side entrance on the western road",
+    site: NUM_SITE,
+    about: [
+      "A second gate where the middle east–west road meets the western boundary, facing out onto the perimeter road.",
+      "Campuses are rarely entered only by their ceremonial front. This is the everyday way in from the west side of the site.",
+    ],
+    facts: [
+      { label: "Faces", value: "West, onto the perimeter road" },
+      { label: "Meets", value: "The middle east–west road" },
+    ],
+    view: viewpointFor("west-gate"),
+    heightM: 6,
+    spanM: spanOf("west-gate"),
   },
 ];
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sky } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
-import { ACESFilmicToneMapping } from "three";
+import { ACESFilmicToneMapping, type Texture } from "three";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
 import { VRRig } from "./VRRig";
@@ -13,7 +13,10 @@ import {
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
-
+import {
+  CAMPUS_BUILDINGS, CAMPUS_POOLS, CAMPUS_ROADS, CAMPUS_WALLS,
+  sizeOf, type LayoutRect, type LayoutSegment,
+} from "../campusLayout";
 import { MangoForest, type MangoDef } from "./MangoTree";
 import { BananaForest, type BananaDef } from "./BananaTree";
 import campusTreesData from "../data/campusTrees.json";
@@ -76,6 +79,131 @@ const LIFT = {
 
 /** One paving tile-set per 8 m of ground → roughly 1 m slabs. */
 const PAVER_M = 8;
+
+/**
+ * How tall the campus trees stand, in metres.
+ *
+ * `Forest` takes an overall *scale*, not a height: a tree's crown tops out at
+ * 1.95 × that scale (the highest canopy blob sits at 1.15 + 0.5 with a 0.6
+ * radius, all × scale). So converting metres → scale keeps the number here
+ * meaningful instead of an arbitrary multiplier.
+ */
+const TREE_HEIGHT_M = 5.5;
+const TREE_CROWN_PER_SCALE = 1.95;
+const TREE_SCALE = TREE_HEIGHT_M / TREE_CROWN_PER_SCALE;
+
+/**
+ * The ground plan lives in `campusLayout.ts` — see the note there. These are
+ * just local aliases so the rendering code below reads the same as before.
+ */
+const ROADS = CAMPUS_ROADS;
+const WALLS = CAMPUS_WALLS;
+const POOLS = CAMPUS_POOLS;
+type RoadDef = LayoutSegment;
+type WallDef = LayoutSegment;
+
+/**
+ * Every solid thing's plan footprint, so planting can be kept off it — read
+ * straight off the shared layout, so moving a building in the editor moves
+ * the keep-out with it and the trees re-flow instead of standing in a wall.
+ */
+const FOOTPRINTS: LayoutRect[] = [...CAMPUS_BUILDINGS, ...CAMPUS_POOLS];
+
+/** Is (px,pz) inside a footprint, allowing `margin` metres of clearance? */
+function insideFootprint(px: number, pz: number, f: LayoutRect, margin: number): boolean {
+  const [w, d] = sizeOf(f);
+  const c = Math.cos(f.rotation), s = Math.sin(f.rotation);
+  const dx = px - f.position[0], dz = pz - f.position[2];
+  const lx = dx * c + dz * s;   // world → the footprint's own frame
+  const lz = -dx * s + dz * c;
+  return Math.abs(lx) <= w / 2 + margin && Math.abs(lz) <= d / 2 + margin;
+}
+
+/** Shortest distance from (px,pz) to the segment a→b. */
+function distToSegment(px: number, pz: number, a: [number, number], b: [number, number]): number {
+  const vx = b[0] - a[0], vz = b[1] - a[1];
+  const len2 = vx * vx + vz * vz;
+  const t = len2 > 0 ? Math.max(0, Math.min(1, ((px - a[0]) * vx + (pz - a[1]) * vz) / len2)) : 0;
+  return Math.hypot(px - (a[0] + t * vx), pz - (a[1] + t * vz));
+}
+
+/** Somewhere a tree must not stand: on a building, in the pool, or on paving. */
+function isObstructed(px: number, pz: number): boolean {
+  for (const f of FOOTPRINTS) if (insideFootprint(px, pz, f, 3)) return true;
+  for (const r of ROADS) if (distToSegment(px, pz, r.from, r.to) < r.widthM / 2 + 2.5) return true;
+  for (const w of WALLS) if (distToSegment(px, pz, w.from, w.to) < 2) return true;
+  return false;
+}
+
+/** One road/walkway segment, oriented to point from `from` to `to`. */
+function RoadSegment({
+  from, to, widthM, kind, roadTex, walkTex,
+}: RoadDef & { roadTex: Texture; walkTex: Texture }) {
+  const dx = to[0] - from[0];
+  const dz = to[1] - from[1];
+  const length = Math.hypot(dx, dz);
+  const angle = Math.atan2(dx, dz); // rotation.y that points local +Z at (dx, dz)
+  const midX = (from[0] + to[0]) / 2;
+  const midZ = (from[1] + to[1]) / 2;
+  const isWalk = kind === "walkway";
+  return (
+    <group position={[midX, 0, midZ]} rotation={[0, angle, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, isWalk ? GROUND.plaza : GROUND.road, 0]} receiveShadow>
+        <planeGeometry args={[widthM, length]} />
+        <meshStandardMaterial map={isWalk ? walkTex : roadTex} roughness={1} {...(isWalk ? LIFT.plaza : LIFT.road)} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * A boundary wall: the same oriented-segment maths as `RoadSegment`, but the
+ * plane becomes a box standing `heightM` tall. Zero-length segments (an
+ * accidental double-click in the editor) would make degenerate geometry, so
+ * they are skipped rather than drawn.
+ */
+function WallSegment({ from, to, widthM, heightM = 4 }: WallDef) {
+  const dx = to[0] - from[0];
+  const dz = to[1] - from[1];
+  const length = Math.hypot(dx, dz);
+  if (length < 0.5) return null;
+  const angle = Math.atan2(dx, dz);
+  return (
+    <group position={[(from[0] + to[0]) / 2, 0, (from[1] + to[1]) / 2]} rotation={[0, angle, 0]}>
+      <mesh position={[0, heightM / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[widthM, heightM, length]} />
+        <meshStandardMaterial color="#cdbfae" roughness={0.95} />
+      </mesh>
+      {/* a darker coping course so the top edge reads at distance */}
+      <mesh position={[0, heightM + 0.06, 0]} castShadow>
+        <boxGeometry args={[widthM + 0.18, 0.12, length]} />
+        <meshStandardMaterial color="#a89a86" roughness={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * A pool: a water surface inside a shallow paved coping. Flat like a road, so
+ * it uses the same lift/polygon-offset discipline to stay out of the ground
+ * plane's z-fight. Kept to plain materials — no reflection pass — so it stays
+ * inside the low-end-phone budget.
+ */
+function Pool({ position, rotation, size }: LayoutRect) {
+  const [w, d] = size ?? [10, 10];
+  return (
+    <group position={[position[0], 0, position[2]]} rotation={[0, rotation, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.apron, 0]} receiveShadow>
+        <planeGeometry args={[w + 3, d + 3]} />
+        <meshStandardMaterial color="#cfc9bd" roughness={1} {...LIFT.apron} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 0]} receiveShadow>
+        <planeGeometry args={[w, d]} />
+        <meshStandardMaterial color="#3d7f96" roughness={0.14} metalness={0.5} {...LIFT.plaza} />
+      </mesh>
+    </group>
+  );
+}
 
 /* ----------------------------------------------------------------- view --- */
 
@@ -253,24 +381,6 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
   const hedge = useMemo(() => hedgeTexture(), []);
   const ultra = mode === "ultra";
 
-  // Street furniture, instanced.
-  const bollards = useMemo(() => {
-    const out: { pos: [number, number, number] }[] = [];
-    for (let i = 0; i < 14; i++) {
-      out.push({ pos: [-26 + i * 4, 0.55, 146] });
-      out.push({ pos: [-26 + i * 4, 0.55, 158] });
-    }
-    return out;
-  }, []);
-  const lamps = useMemo(() => {
-    const out: { pos: [number, number, number] }[] = [];
-    for (let i = 0; i < 9; i++) {
-      out.push({ pos: [-58, 2.6, 130 - i * 13] });
-      out.push({ pos: [112, 2.6, 126 - i * 13] });
-    }
-    return out;
-  }, []);
-
   const { mangoTrees, bananaTrees } = useMemo(() => {
     const mangoes: MangoDef[] = [];
     const bananas: BananaDef[] = [];
@@ -279,10 +389,8 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       s = (s * 1103515245 + 12345) & 0x7fffffff;
       return min + (s / 0x7fffffff) * (max - min);
     };
-    
-    // Add a tree to one of the arrays randomly (stable based on sequence)
+
     const addTree = (x: number, z: number) => {
-      // 30% chance to be a banana tree
       if (rnd(0, 1) < 0.3) {
         bananas.push({ x, z });
       } else {
@@ -290,37 +398,75 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       }
     };
 
-    // Perimeter trees
-    for (let x = -170; x <= 130; x += 15) {
-      if (Math.abs(x + 40) > 15) addTree(x + rnd(-2, 2), 133 + rnd(-2, 2));
-      addTree(x + rnd(-2, 2), -53 + rnd(-2, 2));
-    }
-    for (let z = -40; z <= 120; z += 15) {
-      addTree(-173 + rnd(-2, 2), z + rnd(-2, 2));
-      addTree(133 + rnd(-2, 2), z + rnd(-2, 2));
-    }
-    
-    // Internal road trees
-    for (let x = -170; x <= 130; x += 18) {
-      if (Math.abs(x + 40) > 15) {
-        addTree(x + rnd(-1, 1), 33 + rnd(-1, 1));
-        addTree(x + rnd(-1, 1), 47 + rnd(-1, 1));
-      }
-    }
-    for (let z = -40; z <= 120; z += 18) {
-      if (Math.abs(z - 40) > 15) {
-        addTree(-48 + rnd(-1, 1), z + rnd(-1, 1));
-        addTree(-32 + rnd(-1, 1), z + rnd(-1, 1));
+    const SPACING = 18;
+    for (const r of ROADS) {
+      if (r.kind === "walkway") continue;
+      const vx = r.to[0] - r.from[0], vz = r.to[1] - r.from[1];
+      const len = Math.hypot(vx, vz);
+      if (len < 1) continue;
+      const ux = vx / len, uz = vz / len;
+      const nx = -uz, nz = ux;
+      const off = r.widthM / 2 + 5;
+      for (let t = SPACING / 2; t < len; t += SPACING) {
+        for (const side of [-1, 1]) {
+          const x = r.from[0] + ux * t + nx * off * side + rnd(-1.5, 1.5);
+          const z = r.from[1] + uz * t + nz * off * side + rnd(-1.5, 1.5);
+          if (isObstructed(x, z)) continue;
+          addTree(x, z);
+        }
       }
     }
     return { mangoTrees: mangoes, bananaTrees: bananas };
   }, []);
 
+  // Street furniture, likewise placed off the layout rather than fixed
+  // coordinates: bollards line the entrance avenue, lamps line the main
+  // east–west road through the middle of the campus.
+  const bollards = useMemo(() => {
+    const out: { pos: [number, number, number] }[] = [];
+    const avenue = ROADS.find((r) => r.id === "avenue-lane-out");
+    if (!avenue) return out;
+    const vx = avenue.to[0] - avenue.from[0], vz = avenue.to[1] - avenue.from[1];
+    const len = Math.hypot(vx, vz);
+    const ux = vx / len, uz = vz / len;
+    const nx = -uz, nz = ux;
+    const off = avenue.widthM / 2 + 1.5;
+    for (let t = 4; t < len; t += 6) {
+      for (const side of [-1, 1]) {
+        out.push({ pos: [avenue.from[0] + ux * t + nx * off * side, 0.55, avenue.from[1] + uz * t + nz * off * side] });
+      }
+    }
+    return out;
+  }, []);
+  const lamps = useMemo(() => {
+    const out: { pos: [number, number, number] }[] = [];
+    const mid = ROADS.find((r) => r.id === "middle-horiz");
+    if (!mid) return out;
+    const off = mid.widthM / 2 + 2;
+    for (let x = mid.from[0] + 20; x < mid.to[0]; x += 26) {
+      for (const side of [-1, 1]) {
+        const z = mid.from[1] + off * side;
+        if (isObstructed(x, z)) continue;
+        out.push({ pos: [x, 2.6, z] });
+      }
+    }
+    return out;
+  }, []);
+
+  // Sugar palms line the entrance avenue, following it wherever it points.
   const palms = useMemo(() => {
     const list: [number, number, number][] = [];
-    for (let z = 155; z <= 235; z += 16) {
-      list.push([-51, 0, z]);
-      list.push([-29, 0, z]);
+    const avenue = ROADS.find((r) => r.id === "avenue-lane-out");
+    if (!avenue) return list;
+    const vx = avenue.to[0] - avenue.from[0], vz = avenue.to[1] - avenue.from[1];
+    const len = Math.hypot(vx, vz);
+    const ux = vx / len, uz = vz / len;
+    const nx = -uz, nz = ux;
+    const off = avenue.widthM / 2 + 5.5;
+    for (let t = 8; t < len - 4; t += 16) {
+      for (const side of [-1, 1]) {
+        list.push([avenue.from[0] + ux * t + nx * off * side, 0, avenue.from[1] + uz * t + nz * off * side]);
+      }
     }
     return list;
   }, []);
@@ -378,107 +524,55 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
 
-      {/* --- Central Entrance Avenue --- */}
-      <group position={[-40, 0, 190]}>
-        {/* Inbound and Outbound lanes (each 6m wide) */}
-        {[-5, 5].map((x) => (
-          <mesh key={`lane-${x}`} rotation={[-Math.PI / 2, 0, 0]} position={[x, GROUND.road, 0]} receiveShadow>
-            <planeGeometry args={[6, 100]} />
-            <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-          </mesh>
-        ))}
-        {/* Planted Median */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn + 0.05, 0]} receiveShadow>
-          <planeGeometry args={[4, 100]} />
-          <meshStandardMaterial map={grass} roughness={1} />
-        </mesh>
-        <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
-          <boxGeometry args={[2, 0.8, 92]} />
-          <meshStandardMaterial map={hedge} roughness={0.95} />
-        </mesh>
-        {/* Left and Right outer walkways */}
-        {[-9, 9].map((x) => (
-          <mesh key={`walk-${x}`} rotation={[-Math.PI / 2, 0, 0]} position={[x, GROUND.plaza, 0]} receiveShadow>
-            <planeGeometry args={[2, 100]} />
-            <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
-          </mesh>
-        ))}
-      </group>
-
-      {/* --- Main Campus Grid --- */}
-      {/* South Perimeter Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-20, GROUND.road, 140]} receiveShadow>
-        <planeGeometry args={[334, 14]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* North Perimeter Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-20, GROUND.road, -60]} receiveShadow>
-        <planeGeometry args={[334, 14]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* West Perimeter Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-180, GROUND.road, 40]} receiveShadow>
-        <planeGeometry args={[14, 214]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* East Perimeter Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[140, GROUND.road, 40]} receiveShadow>
-        <planeGeometry args={[14, 214]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* Middle Horizontal Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-20, GROUND.road, 40]} receiveShadow>
-        <planeGeometry args={[334, 14]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* Central Vertical Road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-40, GROUND.road, 40]} receiveShadow>
-        <planeGeometry args={[14, 214]} />
-        <meshStandardMaterial map={road} roughness={1} {...LIFT.road} />
-      </mesh>
-
-      {/* Forecourt Plaza where avenue meets South Perimeter */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-40, GROUND.plaza, 140]} receiveShadow>
-        <circleGeometry args={[20, 32]} />
-        <meshStandardMaterial map={pave} roughness={1} {...LIFT.plaza} />
-      </mesh>
+      {/* --- Ground works (see the arrays above — edit visually in public/campus-editor.html) --- */}
+      {ROADS.map((r) => (
+        <RoadSegment key={r.id} {...r} roadTex={road} walkTex={pave} />
+      ))}
+      {POOLS.map((p) => (
+        <Tappable key={p.id} id="pool" onOpen={onOpenBuilding}>
+          <Pool {...p} />
+        </Tappable>
+      ))}
+      {WALLS.map((w) => (
+        <WallSegment key={w.id} {...w} />
+      ))}
 
       {/* --- the buildings: tapping one opens its own page --- */}
-      {/* 1 — you arrive here, looking north across the lawn */}
       <Tappable id="gate" onOpen={onOpenBuilding}>
-        <MainGate position={[-40, 0, 240]} rotation={Math.PI} />
+        <MainGate position={[-3, 0, 249]} rotation={3.07} />
       </Tappable>
-      
-      {/* The NUM Monument sign at the forecourt circle */}
-      <EntranceMonument position={[-40, 0, 140]} rotation={Math.PI} />
-      {/* Quadrant 1 (Top Left): Teaching and Construction Site */}
+      {/* The NUM Monument sign near the forecourt */}
+      <EntranceMonument position={[-12, 0, 126.5]} rotation={3.142} />
       <Tappable id="teaching" onOpen={onOpenBuilding}>
-        <TeachingBlock position={[-100, 0, -30]} w={60} d={15} floors={4} onRoomClick={(r: string) => onOpenBuilding('teaching', r)} />
+        <TeachingBlock position={[-16, 0, -90.1]} w={53} d={16.1} floors={4} onRoomClick={(r: string) => onOpenBuilding('teaching', r)} />
       </Tappable>
       <Tappable id="construction" onOpen={onOpenBuilding}>
-        <ConstructionBlock position={[-155, 0, -30]} w={46} d={18} floors={5} />
+        <ConstructionBlock position={[-66, 0, -89.5]} w={42} d={16.1} floors={5} />
       </Tappable>
-      {/* Quadrant 4 (Bottom Right): Parking Canopies */}
       <Tappable id="parking" onOpen={onOpenBuilding}>
-        {[0, 1, 2].map((i) => (
-          <ParkingCanopy key={i} position={[50 + i * 20, 0, 90]} rotation={Math.PI / 2} length={64} width={13} />
-        ))}
+        <ParkingCanopy position={[40.1, 0, 91.2]} rotation={1.567} length={92.5} width={12.4} />
+        <ParkingCanopy position={[59.9, 0, 90.2]} rotation={1.567} length={79.2} width={12.5} />
+        <ParkingCanopy position={[81.5, 0, 89.7]} rotation={1.567} length={86.4} width={12.5} />
       </Tappable>
-      {/* Quadrant 2 (Top Right): Great Hall */}
       <Tappable id="hall" onOpen={onOpenBuilding}>
-        <GreatHall position={[70, 0, -10]} />
+        <GreatHall position={[63.2, 0, -49.4]} w={50.3} d={76.8} />
       </Tappable>
       <Tappable id="shrine" onOpen={onOpenBuilding}>
-        <Shrine position={[25, 0, 10]} />
+        <Shrine position={[83.8, 0, 6.3]} />
       </Tappable>
-      {/* Quadrant 3 (Bottom Left): Sports Field */}
       <Tappable id="field" onOpen={onOpenBuilding}>
-        <SportsField position={[-110, 0, 90]} w={120} d={75} />
+        <SportsField position={[-55.7, 0, 79]} w={120.4} d={66} />
+      </Tappable>
+      {/* Added in the editor and since registered in src/buildings.ts, so these
+          have their own pages and landmark buttons like everything else. The
+          bathroom borrows the TeachingBlock component — the closest thing that
+          exists — at single-storey scale. */}
+      <Tappable id="sport-bathroom" onOpen={onOpenBuilding}>
+        <TeachingBlock position={[-56.2, 0, 158]} w={38.6} d={8} floors={1} tower={false} />
+      </Tappable>
+      {/* A second gate, where the middle road meets the western boundary. */}
+      <Tappable id="west-gate" onOpen={onOpenBuilding}>
+        <MainGate position={[-128.5, 0, 34.6]} rotation={-1.58} />
       </Tappable>
 
       {/* --- planting --- */}
@@ -503,10 +597,10 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <cylinderGeometry args={[0.09, 0.12, 5.2, 6]} />
         <meshStandardMaterial color="#dcdad4" roughness={0.6} />
       </Props>
-      {/* clipped hedges around the forecourt beds */}
+      {/* clipped hedge beds flanking the monument at the head of the avenue */}
       {[-1, 1].map((s) => (
-        <mesh key={s} position={[-40 + s * 20, 0.5, 146]} castShadow receiveShadow>
-          <boxGeometry args={[18, 1, 4]} />
+        <mesh key={s} position={[-12 + s * 17, 0.5, 126.5]} castShadow receiveShadow>
+          <boxGeometry args={[16, 1, 4]} />
           <meshStandardMaterial map={hedge} roughness={0.95} />
         </mesh>
       ))}
