@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Sky } from "@react-three/drei";
-import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
+import { createXRStore, XR, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
@@ -10,6 +10,7 @@ import {
 } from "./CampusBuildings";
 import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
+import { VRRig } from "./VRRig";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture } from "../lib/campusTexture";
 import type { Building } from "../buildings";
@@ -287,13 +288,16 @@ export function BuildingView({
           <Ground />
           <TheBuilding id={building.id} model={building.model} onRoomClick={(r) => { setRoom(r); setSpin(false); }} />
           <CameraAnimator room={room} aim={aim} dist={dist} eye={eye} />
-          {/* a pair of palms for scale, hidden for teaching block and hall to avoid clipping */}
-          {building.id !== "teaching" && building.id !== "hall" && [-1, 1].map((s) => (
+          {/* a pair of palms for scale, hidden for teaching block, hall, and field to avoid clipping */}
+          {building.id !== "teaching" && building.id !== "hall" && building.id !== "field" && [-1, 1].map((s) => (
             <group key={s} position={[s * (dist * 0.42), 0, dist * 0.18]}>
               <PalmPlant look={PALM_LOOK} height={11} seed={s + 3} opacity={1} wind={mode === "ultra" ? 1 : 0} />
             </group>
           ))}
-          <XROrigin position={[0, 0, dist * 0.8]} />
+          {/* VR locomotion: left thumbstick walks, right thumbstick snap-turns.
+              XROrigin starts behind the building so you face it on entry.
+              Works on any WebXR device, optimised for Meta Quest 3. */}
+          <VRRig position={[0, 0, dist * 0.8]} />
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           <OrbitControls
             makeDefault
@@ -326,9 +330,14 @@ export function BuildingView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        {vrSupported && (
-          <button className="vr-btn cls-vr" onClick={() => { setMode("ultra"); store.enterVR(); }}>🥽 VR</button>
-        )}
+        <button
+          className="vr-btn cls-vr"
+          style={!vrSupported ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
+          title={vrSupported ? "Enter VR — works on Meta Quest 3 and any WebXR headset" : "VR not detected — open this page on a Meta Quest browser or connect a headset via Air Link"}
+          onClick={() => { if (vrSupported) { setMode("ultra"); store.enterVR(); } }}
+        >
+          🥽 VR
+        </button>
       </div>
 
       <button className="bld-spin" onClick={() => setSpin((v) => !v)}>
@@ -389,11 +398,11 @@ function Ground() {
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
       {/* the apron sits over the lawn — offset so the two can't fight for depth */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]} receiveShadow>
         <circleGeometry args={[78, 48]} />
         <meshStandardMaterial
           map={pave} roughness={1}
-          polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2}
+          polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1}
         />
       </mesh>
     </>
