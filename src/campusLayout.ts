@@ -89,7 +89,10 @@ export const CAMPUS_WALLS: LayoutSegment[] = [
 /** Plan size for components that take no size prop, so framing still works. */
 const KIND_SIZE: Record<string, [number, number]> = {
   "main-gate": [15, 6],
-  monument: [6, 6],
+  // The monument is an 11.5 m plinth, but its curved steps and the clipped
+  // hedges either side carry it out to roughly 25 m across — which is what
+  // planting has to keep clear of and what the page camera has to frame.
+  monument: [25, 12],
   shrine: [8, 8],
 };
 

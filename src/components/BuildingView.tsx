@@ -6,7 +6,7 @@ import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
-  ConstructionBlock, MainGate,
+  ConstructionBlock, MainGate, Pool, POOL,
 } from "./CampusBuildings";
 import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
@@ -77,7 +77,12 @@ function TheBuilding({ id, model, onRoomClick }: { id: string; model?: string; o
       const [w, d] = dims("teaching");
       return <TeachingBlock position={[0, 0, 0]} w={w} d={d} floors={4} onRoomClick={onRoomClick} />;
     }
-    case "gate": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
+    // Two separate structures on the way in: the gate down at the public road,
+    // and the name sign where the avenue reaches the campus. Each page shows
+    // its own — previously "gate" rendered the monument, so the Main Entrance
+    // page disagreed with the place its own landmark button walked you to.
+    case "gate": return <MainGate position={[0, 0, 0]} rotation={Math.PI} />;
+    case "monument": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
     case "shrine": return <Shrine position={[0, 0, 0]} />;
     case "construction": {
       const [w, d] = dims("construction");
@@ -116,18 +121,14 @@ function TheBuilding({ id, model, onRoomClick }: { id: string; model?: string; o
     case "west-gate": return <MainGate position={[0, 0, 0]} rotation={Math.PI} />;
     case "pool": {
       const [w, d] = dims("pool-ani4gy");
-      return (
-        <group>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
-            <planeGeometry args={[w + 3, d + 3]} />
-            <meshStandardMaterial color="#cfc9bd" roughness={1} />
-          </mesh>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]} receiveShadow>
-            <planeGeometry args={[w, d]} />
-            <meshStandardMaterial color="#3d7f96" roughness={0.14} metalness={0.5} />
-          </mesh>
-        </group>
-      );
+      // The same excavated basin the campus shows — not a flat rectangle. This
+      // page turns the model on a turntable, so a single plane would flatten
+      // out and change appearance through every revolution.
+      //
+      // Sat ON the apron rather than sunk into it: this page has no hole cut in
+      // its ground, so a sunken basin would be hidden under the paving and you
+      // would see only the lip of the coping.
+      return <Pool w={w} d={d} topY={POOL.depth} />;
     }
     default: return null;
   }
