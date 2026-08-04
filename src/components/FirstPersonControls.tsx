@@ -39,8 +39,8 @@ export function FirstPersonControls({
   const DOWN = useRef(new Vector3(0, -1, 0));
   /** Eye height of a standing adult — the camera is snapped to this above
    *  whatever ground is underfoot, every frame. */
-  const EYE = eyeHeight ?? 1.65;
-  const SPEED = speed;
+  // const EYE = eyeHeight ?? 1.65;
+  // const SPEED = speed;
   const keys = useRef({ w: false, a: false, s: false, d: false, shift: false, space: false });
   const velY = useRef(0);
   const isGrounded = useRef(false);

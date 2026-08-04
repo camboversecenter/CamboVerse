@@ -2,13 +2,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sky } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
-import { ACESFilmicToneMapping, type Texture } from "three";
+import {
+  ACESFilmicToneMapping, Path, Shape, ShapeGeometry,
+  Float32BufferAttribute, type Texture,
+} from "three";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
 import { VRRig } from "./VRRig";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
-  ConstructionBlock, Props, MainGate,
+  ConstructionBlock, Props, MainGate, Pool,
 } from "./CampusBuildings";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
@@ -88,9 +91,9 @@ const PAVER_M = 8;
  * radius, all × scale). So converting metres → scale keeps the number here
  * meaningful instead of an arbitrary multiplier.
  */
-const TREE_HEIGHT_M = 5.5;
-const TREE_CROWN_PER_SCALE = 1.95;
-const TREE_SCALE = TREE_HEIGHT_M / TREE_CROWN_PER_SCALE;
+// const TREE_HEIGHT_M = 5.5;
+// const TREE_CROWN_PER_SCALE = 1.95;
+// const TREE_SCALE = TREE_HEIGHT_M / TREE_CROWN_PER_SCALE;
 
 /**
  * The ground plan lives in `campusLayout.ts` — see the note there. These are
@@ -128,10 +131,10 @@ function distToSegment(px: number, pz: number, a: [number, number], b: [number, 
 }
 
 /** Somewhere a tree must not stand: on a building, in the pool, or on paving. */
-function isObstructed(px: number, pz: number): boolean {
-  for (const f of FOOTPRINTS) if (insideFootprint(px, pz, f, 3)) return true;
-  for (const r of ROADS) if (distToSegment(px, pz, r.from, r.to) < r.widthM / 2 + 2.5) return true;
-  for (const w of WALLS) if (distToSegment(px, pz, w.from, w.to) < 2) return true;
+function isObstructed(px: number, pz: number, extraMargin = 0): boolean {
+  for (const f of FOOTPRINTS) if (insideFootprint(px, pz, f, 3 + extraMargin)) return true;
+  for (const r of ROADS) if (distToSegment(px, pz, r.from, r.to) < r.widthM / 2 + 2.5 + extraMargin) return true;
+  for (const w of WALLS) if (distToSegment(px, pz, w.from, w.to) < 2 + extraMargin) return true;
   return false;
 }
 
@@ -189,18 +192,26 @@ function WallSegment({ from, to, widthM, heightM = 4 }: WallDef) {
  * plane's z-fight. Kept to plain materials — no reflection pass — so it stays
  * inside the low-end-phone budget.
  */
-function Pool({ position, rotation, size }: LayoutRect) {
+/**
+ * The four world-space corners of a rect in the layout, in order. Used to cut
+ * the pool's opening out of the lawn so the basin below is actually visible.
+ */
+function rectCorners(b: LayoutRect): [number, number][] {
+  const [w, d] = sizeOf(b);
+  const c = Math.cos(b.rotation), s = Math.sin(b.rotation);
+  const cx = b.position[0], cz = b.position[2];
+  return ([[-1, -1], [1, -1], [1, 1], [-1, 1]] as const).map(([sx_, sz_]) => {
+    const lx = (sx_ * w) / 2, lz = (sz_ * d) / 2;
+    return [cx + lx * c - lz * s, cz + lx * s + lz * c] as [number, number];
+  });
+}
+
+/** Places the shared `Pool` basin at its spot on the campus ground stack. */
+function CampusPool({ position, rotation, size }: LayoutRect) {
   const [w, d] = size ?? [10, 10];
   return (
     <group position={[position[0], 0, position[2]]} rotation={[0, rotation, 0]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.apron, 0]} receiveShadow>
-        <planeGeometry args={[w + 3, d + 3]} />
-        <meshStandardMaterial color="#cfc9bd" roughness={1} {...LIFT.apron} />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.plaza, 0]} receiveShadow>
-        <planeGeometry args={[w, d]} />
-        <meshStandardMaterial color="#3d7f96" roughness={0.14} metalness={0.5} {...LIFT.plaza} />
-      </mesh>
+      <Pool w={w} d={d} topY={GROUND.apron} />
     </group>
   );
 }
@@ -354,9 +365,21 @@ function Tappable({
 }: {
   id: string; onOpen: (id: string) => void; children: React.ReactNode;
 }) {
+  // r3f's onClick fires on pointerup with no drag threshold, so an orbit-drag
+  // that happens to end over a building would open it. Track the pointerdown
+  // spot and only treat it as a tap if the pointer barely moved.
+  const down = useRef<{ x: number; y: number } | null>(null);
   return (
     <group
-      onClick={(e) => { e.stopPropagation(); onOpen(id); }}
+      onPointerDown={(e) => { down.current = { x: e.clientX, y: e.clientY }; }}
+      onPointerUp={(e) => {
+        const start = down.current;
+        down.current = null;
+        if (start && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) {
+          e.stopPropagation();
+          onOpen(id);
+        }
+      }}
       onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; }}
       onPointerOut={() => { document.body.style.cursor = ""; }}
     >
@@ -376,6 +399,47 @@ function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
 
 function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding: (id: string, room?: string) => void }) {
   const grass = useMemo(() => grassTexture(46), []);
+
+  /**
+   * The lawn, with a hole cut for each pool.
+   *
+   * `ShapeGeometry` lays the shape out in XY and the mesh is rotated -90° about
+   * X, which maps shape-Y to world -Z — hence the sign flip when placing the
+   * holes. Its generated UVs are raw shape coordinates, so they are rewritten
+   * to 0..1 across the sheet to match what `planeGeometry` gave the grass
+   * texture before; otherwise the tiling would blow up by a factor of 1400.
+   */
+  const lawnGeo = useMemo(() => {
+    const HALF = 700;
+    const outline = new Shape();
+    outline.moveTo(-HALF, -HALF);
+    outline.lineTo(HALF, -HALF);
+    outline.lineTo(HALF, HALF);
+    outline.lineTo(-HALF, HALF);
+    outline.closePath();
+
+    for (const p of CAMPUS_POOLS) {
+      const corners = rectCorners(p);
+      const hole = new Path();
+      // Reversed: a hole must wind opposite to the outline it is cut from.
+      const [c0, c1, c2, c3] = corners;
+      hole.moveTo(c0[0], -c0[1]);
+      hole.lineTo(c3[0], -c3[1]);
+      hole.lineTo(c2[0], -c2[1]);
+      hole.lineTo(c1[0], -c1[1]);
+      hole.closePath();
+      outline.holes.push(hole);
+    }
+
+    const geo = new ShapeGeometry(outline);
+    const pos = geo.attributes.position;
+    const uv: number[] = [];
+    for (let i = 0; i < pos.count; i++) {
+      uv.push((pos.getX(i) + HALF) / (HALF * 2), (pos.getY(i) + HALF) / (HALF * 2));
+    }
+    geo.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+    return geo;
+  }, []);
   const pave = useMemo(() => paveTexture(metresRepeat(104, 104, PAVER_M)[0]), []);
   const road = useMemo(() => roadTexture(metresRepeat(120, 120, PAVER_M)[0]), []);
   const hedge = useMemo(() => hedgeTexture(), []);
@@ -485,13 +549,14 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         // Add a little organic jitter to the grid
         const px = x + rnd() * 8;
         const pz = z + rnd() * 12;
-        
-        out.push({
-          pos: [px, 0, pz],
-          // Align houses to the grid (0 or 90 degrees)
-          rot: rnd() > 0.5 ? 0 : Math.PI / 2,
-          scale: 0.85 + rnd() * 0.5,
-        });
+        const rot = rnd() > 0.5 ? 0 : Math.PI / 2;
+        const scale = 0.85 + rnd() * 0.5;
+
+        // Skip if the jittered position (plus the house's own footprint) lands
+        // on a road or wall — the house body is ~9x11m, so clear by its half-diagonal.
+        if (isObstructed(px, pz, 6.5 * scale)) continue;
+
+        out.push({ pos: [px, 0, pz], rot, scale });
       }
     }
     return out;
@@ -518,9 +583,10 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         shadow-camera-bottom={-150}
       />
 
-      {/* ground: lawn everywhere, then paving laid over it */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn, 0]} receiveShadow>
-        <planeGeometry args={[1400, 1400]} />
+      {/* ground: lawn everywhere, then paving laid over it. The lawn carries a
+          hole per pool — without one the grass plane, being solid, would draw
+          straight across the top of the basin and you would never see into it. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn, 0]} geometry={lawnGeo} receiveShadow>
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
 
@@ -530,7 +596,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       ))}
       {POOLS.map((p) => (
         <Tappable key={p.id} id="pool" onOpen={onOpenBuilding}>
-          <Pool {...p} />
+          <CampusPool {...p} />
         </Tappable>
       ))}
       {WALLS.map((w) => (
@@ -541,8 +607,10 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       <Tappable id="gate" onOpen={onOpenBuilding}>
         <MainGate position={[-3, 0, 249]} rotation={3.07} />
       </Tappable>
-      {/* The NUM Monument sign near the forecourt */}
-      <EntranceMonument position={[-12, 0, 126.5]} rotation={3.142} />
+      {/* The NUM Monument sign where the avenue meets the campus */}
+      <Tappable id="monument" onOpen={onOpenBuilding}>
+        <EntranceMonument position={[-12, 0, 126.5]} rotation={3.142} />
+      </Tappable>
       <Tappable id="teaching" onOpen={onOpenBuilding}>
         <TeachingBlock position={[-16, 0, -90.1]} w={53} d={16.1} floors={4} onRoomClick={(r: string) => onOpenBuilding('teaching', r)} />
       </Tappable>

@@ -107,19 +107,39 @@ export const BUILDINGS: Building[] = [
     id: "gate",
     name: "Main Entrance",
     khmer: "ច្រកចូល",
-    english: "The campus monument and forecourt",
+    english: "The gate at the foot of the avenue",
+    site: NUM_SITE,
+    about: [
+      "The campus gate stands at the far end of the entrance avenue, where it meets the public road: square piers carrying a red hipped roof, with the university's name across the beam in Khmer and English.",
+      "Sugar palms (ដើមត្នោត) line the avenue running north from it — Cambodia's national tree, and the shape most people picture when they picture the Cambodian countryside.",
+    ],
+    facts: [
+      { label: "Marks", value: "The foot of the entrance avenue" },
+      { label: "Sign", value: "សាកលវិទ្យាល័យ ជាតិគ្រប់គ្រង · National University of Management" },
+      { label: "Planting", value: "Sugar palms along the avenue" },
+    ],
+    view: viewpointFor("gate"),
+    heightM: 12,
+    spanM: spanOf("gate"),
+  },
+  {
+    id: "monument",
+    name: "NUM Monument",
+    khmer: "ផ្ទាំងស្លាកសាកលវិទ្យាល័យ",
+    english: "The name sign at the head of the avenue",
     site: NUM_SITE,
     about: [
       "The entrance monument carries the university's name in gold on a dark plinth, set on a curved flight of steps between clipped hedges.",
-      "Sugar palms (ដើមត្នោត) flank the avenue behind it — Cambodia's national tree, and the shape most people picture when they picture the Cambodian countryside.",
+      "It stands where the avenue arrives at the campus proper, so it is the thing you actually read on the way in — the gate announces the address, this announces the place.",
     ],
     facts: [
       { label: "Marks", value: "The head of the entrance avenue" },
-      { label: "Planting", value: "Sugar palms, clipped hedge beds" },
+      { label: "Reads", value: "NUM · INTERNATIONAL CAMPUS" },
+      { label: "Planting", value: "Clipped hedge beds either side" },
     ],
-    view: viewpointFor("gate"),
+    view: viewpointFor("monument"),
     heightM: 3,
-    spanM: spanOf("gate"),
+    spanM: spanOf("monument"),
   },
   {
     id: "teaching",
@@ -265,7 +285,9 @@ export const BUILDINGS: Building[] = [
       { label: "Surround", value: "Paved coping on all four sides" },
     ],
     view: viewpointFor("pool"),
-    heightM: 2,
+    // The basin is 5 m deep, and its page stands it on the apron rather than
+    // sinking it, so that depth is what the page camera has to frame.
+    heightM: 5,
     spanM: spanOf("pool"),
   },
   {

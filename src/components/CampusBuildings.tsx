@@ -1131,3 +1131,88 @@ export function Paving({
     </mesh>
   );
 }
+
+/* ----------------------------------------------------------------- pool --- */
+
+/** How the pool is built, in metres. Shared so the campus and the building
+ *  page show the same thing. */
+export const POOL = {
+  /** Width of the paved coping around the water. */
+  rim: 1.5,
+  /** How far the basin floor sits below the coping. */
+  depth: 5,
+  /** How far the water surface sits below the coping — the freeboard you see
+   *  as a band of tiled wall along the near edge. */
+  drop: 0.3,
+  /** Thickness of the coping slab. */
+  coping: 0.18,
+};
+
+/**
+ * A swimming pool built as an actual excavated basin — coping, four tiled
+ * walls and a floor — rather than a flat rectangle of colour.
+ *
+ * A single plane has no thickness, so it carries no depth cue and simply
+ * vanishes at grazing angles; and where it sat a few centimetres above another
+ * flat surface the depth buffer could not separate the two reliably at range,
+ * so which one won flipped as the camera moved. Real geometry fixes both: the
+ * rim catches light from any direction and the basin reads as a hole in the
+ * ground from every angle.
+ *
+ * `topY` is the height of the coping's top surface, so the caller can sit it
+ * on whatever ground stack it has.
+ */
+export function Pool({ w, d, topY = 0 }: { w: number; d: number; topY?: number }) {
+  const RIM = POOL.rim;
+  const floorY = topY - POOL.depth;
+  const waterY = topY - POOL.drop;
+  const wallY = (topY + floorY) / 2;
+  return (
+    <group>
+      {/* Coping: four solid slabs framing the opening. They never overlap the
+          water in plan, so there is nothing for the depth buffer to fight over. */}
+      {[
+        { x: 0, z: -(d + RIM) / 2, sw: w + RIM * 2, sd: RIM },
+        { x: 0, z: (d + RIM) / 2, sw: w + RIM * 2, sd: RIM },
+        { x: -(w + RIM) / 2, z: 0, sw: RIM, sd: d },
+        { x: (w + RIM) / 2, z: 0, sw: RIM, sd: d },
+      ].map((s, i) => (
+        <mesh key={`cope-${i}`} position={[s.x, topY - POOL.coping / 2, s.z]} castShadow receiveShadow>
+          <boxGeometry args={[s.sw, POOL.coping, s.sd]} />
+          <meshStandardMaterial color="#cfc9bd" roughness={1} />
+        </mesh>
+      ))}
+
+      {/* Basin floor — pale tile, so the water reads as lit and shallow. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, 0]} receiveShadow>
+        <planeGeometry args={[w, d]} />
+        <meshStandardMaterial color="#8fc9db" roughness={0.55} />
+      </mesh>
+
+      {/* The four tiled walls, facing inward. DoubleSide keeps the near wall
+          drawn when you look across the pool from outside it. */}
+      {[
+        { x: 0, z: -d / 2, rot: 0, len: w },
+        { x: 0, z: d / 2, rot: Math.PI, len: w },
+        { x: -w / 2, z: 0, rot: Math.PI / 2, len: d },
+        { x: w / 2, z: 0, rot: -Math.PI / 2, len: d },
+      ].map((s, i) => (
+        <mesh key={`wall-${i}`} position={[s.x, wallY, s.z]} rotation={[0, s.rot, 0]} receiveShadow>
+          <planeGeometry args={[s.len, POOL.depth]} />
+          <meshStandardMaterial color="#a8d8e6" roughness={0.5} side={DoubleSide} />
+        </mesh>
+      ))}
+
+      {/* Water, set below the coping and translucent so the tiled floor shows
+          through — that is the cue that makes it a pool and not a blue mat.
+          `depthWrite` off stops it occluding the basin behind it. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, waterY, 0]}>
+        <planeGeometry args={[w, d]} />
+        <meshStandardMaterial
+          color="#2f7690" roughness={0.3} metalness={0.1}
+          transparent opacity={0.72} depthWrite={false} side={DoubleSide}
+        />
+      </mesh>
+    </group>
+  );
+}
