@@ -1,0 +1,5954 @@
+{
+  "note": "Per-letter and per-syllable provenance for public/audio/*.mp3. See README.md.",
+  "generated": "2026-08-05",
+  "counts": {
+    "files": 647,
+    "nativeRecording": 628,
+    "placeholder": 19,
+    "totalKB": 12967
+  },
+  "letters": [
+    {
+      "char": "ក",
+      "slug": "1780",
+      "kind": "consonant",
+      "spokenAs": "ក",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "ក-enhanced-v2.wav",
+      "driveFileId": "1EXTTyb1_SY48gcTczqwiOvAN_JSn96tt"
+    },
+    {
+      "char": "កា",
+      "slug": "1780-17B6",
+      "kind": "syllable",
+      "spokenAs": "កា",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កា-enhanced-v2.wav",
+      "driveFileId": "1UdpkwdGahd0Fs9sJnLDz1AWb0oAWjFoe",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ា"
+    },
+    {
+      "char": "កាំ",
+      "slug": "1780-17B6-17C6",
+      "kind": "syllable",
+      "spokenAs": "កាំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កាំ-enhanced-v2.wav",
+      "driveFileId": "1z5Xs6p4MV-y1oobFNkaVAQpSoo6OvS30",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ាំ"
+    },
+    {
+      "char": "កិ",
+      "slug": "1780-17B7",
+      "kind": "syllable",
+      "spokenAs": "កិ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កិ-enhanced-v2.wav",
+      "driveFileId": "1i-lCUMxfvnwc60akjg_eL-TzBZ4B20lu",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ិ"
+    },
+    {
+      "char": "កី",
+      "slug": "1780-17B8",
+      "kind": "syllable",
+      "spokenAs": "កី",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កី-enhanced-v2.wav",
+      "driveFileId": "1Saexhlh9SWxsDcOTAJgOPjsacuo9aTeU",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ី"
+    },
+    {
+      "char": "កឹ",
+      "slug": "1780-17B9",
+      "kind": "syllable",
+      "spokenAs": "កឹ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឹ-enhanced-v2.wav",
+      "driveFileId": "1V7CFrRoj60OcmqZcTOkFbha_IFvxQjXv",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ឹ"
+    },
+    {
+      "char": "កឺ",
+      "slug": "1780-17BA",
+      "kind": "syllable",
+      "spokenAs": "កឺ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឺ-enhanced-v2.wav",
+      "driveFileId": "1JRmJ0Y1y8PLGbI1oMRP_JjF6JZW8RNRS",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ឺ"
+    },
+    {
+      "char": "កុ",
+      "slug": "1780-17BB",
+      "kind": "syllable",
+      "spokenAs": "កុ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុ-enhanced-v2.wav",
+      "driveFileId": "1j1AbUKF4mIBMzNGBLeg8430Gk-dTIrsS",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ុ"
+    },
+    {
+      "char": "កុំ",
+      "slug": "1780-17BB-17C6",
+      "kind": "syllable",
+      "spokenAs": "កុំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុំ-enhanced-v2.wav",
+      "driveFileId": "1Q7L_ZWet2KGyF3vrXjQSWRoQzwyZdK0L",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ុំ"
+    },
+    {
+      "char": "កុះ",
+      "slug": "1780-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុះ-enhanced-v2.wav",
+      "driveFileId": "1LOMZGlDlBwO00zZ9FovXYi5GcmHt0E2B",
+      "note": "same lesson-5 clip as the vowel it carries (ក is the anchor)"
+    },
+    {
+      "char": "កូ",
+      "slug": "1780-17BC",
+      "kind": "syllable",
+      "spokenAs": "កូ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កូ-enhanced-v2.wav",
+      "driveFileId": "1aJXyHpy522mRZPe-biMtx45pNYDRo0Fo",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ូ"
+    },
+    {
+      "char": "កួ",
+      "slug": "1780-17BD",
+      "kind": "syllable",
+      "spokenAs": "កួ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កួ-enhanced-v2 (1).wav",
+      "driveFileId": "1BZudrqRmWNuU-qwsNj0QMtqVzfoazg4H",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ួ"
+    },
+    {
+      "char": "កើ",
+      "slug": "1780-17BE",
+      "kind": "syllable",
+      "spokenAs": "កើ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កើ-enhanced-v2.wav",
+      "driveFileId": "1LIdCsBeIFkHOitX06AurTcBd-uhh1yp6",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ើ"
+    },
+    {
+      "char": "កឿ",
+      "slug": "1780-17BF",
+      "kind": "syllable",
+      "spokenAs": "កឿ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឿ-enhanced-v2.wav",
+      "driveFileId": "1JvDknnulcxXEUHbFtA1QeJql_bc-YTP1",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ឿ"
+    },
+    {
+      "char": "កៀ",
+      "slug": "1780-17C0",
+      "kind": "syllable",
+      "spokenAs": "កៀ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៀ-enhanced-v2.wav",
+      "driveFileId": "1WuRRYN6CFrHXYT6CTxLcMnk0kY1T_eQv",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ៀ"
+    },
+    {
+      "char": "កេ",
+      "slug": "1780-17C1",
+      "kind": "syllable",
+      "spokenAs": "កេ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កេ-enhanced-v2.wav",
+      "driveFileId": "1B2Abg7IyPGmg1m3odXM7YP7xWG3Mp_5Z",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel េ"
+    },
+    {
+      "char": "កេះ",
+      "slug": "1780-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កេះ-enhanced-v2.wav",
+      "driveFileId": "1NMC6KgyS-Fr-_B7OzY-RVfdNFuLpbGDo",
+      "note": "same lesson-5 clip as the vowel it carries (ក is the anchor)"
+    },
+    {
+      "char": "កែ",
+      "slug": "1780-17C2",
+      "kind": "syllable",
+      "spokenAs": "កែ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កែ-enhanced-v2.wav",
+      "driveFileId": "1L17VlTxAECc2_3gGH5vDMaQm_n3RWywW",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ែ"
+    },
+    {
+      "char": "កៃ",
+      "slug": "1780-17C3",
+      "kind": "syllable",
+      "spokenAs": "កៃ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៃ-enhanced-v2.wav",
+      "driveFileId": "1CH5Lw8_9JYqQX3n9zU1aIt_QBi4124t_",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ៃ"
+    },
+    {
+      "char": "កោ",
+      "slug": "1780-17C4",
+      "kind": "syllable",
+      "spokenAs": "កោ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កោ-enhanced-v2.wav",
+      "driveFileId": "18ikM0Dpd5KenlHmOCRPtyRcesGPFwMdt",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ោ"
+    },
+    {
+      "char": "កោះ",
+      "slug": "1780-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កោះ-enhanced-v2.wav",
+      "driveFileId": "1rMkKc9G2JLR1RXb-hTwel3xuhe-tQXBL",
+      "note": "same lesson-5 clip as the vowel it carries (ក is the anchor)"
+    },
+    {
+      "char": "កៅ",
+      "slug": "1780-17C5",
+      "kind": "syllable",
+      "spokenAs": "កៅ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៅ-enhanced-v2 (1).wav",
+      "driveFileId": "1rrvyu9edo-lwzPUIkenGt6i-8oicBGJs",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ៅ"
+    },
+    {
+      "char": "កំ",
+      "slug": "1780-17C6",
+      "kind": "syllable",
+      "spokenAs": "កំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កំ-enhanced-v2.wav",
+      "driveFileId": "1xqch-nIlpvsTPlqErm8CWkR0sHzsBAz0",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ំ"
+    },
+    {
+      "char": "កះ",
+      "slug": "1780-17C7",
+      "kind": "syllable",
+      "spokenAs": "កះ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កះ-enhanced-v2.wav",
+      "driveFileId": "1Xb_hRLgEmsrc9U1CY-UhNO0jFYYST3-x",
+      "note": "ក-series syllable; same lesson-5 clip as the vowel ះ"
+    },
+    {
+      "char": "ខ",
+      "slug": "1781",
+      "kind": "consonant",
+      "spokenAs": "ខ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខ-enhanced-v2.wav",
+      "driveFileId": "1FMtDb7UCdes-3jiOO_6GLJDjcRIDHZlE"
+    },
+    {
+      "char": "ខា",
+      "slug": "1781-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខា-enhanced-v2.wav",
+      "driveFileId": "1hhs0xiAEVsfcFVYR2BOs-q7m6Hs2FxjK"
+    },
+    {
+      "char": "ខាំ",
+      "slug": "1781-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខាំ-enhanced-v2.wav",
+      "driveFileId": "1ghmZTM32Pl9wkS9VqAZfP1erk-vh_MH2"
+    },
+    {
+      "char": "ខិ",
+      "slug": "1781-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខិ-enhanced-v2.wav",
+      "driveFileId": "12yA8iSGq5jqNIwr8u5eaUDa6dX-3i5Yu"
+    },
+    {
+      "char": "ខី",
+      "slug": "1781-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខី-enhanced-v2.wav",
+      "driveFileId": "1Gd-PbZFqCscJ4f0cH0DyMY-h_rOiRpOR"
+    },
+    {
+      "char": "ខឹ",
+      "slug": "1781-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខឹ-enhanced-v2.wav",
+      "driveFileId": "1Coko_b2EUDuEqJytea6ZG71kilmHUJja"
+    },
+    {
+      "char": "ខឺ",
+      "slug": "1781-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខឺ-enhanced-v2.wav",
+      "driveFileId": "18Jd0txX1JedGbJ4YbHcTKtmvoq4hwKjw"
+    },
+    {
+      "char": "ខុ",
+      "slug": "1781-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខុ-enhanced-v2.wav",
+      "driveFileId": "11vHvWxomAv7nYOnvE2qQoYWCqxWPHKzM"
+    },
+    {
+      "char": "ខុំ",
+      "slug": "1781-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខុំ-enhanced-v2.wav",
+      "driveFileId": "11iGJdrYaO110WcVzOC6jqRUisYMViMU_"
+    },
+    {
+      "char": "ខុះ",
+      "slug": "1781-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខុះ-enhanced-v2.wav",
+      "driveFileId": "10q7eoguSBQxHh9KhxffHM1oCiu6qq1U-"
+    },
+    {
+      "char": "ខូ",
+      "slug": "1781-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខូ-enhanced-v2.wav",
+      "driveFileId": "1uqlNiDQDcE4gAPUXkAc4IN5NgJMw11gi"
+    },
+    {
+      "char": "ខួ",
+      "slug": "1781-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខួ-enhanced-v2.wav",
+      "driveFileId": "1yzpt0X-LS2Khv3u9Ccp3U8QeWHjFDjiH"
+    },
+    {
+      "char": "ខើ",
+      "slug": "1781-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខើ-enhanced-v2.wav",
+      "driveFileId": "1IgvdffWC7dyQiNv-O7V6k629QKDXswjD"
+    },
+    {
+      "char": "ខឿ",
+      "slug": "1781-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខឿ-enhanced-v2.wav",
+      "driveFileId": "1sT_CuM11Q7enRkfOXYNExTLNR3HX8Ihr"
+    },
+    {
+      "char": "ខៀ",
+      "slug": "1781-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខៀ-enhanced-v2.wav",
+      "driveFileId": "1GAFhU3l3fCK0HlwaM8_a1WCV97Hs-lM1"
+    },
+    {
+      "char": "ខេ",
+      "slug": "1781-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខេ-enhanced-v2.wav",
+      "driveFileId": "1oKOHk2x9M8CLmCLtZxvQinamO0exCHr8"
+    },
+    {
+      "char": "ខេះ",
+      "slug": "1781-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខេះ-enhanced-v2.wav",
+      "driveFileId": "1yGvh7EPDCwHnbioWorLULiXKrgdm-UPn"
+    },
+    {
+      "char": "ខែ",
+      "slug": "1781-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខែ-enhanced-v2.wav",
+      "driveFileId": "1NTPOn-Ts1tYNqn8B3kdglAHhQ5lpeuu0"
+    },
+    {
+      "char": "ខៃ",
+      "slug": "1781-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខៃ-enhanced-v2.wav",
+      "driveFileId": "1VNr36pgyDxkJZZi9ne7vPwP_xxU79Uu3"
+    },
+    {
+      "char": "ខោ",
+      "slug": "1781-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខោ-enhanced-v2.wav",
+      "driveFileId": "12EeQmYv5iu_oYLBlirEr4hwpq6Mf66jT"
+    },
+    {
+      "char": "ខោះ",
+      "slug": "1781-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខោះ-enhanced-v2.wav",
+      "driveFileId": "1aHjt0QbHI4CDRMhdLDDbwa2MC6cJM5AY"
+    },
+    {
+      "char": "ខៅ",
+      "slug": "1781-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខៅ-enhanced-v2.wav",
+      "driveFileId": "1f_FnF_lVXvQgIjQaAl5XPOY50uIEV7_r"
+    },
+    {
+      "char": "ខំ",
+      "slug": "1781-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខំ-enhanced-v2.wav",
+      "driveFileId": "1pim9RUML2ujxTRs_DAHLT-8RGhsQFqdT"
+    },
+    {
+      "char": "ខះ",
+      "slug": "1781-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦",
+      "sourceFile": "ខះ-enhanced-v2.wav",
+      "driveFileId": "1iHq08IBnKrXXnC-p5W-UT0jrU24099NG"
+    },
+    {
+      "char": "គ",
+      "slug": "1782",
+      "kind": "consonant",
+      "spokenAs": "គ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គ-enhanced-v2.wav",
+      "driveFileId": "1kQuecVZX4Ilpz5aOpKVbHiLt9weLQeCO"
+    },
+    {
+      "char": "គា",
+      "slug": "1782-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គា-enhanced-v2.wav",
+      "driveFileId": "1TUYEgHrSJwoeBQMddyMzlAuIF79o04fa"
+    },
+    {
+      "char": "គាំ",
+      "slug": "1782-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គាំ-enhanced-v2.wav",
+      "driveFileId": "1mHlJIMEUey2pVTaxCOk9F6lxDPCcihW4"
+    },
+    {
+      "char": "គិ",
+      "slug": "1782-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គិ-enhanced-v2.wav",
+      "driveFileId": "1lVd3fyLdgv0Wrb_-fiR2wnKWdNP-6oGX"
+    },
+    {
+      "char": "គី",
+      "slug": "1782-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គី-enhanced-v2.wav",
+      "driveFileId": "1olImQAbN8FX-z-CmjN3eO8J58dn9HObD"
+    },
+    {
+      "char": "គឹ",
+      "slug": "1782-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គឹ-enhanced-v2.wav",
+      "driveFileId": "1DRGtMPdC67ZAMBZvg8AdF4wS891wIw1o"
+    },
+    {
+      "char": "គឺ",
+      "slug": "1782-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គឺ-enhanced-v2.wav",
+      "driveFileId": "1Z8RGau5yrsJ3FRVUtgoTCJJ5JtaUnB-V"
+    },
+    {
+      "char": "គុ",
+      "slug": "1782-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គុ-enhanced-v2.wav",
+      "driveFileId": "1isVICCTVJwasKZuhdP_HBRkYq91NXde2"
+    },
+    {
+      "char": "គុំ",
+      "slug": "1782-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គុំ-enhanced-v2.wav",
+      "driveFileId": "1DxqXaX60BehistGkvG6OQws6dYkAlD3O"
+    },
+    {
+      "char": "គុះ",
+      "slug": "1782-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គុះ-enhanced-v2.wav",
+      "driveFileId": "1u4yjh7_2OLfPcWQpxdj6k9GGMl4YepMh"
+    },
+    {
+      "char": "គូ",
+      "slug": "1782-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គូ-enhanced-v2.wav",
+      "driveFileId": "1hAEIdRPW5TtcdwR7ZBDuJu1rf3jNGtq8"
+    },
+    {
+      "char": "គួ",
+      "slug": "1782-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គួ-enhanced-v2.wav",
+      "driveFileId": "1LduLD6pkrIkZda1n-DDOwcdKgm808iCe"
+    },
+    {
+      "char": "គើ",
+      "slug": "1782-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គើ-enhanced-v2.wav",
+      "driveFileId": "1OQAXZt3nWoU7QA7o75PrcqZ53xZ_yNyf"
+    },
+    {
+      "char": "គឿ",
+      "slug": "1782-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គឿ-enhanced-v2.wav",
+      "driveFileId": "1BtABhCHWrO9c2_uAIMq4IJqBN-tmYLvb"
+    },
+    {
+      "char": "គៀ",
+      "slug": "1782-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គៀ-enhanced-v2.wav",
+      "driveFileId": "1NU88yFirdVV0qqZmSIFkDMFs_YwrUgeq"
+    },
+    {
+      "char": "គេ",
+      "slug": "1782-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គេ-enhanced-v2.wav",
+      "driveFileId": "1QGQ7mP8iZZ8x4YvL0Rh9XmMW9bi-F4EY"
+    },
+    {
+      "char": "គេះ",
+      "slug": "1782-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គេះ-enhanced-v2.wav",
+      "driveFileId": "1i36aRy4w1S2dfK676Qmc1axrUi22MbrZ"
+    },
+    {
+      "char": "គែ",
+      "slug": "1782-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គែ-enhanced-v2.wav",
+      "driveFileId": "1b_Ksa-WYBcPOPuJH-rdQIFNHVpc31zCx"
+    },
+    {
+      "char": "គៃ",
+      "slug": "1782-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គៃ-enhanced-v2.wav",
+      "driveFileId": "1ZATsM0TSEGtXDOS_XQV1e7qZavvToE7h"
+    },
+    {
+      "char": "គោ",
+      "slug": "1782-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គោ-enhanced-v2.wav",
+      "driveFileId": "1OGRJ8IYiKum7kF4DM946ad1VBs1O3G9C"
+    },
+    {
+      "char": "គោះ",
+      "slug": "1782-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គោះ-enhanced-v2.wav",
+      "driveFileId": "14aFF5r3vZwD5J0hq6aZsY0iOVXyFWhzh"
+    },
+    {
+      "char": "គៅ",
+      "slug": "1782-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គៅ-enhanced-v2.wav",
+      "driveFileId": "1g7hNWwwRHjgGXYz0_PLu9CM1tL4pXQCA"
+    },
+    {
+      "char": "គំ",
+      "slug": "1782-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គំ-enhanced-v2.wav",
+      "driveFileId": "1VdQrWsGLGnDlWpJola-8CC9Xac-glpv-"
+    },
+    {
+      "char": "គះ",
+      "slug": "1782-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៦",
+      "sourceFile": "គះ-enhanced-v2.wav",
+      "driveFileId": "1YOhWO6NXaLPvBsRMga3ihVg6MkBJ42T4"
+    },
+    {
+      "char": "ឃ",
+      "slug": "1783",
+      "kind": "consonant",
+      "spokenAs": "ឃ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃ.wav",
+      "driveFileId": "1BQ-tpekwUFhCuhJKWgZ-96GsnujxaOXN"
+    },
+    {
+      "char": "ឃា",
+      "slug": "1783-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃា.wav",
+      "driveFileId": "1iH9OvQ3w04USRyZsG_8HM0J7Etq8gGNU"
+    },
+    {
+      "char": "ឃាំ",
+      "slug": "1783-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃាំ.wav",
+      "driveFileId": "1PpUPB01-wK_iWN0Y98EHRBF1GLMa65LR"
+    },
+    {
+      "char": "ឃិ",
+      "slug": "1783-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃិ.wav",
+      "driveFileId": "1_LMUveZ_U4EcL3z3Sp6YV-AbTPk5hRH_"
+    },
+    {
+      "char": "ឃី",
+      "slug": "1783-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃី.wav",
+      "driveFileId": "1wluWFuMU-eS8owD6_mxzZNFctWztXIBW"
+    },
+    {
+      "char": "ឃឹ",
+      "slug": "1783-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃឹ.wav",
+      "driveFileId": "1PKTfWQlVckOGu-J9uybFDzH23PGRES9H"
+    },
+    {
+      "char": "ឃឺ",
+      "slug": "1783-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃឺ.wav",
+      "driveFileId": "1nHpAtje_FaQX_MXIlA-8a5jBRq6OC_G6"
+    },
+    {
+      "char": "ឃុ",
+      "slug": "1783-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃុ.wav",
+      "driveFileId": "1KImUeo5yQrz4Fby1ytUALFtmmUf-_aGx"
+    },
+    {
+      "char": "ឃុំ",
+      "slug": "1783-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃុំ.wav",
+      "driveFileId": "1sk_rhtwx9ygNbRJ5DVo1GP-uKuzKdsbD"
+    },
+    {
+      "char": "ឃុះ",
+      "slug": "1783-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃុះ.wav",
+      "driveFileId": "125mK-Sp7m9XV8-EBygPfznTadQ8V6hZE"
+    },
+    {
+      "char": "ឃូ",
+      "slug": "1783-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃូ.wav",
+      "driveFileId": "1jcDw6_3_emLp3NvlS1VO1TUlmuqBQynp"
+    },
+    {
+      "char": "ឃួ",
+      "slug": "1783-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃួ.wav",
+      "driveFileId": "1QctX1RnMBr0w41Sj7PjL9bF88NVtmhIL"
+    },
+    {
+      "char": "ឃើ",
+      "slug": "1783-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃើ.wav",
+      "driveFileId": "176IOy0cvElh4DBpKTJ39Vo8MGcSs_XIk"
+    },
+    {
+      "char": "ឃឿ",
+      "slug": "1783-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃឿ.wav",
+      "driveFileId": "1tMsisZ7S9gW9OpEqAayvd14EUu9IXE3h"
+    },
+    {
+      "char": "ឃៀ",
+      "slug": "1783-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃៀ.wav",
+      "driveFileId": "1AT3zmpop6MQeI5cyQR84Z8GrwfruKGhH"
+    },
+    {
+      "char": "ឃេ",
+      "slug": "1783-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃេ.wav",
+      "driveFileId": "1vOZ5CX27vpvYgdW80p1v9OohjHdI124I"
+    },
+    {
+      "char": "ឃេះ",
+      "slug": "1783-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃេះ.wav",
+      "driveFileId": "1U0SAyd7AFhRDjtTn8I5Grswt5Qv45CU7"
+    },
+    {
+      "char": "ឃែ",
+      "slug": "1783-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃែ.wav",
+      "driveFileId": "1fGDf0h2levFxndEiJ1tfSLJihTfLRFPX"
+    },
+    {
+      "char": "ឃៃ",
+      "slug": "1783-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃៃ.wav",
+      "driveFileId": "1OL5P6lE_mdBZqlH4OPTwjO3hPgpzsz8N"
+    },
+    {
+      "char": "ឃោ",
+      "slug": "1783-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃោ.wav",
+      "driveFileId": "1pduWtHp-FQG97XdKHSsCL1uGxC14yBq8"
+    },
+    {
+      "char": "ឃោះ",
+      "slug": "1783-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃោះ.wav",
+      "driveFileId": "1lUs5W_cmZSFSUcBhRTVgOeHgNGCHBLn8"
+    },
+    {
+      "char": "ឃៅ",
+      "slug": "1783-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃៅ.wav",
+      "driveFileId": "1rVFDG6MvGw44SqFvqipq8LVgKeU9IDFr"
+    },
+    {
+      "char": "ឃំ",
+      "slug": "1783-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃំ.wav",
+      "driveFileId": "1uFqcB43XIgdCOWwxZIYYMW9rd0B0w4nQ"
+    },
+    {
+      "char": "ឃះ",
+      "slug": "1783-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៧",
+      "sourceFile": "ឃះ.wav",
+      "driveFileId": "11YoD5gCpn1sQ3_5J_B4oU1Oix0qC6s_W"
+    },
+    {
+      "char": "ង",
+      "slug": "1784",
+      "kind": "consonant",
+      "spokenAs": "ង",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ង.wav",
+      "driveFileId": "1hfF4EOd9ev47qqR6nobqFi75GxPvsmew"
+    },
+    {
+      "char": "ងា",
+      "slug": "1784-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងា.wav",
+      "driveFileId": "1AK7UZ6R4ILDp6Fmb_zs_3jemxiHi7WMr"
+    },
+    {
+      "char": "ងាំ",
+      "slug": "1784-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងាំ.wav",
+      "driveFileId": "1H1_N6B3DnWxoNW7Ko4M19x8dGJcsa9oy"
+    },
+    {
+      "char": "ងិ",
+      "slug": "1784-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងិ.wav",
+      "driveFileId": "1srcKFwVVbRi9E9TsXeO2j-aoC7iyz7Hc"
+    },
+    {
+      "char": "ងី",
+      "slug": "1784-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងី.wav",
+      "driveFileId": "1jowE9WDWyEhSoqUC0MjzJKzJfU2tSGsY"
+    },
+    {
+      "char": "ងឹ",
+      "slug": "1784-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងឹ.wav",
+      "driveFileId": "10s2eimVbJJl2iypKKe_ZxEsym2iO4xQL"
+    },
+    {
+      "char": "ងឺ",
+      "slug": "1784-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងឺ.wav",
+      "driveFileId": "1MR0GwhXjEK8C5J1mqcwS6TdZtXBAXV32"
+    },
+    {
+      "char": "ងុ",
+      "slug": "1784-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងុ.wav",
+      "driveFileId": "1iDAgOBf0IgYzXJzOxLSfcbo77oLF1hfu"
+    },
+    {
+      "char": "ងុំ",
+      "slug": "1784-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងុំ.wav",
+      "driveFileId": "1CUsdGKK2xoKbJrq07ah5AVtgB7xJCpSA"
+    },
+    {
+      "char": "ងុះ",
+      "slug": "1784-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងុះ.wav",
+      "driveFileId": "1RDOcLUjl_W-bIJvO4yalgQpJJGjum4da"
+    },
+    {
+      "char": "ងូ",
+      "slug": "1784-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងូ.wav",
+      "driveFileId": "1BCaqgmUrspcZAg68vMiGNF0YBQHZd9M3"
+    },
+    {
+      "char": "ងួ",
+      "slug": "1784-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងួ.wav",
+      "driveFileId": "1Wyxx5DZHQLyOtaHKTbBHRDeG1LslASyu"
+    },
+    {
+      "char": "ងើ",
+      "slug": "1784-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងើ.wav",
+      "driveFileId": "1nemAzgNb2yNtnJ0XT7Gu40zuOyFZkIdO"
+    },
+    {
+      "char": "ងឿ",
+      "slug": "1784-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងឿ.wav",
+      "driveFileId": "1rjkGKaKUn1oTqVAlOH79lf3ZDPcDZ_xF"
+    },
+    {
+      "char": "ងៀ",
+      "slug": "1784-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងៀ.wav",
+      "driveFileId": "1JZNET3fZIzrb7rJOAsTaTNY9XCO3fESm"
+    },
+    {
+      "char": "ងេ",
+      "slug": "1784-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងេ.wav",
+      "driveFileId": "1nWRdyvnsK1Jp8OY2qJRi_Gl-OdTjbwzM"
+    },
+    {
+      "char": "ងេះ",
+      "slug": "1784-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងេះ.wav",
+      "driveFileId": "15NwBeBq91AZqDg3AID4kBpx2Sq0gFGsz"
+    },
+    {
+      "char": "ងែ",
+      "slug": "1784-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងែ.wav",
+      "driveFileId": "1mFRuCjQSegOCkhe4TIOGL2LTTG1cmp02"
+    },
+    {
+      "char": "ងៃ",
+      "slug": "1784-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងៃ.wav",
+      "driveFileId": "1wcv81jgQ_Z9InCeF7wIDr8z-N-_pSsi5"
+    },
+    {
+      "char": "ងោ",
+      "slug": "1784-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងោ.wav",
+      "driveFileId": "1klcvqDZuJuHAWNVDTBJzitGQBHzZ7nMA"
+    },
+    {
+      "char": "ងោះ",
+      "slug": "1784-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងោះ.wav",
+      "driveFileId": "1XpIlFwTDCU5h6u_Gvf_x-T7NMlSwfWfK"
+    },
+    {
+      "char": "ងៅ",
+      "slug": "1784-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងៅ.wav",
+      "driveFileId": "1SB5PBOvlJNvv4M-pg-Zo76-1_FEzfVrg"
+    },
+    {
+      "char": "ងំ",
+      "slug": "1784-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងំ.wav",
+      "driveFileId": "1gSyUbklgLtokB3OO0EEMClUNap9kDx8L"
+    },
+    {
+      "char": "ងះ",
+      "slug": "1784-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៨",
+      "sourceFile": "ងះ.wav",
+      "driveFileId": "1-67vUZ-TmYBetDaCAk7fbLptSKBEN1s0"
+    },
+    {
+      "char": "ច",
+      "slug": "1785",
+      "kind": "consonant",
+      "spokenAs": "ច",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ច-enhanced-v2.wav",
+      "driveFileId": "1cdOHqkXUuhdBOca0H0sWSzgXPrMKe8Wu"
+    },
+    {
+      "char": "ចា",
+      "slug": "1785-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចា-enhanced-v2.wav",
+      "driveFileId": "1ytlOaZuDFiSIUw1bBTpxzvJnmJPhGGdj"
+    },
+    {
+      "char": "ចាំ",
+      "slug": "1785-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចាំ-enhanced-v2.wav",
+      "driveFileId": "1pJRBsrj5jG4lu9ZI3FETczlp1PCBPq7Q"
+    },
+    {
+      "char": "ចិ",
+      "slug": "1785-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចិ-enhanced-v2.wav",
+      "driveFileId": "1sfELyycavGwso96QzlrexTZ6G_RvZduP"
+    },
+    {
+      "char": "ចី",
+      "slug": "1785-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចី-enhanced-v2.wav",
+      "driveFileId": "1h4z3WZWUsg6kIXR2wg-X-jCklzy5OHTP"
+    },
+    {
+      "char": "ចឹ",
+      "slug": "1785-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចឹ-enhanced-v2.wav",
+      "driveFileId": "1b2TO48qAdQuZCwC4LnC5WDrlpnVg5Ltm"
+    },
+    {
+      "char": "ចឺ",
+      "slug": "1785-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចឺ-enhanced-v2.wav",
+      "driveFileId": "1fPNQ705VVRWHLMkNAM8ZGIb2Bv_uqqDZ"
+    },
+    {
+      "char": "ចុ",
+      "slug": "1785-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចុ-enhanced-v2.wav",
+      "driveFileId": "19mZlkZRBaUMTWHVU18wSpR-yZzN8Z32V"
+    },
+    {
+      "char": "ចុំ",
+      "slug": "1785-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចុំ-enhanced-v2.wav",
+      "driveFileId": "1oGub6WxLEo3pFfeVGTAdLjpYN0MDYVxs"
+    },
+    {
+      "char": "ចុះ",
+      "slug": "1785-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចុះ-enhanced-v2.wav",
+      "driveFileId": "1supcMa2XA3kZzM4znu-m1Lp8XyB6OdFJ"
+    },
+    {
+      "char": "ចូ",
+      "slug": "1785-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចូ-enhanced-v2.wav",
+      "driveFileId": "1jlhef4BfXkxey9J6JorXZd8aZ-4w0s4A"
+    },
+    {
+      "char": "ចួ",
+      "slug": "1785-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចួ-enhanced-v2.wav",
+      "driveFileId": "12sZ15Q5OUX9BlRj4LrR-7OQ5EqC1rLRc"
+    },
+    {
+      "char": "ចើ",
+      "slug": "1785-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចើ-enhanced-v2.wav",
+      "driveFileId": "1GL3mvwp5z-AXcLbblgtDTKRdOkhV-wXl"
+    },
+    {
+      "char": "ចឿ",
+      "slug": "1785-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចឿ-enhanced-v2.wav",
+      "driveFileId": "1iG5wm-Mj0SYQOa70hwf7cnXGfC9SddVD"
+    },
+    {
+      "char": "ចៀ",
+      "slug": "1785-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចៀ-enhanced-v2.wav",
+      "driveFileId": "1CuXy5F3XYekT1l35Kb7Ru5aiGBobXOoq"
+    },
+    {
+      "char": "ចេ",
+      "slug": "1785-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចេ-enhanced-v2.wav",
+      "driveFileId": "14up5v3Dl9TSePjerSEjted4-ZsMjK_ps"
+    },
+    {
+      "char": "ចេះ",
+      "slug": "1785-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចេះ-enhanced-v2.wav",
+      "driveFileId": "1pe8e7EpFJalVqZfqbW7jCMKY1rvR_zC3"
+    },
+    {
+      "char": "ចែ",
+      "slug": "1785-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចែ-enhanced-v2.wav",
+      "driveFileId": "1YAjCdfy2tM-9dVE0Db6qZEEuXtFFWhDt"
+    },
+    {
+      "char": "ចៃ",
+      "slug": "1785-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចៃ-enhanced-v2.wav",
+      "driveFileId": "11ujLDKcGLyMcvpwyHe1ZVvDV4OAVfzCN"
+    },
+    {
+      "char": "ចោ",
+      "slug": "1785-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចោ-enhanced-v2.wav",
+      "driveFileId": "1wUJVejUfZYbgL6kQU4OlpBR8fEoJu92j"
+    },
+    {
+      "char": "ចោះ",
+      "slug": "1785-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចោះ-enhanced-v2.wav",
+      "driveFileId": "1iwSI1YBSTMgsQfMOsvyRNj-ospFoj8Mc"
+    },
+    {
+      "char": "ចៅ",
+      "slug": "1785-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចៅ-enhanced-v2.wav",
+      "driveFileId": "18Ynlh6blGbuHwM2DZvbu3OsBzzhkKLbt"
+    },
+    {
+      "char": "ចំ",
+      "slug": "1785-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចំ-enhanced-v2.wav",
+      "driveFileId": "1DYC8sWWA-j83BrYeagkiy5CtXcVNg5Lv"
+    },
+    {
+      "char": "ចះ",
+      "slug": "1785-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៧",
+      "sourceFile": "ចះ-enhanced-v2.wav",
+      "driveFileId": "1ud5eR5nft3ssRzNZGlFJjjGqfsysdCP5"
+    },
+    {
+      "char": "ឆ",
+      "slug": "1786",
+      "kind": "consonant",
+      "spokenAs": "ឆ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆ-enhanced-v2.wav",
+      "driveFileId": "174SpWPxJhgjJOriZ-kplhNsUZ-fT99sg"
+    },
+    {
+      "char": "ឆា",
+      "slug": "1786-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆា-enhanced-v2.wav",
+      "driveFileId": "1ueYr-vVT1jO4P28xPBjj_6gm6jH3iS4y"
+    },
+    {
+      "char": "ឆាំ",
+      "slug": "1786-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆាំ-enhanced-v2.wav",
+      "driveFileId": "1TVgYHiK89JM8wnDduqb2DKUFVgT9aQc9"
+    },
+    {
+      "char": "ឆិ",
+      "slug": "1786-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆិ-enhanced-v2.wav",
+      "driveFileId": "1R2nXbsdwmvTzgSRTzT_5wP1uBrx7bXSm"
+    },
+    {
+      "char": "ឆី",
+      "slug": "1786-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆី-enhanced-v2.wav",
+      "driveFileId": "1B5AXnYuRJrYZGuVOeCKl2W81Qp3PZGl2"
+    },
+    {
+      "char": "ឆឹ",
+      "slug": "1786-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆឹ-enhanced-v2.wav",
+      "driveFileId": "1JtYfo6sm8JGExThaViguJVl_iE8-2oN8"
+    },
+    {
+      "char": "ឆឺ",
+      "slug": "1786-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆឺ-enhanced-v2.wav",
+      "driveFileId": "1E0fE1z09KC-tHuGMmu2HBM42y_DcXUVD"
+    },
+    {
+      "char": "ឆុ",
+      "slug": "1786-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆុ-enhanced-v2.wav",
+      "driveFileId": "1Kp4Gyr5RIqGJJCqTj5gBm-U71m0LlBDG"
+    },
+    {
+      "char": "ឆុំ",
+      "slug": "1786-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆុំ-enhanced-v2.wav",
+      "driveFileId": "1z3xNDQXAWYSICrfEMQMVULmMnhr-sTi-"
+    },
+    {
+      "char": "ឆុះ",
+      "slug": "1786-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆុះ-enhanced-v2.wav",
+      "driveFileId": "1LCmk3iR2gKhdaa7X79EKFzWslkeHwfjV"
+    },
+    {
+      "char": "ឆូ",
+      "slug": "1786-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆូ-enhanced-v2.wav",
+      "driveFileId": "1zVQWlDEameVweoJKMyr422ACDEQ5417_"
+    },
+    {
+      "char": "ឆួ",
+      "slug": "1786-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆួ-enhanced-v2.wav",
+      "driveFileId": "1no82c6VIp3L0TVzQHqfH7ORakVPWgq_i"
+    },
+    {
+      "char": "ឆើ",
+      "slug": "1786-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆើ-enhanced-v2.wav",
+      "driveFileId": "1nspXuLqPeSkgvLohU1QdWud35rgdTEdT"
+    },
+    {
+      "char": "ឆឿ",
+      "slug": "1786-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆឿ-enhanced-v2.wav",
+      "driveFileId": "1GLaT6vQK9Er829-ahMU4vXEPdKiQiN_g"
+    },
+    {
+      "char": "ឆៀ",
+      "slug": "1786-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆៀ-enhanced-v2.wav",
+      "driveFileId": "13Gwu_lqVbu4TP_6_dp5TLhGj-q8Trdpu"
+    },
+    {
+      "char": "ឆេ",
+      "slug": "1786-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆេ-enhanced-v2.wav",
+      "driveFileId": "1aFILZ0XGgX20YTHqRtGerO2l3EnQct2Q"
+    },
+    {
+      "char": "ឆេះ",
+      "slug": "1786-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆេះ-enhanced-v2.wav",
+      "driveFileId": "1cMbDrko4a1WCvhhcc5w-8M1OKiTzPqlc"
+    },
+    {
+      "char": "ឆែ",
+      "slug": "1786-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆែ-enhanced-v2.wav",
+      "driveFileId": "12N4ebIoJpEeaENb7fwLtdV7RlVTDs5Vd"
+    },
+    {
+      "char": "ឆៃ",
+      "slug": "1786-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆៃ-enhanced-v2.wav",
+      "driveFileId": "12SYiwpLHequfmz11y-k7CKivQRAqBJgm"
+    },
+    {
+      "char": "ឆោ",
+      "slug": "1786-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆោ-enhanced-v2.wav",
+      "driveFileId": "1tR3eNFxu-R4pL8TwGBqLO-T1oPWmjdyd"
+    },
+    {
+      "char": "ឆោះ",
+      "slug": "1786-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆោះ-enhanced-v2.wav",
+      "driveFileId": "1fZvja3D2aAI-09QqHoO1wGU6nK_xmCc1"
+    },
+    {
+      "char": "ឆៅ",
+      "slug": "1786-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆៅ-enhanced-v2.wav",
+      "driveFileId": "1OrBN67oNiHfDUrfsy-mrNGzzk9gl94Oo"
+    },
+    {
+      "char": "ឆំ",
+      "slug": "1786-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆំ-enhanced-v2.wav",
+      "driveFileId": "1qo2SMneRwZYQrr20zHUyrPPREwjVl6et"
+    },
+    {
+      "char": "ឆះ",
+      "slug": "1786-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៨",
+      "sourceFile": "ឆះ-enhanced-v2.wav",
+      "driveFileId": "1wxLlVMEgZMc6y6fmT9sCOoHkvB4Q8NXC"
+    },
+    {
+      "char": "ជ",
+      "slug": "1787",
+      "kind": "consonant",
+      "spokenAs": "ជ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជ.wav",
+      "driveFileId": "1pSjUyzeJMOZxfg96S0cqsKXek-PHpKXq"
+    },
+    {
+      "char": "ជា",
+      "slug": "1787-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជា.wav",
+      "driveFileId": "11L167zqhxNaN-nEqZygkXW46vnV7iEM1"
+    },
+    {
+      "char": "ជាំ",
+      "slug": "1787-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជាំ.wav",
+      "driveFileId": "1OihUpi-q5Ow3e2ULwT9PhVPHhQHAUpM4"
+    },
+    {
+      "char": "ជិ",
+      "slug": "1787-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជិ.wav",
+      "driveFileId": "1Rr41vR1riPTKjA0_KpPcsHeSUklcDgR2"
+    },
+    {
+      "char": "ជី",
+      "slug": "1787-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជី.wav",
+      "driveFileId": "1YpuTRIizwzmxHN9S_cvP3VEPh1o5V4-F"
+    },
+    {
+      "char": "ជឹ",
+      "slug": "1787-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជឹ.wav",
+      "driveFileId": "1ZOX578jWlcELGMX5d38E9r2AF41BjAYa"
+    },
+    {
+      "char": "ជឺ",
+      "slug": "1787-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជឺ.wav",
+      "driveFileId": "1e43dR3Op48VYu5PnlxBi934HQiYIvI4F"
+    },
+    {
+      "char": "ជុ",
+      "slug": "1787-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជុ.wav",
+      "driveFileId": "13qsl3H8dy1MTbn0LkwgJUlyV3196U0SW"
+    },
+    {
+      "char": "ជុំ",
+      "slug": "1787-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជុំ.wav",
+      "driveFileId": "1zSHuf8yXZvqoORHKmSmfwanXy-sDJlkR"
+    },
+    {
+      "char": "ជុះ",
+      "slug": "1787-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជុះ.wav",
+      "driveFileId": "1J91jMCBeAXIj1pEcasUQ8envm-ZAtusj"
+    },
+    {
+      "char": "ជូ",
+      "slug": "1787-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជូ.wav",
+      "driveFileId": "1HlrIlCF6jtePNCdlu8smykcDeAbKxKHS"
+    },
+    {
+      "char": "ជួ",
+      "slug": "1787-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជួ.wav",
+      "driveFileId": "1rNc848NGtcTjBYdmeP4CcuFp0rlKWLBM"
+    },
+    {
+      "char": "ជើ",
+      "slug": "1787-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជើ.wav",
+      "driveFileId": "1SrV5iYVi5I0u63PSSIutGwhZnIXtnSpO"
+    },
+    {
+      "char": "ជឿ",
+      "slug": "1787-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជឿ.wav",
+      "driveFileId": "1sOF8qOIcDohuL7dVXyTq9zdHMktwap6V"
+    },
+    {
+      "char": "ជៀ",
+      "slug": "1787-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជៀ.wav",
+      "driveFileId": "1weIyEdbwamsiMIwIuhTzUWih7lFNARRC"
+    },
+    {
+      "char": "ជេ",
+      "slug": "1787-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជេ.wav",
+      "driveFileId": "1035b7-IeM6jZVQUmTwlCbfBIDUsyHjv8"
+    },
+    {
+      "char": "ជេះ",
+      "slug": "1787-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជេះ.wav",
+      "driveFileId": "1vTpvowjrx7xmIkVcbA6oVVonnIqO8TEo"
+    },
+    {
+      "char": "ជែ",
+      "slug": "1787-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជែ.wav",
+      "driveFileId": "11aJkM0gD6DOAqOn7FFaOcSWOZit8Dk6A"
+    },
+    {
+      "char": "ជៃ",
+      "slug": "1787-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជៃ.wav",
+      "driveFileId": "1_qM2b0Kr0vAI7TX7potx0j7TCpULIePL"
+    },
+    {
+      "char": "ជោ",
+      "slug": "1787-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជោ.wav",
+      "driveFileId": "1SVIEhhbf-EXSAngHGc9UOZffnOBrfmYe"
+    },
+    {
+      "char": "ជោះ",
+      "slug": "1787-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជោះ.wav",
+      "driveFileId": "1_OFmknTtJjKNecnuFqj81o0-rDnw3lob"
+    },
+    {
+      "char": "ជៅ",
+      "slug": "1787-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជៅ.wav",
+      "driveFileId": "18DcztK1qtKmHcIjgA95p8OaLRsZcWvVr"
+    },
+    {
+      "char": "ជំ",
+      "slug": "1787-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជំ.wav",
+      "driveFileId": "1SAXkblUJ6DDMhTVtXFliMA4r-_PyA7rY"
+    },
+    {
+      "char": "ជះ",
+      "slug": "1787-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៩",
+      "sourceFile": "ជះ.wav",
+      "driveFileId": "1Dxm7OAaloXaWGK4UQVpCTw49riMTVaN4"
+    },
+    {
+      "char": "ឈ",
+      "slug": "1788",
+      "kind": "consonant",
+      "spokenAs": "ឈ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈ.wav",
+      "driveFileId": "1Ce8VifjvonhOfdoTI16HDJxOp5Jx1KT0"
+    },
+    {
+      "char": "ឈា",
+      "slug": "1788-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈា.wav",
+      "driveFileId": "1wOPwlkbjVXRvTtclDZQ8YlWfatUAmQZ7"
+    },
+    {
+      "char": "ឈាំ",
+      "slug": "1788-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈាំ.wav",
+      "driveFileId": "1hL3sggw-qRVc01eQWvjn1hDFIdsLJ4b_"
+    },
+    {
+      "char": "ឈិ",
+      "slug": "1788-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈិ.wav",
+      "driveFileId": "11bq1vlbVjDx2uEol3IM_USZnIK0acGST"
+    },
+    {
+      "char": "ឈី",
+      "slug": "1788-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈី.wav",
+      "driveFileId": "1mP1iFONyPxtbemunfRPGmfv9YA4UKzQx"
+    },
+    {
+      "char": "ឈឹ",
+      "slug": "1788-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈឹ.wav",
+      "driveFileId": "1Qa1XbvRDJEyRnKu_ZumVYdJ8j2b3Zm02"
+    },
+    {
+      "char": "ឈឺ",
+      "slug": "1788-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈឺ.wav",
+      "driveFileId": "1hLwwCDmYzMVeK9pUfCs4tH_s-z_385xS"
+    },
+    {
+      "char": "ឈុ",
+      "slug": "1788-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈុ.wav",
+      "driveFileId": "1gmHiJfPSQrxBqkxZx0tkYKlo-f2GelfT"
+    },
+    {
+      "char": "ឈុំ",
+      "slug": "1788-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈុំ.wav",
+      "driveFileId": "14OpOlEuWMirZT_KsUaGbnQ9NRZCAQgK7"
+    },
+    {
+      "char": "ឈុះ",
+      "slug": "1788-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈុះ.wav",
+      "driveFileId": "1rv9uE0sDdEtHsjqoDQq5qisHM7zeJ0hp"
+    },
+    {
+      "char": "ឈូ",
+      "slug": "1788-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈូ.wav",
+      "driveFileId": "196GrJFQSW2NfmZyE4SsoX-qcRlVmLnQK"
+    },
+    {
+      "char": "ឈួ",
+      "slug": "1788-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈួ.wav",
+      "driveFileId": "1fo8uQifJwIgPw6cNuShSX1WwHZOp5pp3"
+    },
+    {
+      "char": "ឈើ",
+      "slug": "1788-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈើ.wav",
+      "driveFileId": "1LWCCslhTC6yl939JgLfeKzKX63qoHcr-"
+    },
+    {
+      "char": "ឈឿ",
+      "slug": "1788-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈឿ.wav",
+      "driveFileId": "1sEDmBDdPVERNlIGJ9seaFmmlJ2vNb9tI"
+    },
+    {
+      "char": "ឈៀ",
+      "slug": "1788-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈៀ.wav",
+      "driveFileId": "11In3QfXQyey9D4twMi0OcLCfLFFzb8W4"
+    },
+    {
+      "char": "ឈេ",
+      "slug": "1788-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈេ.wav",
+      "driveFileId": "10OqJ6GvZ6Lsv6rlpltR6KuK3mF8uAMza"
+    },
+    {
+      "char": "ឈេះ",
+      "slug": "1788-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈេះ.wav",
+      "driveFileId": "1HhhK1bxcZzgwE-i8DTVQSGf-Cn_dT9Vb"
+    },
+    {
+      "char": "ឈែ",
+      "slug": "1788-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈែ.wav",
+      "driveFileId": "103VHdAwKTXsS21ZhK1AmMfmS-sRWF_wX"
+    },
+    {
+      "char": "ឈៃ",
+      "slug": "1788-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈៃ.wav",
+      "driveFileId": "1E1Jl70JRB9LEEBYWYwhI1UVmEO9GTT4r"
+    },
+    {
+      "char": "ឈោ",
+      "slug": "1788-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈោ.wav",
+      "driveFileId": "1cKAsX7LyZx4I_5SUXGw0vNF0SeB0ltVd"
+    },
+    {
+      "char": "ឈោះ",
+      "slug": "1788-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈោះ.wav",
+      "driveFileId": "1zdstiDtIHuXoUZsF7lAD94LRm4TEX0BP"
+    },
+    {
+      "char": "ឈៅ",
+      "slug": "1788-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈៅ.wav",
+      "driveFileId": "1HaUZDlIaeM-8BiNd4DPgX_GvQqAClmYt"
+    },
+    {
+      "char": "ឈំ",
+      "slug": "1788-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈំ.wav",
+      "driveFileId": "1hrggM1I5qAnQTF3HebHjVyN5s13avrnA"
+    },
+    {
+      "char": "ឈះ",
+      "slug": "1788-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២០",
+      "sourceFile": "ឈះ.wav",
+      "driveFileId": "1k_GzMDeFB5fYGm2lHKLEUr3bZMnL1Vxj"
+    },
+    {
+      "char": "ញ",
+      "slug": "1789",
+      "kind": "consonant",
+      "spokenAs": "ញ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញ.wav",
+      "driveFileId": "1a3hee87Ry3SdOpP53Ai0r46EwgnMN4Vw"
+    },
+    {
+      "char": "ញា",
+      "slug": "1789-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញា.wav",
+      "driveFileId": "1KJ3JxxeLon0drgPrT7i4tYKdF38kqnFf"
+    },
+    {
+      "char": "ញាំ",
+      "slug": "1789-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញាំ.wav",
+      "driveFileId": "1QBGfCE0gH1DBjGl0gi5pxkw3brUyGBaU"
+    },
+    {
+      "char": "ញិ",
+      "slug": "1789-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញិ.wav",
+      "driveFileId": "18GnsJvoPTCgKpMxG4ZxlDaSVh6bMetdG"
+    },
+    {
+      "char": "ញី",
+      "slug": "1789-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញី.wav",
+      "driveFileId": "1BejBUfWyMnBQqVkVolyTSGQS5p3oWbLc"
+    },
+    {
+      "char": "ញឹ",
+      "slug": "1789-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញឹ.wav",
+      "driveFileId": "16evEFUGwGtmKoQJPjFl68NZt_IAZDs4u"
+    },
+    {
+      "char": "ញឺ",
+      "slug": "1789-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញឺ.wav",
+      "driveFileId": "1bNJMoVacrCovSqqQaLFWrUz3QFH2Xt4J"
+    },
+    {
+      "char": "ញុ",
+      "slug": "1789-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញុ.wav",
+      "driveFileId": "1xkuEmL7rebFxauTWfcqVLjegu1bBQSiv"
+    },
+    {
+      "char": "ញុំ",
+      "slug": "1789-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញុំ.wav",
+      "driveFileId": "1G4iRWO_16seHSDXf3zY4G1y_6MgbJe_x"
+    },
+    {
+      "char": "ញុះ",
+      "slug": "1789-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញុះ.wav",
+      "driveFileId": "1hnLdFSbNz_e8dUBc9GYBnmF9qEMiu9zQ"
+    },
+    {
+      "char": "ញូ",
+      "slug": "1789-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញូ.wav",
+      "driveFileId": "1Ikd6ULhEhDhdMn_T9LSUK-op98FgDI52"
+    },
+    {
+      "char": "ញួ",
+      "slug": "1789-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញួ.wav",
+      "driveFileId": "1-K_GVhZ1MT9qZFzkBtTtH2zVvKknflBT"
+    },
+    {
+      "char": "ញើ",
+      "slug": "1789-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញើ.wav",
+      "driveFileId": "1m_t8-rVFRE7VG7K2DTRQ45JVLPKONrR4"
+    },
+    {
+      "char": "ញឿ",
+      "slug": "1789-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញឿ.wav",
+      "driveFileId": "1ebVcOJb-TUCF1FHqnRNVoaLqPhzgYrRN"
+    },
+    {
+      "char": "ញៀ",
+      "slug": "1789-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញៀ.wav",
+      "driveFileId": "1mRSupPqFK1TpHQi1l0Odm-mdrYcQVK7s"
+    },
+    {
+      "char": "ញេ",
+      "slug": "1789-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញេ.wav",
+      "driveFileId": "1BLV5J-KY9n3nGkrwnmv7gzP0bRwza3Vt"
+    },
+    {
+      "char": "ញេះ",
+      "slug": "1789-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញេះ.wav",
+      "driveFileId": "1GfeE4PBVwP1Q5drI3YlXFLc303Av_AX_"
+    },
+    {
+      "char": "ញែ",
+      "slug": "1789-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញែ.wav",
+      "driveFileId": "1GWnhtvquEka9CxQu-cQcmtNInRUGmKQB"
+    },
+    {
+      "char": "ញៃ",
+      "slug": "1789-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញៃ.wav",
+      "driveFileId": "1OrxCArJkQGldDv4uaSMmGi2-CxtgPwNc"
+    },
+    {
+      "char": "ញោ",
+      "slug": "1789-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញោ.wav",
+      "driveFileId": "1KV1gohrn93qSVxN2toa8HlIxx9JjZs_i"
+    },
+    {
+      "char": "ញោះ",
+      "slug": "1789-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញោះ.wav",
+      "driveFileId": "1JGOFzX6GXdhV6L4HH8vkHp-mIlXmSbzu"
+    },
+    {
+      "char": "ញៅ",
+      "slug": "1789-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញៅ.wav",
+      "driveFileId": "1IeLGkufAMV8uioicZ8YJ1NkBn9mtOzNX"
+    },
+    {
+      "char": "ញំ",
+      "slug": "1789-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញំ.wav",
+      "driveFileId": "19VP95vFk7JI_ZDhxAvqkMKCM7a6Sx32Q"
+    },
+    {
+      "char": "ញះ",
+      "slug": "1789-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២១",
+      "sourceFile": "ញះ.wav",
+      "driveFileId": "1uhJl0nk-wecobYhq4wa2Rl8paXGSQ3JS"
+    },
+    {
+      "char": "ដ",
+      "slug": "178A",
+      "kind": "consonant",
+      "spokenAs": "ដ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដ-enhanced-v2.wav",
+      "driveFileId": "1qfoX6lkYDBjIxAzZKmnxjGYXDF-c8PPe"
+    },
+    {
+      "char": "ដា",
+      "slug": "178A-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដា-enhanced-v2.wav",
+      "driveFileId": "1QqYfkZZgnxkNiAdy-RjKgI6Ub0kmVgea"
+    },
+    {
+      "char": "ដាំ",
+      "slug": "178A-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដាំ-enhanced-v2.wav",
+      "driveFileId": "1o2xQF5_Z-iJ_9cExDD-irlGKNloSMPHd"
+    },
+    {
+      "char": "ដិ",
+      "slug": "178A-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដិ-enhanced-v2.wav",
+      "driveFileId": "1tKyvwaEB9iBP1ah-4heaTWenCdTDYAPC"
+    },
+    {
+      "char": "ដី",
+      "slug": "178A-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដី-enhanced-v2.wav",
+      "driveFileId": "1CPW02DBHBwtuJp3XEi76JuXP3EGX56Kf"
+    },
+    {
+      "char": "ដឹ",
+      "slug": "178A-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដឹ-enhanced-v2.wav",
+      "driveFileId": "19bV3FU6-nlvbaSwnBt7NmcKhatHqgczA"
+    },
+    {
+      "char": "ដឺ",
+      "slug": "178A-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដឺ-enhanced-v2.wav",
+      "driveFileId": "1gfA9rgQCj_vgCP1Jrc8tNgIEaiRgzg6j"
+    },
+    {
+      "char": "ដុ",
+      "slug": "178A-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដុ-enhanced-v2.wav",
+      "driveFileId": "1dQRoJyWlTlDuOhCSGB-HYGxQXTMi_VOu"
+    },
+    {
+      "char": "ដុំ",
+      "slug": "178A-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដុំ-enhanced-v2.wav",
+      "driveFileId": "1UBSfODH81xU-4035hDWNSNbCP0TK_Zrs"
+    },
+    {
+      "char": "ដុះ",
+      "slug": "178A-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដុះ-enhanced-v2.wav",
+      "driveFileId": "1OKVq8tf_G7SgsBwfFfNMt15kQHFMqc_O"
+    },
+    {
+      "char": "ដូ",
+      "slug": "178A-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដូ-enhanced-v2.wav",
+      "driveFileId": "1Fw4ZNDDQ6ObjJ6plYHQ0u9hYLrvnFkh0"
+    },
+    {
+      "char": "ដួ",
+      "slug": "178A-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដួ-enhanced-v2.wav",
+      "driveFileId": "1CVMDdyUeKCCkupvYL2SXz0-CSTaZc4P-"
+    },
+    {
+      "char": "ដើ",
+      "slug": "178A-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដើ-enhanced-v2.wav",
+      "driveFileId": "1ROZE7i0Catqk5s80PxAojb0PD5HOlbzb"
+    },
+    {
+      "char": "ដឿ",
+      "slug": "178A-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដឿ-enhanced-v2.wav",
+      "driveFileId": "1ZB66WJZEqwWiyjwHmBPNdrabvvHqfGAx"
+    },
+    {
+      "char": "ដៀ",
+      "slug": "178A-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដៀ-enhanced-v2.wav",
+      "driveFileId": "1_yBg6-QFF2ogUTB1NNSDLADQ-1Q-rif-"
+    },
+    {
+      "char": "ដេ",
+      "slug": "178A-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដេ-enhanced-v2.wav",
+      "driveFileId": "1WEBr3AR6m6Roz_Oi3NGz3K8fbsIMoZU9"
+    },
+    {
+      "char": "ដេះ",
+      "slug": "178A-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដេះ-enhanced-v2.wav",
+      "driveFileId": "1t-TzAGqkJp2rkQh0HVLrfaCL4gdAsmeA"
+    },
+    {
+      "char": "ដែ",
+      "slug": "178A-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដែ-enhanced-v2.wav",
+      "driveFileId": "1cNH9w03iVVKojvfZwV5ThtG7hyt_Pw3S"
+    },
+    {
+      "char": "ដៃ",
+      "slug": "178A-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដៃ-enhanced-v2.wav",
+      "driveFileId": "1uR3IQSj5Jlvjua-rOBicz-Q9DZ5adA7P"
+    },
+    {
+      "char": "ដោ",
+      "slug": "178A-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដោ-enhanced-v2.wav",
+      "driveFileId": "17DftnfBtieAJN_sHtW56AW6nBjSKNpkr"
+    },
+    {
+      "char": "ដោះ",
+      "slug": "178A-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដោះ-enhanced-v2.wav",
+      "driveFileId": "1nfDZfrskSe-MBWLGt-drXmFwQBtRUk2P"
+    },
+    {
+      "char": "ដៅ",
+      "slug": "178A-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដៅ-enhanced-v2.wav",
+      "driveFileId": "1nPa-IB_8QpTOKhiD0sGc7BlPJIGiRr90"
+    },
+    {
+      "char": "ដំ",
+      "slug": "178A-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដំ-enhanced-v2.wav",
+      "driveFileId": "1sLYnbm_G962hQHLc6v9f5YZIeIV-qbtz"
+    },
+    {
+      "char": "ដះ",
+      "slug": "178A-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៩",
+      "sourceFile": "ដះ-enhanced-v2.wav",
+      "driveFileId": "190y6qa2y7kLY0ko4v8vvC3iL-6xGJQG0"
+    },
+    {
+      "char": "ឋ",
+      "slug": "178B",
+      "kind": "consonant",
+      "spokenAs": "ឋ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋ-enhanced-v2.wav",
+      "driveFileId": "1HYRGIOHH0oGlfgxInVC1ch8Kv8GW0xoF"
+    },
+    {
+      "char": "ឋា",
+      "slug": "178B-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋា-enhanced-v2.wav",
+      "driveFileId": "1E8fNuFdDFRYX3_ESOaPhJ8VopvM8jXEo"
+    },
+    {
+      "char": "ឋាំ",
+      "slug": "178B-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋាំ-enhanced-v2.wav",
+      "driveFileId": "1VzfwwkZEitpiyLxk3J0JVVxn_dTfdlLA"
+    },
+    {
+      "char": "ឋិ",
+      "slug": "178B-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋិ-enhanced-v2.wav",
+      "driveFileId": "1k3i_DZtdcFf-4ssWZKdT9KG47vjzWHVL"
+    },
+    {
+      "char": "ឋី",
+      "slug": "178B-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋី-enhanced-v2.wav",
+      "driveFileId": "1DGXTRDcRbep-Tu02PtYZ6D-TXSeaQ3Me"
+    },
+    {
+      "char": "ឋឹ",
+      "slug": "178B-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋឹ-enhanced-v2.wav",
+      "driveFileId": "1qTzcg0lZuBq_T29mhVrw_WQP9TOQMSW4"
+    },
+    {
+      "char": "ឋឺ",
+      "slug": "178B-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋឺ-enhanced-v2.wav",
+      "driveFileId": "1W5x1FK0TJp5qUGCjm6noysNUoT-OC6cX"
+    },
+    {
+      "char": "ឋុ",
+      "slug": "178B-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋុ-enhanced-v2.wav",
+      "driveFileId": "1vcbaNSem5S15cMeXDyhKdowXXV1PQgst"
+    },
+    {
+      "char": "ឋុំ",
+      "slug": "178B-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋុំ-enhanced-v2.wav",
+      "driveFileId": "1e06WXRu9C7mj-IvqIDAqL2WfdevfWjlE"
+    },
+    {
+      "char": "ឋុះ",
+      "slug": "178B-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋុះ-enhanced-v2.wav",
+      "driveFileId": "1uC2z0rPBX73FM33Ip2ct2x6Zy2G_5p1O"
+    },
+    {
+      "char": "ឋូ",
+      "slug": "178B-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋូ-enhanced-v2.wav",
+      "driveFileId": "1RMkh4cTHrII5PYUW7qVIv2yBJWn_bK7i"
+    },
+    {
+      "char": "ឋួ",
+      "slug": "178B-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋួ-enhanced-v2.wav",
+      "driveFileId": "1NVFq2TcTYlfLts_R34HYrWYEgcryDwwj"
+    },
+    {
+      "char": "ឋើ",
+      "slug": "178B-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋើ-enhanced-v2.wav",
+      "driveFileId": "1iOuHiRIsuWKR3IdQgwJwF_fjylz1BDcG"
+    },
+    {
+      "char": "ឋឿ",
+      "slug": "178B-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋឿ-enhanced-v2.wav",
+      "driveFileId": "13K4OqMHVtCpJdhHu6aMyYuFbfKOkdAaA"
+    },
+    {
+      "char": "ឋៀ",
+      "slug": "178B-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋៀ-enhanced-v2.wav",
+      "driveFileId": "1cxOvx0kCo3n9NZQPkf0kAho_sLSstFx_"
+    },
+    {
+      "char": "ឋេ",
+      "slug": "178B-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋេ-enhanced-v2.wav",
+      "driveFileId": "1bE032pNVU2LJTppNNqWclfYE06PS1B10"
+    },
+    {
+      "char": "ឋេះ",
+      "slug": "178B-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋេះ-enhanced-v2.wav",
+      "driveFileId": "1pOqjYK0Y7o1d-f-jY63UCMS7vcJcGoUc"
+    },
+    {
+      "char": "ឋែ",
+      "slug": "178B-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋែ-enhanced-v2.wav",
+      "driveFileId": "1hAle0bHffwWnuSDCUhdqj5evx-IMfDsQ"
+    },
+    {
+      "char": "ឋៃ",
+      "slug": "178B-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋៃ-enhanced-v2.wav",
+      "driveFileId": "1BlokZhqgmb1BvIo3AHMClTRDg4LHKich"
+    },
+    {
+      "char": "ឋោ",
+      "slug": "178B-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋោ-enhanced-v2.wav",
+      "driveFileId": "1gmSfbQENk749CL4a_Jo5DDl9QW9AJkS2"
+    },
+    {
+      "char": "ឋោះ",
+      "slug": "178B-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋោះ-enhanced-v2.wav",
+      "driveFileId": "1o_Zlm-pqUOf_zLeEOVmN0SD56gj4_T61"
+    },
+    {
+      "char": "ឋៅ",
+      "slug": "178B-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋៅ-enhanced-v2.wav",
+      "driveFileId": "1PbGhIuLbzIT5C0Jk8L_EXXh-3PMnh580"
+    },
+    {
+      "char": "ឋំ",
+      "slug": "178B-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋំ-enhanced-v2.wav",
+      "driveFileId": "1h5r43pBPTWLBNMzQuU_lcbk87fawRShq"
+    },
+    {
+      "char": "ឋះ",
+      "slug": "178B-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១០",
+      "sourceFile": "ឋះ-enhanced-v2.wav",
+      "driveFileId": "1gKYADPSmUP_eXVXStueiKg547C2seHQK"
+    },
+    {
+      "char": "ឌ",
+      "slug": "178C",
+      "kind": "consonant",
+      "spokenAs": "ឌ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌ.wav",
+      "driveFileId": "1-MXNQRzJEMRd5ZE9GiV1sK7zw4YMaTW7"
+    },
+    {
+      "char": "ឌា",
+      "slug": "178C-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌា.wav",
+      "driveFileId": "10uy8pHflSrKXvwucUUMhFmaRy7W3Q58j"
+    },
+    {
+      "char": "ឌាំ",
+      "slug": "178C-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌាំ.wav",
+      "driveFileId": "10SkNpmNQJVIccKLA6inmNFTkW3SI2-cL"
+    },
+    {
+      "char": "ឌិ",
+      "slug": "178C-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌិ.wav",
+      "driveFileId": "16LSQplbYwpo47VHsY18QybWSrCh3UvTg"
+    },
+    {
+      "char": "ឌី",
+      "slug": "178C-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌី.wav",
+      "driveFileId": "1bmw4Hdo0UfnaCKjtMCakzn3RvW2ApKlP"
+    },
+    {
+      "char": "ឌឹ",
+      "slug": "178C-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌឹ.wav",
+      "driveFileId": "1sKzA3--KxVVjwTdtLykyZpWY3aZKYaav"
+    },
+    {
+      "char": "ឌឺ",
+      "slug": "178C-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌឺ.wav",
+      "driveFileId": "1l3y_eKb0mxNDa12-LeS_JCnp9i4TbBs-"
+    },
+    {
+      "char": "ឌុ",
+      "slug": "178C-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌុ.wav",
+      "driveFileId": "1Ik5RBmvn6zelaDwuFOskK418qCOXowIy"
+    },
+    {
+      "char": "ឌុំ",
+      "slug": "178C-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌុំ.wav",
+      "driveFileId": "1xBUBEVHCVQRpl0DBwv2gEdT0Tjq3Wt6A"
+    },
+    {
+      "char": "ឌុះ",
+      "slug": "178C-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌុះ.wav",
+      "driveFileId": "1TjuIElFJv_f7TYglRhG9X2w53sir1Znj"
+    },
+    {
+      "char": "ឌូ",
+      "slug": "178C-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌូ.wav",
+      "driveFileId": "1V9TBOseC6Bb_BCmH7cjqOKdNn9_sqn3e"
+    },
+    {
+      "char": "ឌួ",
+      "slug": "178C-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌួ.wav",
+      "driveFileId": "1JC17vUjegMygxQPVKN0un61-t6epjzIO"
+    },
+    {
+      "char": "ឌើ",
+      "slug": "178C-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌើ.wav",
+      "driveFileId": "1MgNRJimyi2ePFpv-PEjIr17__XjsBVmc"
+    },
+    {
+      "char": "ឌឿ",
+      "slug": "178C-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌឿ.wav",
+      "driveFileId": "1Lqo11uAobtLodZiebOQWdBNes7Qd6YAz"
+    },
+    {
+      "char": "ឌៀ",
+      "slug": "178C-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌៀ.wav",
+      "driveFileId": "1Yv89jAtO2lydsodDTNpbTANMYEOie_l4"
+    },
+    {
+      "char": "ឌេ",
+      "slug": "178C-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌេ.wav",
+      "driveFileId": "1Mdu474JklzH_Sti_evMIRR-J0TLuJ3LB"
+    },
+    {
+      "char": "ឌេះ",
+      "slug": "178C-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌេះ.wav",
+      "driveFileId": "1kMuzODsyy5Xpe2ntDpgX4uoGXg9guvdi"
+    },
+    {
+      "char": "ឌែ",
+      "slug": "178C-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌែ.wav",
+      "driveFileId": "1sZCTFFU7-xLqNvJ07-tIQS8qaKY2_hKj"
+    },
+    {
+      "char": "ឌៃ",
+      "slug": "178C-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌៃ.wav",
+      "driveFileId": "1nyG-sTbPhUW3Ymd-7vW2RZEDrMwxn1Lk"
+    },
+    {
+      "char": "ឌោ",
+      "slug": "178C-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌោ.wav",
+      "driveFileId": "1hTtbBPguLC8ZhZWoZcnK3hPn_68BgXgx"
+    },
+    {
+      "char": "ឌោះ",
+      "slug": "178C-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌោះ.wav",
+      "driveFileId": "1E--FWSTNPHBKda6073vMcdrnaS7O8VZP"
+    },
+    {
+      "char": "ឌៅ",
+      "slug": "178C-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌៅ.wav",
+      "driveFileId": "1LP5-gEnaLCX4CkO-pXG7kVGL8q8-_G6I"
+    },
+    {
+      "char": "ឌំ",
+      "slug": "178C-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌំ.wav",
+      "driveFileId": "1BbSbdHtx2om_fYwBqpeDh7GM2OtAPIjR"
+    },
+    {
+      "char": "ឌះ",
+      "slug": "178C-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២២",
+      "sourceFile": "ឌះ.wav",
+      "driveFileId": "1XRhHEpU1EyiwGNmoYjV-Ej75unDyJxBz"
+    },
+    {
+      "char": "ឍ",
+      "slug": "178D",
+      "kind": "consonant",
+      "spokenAs": "ឍ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍ.wav",
+      "driveFileId": "1mpUCEPAgSOofpsuYSW_Kv8SGHhfMDQfA"
+    },
+    {
+      "char": "ឍា",
+      "slug": "178D-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍា.wav",
+      "driveFileId": "1Lzhlnv9y1eoluRzrLb4OegUjENM0LgP4"
+    },
+    {
+      "char": "ឍាំ",
+      "slug": "178D-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍាំ.wav",
+      "driveFileId": "1ADM48mkKtnRbIu0fF8DDHfBZejU8aoc9"
+    },
+    {
+      "char": "ឍិ",
+      "slug": "178D-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍិ.wav",
+      "driveFileId": "1DGSQhrSbx8676nLSHNIdpU6-ajUhYqMn"
+    },
+    {
+      "char": "ឍី",
+      "slug": "178D-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍី.wav",
+      "driveFileId": "18dbhNblezuvwCd8d5QGUhT_o_okorDKv"
+    },
+    {
+      "char": "ឍឹ",
+      "slug": "178D-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍឹ.wav",
+      "driveFileId": "1o-OjVi9viPK4wG9BSsbWEuI36noOJK5J"
+    },
+    {
+      "char": "ឍឺ",
+      "slug": "178D-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍឺ.wav",
+      "driveFileId": "18reYjX7XkNwYbMS8P2IMa-w2oTRrstJJ"
+    },
+    {
+      "char": "ឍុ",
+      "slug": "178D-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍុ.wav",
+      "driveFileId": "1BbtLnSseRfkPxgXraHZybi7FK0JJ6izC"
+    },
+    {
+      "char": "ឍុំ",
+      "slug": "178D-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍុំ.wav",
+      "driveFileId": "1QaDR65hMJTj1JKTcnvf31fdizCCtHjcl"
+    },
+    {
+      "char": "ឍុះ",
+      "slug": "178D-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍុះ.wav",
+      "driveFileId": "1AJwRwy5aM2Hh-6nl7XUW_l7i0Pqug0wr"
+    },
+    {
+      "char": "ឍូ",
+      "slug": "178D-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍូ.wav",
+      "driveFileId": "1Qqsp-sJzcndoQ2U--bg1A0ASxN-Dh-5g"
+    },
+    {
+      "char": "ឍួ",
+      "slug": "178D-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍួ.wav",
+      "driveFileId": "17ZdmejwAwt7_6zYK-9vhvUyhsa7g7LCN"
+    },
+    {
+      "char": "ឍើ",
+      "slug": "178D-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍើ.wav",
+      "driveFileId": "1I6eC45Fk7VUAcI_eA6Syo63RNa-AG-pT"
+    },
+    {
+      "char": "ឍឿ",
+      "slug": "178D-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍឿ.wav",
+      "driveFileId": "14b8R0-gNWBilAPhYORoMc-L62vHzrYbo"
+    },
+    {
+      "char": "ឍៀ",
+      "slug": "178D-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍៀ.wav",
+      "driveFileId": "1eViKgn7cnWSqQAgSmXotzwDhUaz9O6fq"
+    },
+    {
+      "char": "ឍេ",
+      "slug": "178D-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍេ.wav",
+      "driveFileId": "1HJcoFNZdS2qOp0BFg9anukLFFbVvhRqW"
+    },
+    {
+      "char": "ឍេះ",
+      "slug": "178D-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍេះ.wav",
+      "driveFileId": "1ClC4GeWWKUxL8HDXenhMPufAHrsz5yIQ"
+    },
+    {
+      "char": "ឍែ",
+      "slug": "178D-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍែ.wav",
+      "driveFileId": "1qaYRCDbXdgiB4i_oSUy5SkbXT68UEw8f"
+    },
+    {
+      "char": "ឍៃ",
+      "slug": "178D-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍៃ.wav",
+      "driveFileId": "1mfaJmSh2ZmviSV3a6Q4VRqPY3Czk7D4l"
+    },
+    {
+      "char": "ឍោ",
+      "slug": "178D-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍោ.wav",
+      "driveFileId": "1Bo0SQWJBGsx08n4J_8Goh3astaIkHKL0"
+    },
+    {
+      "char": "ឍោះ",
+      "slug": "178D-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍោះ.wav",
+      "driveFileId": "1GLQ82Yo1SvwBN1hlpj8qLHImUTSatnZY"
+    },
+    {
+      "char": "ឍៅ",
+      "slug": "178D-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍៅ.wav",
+      "driveFileId": "1GssN60GNasapZEG-Y3cDyRJELnHgXIkr"
+    },
+    {
+      "char": "ឍំ",
+      "slug": "178D-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍំ.wav",
+      "driveFileId": "1cwbQQoQQZxHJOs5UuczQnIk7v8DKfX9z"
+    },
+    {
+      "char": "ឍះ",
+      "slug": "178D-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៣",
+      "sourceFile": "ឍះ.wav",
+      "driveFileId": "1J7jTagcieD8xMgVO4Upi3kXr4q0tsm0E"
+    },
+    {
+      "char": "ណ",
+      "slug": "178E",
+      "kind": "consonant",
+      "spokenAs": "ណ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណ-enhanced-v2.wav",
+      "driveFileId": "1In6cphHA6PdP2rOB-Bz5P3zcdEkpUaq8"
+    },
+    {
+      "char": "ណា",
+      "slug": "178E-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណា-enhanced-v2.wav",
+      "driveFileId": "1JXzQ23LFa6HLn90iNlv10naRpf1-AWPx"
+    },
+    {
+      "char": "ណាំ",
+      "slug": "178E-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណាំ-enhanced-v2.wav",
+      "driveFileId": "1v5OxTDyYx5Puu7ZlG58PrNM57Vl-zJYG"
+    },
+    {
+      "char": "ណិ",
+      "slug": "178E-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណិ-enhanced-v2.wav",
+      "driveFileId": "158BBZGG_5EtGnG3nGrvlLu3SMQPE-dBz"
+    },
+    {
+      "char": "ណី",
+      "slug": "178E-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណី-enhanced-v2.wav",
+      "driveFileId": "1LmMicBAKTEdLgcHEaP-on_eDNbdKDqaX"
+    },
+    {
+      "char": "ណឹ",
+      "slug": "178E-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណឹ-enhanced-v2.wav",
+      "driveFileId": "1ZqX45Qris5JMHgeR_1U28mYHIpgnMZiW"
+    },
+    {
+      "char": "ណឺ",
+      "slug": "178E-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណឺ-enhanced-v2.wav",
+      "driveFileId": "1mqLS0VrtI-YM7qNl8jDjfskncQaIMmVV"
+    },
+    {
+      "char": "ណុ",
+      "slug": "178E-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណុ-enhanced-v2.wav",
+      "driveFileId": "1Sf8fXeNHscg7TfQorjgboU_c8wSyEtX-"
+    },
+    {
+      "char": "ណុំ",
+      "slug": "178E-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណុំ-enhanced-v2.wav",
+      "driveFileId": "1EYF2D9PSIfMD8AjZvnO_2oG5mvy7LiUt"
+    },
+    {
+      "char": "ណុះ",
+      "slug": "178E-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណុះ-enhanced-v2.wav",
+      "driveFileId": "1mvGlDKbW_-z1RxA688YC3O-ZHq2zpIQh"
+    },
+    {
+      "char": "ណូ",
+      "slug": "178E-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណូ-enhanced-v2.wav",
+      "driveFileId": "17B0GaFtCdVHValurdYg2n6KPE0FRXfZk"
+    },
+    {
+      "char": "ណួ",
+      "slug": "178E-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណួ-enhanced-v2.wav",
+      "driveFileId": "1iFkiU1OtglQVk-tV9NAHjR3p0yj9lhan"
+    },
+    {
+      "char": "ណើ",
+      "slug": "178E-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណើ-enhanced-v2.wav",
+      "driveFileId": "16vQiUVzkTtIH5oS-vKGmcqKu3H-fawFe"
+    },
+    {
+      "char": "ណឿ",
+      "slug": "178E-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណឿ-enhanced-v2.wav",
+      "driveFileId": "12ENyotJvWj2CcjQ5fbv4DynIApRpa-rv"
+    },
+    {
+      "char": "ណៀ",
+      "slug": "178E-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណៀ-enhanced-v2.wav",
+      "driveFileId": "1q5iIJGALIxrVMUoMJ9xXcPHuZC5Q0XL-"
+    },
+    {
+      "char": "ណេ",
+      "slug": "178E-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណេ-enhanced-v2.wav",
+      "driveFileId": "1Az76HhpAOaKmeiaRrgLp05l2bT8NN8AI"
+    },
+    {
+      "char": "ណេះ",
+      "slug": "178E-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណេះ-enhanced-v2.wav",
+      "driveFileId": "1Qwkc1MpMMs-sfw-tcbG2n0rh4sMMj39m"
+    },
+    {
+      "char": "ណែ",
+      "slug": "178E-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណែ-enhanced-v2.wav",
+      "driveFileId": "1zsxLKOR5kVo-GeIEpxZgq-mDEN_ouoqh"
+    },
+    {
+      "char": "ណៃ",
+      "slug": "178E-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណៃ-enhanced-v2.wav",
+      "driveFileId": "1PnTF4a7JPyvH-v1zyUdOVqKdkgPcXYj0"
+    },
+    {
+      "char": "ណោ",
+      "slug": "178E-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណោ-enhanced-v2.wav",
+      "driveFileId": "1Pt3BXAS8XYnEnyIIgBTWzySkR8srELle"
+    },
+    {
+      "char": "ណោះ",
+      "slug": "178E-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណោះ-enhanced-v2.wav",
+      "driveFileId": "1hQwKPEqLg40AiMUq4JkEA3yO8sFkykQI"
+    },
+    {
+      "char": "ណៅ",
+      "slug": "178E-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណៅ-enhanced-v2.wav",
+      "driveFileId": "1mCRpMGTrQ4v32SjIHGnEYUI98mDWIJX0"
+    },
+    {
+      "char": "ណំ",
+      "slug": "178E-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណំ-enhanced-v2.wav",
+      "driveFileId": "1VDjaK9Ha0ezRtzY4ChKSK3v4iCd0dtdD"
+    },
+    {
+      "char": "ណះ",
+      "slug": "178E-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១១",
+      "sourceFile": "ណះ-enhanced-v2.wav",
+      "driveFileId": "1j1eO8JNqkpg2hRcEzl8Uc9sNLJP_mkCb"
+    },
+    {
+      "char": "ត",
+      "slug": "178F",
+      "kind": "consonant",
+      "spokenAs": "ត",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ត-enhanced-v2.wav",
+      "driveFileId": "1flfNgr1KiUEt-HQdLO_ppUOyuvJvmI8X"
+    },
+    {
+      "char": "តា",
+      "slug": "178F-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តា-enhanced-v2.wav",
+      "driveFileId": "1HgSgpy7OfDiuHojl5i01YY_v0cvM8QLL"
+    },
+    {
+      "char": "តិ",
+      "slug": "178F-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តិ-enhanced-v2.wav",
+      "driveFileId": "1woUjatFqccArLenekFuMOwvZ57KtN8Yz"
+    },
+    {
+      "char": "តី",
+      "slug": "178F-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តី-enhanced-v2.wav",
+      "driveFileId": "16pvPSZvxp0P9h0FybX2izAbPBNouu2E3"
+    },
+    {
+      "char": "តឹ",
+      "slug": "178F-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តឹ-enhanced-v2.wav",
+      "driveFileId": "1IQoke1phpix8eIYeUVWu4Mis7ndMl78z"
+    },
+    {
+      "char": "តឺ",
+      "slug": "178F-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តឺ-enhanced-v2.wav",
+      "driveFileId": "1MUdD9eqp86-XtLfqr4mnBArZN3SjXHxy"
+    },
+    {
+      "char": "តុ",
+      "slug": "178F-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តុ-enhanced-v2.wav",
+      "driveFileId": "15AtsdQHqPF01kMmcRCdERcEuinIu0J9z"
+    },
+    {
+      "char": "តូ",
+      "slug": "178F-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តូ-enhanced-v2.wav",
+      "driveFileId": "1s55igL1pcOQQXI4jDgJLpX5_539N9vF_"
+    },
+    {
+      "char": "តួ",
+      "slug": "178F-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តួ-enhanced-v2.wav",
+      "driveFileId": "1PzRDwWOee3-58mmRCkZ4GbGhsBydRb67"
+    },
+    {
+      "char": "តើ",
+      "slug": "178F-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តើ-enhanced-v2.wav",
+      "driveFileId": "1-imLcJBWv1Vzcsai51lT4s9LhZMrsjc6"
+    },
+    {
+      "char": "តឿ",
+      "slug": "178F-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តឿ-enhanced-v2.wav",
+      "driveFileId": "1KJGg72CRc-5avB5IqmJR4F-gFsgMlKeI"
+    },
+    {
+      "char": "តៀ",
+      "slug": "178F-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "តៀ-enhanced-v2.wav",
+      "driveFileId": "1tweib-PPWncdW0VfIpX9mIIx9Jp_qhv-"
+    },
+    {
+      "char": "ថ",
+      "slug": "1790",
+      "kind": "consonant",
+      "spokenAs": "ថ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ថាំ",
+      "slug": "1790-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថាំ-enhanced-v2.wav",
+      "driveFileId": "1dXkCeB3LjNHgKBLcrqCh57ciIgirPp14"
+    },
+    {
+      "char": "ថុំ",
+      "slug": "1790-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថុំ-enhanced-v2.wav",
+      "driveFileId": "1pIOY_Qd5hYGHBM92F0NKQ4ll7OpOk8fy"
+    },
+    {
+      "char": "ថុះ",
+      "slug": "1790-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថុះ-enhanced-v2.wav",
+      "driveFileId": "145mPIPLZZ1CZY01owa30CvikPkSLq7m6"
+    },
+    {
+      "char": "ថេ",
+      "slug": "1790-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថេ-enhanced-v2.wav",
+      "driveFileId": "1swMHt0QEpKVp2OjeGnJ65pzuoI0BiAoU"
+    },
+    {
+      "char": "ថេះ",
+      "slug": "1790-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថេះ-enhanced-v2.wav",
+      "driveFileId": "1Ps4QsuIoM8HVEjZh7MtzoFpcTwPTpt3F"
+    },
+    {
+      "char": "ថែ",
+      "slug": "1790-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថែ-enhanced-v2.wav",
+      "driveFileId": "1Eyhpb6ztpdr_CaYGzLBc12oPJmX-y39Q"
+    },
+    {
+      "char": "ថៃ",
+      "slug": "1790-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថៃ-enhanced-v2.wav",
+      "driveFileId": "1-XSg_zAwiPbo1ziGdz0ROqIYcFMvtKzM"
+    },
+    {
+      "char": "ថោ",
+      "slug": "1790-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថោ-enhanced-v2.wav",
+      "driveFileId": "1s-2mzFAvv7SlNKaCf0911o4PyR2AWiU4"
+    },
+    {
+      "char": "ថោះ",
+      "slug": "1790-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថោះ-enhanced-v2.wav",
+      "driveFileId": "1E1G28dPVT0J6Z17DBB68XYSI-bbgm6GC"
+    },
+    {
+      "char": "ថៅ",
+      "slug": "1790-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថៅ-enhanced-v2.wav",
+      "driveFileId": "161cyiy5GKwYZ9Sti--MjZaaTHyTHly3c"
+    },
+    {
+      "char": "ថំ",
+      "slug": "1790-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថំ-enhanced-v2.wav",
+      "driveFileId": "1VbHHenxUpdpsW4CswQvG8pu6rqQH0lXf"
+    },
+    {
+      "char": "ថះ",
+      "slug": "1790-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១២",
+      "sourceFile": "ថះ-enhanced-v2.wav",
+      "driveFileId": "1VSNF-sGKXxe7b_pIwc2-lWD5_mFw11Dr"
+    },
+    {
+      "char": "ទ",
+      "slug": "1791",
+      "kind": "consonant",
+      "spokenAs": "ទ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទ.wav",
+      "driveFileId": "1G05mSX0y_Zwvu3MrhVjORR__ctA2oDdp"
+    },
+    {
+      "char": "ទា",
+      "slug": "1791-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទា.wav",
+      "driveFileId": "1CXB6qiE4wkfjjephTf8YoJuBT6NWSQD9"
+    },
+    {
+      "char": "ទិ",
+      "slug": "1791-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទិ.wav",
+      "driveFileId": "1tN4biBd-8K5vGnuZDqeKBEQXl0ltYSH5"
+    },
+    {
+      "char": "ទី",
+      "slug": "1791-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទី.wav",
+      "driveFileId": "1m0Njo7xPbzHJL9FErd4U6peH-hROdjor"
+    },
+    {
+      "char": "ទឹ",
+      "slug": "1791-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទឹ.wav",
+      "driveFileId": "1Mmzkg9ojcEt-6z3HBCmTjLZDu1SV-0C1"
+    },
+    {
+      "char": "ទឺ",
+      "slug": "1791-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទឺ.wav",
+      "driveFileId": "1WsBif9rI2TudNNOzh5YUTi2lZ-cXPgoV"
+    },
+    {
+      "char": "ទុ",
+      "slug": "1791-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទុ.wav",
+      "driveFileId": "1PF8_6BlYUCR0sqlll6W17xDqXcXZz3uU"
+    },
+    {
+      "char": "ទូ",
+      "slug": "1791-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទូ.wav",
+      "driveFileId": "1Pbr05sLTD1c9qalZo_tb5oIBk3gAmXRh"
+    },
+    {
+      "char": "ទួ",
+      "slug": "1791-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទួ.wav",
+      "driveFileId": "1AqPfA9cDyOB0JURLjBdbezzb3hclYWKD"
+    },
+    {
+      "char": "ទើ",
+      "slug": "1791-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទើ.wav",
+      "driveFileId": "1jm6pf8cGIQD6EzLc8AziCxxhZgY6VKpj"
+    },
+    {
+      "char": "ទឿ",
+      "slug": "1791-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទឿ.wav",
+      "driveFileId": "1QbqL8UJaRCWcoFEGWDCtN5cIriiZgzx2"
+    },
+    {
+      "char": "ទៀ",
+      "slug": "1791-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ទៀ.wav",
+      "driveFileId": "17PA7lAjtAP50Vjp-v5ac8Zopf8RQwQHe"
+    },
+    {
+      "char": "ធ",
+      "slug": "1792",
+      "kind": "consonant",
+      "spokenAs": "ធ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ធាំ",
+      "slug": "1792-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធាំ.wav",
+      "driveFileId": "1LqcD9ia7qQW2s81t3RrHj-VjAdjIrBZ6"
+    },
+    {
+      "char": "ធុំ",
+      "slug": "1792-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធុំ.wav",
+      "driveFileId": "1mH1PObx4Cg86X232jbF1c8nLTfl4MVwI"
+    },
+    {
+      "char": "ធុះ",
+      "slug": "1792-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធុះ.wav",
+      "driveFileId": "1muRjwhN8ZTVcMN0_JsbkIp0VhSsKSERk"
+    },
+    {
+      "char": "ធេ",
+      "slug": "1792-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធេ.wav",
+      "driveFileId": "11OW4xpPihlWlwUiBhVNHdmFlyUox3uBE"
+    },
+    {
+      "char": "ធេះ",
+      "slug": "1792-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធេះ.wav",
+      "driveFileId": "1wQq3pqf-FZ9QcULM_rbxgetUPQLOdklT"
+    },
+    {
+      "char": "ធែ",
+      "slug": "1792-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធែ.wav",
+      "driveFileId": "1Ig1BWm33wvQpFIGNPzxln2RIftaF7ysM"
+    },
+    {
+      "char": "ធៃ",
+      "slug": "1792-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធៃ.wav",
+      "driveFileId": "1iZ2tbggdJ-eYexdK1i4AHkOp2ODm36lP"
+    },
+    {
+      "char": "ធោ",
+      "slug": "1792-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធោ.wav",
+      "driveFileId": "1TmjBE4pwObDcvlgGBMJw__ApEiTaLT9j"
+    },
+    {
+      "char": "ធោះ",
+      "slug": "1792-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធោះ.wav",
+      "driveFileId": "1jF3QGtyq-AwdyvlSze5xZmHiK521seUJ"
+    },
+    {
+      "char": "ធៅ",
+      "slug": "1792-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធៅ.wav",
+      "driveFileId": "1HVKiC5iyqeNOB7WuHjYHW7O2GkRuYIFx"
+    },
+    {
+      "char": "ធំ",
+      "slug": "1792-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធំ.wav",
+      "driveFileId": "1kBSofkvpWf67lB0GBLo4cbEr8UFTpFL9"
+    },
+    {
+      "char": "ធះ",
+      "slug": "1792-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៤",
+      "sourceFile": "ធះ.wav",
+      "driveFileId": "148b15KwQYCkOgKal2zkw6mWqFzxg5HLx"
+    },
+    {
+      "char": "ន",
+      "slug": "1793",
+      "kind": "consonant",
+      "spokenAs": "ន",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ន.wav",
+      "driveFileId": "1JdZM-61T7zymCmtc3q0wtYpH8qIU7P2Q"
+    },
+    {
+      "char": "នា",
+      "slug": "1793-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នា.wav",
+      "driveFileId": "1ROtdxkDC6dMGgDHTffp_6GB5MLsvFp5C"
+    },
+    {
+      "char": "និ",
+      "slug": "1793-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "និ.wav",
+      "driveFileId": "11ARpvf8AQeX96B6IqA80FjwZwZl4PGr-"
+    },
+    {
+      "char": "នី",
+      "slug": "1793-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នី.wav",
+      "driveFileId": "1yj85Z8mJTE1bfLSjEcjcwXcMH9o6XzL_"
+    },
+    {
+      "char": "នឹ",
+      "slug": "1793-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នឹ.wav",
+      "driveFileId": "1Myt3vRzLe13muZNB7F4q3sdwXePZkj5f"
+    },
+    {
+      "char": "នឺ",
+      "slug": "1793-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នឺ.wav",
+      "driveFileId": "18DJU6NVJk_YtM2UNlylgpJzLceqcJE7i"
+    },
+    {
+      "char": "នុ",
+      "slug": "1793-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នុ.wav",
+      "driveFileId": "1iW4XmYEiVoNyudvyw77YCJhxoR6Woxmv"
+    },
+    {
+      "char": "នូ",
+      "slug": "1793-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នូ.wav",
+      "driveFileId": "1ZTVI20wnA_7tvRzOZunvx5LTLsbcrklU"
+    },
+    {
+      "char": "នួ",
+      "slug": "1793-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នួ.wav",
+      "driveFileId": "1RplQAo_40r1XXiuJ1vaIMzkwfuZPuoRJ"
+    },
+    {
+      "char": "នើ",
+      "slug": "1793-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នើ.wav",
+      "driveFileId": "1UA33DPXwb-w3zYlxhrB-NZFHvwdJAOaJ"
+    },
+    {
+      "char": "នឿ",
+      "slug": "1793-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នឿ.wav",
+      "driveFileId": "1_71DmSg9UiD78ap9InGfpCFQ4S7DdU7o"
+    },
+    {
+      "char": "នៀ",
+      "slug": "1793-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "នៀ.wav",
+      "driveFileId": "1hMGrFqU10z1_QuUhq-J6Y5uW24d0mq0N"
+    },
+    {
+      "char": "ប",
+      "slug": "1794",
+      "kind": "consonant",
+      "spokenAs": "ប",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ប-enhanced-v2.wav",
+      "driveFileId": "1Y1vem8itlQWH2KDHlBQRgoUvE1zYX7DI"
+    },
+    {
+      "char": "បា",
+      "slug": "1794-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បា-enhanced-v2.wav",
+      "driveFileId": "1uyGStZ8m3E39s3ilPJ2PGZWwg0Y-X2fc"
+    },
+    {
+      "char": "បិ",
+      "slug": "1794-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បិ-enhanced-v2.wav",
+      "driveFileId": "1egpABc-_vlbehd20R-Wxedl8Qtm2uju0"
+    },
+    {
+      "char": "បី",
+      "slug": "1794-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បី-enhanced-v2.wav",
+      "driveFileId": "1KGEPxEYwXodN8MkvrdkeDyLd1e9R5JY_"
+    },
+    {
+      "char": "បឹ",
+      "slug": "1794-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បឹ-enhanced-v2.wav",
+      "driveFileId": "1LRvqz9hwqmNbMVwlwkKCMTlggY4cbFpC"
+    },
+    {
+      "char": "បឺ",
+      "slug": "1794-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បឺ-enhanced-v2.wav",
+      "driveFileId": "1tAqyPA9zg-GoyfEV_N3defPJwIFsKm2X"
+    },
+    {
+      "char": "បុ",
+      "slug": "1794-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បុ-enhanced-v2.wav",
+      "driveFileId": "1HR0IQrjwpVGhc2WYE_4pWvxNCwy-6nbQ"
+    },
+    {
+      "char": "បូ",
+      "slug": "1794-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បូ-enhanced-v2.wav",
+      "driveFileId": "12Uqd5xjJ609HdRPI5b9ZG2oZqCqP6ikc"
+    },
+    {
+      "char": "បួ",
+      "slug": "1794-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បួ-enhanced-v2.wav",
+      "driveFileId": "1qU_szPa6os1qKXeBOUjp7IjZ_kFju108"
+    },
+    {
+      "char": "បើ",
+      "slug": "1794-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បើ-enhanced-v2.wav",
+      "driveFileId": "1OOF2QtmK9P2Xk2BPGbm9cYQI8c6UJspK"
+    },
+    {
+      "char": "បឿ",
+      "slug": "1794-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បឿ-enhanced-v2.wav",
+      "driveFileId": "1gvNPGa5Biq6I7sQy4544kSVBOsQlqbfN"
+    },
+    {
+      "char": "បៀ",
+      "slug": "1794-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "បៀ-enhanced-v2.wav",
+      "driveFileId": "14EBB-0gD0w7lMeyqjOp-lpX3ZpLZRyQ0"
+    },
+    {
+      "char": "ផ",
+      "slug": "1795",
+      "kind": "consonant",
+      "spokenAs": "ផ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ផាំ",
+      "slug": "1795-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផាំ-enhanced-v2.wav",
+      "driveFileId": "1tjRnIm__nXJohcPBIYMYEpgZ24RUAnHh"
+    },
+    {
+      "char": "ផុំ",
+      "slug": "1795-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផុំ-enhanced-v2.wav",
+      "driveFileId": "1Vgfo4d1lyj5tLK2y1mdqpJmkQ3DpGp09"
+    },
+    {
+      "char": "ផុះ",
+      "slug": "1795-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផុះ-enhanced-v2.wav",
+      "driveFileId": "1CsoavmYDVdNhq_SVZ4AkEvOh8r7iP6hL"
+    },
+    {
+      "char": "ផេ",
+      "slug": "1795-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផេ-enhanced-v2.wav",
+      "driveFileId": "13DL2Fx0Snp0cxCS1dQdC5R-LJJ250TnA"
+    },
+    {
+      "char": "ផេះ",
+      "slug": "1795-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផេះ-enhanced-v2.wav",
+      "driveFileId": "1rPpfMBjgJDB7tSlQELTJbO7PXiaykyle"
+    },
+    {
+      "char": "ផែ",
+      "slug": "1795-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផែ-enhanced-v2.wav",
+      "driveFileId": "1HNOZeQ-qygAk_dH_l013TD6U3TPYhvpt"
+    },
+    {
+      "char": "ផៃ",
+      "slug": "1795-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផៃ-enhanced-v2.wav",
+      "driveFileId": "1rXcKe0kD4gnYneHG_o9XL1aPd2ItKbQ2"
+    },
+    {
+      "char": "ផោ",
+      "slug": "1795-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផោ-enhanced-v2.wav",
+      "driveFileId": "1QaKWEAxyddLmTE9Stoinecoo_XTp5xP1"
+    },
+    {
+      "char": "ផោះ",
+      "slug": "1795-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផោះ-enhanced-v2.wav",
+      "driveFileId": "10dTcC-6ykxlc93mLnl3Ijyzf9-h2DPxH"
+    },
+    {
+      "char": "ផៅ",
+      "slug": "1795-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផៅ-enhanced-v2.wav",
+      "driveFileId": "1UmcKWVgQ3KtR2oKVEJN9YsDFTMFJQc7j"
+    },
+    {
+      "char": "ផំ",
+      "slug": "1795-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផំ-enhanced-v2.wav",
+      "driveFileId": "1uBUFqqb188utysKfLEFSQRpBTjbci1KD"
+    },
+    {
+      "char": "ផះ",
+      "slug": "1795-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៣",
+      "sourceFile": "ផះ-enhanced-v2.wav",
+      "driveFileId": "1Nd5qb1nLanxdH8Y_cWPrDaBx1CJur0Lv"
+    },
+    {
+      "char": "ព",
+      "slug": "1796",
+      "kind": "consonant",
+      "spokenAs": "ព",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ពាំ",
+      "slug": "1796-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពាំ.wav",
+      "driveFileId": "1bxqyvjxY9O3Jhw6lJe4lpbukhqP0p2au"
+    },
+    {
+      "char": "ពុំ",
+      "slug": "1796-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពុំ.wav",
+      "driveFileId": "1WAfmglonMl1bOlE4OUXtNshbWa659ikg"
+    },
+    {
+      "char": "ពុះ",
+      "slug": "1796-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពុះ.wav",
+      "driveFileId": "1kCd-sPUpmuoN7cRfA6uE0MDfB0kbKUOb"
+    },
+    {
+      "char": "ពេ",
+      "slug": "1796-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពេ.wav",
+      "driveFileId": "1pKqUjwj-Rvm3MTdLsmRmSOjrndDC5WLa"
+    },
+    {
+      "char": "ពេះ",
+      "slug": "1796-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពេះ.wav",
+      "driveFileId": "1ryKwfLyanXSpWolFmNMc4hKZA2SfpPuo"
+    },
+    {
+      "char": "ពែ",
+      "slug": "1796-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពែ.wav",
+      "driveFileId": "1STnPkRN9EBWtShf6Qw5lzD86JQXVa_3-"
+    },
+    {
+      "char": "ពៃ",
+      "slug": "1796-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពៃ.wav",
+      "driveFileId": "1ncHyCwrIndvePfj_4syIJhG1I_SBdOJR"
+    },
+    {
+      "char": "ពោ",
+      "slug": "1796-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពោ.wav",
+      "driveFileId": "1XcPK0F-Ecp0-PRIUuYenqPYShd4tTTct"
+    },
+    {
+      "char": "ពោះ",
+      "slug": "1796-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពោះ.wav",
+      "driveFileId": "17guMk1duIqPnf4QS3oDq1Rq6KPs35emf"
+    },
+    {
+      "char": "ពៅ",
+      "slug": "1796-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពៅ.wav",
+      "driveFileId": "1uhD3p_WAgxKEXhvUlDko6uQjyBbQ1o9q"
+    },
+    {
+      "char": "ពំ",
+      "slug": "1796-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពំ.wav",
+      "driveFileId": "1qHUQ-z01tWEVj2AdvbVeizoDd-8QSCZj"
+    },
+    {
+      "char": "ពះ",
+      "slug": "1796-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៥",
+      "sourceFile": "ពះ.wav",
+      "driveFileId": "1ESUZ_7SSDTbJkJQjsWbJcIGcUm1r7CJS"
+    },
+    {
+      "char": "ភ",
+      "slug": "1797",
+      "kind": "consonant",
+      "spokenAs": "ភ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភ.wav",
+      "driveFileId": "1Ze_GbTNQJEY97o_dwMjbqBJqa2wve2Vd"
+    },
+    {
+      "char": "ភា",
+      "slug": "1797-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភា.wav",
+      "driveFileId": "1oS88qQy6UnAV4pcJCC7jmpUHSOZAO-gP"
+    },
+    {
+      "char": "ភិ",
+      "slug": "1797-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភិ.wav",
+      "driveFileId": "1h7_LJxfOVnjk2A-GA-loaLLYJoRhiLFf"
+    },
+    {
+      "char": "ភី",
+      "slug": "1797-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភី.wav",
+      "driveFileId": "1IYvQXyQzLUvaKyTwapoYfJCtRy0F-ZnS"
+    },
+    {
+      "char": "ភឹ",
+      "slug": "1797-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភឹ.wav",
+      "driveFileId": "1rFndZt8p4fgQXU50O5LXpC9yxFTwOg0f"
+    },
+    {
+      "char": "ភឺ",
+      "slug": "1797-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភឺ.wav",
+      "driveFileId": "1p1Qml7rBnFVAXyB7NjqPKUK5vfKhjlir"
+    },
+    {
+      "char": "ភុ",
+      "slug": "1797-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភុ.wav",
+      "driveFileId": "1PwmGIJYNjmkgoNNEYFSIm0D0yAJoGTEY"
+    },
+    {
+      "char": "ភូ",
+      "slug": "1797-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភូ.wav",
+      "driveFileId": "13ezmH9QZycKenJxyBEXI8pJXZ1NmHB2r"
+    },
+    {
+      "char": "ភួ",
+      "slug": "1797-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភួ.wav",
+      "driveFileId": "1UKyjFEzngM5IeXvibqcwzK9DzfuKUy6G"
+    },
+    {
+      "char": "ភើ",
+      "slug": "1797-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភើ.wav",
+      "driveFileId": "1MqWXy40Ny92I1knCSoV9rH_Zn6XTuOgA"
+    },
+    {
+      "char": "ភឿ",
+      "slug": "1797-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភឿ.wav",
+      "driveFileId": "150awjbvmn03vCabteq8cDZXVATUZ-x9F"
+    },
+    {
+      "char": "ភៀ",
+      "slug": "1797-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "ភៀ.wav",
+      "driveFileId": "1QdpmIyTmBISxtnie_9EEULd-NLLRXE8e"
+    },
+    {
+      "char": "ម",
+      "slug": "1798",
+      "kind": "consonant",
+      "spokenAs": "ម",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "មាំ",
+      "slug": "1798-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មាំ.wav",
+      "driveFileId": "1LrjAVmyCxGiS9z5Cvx15HgG_9B__qAvb"
+    },
+    {
+      "char": "មុំ",
+      "slug": "1798-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មុំ.wav",
+      "driveFileId": "1LY6MrDATgZmFDckyX75QV_ScnOl4oStc"
+    },
+    {
+      "char": "មុះ",
+      "slug": "1798-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មុះ.wav",
+      "driveFileId": "1dQVXA7a0HoOFxyLmus-cjWfdkcdtCX3d"
+    },
+    {
+      "char": "មួ",
+      "slug": "1798-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៣",
+      "sourceFile": "មួ.wav",
+      "driveFileId": "1wPq0rhGvqqtP7gHZNjoVi4I9n4h5DYhd"
+    },
+    {
+      "char": "មឿ",
+      "slug": "1798-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៣",
+      "sourceFile": "មឿ.wav",
+      "driveFileId": "1Dq1rLVlQZ-ep2qZ-f3aGzBVnlmZdHPp4"
+    },
+    {
+      "char": "មៀ",
+      "slug": "1798-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៣",
+      "sourceFile": "មៀ.wav",
+      "driveFileId": "1WJOZzoeP5dZNeFm1M_HN6Qwy_DetLsji"
+    },
+    {
+      "char": "មេ",
+      "slug": "1798-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មេ.wav",
+      "driveFileId": "1SlAiqX9b1YUBcf0Kl3ZlOqVf7Xl5Z3PQ"
+    },
+    {
+      "char": "មេះ",
+      "slug": "1798-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មេះ.wav",
+      "driveFileId": "1CEmuDGQRuEoPgTJs-CeIAOrXjgbK5OIw"
+    },
+    {
+      "char": "មែ",
+      "slug": "1798-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មែ.wav",
+      "driveFileId": "1mzcBSBL9Y-KDqaJwL2UbRYWh1hd0YqTC"
+    },
+    {
+      "char": "មៃ",
+      "slug": "1798-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មៃ.wav",
+      "driveFileId": "1hFgc5mmE72MROeQfzYVQa-kdS_TffeCq"
+    },
+    {
+      "char": "មោ",
+      "slug": "1798-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មោ.wav",
+      "driveFileId": "1urOtoZ1nUp77Xq5tEKaoIfzeoslLGkoz"
+    },
+    {
+      "char": "មោះ",
+      "slug": "1798-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មោះ.wav",
+      "driveFileId": "1GJSnTXijEzQHApNfW7k3RtDaaO5fh1im"
+    },
+    {
+      "char": "មៅ",
+      "slug": "1798-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មៅ.wav",
+      "driveFileId": "1ZhGJYPqhK6L-teZRz9zWyTOAFUtAMhH6"
+    },
+    {
+      "char": "មំ",
+      "slug": "1798-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មំ.wav",
+      "driveFileId": "1Tfyv5b6JYtpbvTGv5kMAfjxZwG30MduY"
+    },
+    {
+      "char": "មះ",
+      "slug": "1798-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៦",
+      "sourceFile": "មះ.wav",
+      "driveFileId": "1mxNdxxWbZe072FivlGxf9Ju6_tDmX6oB"
+    },
+    {
+      "char": "យ",
+      "slug": "1799",
+      "kind": "consonant",
+      "spokenAs": "យ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យ.wav",
+      "driveFileId": "1gm4q_uBiVbsBo-ZA6glYW92CbDiDBtgq"
+    },
+    {
+      "char": "យា",
+      "slug": "1799-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យា.wav",
+      "driveFileId": "1JUzB7cIk0ZmVsKAw99aQW6anK3bGFV5D"
+    },
+    {
+      "char": "យិ",
+      "slug": "1799-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យិ.wav",
+      "driveFileId": "1rlyRxZWJW1ASORvoQ8NpRmzVocI97MpT"
+    },
+    {
+      "char": "យី",
+      "slug": "1799-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យី.wav",
+      "driveFileId": "12525qx6OpKXM5DYAzEl7El3HtQqeGYeV"
+    },
+    {
+      "char": "យឹ",
+      "slug": "1799-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យឹ.wav",
+      "driveFileId": "1lVe9sAAj9rKcW2hqTsg1JYHn0Vam8Ob4"
+    },
+    {
+      "char": "យឺ",
+      "slug": "1799-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យឺ.wav",
+      "driveFileId": "1q0pqKVxOI6cQSe18wIfhmymJlEuttc9z"
+    },
+    {
+      "char": "យុ",
+      "slug": "1799-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យុ.wav",
+      "driveFileId": "157W3UUM2ckumiWl-cbkpOPNL-UEGk6P2"
+    },
+    {
+      "char": "យូ",
+      "slug": "1799-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យូ.wav",
+      "driveFileId": "1QXe-xQsipKyn3bIpl_b-h0MzDshgbkJp"
+    },
+    {
+      "char": "យួ",
+      "slug": "1799-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យួ.wav",
+      "driveFileId": "1J8N-YNInuth7zWQ-ukAnwBiDico50kHQ"
+    },
+    {
+      "char": "យើ",
+      "slug": "1799-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យើ.wav",
+      "driveFileId": "14WgOvqk_43oAuRWMr0caWnbrL1Ln7gvN"
+    },
+    {
+      "char": "យឿ",
+      "slug": "1799-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យឿ.wav",
+      "driveFileId": "19rQbWFHanBKUVbdJEMW6117urlJg-s6z"
+    },
+    {
+      "char": "យៀ",
+      "slug": "1799-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "យៀ.wav",
+      "driveFileId": "1pCzftfdof9gSYp1vQE-ChM86Rsn8DWG6"
+    },
+    {
+      "char": "រ",
+      "slug": "179A",
+      "kind": "consonant",
+      "spokenAs": "រ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "រាំ",
+      "slug": "179A-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រាំ.wav",
+      "driveFileId": "1zE7YN8T-lfdpHJFKiMqqYOh1HYMD7TAz"
+    },
+    {
+      "char": "រុំ",
+      "slug": "179A-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រុំ.wav",
+      "driveFileId": "1MkPVRto_0b7phCtyWxuhfDV2MBZjhO6L"
+    },
+    {
+      "char": "រុះ",
+      "slug": "179A-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រុះ.wav",
+      "driveFileId": "1PLI8uKzhkj3COt_uZSgZJTyM7rLrls0t"
+    },
+    {
+      "char": "រួ",
+      "slug": "179A-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៥",
+      "sourceFile": "រួ.wav",
+      "driveFileId": "1odNllQi7LnoiovI7Mta21UMAnuM7UaVc"
+    },
+    {
+      "char": "រឿ",
+      "slug": "179A-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៥",
+      "sourceFile": "រឿ.wav",
+      "driveFileId": "14elMlb3LLJc0VtRfHVATqFL0tAT7mae_"
+    },
+    {
+      "char": "រៀ",
+      "slug": "179A-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៥",
+      "sourceFile": "រៀ.wav",
+      "driveFileId": "1a0BkkjdNVYTDemJi-tzo5g8icVYItJmF"
+    },
+    {
+      "char": "រេ",
+      "slug": "179A-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រេ.wav",
+      "driveFileId": "1k3h28ZzaOy7qw3_0ES5dq0jf1jDMBsMh"
+    },
+    {
+      "char": "រេះ",
+      "slug": "179A-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រេះ.wav",
+      "driveFileId": "19MEh-tG7kAdpZU68qa33WbDj3IFRZj8F"
+    },
+    {
+      "char": "រែ",
+      "slug": "179A-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រែ.wav",
+      "driveFileId": "18vbXbIJj2ZBl7y1Tf-N3tBFg6Kn8sJpM"
+    },
+    {
+      "char": "រៃ",
+      "slug": "179A-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រៃ.wav",
+      "driveFileId": "12-NW2QrR15LTZnvOjKGiRNs7iN753c6z"
+    },
+    {
+      "char": "រោ",
+      "slug": "179A-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រោ.wav",
+      "driveFileId": "1abEuaoR3SiDKY4k4NMSOreCTNGNj1QST"
+    },
+    {
+      "char": "រោះ",
+      "slug": "179A-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រោះ.wav",
+      "driveFileId": "1Zh_MKnGagnhz4tLyvyMDYFd2TSIikpAB"
+    },
+    {
+      "char": "រៅ",
+      "slug": "179A-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រៅ.wav",
+      "driveFileId": "1pAFtkkVYRtdbE0Bna4vyOpdRfMB1obYs"
+    },
+    {
+      "char": "រំ",
+      "slug": "179A-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រំ.wav",
+      "driveFileId": "1c6PmZdm93LFOmcdVywuQiW8rYVnNv0lA"
+    },
+    {
+      "char": "រះ",
+      "slug": "179A-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៧",
+      "sourceFile": "រះ.wav",
+      "driveFileId": "1wQHz8HXn_4byu0kVa018jDCXTJDOei49"
+    },
+    {
+      "char": "ល",
+      "slug": "179B",
+      "kind": "consonant",
+      "spokenAs": "ល",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "ល.wav",
+      "driveFileId": "1aV9QbQaE-YrpeFofv8ULT98WConC2Vg1"
+    },
+    {
+      "char": "លា",
+      "slug": "179B-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លា.wav",
+      "driveFileId": "1kqgOHjfPyH-e_PHi0QIuy006Zgc1rVz_"
+    },
+    {
+      "char": "លិ",
+      "slug": "179B-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លិ.wav",
+      "driveFileId": "1_DlDompzFr1ysERJ3KAslxQU_4qhdeRr"
+    },
+    {
+      "char": "លី",
+      "slug": "179B-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លី.wav",
+      "driveFileId": "1vTnmuu5b8t6-DMKdtlpyXAdWJ_QjwNvG"
+    },
+    {
+      "char": "លឹ",
+      "slug": "179B-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លឹ.wav",
+      "driveFileId": "1Hcflol_DwUFBq2gisXxuxYzQenn3Qmdz"
+    },
+    {
+      "char": "លឺ",
+      "slug": "179B-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លឺ.wav",
+      "driveFileId": "1dmOlMpGhHOt2CgC0ee2hLFU0m4znR0Yw"
+    },
+    {
+      "char": "លុ",
+      "slug": "179B-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លុ.wav",
+      "driveFileId": "1JqusO5F56bXkDYR29dQ0BuwShv6WSY6W"
+    },
+    {
+      "char": "លូ",
+      "slug": "179B-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លូ.wav",
+      "driveFileId": "18UI-UfxSf5F7S5vkCxJsvScj3dn9OmeC"
+    },
+    {
+      "char": "លួ",
+      "slug": "179B-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លួ.wav",
+      "driveFileId": "1OiSjdnGp26rnLE8QrrpMtRMBTIess8N6"
+    },
+    {
+      "char": "លើ",
+      "slug": "179B-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លើ.wav",
+      "driveFileId": "1a5Xyx986GjP72Xjg0Obf6V1DCaME01NG"
+    },
+    {
+      "char": "លឿ",
+      "slug": "179B-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លឿ.wav",
+      "driveFileId": "1s1e9cryF6aGYtDpF8w0GWvkj754aXZyt"
+    },
+    {
+      "char": "លៀ",
+      "slug": "179B-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "លៀ.wav",
+      "driveFileId": "1aRmvlTPmsN8Ky80MxVwCnjD8LPV1yaX6"
+    },
+    {
+      "char": "វ",
+      "slug": "179C",
+      "kind": "consonant",
+      "spokenAs": "វ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "វាំ",
+      "slug": "179C-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វាំ.wav",
+      "driveFileId": "1QWABqeYB_KV4Sxe56ILQYiyEdpAMXznu"
+    },
+    {
+      "char": "វុំ",
+      "slug": "179C-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វុំ.wav",
+      "driveFileId": "1WzQ5E6TeuMmqjA0CJMbpSVl67I3CRyiM"
+    },
+    {
+      "char": "វុះ",
+      "slug": "179C-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វុះ.wav",
+      "driveFileId": "139OBN0ACdqjIiCLmPYghgkvMZ8oqFXRO"
+    },
+    {
+      "char": "វួ",
+      "slug": "179C-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៦",
+      "sourceFile": "វួ.wav",
+      "driveFileId": "1ZNtpsf-TT3MM07p_K-UkcJPvUjAbV_zu"
+    },
+    {
+      "char": "វឿ",
+      "slug": "179C-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៦",
+      "sourceFile": "វឿ.wav",
+      "driveFileId": "1feGpvd6Dcr5xDRntY24rIPqTYfJVYZXW"
+    },
+    {
+      "char": "វៀ",
+      "slug": "179C-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៦",
+      "sourceFile": "វៀ.wav",
+      "driveFileId": "1J1A3KuqNFp3jk73j5bNi7FyigNP9-mLu"
+    },
+    {
+      "char": "វេ",
+      "slug": "179C-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វេ.wav",
+      "driveFileId": "1KWf48rcLi4Q3Oy02xbAa5OSCiPIgZDzz"
+    },
+    {
+      "char": "វេះ",
+      "slug": "179C-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វេះ.wav",
+      "driveFileId": "1D-m89JX03XfEWa7TdrfI9OhdvaSW8Lqc"
+    },
+    {
+      "char": "វែ",
+      "slug": "179C-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វែ.wav",
+      "driveFileId": "1HBNi1frZwYDcjv2pdVCwwiN3WT7vejDr"
+    },
+    {
+      "char": "វៃ",
+      "slug": "179C-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វៃ.wav",
+      "driveFileId": "1pvJkRdurJgUvWOkEA9pdiomrn-5o6e9v"
+    },
+    {
+      "char": "វោ",
+      "slug": "179C-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វោ.wav",
+      "driveFileId": "1K1Dm5jGESvEC6o1eD35JKs_K87MVmUoR"
+    },
+    {
+      "char": "វោះ",
+      "slug": "179C-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វោះ.wav",
+      "driveFileId": "1PEd1i4MAchxsPfNjb16BZQKJf1hI7rBW"
+    },
+    {
+      "char": "វៅ",
+      "slug": "179C-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វៅ.wav",
+      "driveFileId": "1jQmoRQGc8uxn2nGWwCh7Xi7E9VIlinE1"
+    },
+    {
+      "char": "វំ",
+      "slug": "179C-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វំ.wav",
+      "driveFileId": "1RWU1EbuenG8EC6GAOb_p71zleKyMNAlV"
+    },
+    {
+      "char": "វះ",
+      "slug": "179C-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី២៨",
+      "sourceFile": "វះ.wav",
+      "driveFileId": "1AIWn3ndfKZOyUkI6hVIIVBxT_nRLkzrw"
+    },
+    {
+      "char": "ស",
+      "slug": "179F",
+      "kind": "consonant",
+      "spokenAs": "ស",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ស-enhanced-v2.wav",
+      "driveFileId": "1saMgoXXPUU2Id8vFk1X0Pzdsk_xJF5Qh"
+    },
+    {
+      "char": "សា",
+      "slug": "179F-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សា-enhanced-v2.wav",
+      "driveFileId": "1HYIvfJnU_yEkdey0DtGXzbueuTmztplL"
+    },
+    {
+      "char": "សិ",
+      "slug": "179F-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សិ-enhanced-v2.wav",
+      "driveFileId": "1v9VaM--KfFClST7B8_iAPHxR3pa_y00k"
+    },
+    {
+      "char": "សី",
+      "slug": "179F-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សី-enhanced-v2.wav",
+      "driveFileId": "1-Mavgcc5yA-O6i9-5MwmeH54-gL9gY6v"
+    },
+    {
+      "char": "សឹ",
+      "slug": "179F-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សឹ-enhanced-v2.wav",
+      "driveFileId": "1Vy_dlGhhps5lSv0Fj4nLBTuiJtGIrCGE"
+    },
+    {
+      "char": "សឺ",
+      "slug": "179F-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សឺ-enhanced-v2.wav",
+      "driveFileId": "1bLB6dj_APYOIJk3AHiZqMne-6X8QNlHe"
+    },
+    {
+      "char": "សុ",
+      "slug": "179F-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សុ-enhanced-v2.wav",
+      "driveFileId": "1TZrquZKj0lAKSSWCtt1OXyXsNudfmQsB"
+    },
+    {
+      "char": "សូ",
+      "slug": "179F-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សូ-enhanced-v2.wav",
+      "driveFileId": "1fsjND4cxAwS5NouW2JReoxr25h8nm_j9"
+    },
+    {
+      "char": "សួ",
+      "slug": "179F-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សួ-enhanced-v2.wav",
+      "driveFileId": "1VmaMJ037IW0Yfv4pk65_xr89XkdS271S"
+    },
+    {
+      "char": "សើ",
+      "slug": "179F-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សើ-enhanced-v2.wav",
+      "driveFileId": "1t2-s631eSqxuw8fwaZ-QgOa2xxrSQa0V"
+    },
+    {
+      "char": "សឿ",
+      "slug": "179F-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សឿ-enhanced-v2.wav",
+      "driveFileId": "1JertMXf0pBpJ7RCxS2blZoCFM71lSRhc"
+    },
+    {
+      "char": "សៀ",
+      "slug": "179F-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "សៀ-enhanced-v2.wav",
+      "driveFileId": "11Aqik2Na5o0acxXoEtl4qAuNBhyb11ZQ"
+    },
+    {
+      "char": "ហ",
+      "slug": "17A0",
+      "kind": "consonant",
+      "spokenAs": "ហ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ហាំ",
+      "slug": "17A0-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហាំ-enhanced-v2.wav",
+      "driveFileId": "1ee74UVPWpMF3nqkdBXHKPg82iMBn_f22"
+    },
+    {
+      "char": "ហុំ",
+      "slug": "17A0-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហុំ-enhanced-v2.wav",
+      "driveFileId": "1zBCwCsTMLPp1SUKwXCqyC8GEy97Q2jhC"
+    },
+    {
+      "char": "ហុះ",
+      "slug": "17A0-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហុះ-enhanced-v2.wav",
+      "driveFileId": "1SDaDM20cdOOLDLaq6gipjFzWRvB7UzhM"
+    },
+    {
+      "char": "ហួ",
+      "slug": "17A0-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៩",
+      "sourceFile": "ហួ.wav",
+      "driveFileId": "1LBZXg6GTP0Zly_yy8LzgoFEnGkULtJsF"
+    },
+    {
+      "char": "ហឿ",
+      "slug": "17A0-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៩",
+      "sourceFile": "ហឿ.wav",
+      "driveFileId": "1K6Lalpum6mNe7SUVUMfTQGFyBH8JjVVX"
+    },
+    {
+      "char": "ហៀ",
+      "slug": "17A0-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៣៩",
+      "sourceFile": "ហៀ.wav",
+      "driveFileId": "1Ik623h61bAvROIool4-AF6DLjWtpz1MP"
+    },
+    {
+      "char": "ហេ",
+      "slug": "17A0-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហេ-enhanced-v2.wav",
+      "driveFileId": "1LKqTy6eblfXTgX1KplJ9lQVBcmM6LDwe"
+    },
+    {
+      "char": "ហេះ",
+      "slug": "17A0-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហេះ-enhanced-v2.wav",
+      "driveFileId": "1aOR8FnH63NEk-QnpdrPskkQ05rtpce8g"
+    },
+    {
+      "char": "ហែ",
+      "slug": "17A0-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហែ-enhanced-v2.wav",
+      "driveFileId": "18XWbTzCDc06uFu29NWHdrPatcCcoo0JQ"
+    },
+    {
+      "char": "ហៃ",
+      "slug": "17A0-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហៃ-enhanced-v2.wav",
+      "driveFileId": "1Gv7knWw7QUUMcC2uBgSvUjN-9k2KB8YI"
+    },
+    {
+      "char": "ហោ",
+      "slug": "17A0-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហោ-enhanced-v2.wav",
+      "driveFileId": "1Fp60rs9o1UPiWpu5MAornWZ4U5-VcUx8"
+    },
+    {
+      "char": "ហោះ",
+      "slug": "17A0-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហោះ-enhanced-v2.wav",
+      "driveFileId": "1nxRpD4iNIlRkkYTy4RQUav262uXCOpMR"
+    },
+    {
+      "char": "ហៅ",
+      "slug": "17A0-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហៅ-enhanced-v2.wav",
+      "driveFileId": "17gA0-Fu6zJ5DAfYneTxRTWyNLiLgh650"
+    },
+    {
+      "char": "ហំ",
+      "slug": "17A0-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហំ-enhanced-v2.wav",
+      "driveFileId": "1sUYiML6lesBz0UtxMCxIruKN1BveYozj"
+    },
+    {
+      "char": "ហះ",
+      "slug": "17A0-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៤",
+      "sourceFile": "ហះ-enhanced-v2.wav",
+      "driveFileId": "1mZ7rpcYu3Pb9mmrFml2k92Ek-IVTG0xP"
+    },
+    {
+      "char": "ឡ",
+      "slug": "17A1",
+      "kind": "consonant",
+      "spokenAs": "ឡ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡ-enhanced-v2.wav",
+      "driveFileId": "1kdS9NkL49GgMieOfcavragLJeK8lWhlV"
+    },
+    {
+      "char": "ឡា",
+      "slug": "17A1-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡា-enhanced-v2.wav",
+      "driveFileId": "1dOzDnDIWw9ovXV0p4x6aSDTV99Rv6M2c"
+    },
+    {
+      "char": "ឡិ",
+      "slug": "17A1-17B7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡិ-enhanced-v2.wav",
+      "driveFileId": "1P6UAA1DjJpflnudfcKy-9Rtn_Rqg2qmy"
+    },
+    {
+      "char": "ឡី",
+      "slug": "17A1-17B8",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡី-enhanced-v2.wav",
+      "driveFileId": "1B3Jr8viLUev_FUQ_uJoBLOxUbURNbkLc"
+    },
+    {
+      "char": "ឡឹ",
+      "slug": "17A1-17B9",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡឹ-enhanced-v2.wav",
+      "driveFileId": "1vVvPD3ji5BnoAB4bZWzWKP7WDTKgB8IL"
+    },
+    {
+      "char": "ឡឺ",
+      "slug": "17A1-17BA",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡឺ-enhanced-v2.wav",
+      "driveFileId": "1M8fh6Aw-IyY-y29sWWUl8fQc3OBTGxme"
+    },
+    {
+      "char": "ឡុ",
+      "slug": "17A1-17BB",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡុ-enhanced-v2.wav",
+      "driveFileId": "1tkalprdQ2PUhA8cv2I3M-vbO77Miw42r"
+    },
+    {
+      "char": "ឡូ",
+      "slug": "17A1-17BC",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡូ-enhanced-v2.wav",
+      "driveFileId": "1uQZZeG2IuWSH_-0bhoBmqoz_0JdQAhSn"
+    },
+    {
+      "char": "ឡួ",
+      "slug": "17A1-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡួ-enhanced-v2.wav",
+      "driveFileId": "1o82zW9yyL_L-65Lt254CYfx8nH0Dy7DF"
+    },
+    {
+      "char": "ឡើ",
+      "slug": "17A1-17BE",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡើ-enhanced-v2.wav",
+      "driveFileId": "1ugtaxieLql40xjKP7LqFFKE18IyivyPy"
+    },
+    {
+      "char": "ឡឿ",
+      "slug": "17A1-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡឿ-enhanced-v2.wav",
+      "driveFileId": "1b5711pLwW9MGhtM3dK0VgE9Ljpwou-OK"
+    },
+    {
+      "char": "ឡៀ",
+      "slug": "17A1-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "ឡៀ-enhanced-v2.wav",
+      "driveFileId": "1ZCPvmDoow_xETI0B9WuD7zIntk4bw7j8"
+    },
+    {
+      "char": "អ",
+      "slug": "17A2",
+      "kind": "consonant",
+      "spokenAs": "អ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "អ.wav",
+      "driveFileId": "15bEh1hpYpeSnHFkgmNTCFLqX67mb1Vxq"
+    },
+    {
+      "char": "អា",
+      "slug": "17A2-17B6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "អា.wav",
+      "driveFileId": "1OQY-YptMxIhPeGwqz8jqHH3Wbj-w75HQ"
+    },
+    {
+      "char": "អាំ",
+      "slug": "17A2-17B6-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អាំ-enhanced-v2.wav",
+      "driveFileId": "1wY2kI47xtkMzqepQ2YPgqAAU4UEvbqFR"
+    },
+    {
+      "char": "អុំ",
+      "slug": "17A2-17BB-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អុំ-enhanced-v2.wav",
+      "driveFileId": "11vPvZA6Y-5Gv5cjORc2MIMxWKxUj9pXz"
+    },
+    {
+      "char": "អុះ",
+      "slug": "17A2-17BB-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អុះ-enhanced-v2.wav",
+      "driveFileId": "1S6SjxN8Co2wJgwf32QUgzH1G-zkRDUZl"
+    },
+    {
+      "char": "អួ",
+      "slug": "17A2-17BD",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៤០",
+      "sourceFile": "អួ.wav",
+      "driveFileId": "1A00d4J1XLAYYzy3nHvYLPAKlegd8gaG3"
+    },
+    {
+      "char": "អឿ",
+      "slug": "17A2-17BF",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៤០",
+      "sourceFile": "អឿ.wav",
+      "driveFileId": "1MD2O3Zlw5mkO8GEpiY4AqjS7PmoxOJt3"
+    },
+    {
+      "char": "អៀ",
+      "slug": "17A2-17C0",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៤០",
+      "sourceFile": "អៀ.wav",
+      "driveFileId": "1TzuhjHxxeAmJ9U2DmFrlcQRxQh9cowBb"
+    },
+    {
+      "char": "អេ",
+      "slug": "17A2-17C1",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អេ-enhanced-v2.wav",
+      "driveFileId": "1ptetz0v9waEvUlZyOYznOo5J2J1Xr9tq"
+    },
+    {
+      "char": "អេះ",
+      "slug": "17A2-17C1-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អេះ-enhanced-v2.wav",
+      "driveFileId": "1KSZeRPAfVxLt0bbgIzu7NNm03oYa3N_4"
+    },
+    {
+      "char": "អែ",
+      "slug": "17A2-17C2",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អែ-enhanced-v2.wav",
+      "driveFileId": "13zZWqcmL060P3ZeR8mI0cwcm_s_F7Lqf"
+    },
+    {
+      "char": "អៃ",
+      "slug": "17A2-17C3",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អៃ-enhanced-v2.wav",
+      "driveFileId": "1Ips49KEcEARy1jBc319c1aTagEZMb7lh"
+    },
+    {
+      "char": "អោ",
+      "slug": "17A2-17C4",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អោ-enhanced-v2.wav",
+      "driveFileId": "1uobRMuzDv_Kd5kbaydHTdo4Th_4uvSh3"
+    },
+    {
+      "char": "អោះ",
+      "slug": "17A2-17C4-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អោះ-enhanced-v2.wav",
+      "driveFileId": "1ga3DT1clgadFZH4sk3MQKrHOnh6I-dUm"
+    },
+    {
+      "char": "អៅ",
+      "slug": "17A2-17C5",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អៅ-enhanced-v2.wav",
+      "driveFileId": "1XE1mddfvIwSkXf4OAdlmdeSap1S_BsUG"
+    },
+    {
+      "char": "អំ",
+      "slug": "17A2-17C6",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អំ-enhanced-v2.wav",
+      "driveFileId": "1LUxFTT_B87kZoEHj3NKp8UGgDAKwHvJV"
+    },
+    {
+      "char": "អះ",
+      "slug": "17A2-17C7",
+      "kind": "syllable",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី១៥",
+      "sourceFile": "អះ-enhanced-v2.wav",
+      "driveFileId": "1PYkSwTPchrnhI_-nlblsdJ-VbrWRTYEE"
+    },
+    {
+      "char": "ឥ",
+      "slug": "17A5",
+      "kind": "other",
+      "spokenAs": "ឥ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "ឥ.wav",
+      "driveFileId": "1iosAUvcYrk3xQYDYstDay6zM1-sxUpxi"
+    },
+    {
+      "char": "ឦ",
+      "slug": "17A6",
+      "kind": "other",
+      "spokenAs": "ឦ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "ឦ.wav",
+      "driveFileId": "1kI8O6hevoEADvuszOewx0FR5bPUTIcFX"
+    },
+    {
+      "char": "ឧ",
+      "slug": "17A7",
+      "kind": "other",
+      "spokenAs": "ឧ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "ឧ.wav",
+      "driveFileId": "1dAhiiST26yGHOMLrimPUawPyIttjhYze"
+    },
+    {
+      "char": "ឩ",
+      "slug": "17A9",
+      "kind": "other",
+      "spokenAs": "ឩ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "ឩ.wav",
+      "driveFileId": "1PhhMmngUwUQJIK_8k61RqRo8boGNe3qO"
+    },
+    {
+      "char": "ឪ",
+      "slug": "17AA",
+      "kind": "other",
+      "spokenAs": "ឪ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៥",
+      "sourceFile": "ឪ.wav",
+      "driveFileId": "1lxAkvLQ10SH0ftpj_P2egzTUiLjKOLeh"
+    },
+    {
+      "char": "ឫ",
+      "slug": "17AB",
+      "kind": "other",
+      "spokenAs": "ឫ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឫ.wav",
+      "driveFileId": "1iHvpyilMeZ1S0JV9nAtjb3ncrN-OK2fL"
+    },
+    {
+      "char": "ឬ",
+      "slug": "17AC",
+      "kind": "other",
+      "spokenAs": "ឬ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឬ.wav",
+      "driveFileId": "170w1uty4Tvedg52gLpf1cjYmKE0Cgsn6"
+    },
+    {
+      "char": "ឭ",
+      "slug": "17AD",
+      "kind": "other",
+      "spokenAs": "ឭ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឭ.wav",
+      "driveFileId": "1d8AvZGjO2t_5NauPt7nKNbWsxV3YDhmy"
+    },
+    {
+      "char": "ឮ",
+      "slug": "17AE",
+      "kind": "other",
+      "spokenAs": "ឮ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឮ.wav",
+      "driveFileId": "1d7CO0Tl9Lw1a0SDqpf0FHgcU2sJW1WK8"
+    },
+    {
+      "char": "ឯ",
+      "slug": "17AF",
+      "kind": "other",
+      "spokenAs": "ឯ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឯ.wav",
+      "driveFileId": "1IwuTgTXJ4sL4f0LQrUS5MBhuZ42RqEaS"
+    },
+    {
+      "char": "ឰ",
+      "slug": "17B0",
+      "kind": "other",
+      "spokenAs": "ឰ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឰ.wav",
+      "driveFileId": "1x098WvvPJAby1O150joUc14lTlX-_7BZ"
+    },
+    {
+      "char": "ឱ",
+      "slug": "17B1",
+      "kind": "other",
+      "spokenAs": "ឱ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៦៦",
+      "sourceFile": "ឱ.wav",
+      "driveFileId": "1RnR44PbhJ5bFiBLDzWvsgW9JInYsDOFo"
+    },
+    {
+      "char": "ឳ",
+      "slug": "17B3",
+      "kind": "other",
+      "spokenAs": "ឳ",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "ា",
+      "slug": "17B6",
+      "kind": "dependent-vowel",
+      "spokenAs": "កា",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កា-enhanced-v2.wav",
+      "driveFileId": "1UdpkwdGahd0Fs9sJnLDz1AWb0oAWjFoe"
+    },
+    {
+      "char": "ាំ",
+      "slug": "17B6-17C6",
+      "kind": "dependent-vowel",
+      "spokenAs": "កាំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កាំ-enhanced-v2.wav",
+      "driveFileId": "1z5Xs6p4MV-y1oobFNkaVAQpSoo6OvS30"
+    },
+    {
+      "char": "ិ",
+      "slug": "17B7",
+      "kind": "dependent-vowel",
+      "spokenAs": "កិ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កិ-enhanced-v2.wav",
+      "driveFileId": "1i-lCUMxfvnwc60akjg_eL-TzBZ4B20lu"
+    },
+    {
+      "char": "ី",
+      "slug": "17B8",
+      "kind": "dependent-vowel",
+      "spokenAs": "កី",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កី-enhanced-v2.wav",
+      "driveFileId": "1Saexhlh9SWxsDcOTAJgOPjsacuo9aTeU"
+    },
+    {
+      "char": "ឹ",
+      "slug": "17B9",
+      "kind": "dependent-vowel",
+      "spokenAs": "កឹ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឹ-enhanced-v2.wav",
+      "driveFileId": "1V7CFrRoj60OcmqZcTOkFbha_IFvxQjXv"
+    },
+    {
+      "char": "ឺ",
+      "slug": "17BA",
+      "kind": "dependent-vowel",
+      "spokenAs": "កឺ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឺ-enhanced-v2.wav",
+      "driveFileId": "1JRmJ0Y1y8PLGbI1oMRP_JjF6JZW8RNRS"
+    },
+    {
+      "char": "ុ",
+      "slug": "17BB",
+      "kind": "dependent-vowel",
+      "spokenAs": "កុ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុ-enhanced-v2.wav",
+      "driveFileId": "1j1AbUKF4mIBMzNGBLeg8430Gk-dTIrsS"
+    },
+    {
+      "char": "ុំ",
+      "slug": "17BB-17C6",
+      "kind": "dependent-vowel",
+      "spokenAs": "កុំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុំ-enhanced-v2.wav",
+      "driveFileId": "1Q7L_ZWet2KGyF3vrXjQSWRoQzwyZdK0L"
+    },
+    {
+      "char": "ុះ",
+      "slug": "17BB-17C7",
+      "kind": "dependent-vowel",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កុះ-enhanced-v2.wav",
+      "driveFileId": "1LOMZGlDlBwO00zZ9FovXYi5GcmHt0E2B"
+    },
+    {
+      "char": "ូ",
+      "slug": "17BC",
+      "kind": "dependent-vowel",
+      "spokenAs": "កូ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កូ-enhanced-v2.wav",
+      "driveFileId": "1aJXyHpy522mRZPe-biMtx45pNYDRo0Fo"
+    },
+    {
+      "char": "ួ",
+      "slug": "17BD",
+      "kind": "dependent-vowel",
+      "spokenAs": "កួ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កួ-enhanced-v2 (1).wav",
+      "driveFileId": "1BZudrqRmWNuU-qwsNj0QMtqVzfoazg4H"
+    },
+    {
+      "char": "ើ",
+      "slug": "17BE",
+      "kind": "dependent-vowel",
+      "spokenAs": "កើ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កើ-enhanced-v2.wav",
+      "driveFileId": "1LIdCsBeIFkHOitX06AurTcBd-uhh1yp6"
+    },
+    {
+      "char": "ឿ",
+      "slug": "17BF",
+      "kind": "dependent-vowel",
+      "spokenAs": "កឿ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កឿ-enhanced-v2.wav",
+      "driveFileId": "1JvDknnulcxXEUHbFtA1QeJql_bc-YTP1"
+    },
+    {
+      "char": "ៀ",
+      "slug": "17C0",
+      "kind": "dependent-vowel",
+      "spokenAs": "កៀ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៀ-enhanced-v2.wav",
+      "driveFileId": "1WuRRYN6CFrHXYT6CTxLcMnk0kY1T_eQv"
+    },
+    {
+      "char": "េ",
+      "slug": "17C1",
+      "kind": "dependent-vowel",
+      "spokenAs": "កេ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កេ-enhanced-v2.wav",
+      "driveFileId": "1B2Abg7IyPGmg1m3odXM7YP7xWG3Mp_5Z"
+    },
+    {
+      "char": "េះ",
+      "slug": "17C1-17C7",
+      "kind": "dependent-vowel",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កេះ-enhanced-v2.wav",
+      "driveFileId": "1NMC6KgyS-Fr-_B7OzY-RVfdNFuLpbGDo"
+    },
+    {
+      "char": "ែ",
+      "slug": "17C2",
+      "kind": "dependent-vowel",
+      "spokenAs": "កែ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កែ-enhanced-v2.wav",
+      "driveFileId": "1L17VlTxAECc2_3gGH5vDMaQm_n3RWywW"
+    },
+    {
+      "char": "ៃ",
+      "slug": "17C3",
+      "kind": "dependent-vowel",
+      "spokenAs": "កៃ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៃ-enhanced-v2.wav",
+      "driveFileId": "1CH5Lw8_9JYqQX3n9zU1aIt_QBi4124t_"
+    },
+    {
+      "char": "ោ",
+      "slug": "17C4",
+      "kind": "dependent-vowel",
+      "spokenAs": "កោ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កោ-enhanced-v2.wav",
+      "driveFileId": "18ikM0Dpd5KenlHmOCRPtyRcesGPFwMdt"
+    },
+    {
+      "char": "ោះ",
+      "slug": "17C4-17C7",
+      "kind": "dependent-vowel",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កោះ-enhanced-v2.wav",
+      "driveFileId": "1rMkKc9G2JLR1RXb-hTwel3xuhe-tQXBL"
+    },
+    {
+      "char": "ៅ",
+      "slug": "17C5",
+      "kind": "dependent-vowel",
+      "spokenAs": "កៅ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កៅ-enhanced-v2 (1).wav",
+      "driveFileId": "1rrvyu9edo-lwzPUIkenGt6i-8oicBGJs"
+    },
+    {
+      "char": "ំ",
+      "slug": "17C6",
+      "kind": "dependent-vowel",
+      "spokenAs": "កំ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កំ-enhanced-v2.wav",
+      "driveFileId": "1xqch-nIlpvsTPlqErm8CWkR0sHzsBAz0"
+    },
+    {
+      "char": "ះ",
+      "slug": "17C7",
+      "kind": "dependent-vowel",
+      "spokenAs": "កះ",
+      "source": "native-recording",
+      "lesson": "មេរៀនទី៥",
+      "sourceFile": "កះ-enhanced-v2.wav",
+      "driveFileId": "1Xb_hRLgEmsrc9U1CY-UhNO0jFYYST3-x"
+    },
+    {
+      "char": "០",
+      "slug": "17E0",
+      "kind": "other",
+      "spokenAs": "០",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "១",
+      "slug": "17E1",
+      "kind": "other",
+      "spokenAs": "១",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "២",
+      "slug": "17E2",
+      "kind": "other",
+      "spokenAs": "២",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៣",
+      "slug": "17E3",
+      "kind": "other",
+      "spokenAs": "៣",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៤",
+      "slug": "17E4",
+      "kind": "other",
+      "spokenAs": "៤",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៥",
+      "slug": "17E5",
+      "kind": "other",
+      "spokenAs": "៥",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៦",
+      "slug": "17E6",
+      "kind": "other",
+      "spokenAs": "៦",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៧",
+      "slug": "17E7",
+      "kind": "other",
+      "spokenAs": "៧",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៨",
+      "slug": "17E8",
+      "kind": "other",
+      "spokenAs": "៨",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    },
+    {
+      "char": "៩",
+      "slug": "17E9",
+      "kind": "other",
+      "spokenAs": "៩",
+      "source": "machine-tts-placeholder",
+      "lesson": null,
+      "sourceFile": null,
+      "driveFileId": null
+    }
+  ]
+}
