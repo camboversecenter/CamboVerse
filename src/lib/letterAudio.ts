@@ -2,10 +2,10 @@
  * Audio playback for the Khmer Alphabet Classroom.
  *
  * Plays the clip in `public/audio/` (one per letter, named by the letter's own
- * codepoints — see that folder's README.md and SOURCES.json). Device
- * text-to-speech is only a fallback: Khmer TTS voices are patchy and most
- * low-end Androids have none (see ./voice.ts), so the clip is what a visitor
- * normally hears.
+ * codepoints — see that folder's README.md and SOURCES.json). A tile with no
+ * clip stays silent rather than falling back to any form of TTS — device
+ * Khmer voices are unreliable across browsers/OSes and reading an English
+ * romanisation as a substitute was judged worse than silence.
  *
  * Mobile-budget notes (TODO.md's "$150 Android over 4G" bar): nothing is
  * fetched until a letter is actually tapped, so opening the classroom costs
@@ -15,7 +15,7 @@
  * Only one letter sounds at a time — tapping a second cuts the first off rather
  * than layering, which is what a classroom board should do.
  */
-import { speak, stopSpeaking, ttsSupported } from "./voice";
+import { stopSpeaking } from "./voice";
 
 /**
  * Where the clips live. Same-origin `public/audio/` today; point this at a CDN
@@ -33,13 +33,6 @@ export function clipUrl(char: string): string {
   return `${AUDIO_BASE}/${slugFor(char)}.mp3`;
 }
 
-/**
- * Letters we've already found to have no clip. Syllables in the "learn to use"
- * space mostly fall here — we record letters, not every combination — so this
- * keeps repeat taps from re-requesting a known-404.
- */
-const missing = new Set<string>();
-
 let current: HTMLAudioElement | null = null;
 
 /** Stop whatever is sounding right now. */
@@ -52,8 +45,8 @@ export function stopLetterAudio(): void {
 }
 
 /**
- * Say a letter (or syllable) aloud: its recorded clip if we have one, otherwise
- * the device's Khmer voice, otherwise nothing.
+ * Say a letter (or syllable) aloud: its recorded clip if we have one,
+ * otherwise nothing.
  *
  * Fire-and-forget — call it straight from a tap handler. Browsers block audio
  * that isn't user-initiated, so it must originate from a real gesture.
@@ -61,19 +54,12 @@ export function stopLetterAudio(): void {
 export function playLetterAudio(char: string): void {
   stopLetterAudio();
 
-  if (missing.has(char)) {
-    speakFallback(char);
-    return;
-  }
-
   const el = new Audio(clipUrl(char));
   current = el;
 
-  // A missing or undecodable file lands here rather than throwing.
+  // A missing or undecodable file lands here rather than throwing — stays silent.
   el.onerror = () => {
-    missing.add(char);
     if (current === el) current = null;
-    speakFallback(char);
   };
   el.onended = () => {
     if (current === el) current = null;
@@ -84,8 +70,4 @@ export function playLetterAudio(char: string): void {
     // the same file will usually play fine on the next real tap.
     if (current === el) current = null;
   });
-}
-
-function speakFallback(char: string): void {
-  if (ttsSupported()) speak(char, "km-KH");
 }

@@ -6,7 +6,7 @@ import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
-  ConstructionBlock, MainGate, Pool, POOL,
+  ConstructionBlock, MainGate, Pool, POOL, DEBUG_MONUMENT,
 } from "./CampusBuildings";
 import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
@@ -82,7 +82,7 @@ function TheBuilding({ id, model, onRoomClick }: { id: string; model?: string; o
     // its own — previously "gate" rendered the monument, so the Main Entrance
     // page disagreed with the place its own landmark button walked you to.
     case "gate": return <MainGate position={[0, 0, 0]} rotation={Math.PI} />;
-    case "monument": return <EntranceMonument position={[0, 0, 0]} rotation={Math.PI} />;
+    case "monument": return <EntranceMonument position={[0, 0, 0]} rotation={0} />;
     case "shrine": return <Shrine position={[0, 0, 0]} />;
     case "construction": {
       const [w, d] = dims("construction");
@@ -191,6 +191,76 @@ function CameraAnimator({ room, aim, dist, eye }: { room: string | null; aim: nu
   return null;
 }
 
+/**
+ * TEMPORARY: four fixed, repeatable camera presets for inspecting the NUM
+ * Monument's hardscape (see `DEBUG_MONUMENT` in CampusBuildings.tsx). Unlike
+ * `CameraAnimator`, this snaps instantly rather than easing, and holds the
+ * orbit controls disabled while a preset is active so the shot doesn't drift
+ * before a screenshot is taken. Only mounted for the monument page.
+ */
+type InspectView = "front" | "three-quarter" | "three-quarter-right" | "top" | "side" | null;
+
+function InspectionCamera({ view, radius, height }: { view: InspectView; radius: number; height: number }) {
+  const { camera } = useThree();
+  const controls = useThree((s) => s.controls) as any;
+
+  useEffect(() => {
+    if (!controls) return;
+    if (!view) {
+      // Returning to free-look: put `up` back to the OrbitControls-standard
+      // (0,1,0) before handing control back, so drag-orbiting resumes
+      // normally rather than orbiting around whatever axis the last preset
+      // (e.g. "top") used.
+      camera.up.set(0, 1, 0);
+      controls.enabled = true;
+      controls.update();
+      return;
+    }
+    // `up` matters here, not just position/look: three.js's lookAt() is
+    // degenerate when `up` is parallel (or nearly so) to the view direction
+    // — exactly the "top" case, looking straight down world -Y with the
+    // usual (0,1,0) up. That combination produced an unpredictable roll (the
+    // first version of this preset used a 0.001 z-nudge on position instead,
+    // which was not enough — the view still came out rotated). Fixed by
+    // giving the top view a proper horizontal up vector, (0,0,1), so FRONT
+    // (+Z) reads as "up" on screen instead of being left to chance.
+    const presets: Record<Exclude<InspectView, null>, {
+      pos: [number, number, number]; look: [number, number, number]; up: [number, number, number];
+    }> = {
+      // Centred on local +Z, eye roughly at letter-mid-height, dead ahead —
+      // no yaw/pitch component beyond that.
+      front: { pos: [0, height * 0.55, radius * 2.6], look: [0, height * 0.45, 0], up: [0, 1, 0] },
+      // Elevated three-quarter from the front-left, high enough to read the
+      // platform and all three stair tiers at once.
+      "three-quarter": { pos: [-radius * 1.7, radius * 1.5, radius * 1.9], look: [0, height * 0.35, 0], up: [0, 1, 0] },
+      // Mirror of the above from the front-right, for checking left/right
+      // symmetry from both sides.
+      "three-quarter-right": { pos: [radius * 1.7, radius * 1.5, radius * 1.9], look: [0, height * 0.35, 0], up: [0, 1, 0] },
+      // Directly overhead, looking straight down.
+      top: { pos: [0, radius * 3.4, 0], look: [0, 0, 0], up: [0, 0, 1] },
+      // Centred on local +X, eye at letter-mid-height — shows platform
+      // thickness, stair heights, pedestal height and letter height stacked.
+      side: { pos: [radius * 2.6, height * 0.55, 0], look: [0, height * 0.45, 0], up: [0, 1, 0] },
+    };
+    // Set the camera transform directly and stop here — deliberately NOT
+    // calling controls.update() for a preset. lookAt() already gives the
+    // camera its exact, correct orientation; OrbitControls.update() then
+    // re-derives spherical coordinates from `camera.up` and reconstructs the
+    // position/orientation from those, and with a non-default `up` (the top
+    // view's (0,0,1)) that round-trip did not reproduce the same view — it
+    // came out rotated. Skipping it leaves our direct lookAt() as the final,
+    // unmodified word on where the camera points.
+    const p = presets[view];
+    camera.position.set(...p.pos);
+    camera.up.set(...p.up);
+    camera.lookAt(...p.look);
+    controls.target.set(...p.look);
+    controls.enabled = false;
+  }, [view, camera, controls, radius, height]);
+
+  return null;
+}
+
 export function BuildingView({
   building,
   initialRoom = null,
@@ -221,7 +291,10 @@ export function BuildingView({
   // but it has to get out of the way in one tap.
   const [info, setInfo] = useState(true);
   const [room, _setRoom] = useState<string | null>(initialRoom);
-  
+  // TEMPORARY: fixed inspection-camera state, only used on the monument page
+  // while DEBUG_MONUMENT is on — see InspectionCamera above.
+  const [inspectView, setInspectView] = useState<InspectView>(null);
+
   const setRoom = (r: string | null) => {
     _setRoom(r);
     onRoomChange?.(r);
@@ -289,12 +362,21 @@ export function BuildingView({
           <Ground />
           <TheBuilding id={building.id} model={building.model} onRoomClick={(r) => { setRoom(r); setSpin(false); }} />
           <CameraAnimator room={room} aim={aim} dist={dist} eye={eye} />
-          {/* a pair of palms for scale, hidden for teaching block, hall, and field to avoid clipping */}
-          {building.id !== "teaching" && building.id !== "hall" && building.id !== "field" && [-1, 1].map((s) => (
+          {/* a pair of palms for scale, hidden for teaching block, hall, and field
+              to avoid clipping — also hidden for the monument page while
+              DEBUG_MONUMENT is on, so the hardscape inspection has nothing
+              in front of the camera. TEMPORARY, remove the extra clause
+              alongside DEBUG_MONUMENT once the geometry is confirmed. */}
+          {building.id !== "teaching" && building.id !== "hall" && building.id !== "field"
+            && !(DEBUG_MONUMENT && building.id === "monument") && [-1, 1].map((s) => (
             <group key={s} position={[s * (dist * 0.42), 0, dist * 0.18]}>
               <PalmPlant look={PALM_LOOK} height={11} seed={s + 3} opacity={1} wind={mode === "ultra" ? 1 : 0} />
             </group>
           ))}
+          {/* TEMPORARY: fixed inspection cameras, monument page only */}
+          {DEBUG_MONUMENT && building.id === "monument" && (
+            <InspectionCamera view={inspectView} radius={8} height={2.6} />
+          )}
           {/* VR locomotion: left thumbstick walks, right thumbstick snap-turns.
               XROrigin starts behind the building so you face it on entry.
               Works on any WebXR device, optimised for Meta Quest 3. */}
@@ -344,6 +426,39 @@ export function BuildingView({
       <button className="bld-spin" onClick={() => setSpin((v) => !v)}>
         {spin ? "⏸ Stop turning" : "▶ Turn"}
       </button>
+
+      {/* TEMPORARY: fixed inspection-camera panel, monument page only, gone
+          alongside DEBUG_MONUMENT once the hardscape geometry is confirmed */}
+      {DEBUG_MONUMENT && building.id === "monument" && (
+        <div style={{
+          position: "fixed", left: 16, bottom: 90, zIndex: 20,
+          display: "flex", gap: 6, flexWrap: "wrap", maxWidth: 220,
+        }}>
+          {(["front", "three-quarter", "three-quarter-right", "top", "side"] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => { setSpin(false); setInspectView(v); }}
+              style={{
+                padding: "6px 10px", borderRadius: 6, border: "1px solid #0006",
+                background: inspectView === v ? "#2255ff" : "#ffffffcc",
+                color: inspectView === v ? "#fff" : "#111", fontSize: 12, cursor: "pointer",
+              }}
+            >
+              {v === "three-quarter" ? "3/4 L" : v === "three-quarter-right" ? "3/4 R" : v[0].toUpperCase() + v.slice(1)}
+            </button>
+          ))}
+          <button
+            onClick={() => setInspectView(null)}
+            style={{
+              padding: "6px 10px", borderRadius: 6, border: "1px solid #0006",
+              background: inspectView === null ? "#2255ff" : "#ffffffcc",
+              color: inspectView === null ? "#fff" : "#111", fontSize: 12, cursor: "pointer",
+            }}
+          >
+            Free
+          </button>
+        </div>
+      )}
 
       {!info && (
         <button className="bld-show" onClick={() => setInfo(true)}>

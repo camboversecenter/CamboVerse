@@ -5,7 +5,7 @@ import {
 } from "three";
 import { Text, Instances, Instance } from "@react-three/drei";
 import {
-  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture
+  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, radialPaveTexture,
 } from "../lib/campusTexture";
 
 /**
@@ -836,36 +836,395 @@ export function MainGate({ position = [0, 0, 0] as [number, number, number], rot
  * The **entrance monument**: gold NUM lettering on a dark plinth, on its curved
  * flight of steps between clipped hedges.
  */
+/**
+ * One straight letter-stroke, as a box whose long axis runs from `from` to
+ * `to` (both in the letter's own local X/Y plane — X across, Y up). Rotating
+ * a box around Z to align its default X-axis with an arbitrary 2D direction
+ * is the same trick `hippedRoofGeometry`'s neighbours use for anything at an
+ * angle: build it flat along an axis, then rotate into place.
+ */
+function Stroke({
+  from, to, w, t, color, metalness, roughness,
+}: {
+  from: [number, number]; to: [number, number]; w: number; t: number;
+  color: string; metalness: number; roughness: number;
+}) {
+  const dx = to[0] - from[0], dy = to[1] - from[1];
+  const len = Math.hypot(dx, dy);
+  const angle = Math.atan2(dy, dx);
+  const mx = (from[0] + to[0]) / 2, my = (from[1] + to[1]) / 2;
+  return (
+    <mesh position={[mx, my, 0]} rotation={[0, 0, angle]} castShadow receiveShadow>
+      <boxGeometry args={[len, w, t]} />
+      <meshStandardMaterial color={color} metalness={metalness} roughness={roughness} />
+    </mesh>
+  );
+}
+
+type LetterProps = { cx: number; h: number; stroke: number; depth: number; baseY: number; color: string };
+const GOLD_FINISH = { metalness: 0.75, roughness: 0.18 };
+
+/** A block "N": two uprights and a single diagonal, top-left to bottom-right. */
+function LetterN({ cx, h, stroke, depth, baseY, color }: LetterProps) {
+  const w = h * 0.62, hw = w / 2, hh = h / 2, my = baseY + hh;
+  const p = { t: stroke, depth, color, ...GOLD_FINISH };
+  return (
+    <group position={[cx, my, 0]}>
+      <Stroke from={[-hw + stroke / 2, -hh]} to={[-hw + stroke / 2, hh]} w={stroke} {...p} />
+      <Stroke from={[hw - stroke / 2, -hh]} to={[hw - stroke / 2, hh]} w={stroke} {...p} />
+      <Stroke from={[-hw + stroke * 0.9, hh - stroke * 0.3]} to={[hw - stroke * 0.9, -hh + stroke * 0.3]} w={stroke} {...p} />
+    </group>
+  );
+}
+
+/** A block "M": two uprights and a V dipping to half height, not to the floor. */
+function LetterM({ cx, h, stroke, depth, baseY, color }: LetterProps) {
+  const w = h * 0.8, hw = w / 2, hh = h / 2, my = baseY + hh;
+  const p = { t: stroke, depth, color, ...GOLD_FINISH };
+  return (
+    <group position={[cx, my, 0]}>
+      <Stroke from={[-hw + stroke / 2, -hh]} to={[-hw + stroke / 2, hh]} w={stroke} {...p} />
+      <Stroke from={[hw - stroke / 2, -hh]} to={[hw - stroke / 2, hh]} w={stroke} {...p} />
+      <Stroke from={[-hw + stroke * 0.9, hh - stroke * 0.2]} to={[0, 0]} w={stroke} {...p} />
+      <Stroke from={[hw - stroke * 0.9, hh - stroke * 0.2]} to={[0, 0]} w={stroke} {...p} />
+    </group>
+  );
+}
+
+/**
+ * A block "U": two uprights joined by a curved foot, approximated as short
+ * straight segments around an arc — the same stroke width as the uprights, so
+ * it reads as one continuous letterform rather than switching techniques
+ * partway down.
+ */
+function LetterU({ cx, h, stroke, depth, baseY, color }: LetterProps) {
+  const w = h * 0.58, hw = w / 2, hh = h / 2, my = baseY + hh;
+  const curveR = hw - stroke / 2;
+  const straightBottomY = -hh + curveR;
+  const p = { t: stroke, depth, color, ...GOLD_FINISH };
+  const segs = 16;
+  const arcPoint = (a: number): [number, number] => [Math.cos(a) * curveR, straightBottomY + Math.sin(a) * curveR];
+  return (
+    <group position={[cx, my, 0]}>
+      <Stroke from={[-hw + stroke / 2, straightBottomY]} to={[-hw + stroke / 2, hh]} w={stroke} {...p} />
+      <Stroke from={[hw - stroke / 2, straightBottomY]} to={[hw - stroke / 2, hh]} w={stroke} {...p} />
+      {Array.from({ length: segs }, (_, i) => {
+        const a0 = Math.PI + (i / segs) * Math.PI;
+        const a1 = Math.PI + ((i + 1) / segs) * Math.PI;
+        return <Stroke key={i} from={arcPoint(a0)} to={arcPoint(a1)} w={stroke} {...p} />;
+      })}
+    </group>
+  );
+}
+
+/**
+ * The campus entrance monument: freestanding mirror-gold "NUM" letters
+ * standing on a low polished-granite wall reading "INTERNATIONAL CAMPUS", on
+ * a circular plaza — radial paving, a near-full ring of curved steps (with a
+ * gap for the approach path), and a ring hedge outside that.
+ *
+ * Rebuilt from drone footage of the real thing (see the campus layout notes):
+ * the original version was a flat signboard on a rectangular plinth, which is
+ * not what actually stands there. Letters are built from primitives (boxes
+ * for the strokes, a curved approximation for the U) rather than a loaded
+ * font — no assets, matching everything else on this campus — with a bright
+ * low-roughness gold material rather than a true mirror: this scene has no
+ * environment map, and adding one reflective surface per letter face would
+ * cost far more than the low-end-phone budget allows for a single landmark.
+ *
+ * Letter height (~5.4 m) and wall height (~1.3 m) come from measuring a
+ * person against the letters in one drone frame — a visual estimate, not a
+ * survey, in keeping with how every other building here is sourced.
+ */
+/**
+ * One rounded hedge mass: a short run of overlapping flattened hemisphere
+ * domes following an arc, so it reads as a dense curved planting bed rather
+ * than a single sphere. `angleCenter`/`angleSpan` are in the monument's own
+ * angle system (see `FRONT_ANGLE` below); `radius` is the arc the domes sit
+ * on; `w`/`h` are the mass's tangential width and height.
+ */
+function HedgeMass({
+  angleCenter, angleSpan, radius, w, h, domes, hedgeMap,
+}: {
+  angleCenter: number; angleSpan: number; radius: number; w: number; h: number;
+  domes: number; hedgeMap: import("three").Texture;
+}) {
+  const step = angleSpan / Math.max(1, domes - 1);
+  const domeW = w * 1.15; // overlap neighbours so the run reads as one mass
+  return (
+    <>
+      {Array.from({ length: domes }, (_, i) => {
+        const a = domes === 1 ? angleCenter : angleCenter - angleSpan / 2 + i * step;
+        return (
+          <mesh
+            key={i}
+            position={[Math.cos(a) * radius, 0, Math.sin(a) * radius]}
+            rotation={[0, -a, 0]}
+            scale={[domeW / 2, h, domeW / 2]}
+            receiveShadow
+            castShadow
+          >
+            <sphereGeometry args={[1, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial map={hedgeMap} color="#7fae3a" roughness={0.95} />
+          </mesh>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * A short brown planter-edge transition at one end of the stair arc: a brief
+ * curved segment continuing the stair's own outer radius (so it reads as
+ * part of the same sweep, not bolted on), then ONE short chamfered segment
+ * angled away from pure-tangent — a corner cut, not a freestanding arm.
+ * Deliberately kept small: most of this is meant to end up hidden under the
+ * hedge mass that now sits on top of it (see `FrontHedge` below), not to
+ * read as a wall in its own right. Solid wedges from the centre out to
+ * `radius`, same technique the stair tiers themselves already use (the
+ * inner portion is hidden under the stairs and platform).
+ *
+ * `thetaAtSide` is the stair arc's own end angle on this side (`arcStart` or
+ * `arcStart + arcLen`, already in CylinderGeometry's theta convention — see
+ * the note above `arcStart`); `side` is +1/-1 and picks which way the curve
+ * continues and which way the chamfer angles, so the two calls mirror
+ * exactly rather than being hand-tuned separately.
+ */
+function StairBorder({
+  side, thetaAtSide, radius, height, extraAngle, chamferLen, chamferAngle, color,
+}: {
+  side: 1 | -1; thetaAtSide: number; radius: number; height: number;
+  extraAngle: number; chamferLen: number; chamferAngle: number; color: string;
+}) {
+  const curveEnd = thetaAtSide + side * extraAngle;
+  const thetaStart = Math.min(thetaAtSide, curveEnd);
+  // tangent direction of travel at the curve's far end, rotated outward by
+  // `chamferAngle` so the short tail cuts at an angle instead of continuing
+  // straight out radially — the "chamfered corner" look, not a long arm.
+  const tanX = side * Math.cos(curveEnd);
+  const tanZ = -side * Math.sin(curveEnd);
+  const phi = side * chamferAngle;
+  const dirX = tanX * Math.cos(phi) - tanZ * Math.sin(phi);
+  const dirZ = tanX * Math.sin(phi) + tanZ * Math.cos(phi);
+  const endX = radius * Math.sin(curveEnd);
+  const endZ = radius * Math.cos(curveEnd);
+  const tailAngle = Math.atan2(-dirZ, dirX);
+  const tailCx = endX + (dirX * chamferLen) / 2;
+  const tailCz = endZ + (dirZ * chamferLen) / 2;
+
+  return (
+    <group>
+      <mesh position={[0, height / 2, 0]} receiveShadow castShadow>
+        <cylinderGeometry args={[radius, radius, height, 24, 1, false, thetaStart, extraAngle]} />
+        <meshStandardMaterial color={color} roughness={1} />
+      </mesh>
+      <mesh position={[tailCx, height / 2, tailCz]} rotation={[0, tailAngle, 0]} receiveShadow castShadow>
+        <boxGeometry args={[chamferLen, height, radius * 0.14]} />
+        <meshStandardMaterial color={color} roughness={1} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * Profile for the front hedge beds: a fuller trimmed box-shrub profile with steep
+ * rounded sides, a broad flattened top, and soft transitions at ground level.
+ */
+const HEDGE_BED_PROFILE: [number, number][] = [
+  [0.00, 0.00],
+  [0.02, 0.35],
+  [0.06, 0.70],
+  [0.12, 0.90],
+  [0.22, 0.98],
+  [0.35, 1.00],
+  [0.65, 1.00],
+  [0.78, 0.98],
+  [0.88, 0.90],
+  [0.94, 0.70],
+  [0.98, 0.35],
+  [1.00, 0.00],
+];
+
+/**
+ * Builds one continuous rounded front hedge bed as a single lofted mesh.
+ * Sweeps `HEDGE_BED_PROFILE` along a polar arc around the monument origin.
+ * Smoothly tapers at both ends to form seamless rounded caps.
+ */
+function frontHedgeBedGeometry({
+  angleStart, angleEnd, innerR, depth, height, angularSegments = 48,
+}: {
+  angleStart: number; angleEnd: number; innerR: number; depth: number; height: number;
+  angularSegments?: number;
+}): BufferGeometry {
+  const taperAt = (u: number) => {
+    const startEase = Math.sin(Math.min(1, u / 0.12) * Math.PI / 2);
+    const endEase = Math.sin(Math.min(1, (1 - u) / 0.12) * Math.PI / 2);
+    return Math.min(startEase, endEase);
+  };
+
+  const crossSegments = HEDGE_BED_PROFILE.length;
+  const pos: number[] = [];
+  const col: number[] = [];
+
+  for (let i = 0; i <= angularSegments; i++) {
+    const u = i / angularSegments;
+    const angle = angleStart + (angleEnd - angleStart) * u;
+    const taper = taperAt(u);
+    for (let j = 0; j < crossSegments; j++) {
+      const [rFrac, yFrac] = HEDGE_BED_PROFILE[j];
+
+      // Fine small-scale foliage noise
+      const wave1 = Math.sin(i * 1.8) * Math.cos(j * 1.5);
+      const wave2 = Math.cos(i * 3.2) * Math.sin(j * 2.8);
+      const rJitter = 1 + 0.012 * wave1 + 0.008 * wave2;
+      const yJitter = 1 + 0.015 * wave1 + 0.010 * wave2;
+
+      const radius = innerR + rFrac * depth * taper * rJitter;
+      const y = yFrac * height * taper * yJitter;
+
+      pos.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+
+      // Fine tonal variation
+      const jitter = 0.90 + 0.10 * Math.sin(i * 1.2) * Math.cos(j * 1.8);
+      col.push(jitter, jitter, jitter);
+    }
+  }
+
+  const idx: number[] = [];
+  for (let i = 0; i < angularSegments; i++) {
+    for (let j = 0; j < crossSegments - 1; j++) {
+      const a = i * crossSegments + j;
+      const b = a + 1;
+      const c = a + crossSegments;
+      const d = c + 1;
+      idx.push(a, c, b, b, c, d);
+    }
+  }
+
+  const g = new BufferGeometry();
+  g.setAttribute("position", new Float32BufferAttribute(pos, 3));
+  g.setAttribute("color", new Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+/** One continuous front hedge bed mass. */
+function FrontHedgeBed({
+  angleStart, angleEnd, innerR, depth, height, color,
+}: {
+  angleStart: number; angleEnd: number; innerR: number; depth: number; height: number; color: string;
+}) {
+  const geo = useMemo(
+    () => frontHedgeBedGeometry({ angleStart, angleEnd, innerR, depth, height }),
+    [angleStart, angleEnd, innerR, depth, height]
+  );
+  return (
+    <mesh geometry={geo} receiveShadow castShadow>
+      <meshStandardMaterial color={color} vertexColors roughness={0.92} side={DoubleSide} />
+    </mesh>
+  );
+}
+
+/**
+ * TEMPORARY hardscape-inspection switch. When true, `EntranceMonument` hides
+ * its four `HedgeMass` planting instances and draws local axes, a FRONT=+Z
+ * arrow, an origin marker, a bounding box and per-tier wireframes instead —
+ * so the platform/stairs/pedestal/letters can be inspected with nothing
+ * else in the way. Exported so `BuildingView.tsx` can hide the site's own
+ * palm pair for the same page. Flip back to `false` (or delete this block
+ * and its call sites) once the hardscape geometry is confirmed correct —
+ * none of this changes the monument's actual geometry.
+ */
+export const DEBUG_MONUMENT = true;
+
 export function EntranceMonument({ position = [0, 0, 0] as [number, number, number], rotation = 0 }) {
-  const sign = useMemo(() => signTexture("NUM", "INTERNATIONAL CAMPUS", { fg: "#c8a13c", sub: "#f2f0ea", bg: "#2f3338" }), []);
-  const hedge = useMemo(() => hedgeTexture(), []);
+  const radialPave = useMemo(() => radialPaveTexture(), []);
+
+  // Saved Layout Config from 3D Editor
+  const PLATFORM_R = 2.8;
+  const PLATFORM_THICKNESS = 0.45;
+  const platformPos: [number, number, number] = [0, 0.38, 0];
+
+  const STEPS = 3;
+  const STEP_W = 0.42;
+  const STEP_H = 0.15;
+  const STAIR_ARC = (360 * Math.PI) / 180;
+  const stairsPos: [number, number, number] = [0, 0.15, 0];
+
+  const WALL_LEN = 4.7;
+  const WALL_H = 0.75;
+  const WALL_T = 0.55;
+  const pedestalPos: [number, number, number] = [0, 0.825, -0.4];
+
+  const H = 1.5, GAP = H * 0.1;
+  const GOLD = "#C89E2C";
+  const wN = H * 0.62, wU = H * 0.58, wM = H * 0.8;
+  const totalW = wN + GAP + wU + GAP + wM;
+  const xN = -totalW / 2 + wN / 2;
+  const xU = xN + wN / 2 + GAP + wU / 2;
+  const xM = xU + wU / 2 + GAP + wM / 2;
+  const lettersPos: [number, number, number] = [0, 1.95, -0.4];
+
+  const hedgesConfig = [
+    { id: "hedge_1", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 2.6, color: "#82B238", pos: [-1.21, 0.2, -0.89] as [number, number, number], rotY: -0.38 },
+    { id: "hedge_2", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4.0, color: "#82B238", pos: [0.08, 0, 1.34] as [number, number, number], rotY: 0.74 },
+    { id: "hedge_3", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4.0, color: "#82B238", pos: [1.41, 0, -1.81] as [number, number, number], rotY: 0.4 },
+    { id: "hedge_4", innerR: 4.2, depth: 1.45, height: 0.8, arcLength: 2.6, color: "#82B238", pos: [0.79, 0.25, -1.32] as [number, number, number], rotY: -1.12 },
+  ];
+
   return (
     <group position={position} rotation={[0, rotation, 0]}>
-      {/* curved steps */}
-      {[0, 1, 2].map((i) => (
-        <mesh key={i} position={[0, 0.16 + i * 0.22, 3.4 - i * 0.9]} receiveShadow castShadow>
-          <cylinderGeometry args={[9 - i * 1.4, 9 - i * 1.4, 0.22, 28, 1, false, Math.PI * 0.15, Math.PI * 0.7]} />
-          <meshStandardMaterial color="#9d6a58" roughness={1} />
+      {/* 360-Degree Symmetrical Stairs Stack */}
+      <group position={stairsPos}>
+        {Array.from({ length: STEPS }, (_, i) => (
+          <mesh key={i} position={[0, i * STEP_H + STEP_H / 2, 0]} receiveShadow castShadow>
+            <cylinderGeometry args={[PLATFORM_R + (STEPS - i) * STEP_W, PLATFORM_R + (STEPS - i) * STEP_W, STEP_H, 48, 1, false, 0, STAIR_ARC]} />
+            <meshStandardMaterial color="#8A5A43" roughness={1} />
+          </mesh>
+        ))}
+      </group>
+
+      {/* Grey Circular Platform */}
+      <group position={platformPos}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, PLATFORM_THICKNESS / 2 + 0.01, 0]} receiveShadow>
+          <circleGeometry args={[PLATFORM_R, 48]} />
+          <meshStandardMaterial map={radialPave} color="#cfcdc7" roughness={1} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
         </mesh>
-      ))}
-      {/* plinth + lettering */}
-      <mesh position={[0, 1.2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[11.5, 2.4, 1.1]} />
-        <meshStandardMaterial color="#2f3338" roughness={0.6} />
+        <mesh receiveShadow castShadow>
+          <cylinderGeometry args={[PLATFORM_R, PLATFORM_R, PLATFORM_THICKNESS, 48]} />
+          <meshStandardMaterial map={radialPave} color="#cfcdc7" roughness={1} />
+        </mesh>
+      </group>
+
+      {/* Black Pedestal Wall & Letters */}
+      <mesh position={pedestalPos} receiveShadow castShadow>
+        <boxGeometry args={[WALL_LEN, WALL_H, WALL_T]} />
+        <meshStandardMaterial color="#171717" roughness={0.2} metalness={0.3} />
       </mesh>
-      {[-1, 1].map((s) => (
-        <mesh key={s} position={[0, 1.2, s * 0.57]} rotation={[0, s > 0 ? 0 : Math.PI, 0]}>
-          <planeGeometry args={[11, 2.2]} />
-          <meshStandardMaterial map={sign} roughness={0.45} metalness={0.25} />
-        </mesh>
-      ))}
-      {/* hedges either side */}
-      {[-1, 1].map((s) => (
-        <mesh key={s} position={[s * 9.5, 0.75, 1.4]} castShadow receiveShadow>
-          <boxGeometry args={[6.5, 1.5, 3.2]} />
-          <meshStandardMaterial map={hedge} roughness={0.95} />
-        </mesh>
-      ))}
+      <group position={lettersPos}>
+        <mesh position={[xN, 0, 0]} castShadow><boxGeometry args={[wN, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
+        <mesh position={[xU, 0, 0]} castShadow><boxGeometry args={[wU, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
+        <mesh position={[xM, 0, 0]} castShadow><boxGeometry args={[wM, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
+      </group>
+
+      {/* Custom Placed Hedge Beds */}
+      {hedgesConfig.map((h) => {
+        const midR = h.innerR + h.depth / 2;
+        const span = h.arcLength / midR;
+        return (
+          <group key={h.id} position={h.pos} rotation={[0, h.rotY, 0]}>
+            <FrontHedgeBed
+              angleStart={0}
+              angleEnd={span}
+              innerR={h.innerR}
+              depth={h.depth}
+              height={h.height}
+              color={h.color}
+            />
+          </group>
+        );
+      })}
     </group>
   );
 }

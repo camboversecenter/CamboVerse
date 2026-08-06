@@ -609,7 +609,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       </Tappable>
       {/* The NUM Monument sign where the avenue meets the campus */}
       <Tappable id="monument" onOpen={onOpenBuilding}>
-        <EntranceMonument position={[-12, 0, 126.5]} rotation={3.142} />
+        <EntranceMonument position={[-12, 0, 126.5]} rotation={0} />
       </Tappable>
       <Tappable id="teaching" onOpen={onOpenBuilding}>
         <TeachingBlock position={[-16, 0, -90.1]} w={53} d={16.1} floors={4} onRoomClick={(r: string) => onOpenBuilding('teaching', r)} />

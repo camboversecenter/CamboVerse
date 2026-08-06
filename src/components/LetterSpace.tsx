@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Texture } from "three";
 import { makeGlyphTexture } from "../lib/glyphTexture";
 import { usageFor, KHMER_FONTS, type KhmerLetter, type Syllable } from "../khmer";
+import { playLetterAudio } from "../lib/letterAudio";
 
 /**
  * A 3D space for one letter — how to *use* it. For a consonant it shows the
@@ -110,7 +111,7 @@ export function LetterSpace({
           <directionalLight position={[3, 6, 8]} intensity={1.0} />
 
           {/* The letter itself, large, at the top. */}
-          {bigTex && <Tile texture={bigTex} position={[0, gridTop + 2.4, 0]} size={2} />}
+          {bigTex && <Tile texture={bigTex} position={[0, gridTop + 2.4, 0]} size={2} onSelect={() => playLetterAudio(letter.char)} />}
 
           {/* Syllables / examples below. */}
           {ready &&
@@ -125,7 +126,10 @@ export function LetterSpace({
                   texture={tileTex[i]}
                   position={[x, y, 0]}
                   selected={picked?.khmer === s.khmer}
-                  onSelect={() => setPicked(s)}
+                  onSelect={() => {
+                    setPicked(s);
+                    playLetterAudio(s.khmer);
+                  }}
                 />
               );
             })}

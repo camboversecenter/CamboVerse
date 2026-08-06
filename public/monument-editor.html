@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUM Monument Complete 3D Editor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f1318;
+      color: #e1e7ed;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    #viewport-container {
+      flex: 1;
+      position: relative;
+      background: radial-gradient(circle at center, #1b232e 0%, #090c10 100%);
+    }
+    #canvas3d {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    /* Left Object Palette & List Sidebar */
+    #left-menu {
+      width: 310px;
+      background: #151a21;
+      border-right: 1px solid #263140;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      z-index: 10;
+    }
+    .brand-header {
+      padding: 14px 16px;
+      background: #1b222c;
+      border-bottom: 1px solid #263140;
+    }
+    .brand-header h1 {
+      font-size: 16px;
+      color: #82B238;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-header p {
+      font-size: 11px;
+      color: #8b9bb0;
+      margin-top: 2px;
+    }
+
+    .palette-section {
+      padding: 12px 14px;
+      background: #19202a;
+      border-bottom: 1px solid #263140;
+    }
+    .palette-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #82B238;
+      margin-bottom: 8px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .palette-card {
+      background: #232d3b;
+      border: 1px dashed #3a4a5c;
+      border-radius: 6px;
+      padding: 7px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #d0e0f0;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .palette-card:hover {
+      background: #2e3b4e;
+      border-color: #82B238;
+      color: #fff;
+    }
+    .palette-card:active {
+      cursor: grabbing;
+    }
+
+    .object-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .list-header-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #c89e2c;
+      margin: 4px 0 8px 4px;
+    }
+    .object-item {
+      padding: 9px 11px;
+      border-radius: 6px;
+      background: #1e2632;
+      border: 1px solid #2a3648;
+      margin-bottom: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+    .object-item:hover {
+      background: #273344;
+      border-color: #82B238;
+    }
+    .object-item.selected {
+      background: #2b3b24;
+      border-color: #82B238;
+      color: #bdf06e;
+      font-weight: 600;
+    }
+    .object-item .actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .object-item .btn-del {
+      background: #3b2023;
+      border: 1px solid #6b2d34;
+      color: #f08d96;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px 6px;
+      transition: all 0.15s ease;
+    }
+    .object-item .btn-del:hover {
+      background: #542227;
+      color: #fff;
+    }
+    .object-item .badge {
+      font-size: 10px;
+      background: #151a21;
+      padding: 2px 6px;
+      border-radius: 10px;
+      color: #7b8e9b;
+    }
+
+    /* Right Inspector Sidebar */
+    #right-sidebar {
+      width: 320px;
+      background: #151a21;
+      border-left: 1px solid #263140;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      z-index: 10;
+    }
+    .inspector-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #c89e2c;
+      margin: 14px 0 8px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #263140;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #b0c0d4;
+      margin-bottom: 4px;
+    }
+    
+    input[type=number].val-input {
+      background: #0d1117;
+      border: 1px solid #36465c;
+      color: #82B238;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      width: 75px;
+      text-align: right;
+      outline: none;
+    }
+    input[type=number].val-input:focus {
+      border-color: #82B238;
+      box-shadow: 0 0 6px rgba(130, 178, 56, 0.4);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 5px;
+      background: #263140;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #82B238;
+      cursor: pointer;
+    }
+
+    .gizmo-btn-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    button.gizmo-btn {
+      flex: 1;
+      background: #1e2632;
+      color: #a0b2c6;
+      border: 1px solid #2a3648;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.gizmo-btn.active {
+      background: #82B238;
+      color: #0f1a04;
+      border-color: #82B238;
+    }
+
+    .preset-btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    button.btn {
+      background: #1e2632;
+      color: #d0e0f0;
+      border: 1px solid #2a3648;
+      padding: 7px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.btn:hover {
+      background: #273344;
+      border-color: #82B238;
+      color: #fff;
+    }
+    button.btn-danger {
+      background: #3d1b20;
+      color: #f08d96;
+      border: 1px solid #6b2a32;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: all 0.15s ease;
+    }
+    button.btn-danger:hover {
+      background: #5c232c;
+      color: #fff;
+    }
+
+    button.btn-primary {
+      background: #82B238;
+      color: #0f1a04;
+      border: none;
+      font-size: 13px;
+      padding: 10px;
+      width: 100%;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .footer {
+      padding: 14px;
+      background: #11151b;
+      border-top: 1px solid #263140;
+    }
+    textarea.json-output {
+      width: 100%;
+      height: 120px;
+      background: #090c10;
+      border: 1px solid #263140;
+      color: #7ee787;
+      font-family: monospace;
+      font-size: 10px;
+      padding: 6px;
+      border-radius: 4px;
+      resize: none;
+      margin-bottom: 8px;
+    }
+
+    .floating-tools {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(21, 26, 33, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .toast {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #82B238;
+      color: #0d1604;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+
+  <!-- Three.js & Controls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+</head>
+<body>
+
+  <!-- Left Sidebar: Draggable Palette & Object Menu -->
+  <div id="left-menu">
+    <div class="brand-header">
+      <h1>🏛️ Monument Editor</h1>
+      <p>Drag ANY item onto 3D ground or click to add!</p>
+    </div>
+
+    <!-- Draggable Objects Palette for ALL Elements -->
+    <div class="palette-section">
+      <div class="palette-title">🎨 Add / Drag Palette</div>
+      <div class="palette-grid">
+        <div class="palette-card" draggable="true" data-type="hedge">
+          <span>🌿</span> Hedge Bed
+        </div>
+        <div class="palette-card" draggable="true" data-type="platform">
+          <span>🏛️</span> Platform
+        </div>
+        <div class="palette-card" draggable="true" data-type="stairs">
+          <span>🪜</span> Stairs Tier
+        </div>
+        <div class="palette-card" draggable="true" data-type="pedestal">
+          <span>⬛</span> Pedestal
+        </div>
+        <div class="palette-card" draggable="true" data-type="letters">
+          <span>🔤</span> Sign Letters
+        </div>
+        <div class="palette-card" draggable="true" data-type="palm">
+          <span>🌴</span> Sugar Palm
+        </div>
+        <div class="palette-card" draggable="true" data-type="box">
+          <span>📦</span> Box Block
+        </div>
+        <div class="palette-card" draggable="true" data-type="lamp">
+          <span>💡</span> Lamp Post
+        </div>
+      </div>
+    </div>
+
+    <div class="object-list" id="object-list">
+      <div class="list-header-title">📋 Active Scene Objects</div>
+      <div id="object-list-items"></div>
+    </div>
+  </div>
+
+  <!-- Viewport Area -->
+  <div id="viewport-container">
+    <canvas id="canvas3d"></canvas>
+    
+    <div class="floating-tools">
+      <span style="font-size:12px; font-weight:600; color:#fff;">Gizmo:</span>
+      <div class="gizmo-btn-group" style="margin:0;">
+        <button class="gizmo-btn active" id="btn-mode-translate">Move (W)</button>
+        <button class="gizmo-btn" id="btn-mode-rotate">Rotate (E)</button>
+        <button class="gizmo-btn" id="btn-mode-scale">Scale (R)</button>
+      </div>
+      <div style="height:16px; width:1px; background:#36465c; margin:0 4px;"></div>
+      <button class="btn" id="btn-undo" title="Undo (Ctrl+Z)">↩️ Undo</button>
+      <button class="btn" id="btn-redo" title="Redo (Ctrl+Y)">↪️ Redo</button>
+    </div>
+
+    <div id="toast" class="toast">Copied Full Monument JSON to Clipboard!</div>
+  </div>
+
+  <!-- Right Sidebar: Object Inspector & Settings -->
+  <div id="right-sidebar">
+    <div class="inspector-body" id="inspector-body">
+      <div class="section-title">Camera Angles</div>
+      <div class="preset-btn-group">
+        <button class="btn" id="btn-cam-front">Front View</button>
+        <button class="btn" id="btn-cam-top">Top View</button>
+        <button class="btn" id="btn-cam-fl">Front-Left 3/4</button>
+        <button class="btn" id="btn-cam-fr">Front-Right 3/4</button>
+      </div>
+
+      <div class="section-title" id="selected-object-name">Selected: None</div>
+
+      <div id="dynamic-controls">
+        <p style="font-size:12px; color:#7b8e9b;">Click or drag objects onto the 3D viewport to edit properties.</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <textarea id="json-output" class="json-output" readonly></textarea>
+      <button class="btn-primary" id="btn-copy">📋 Export & Copy Full JSON</button>
+    </div>
+  </div>
+
+  <script>
+    const OrbitControls = THREE.OrbitControls;
+    const TransformControls = THREE.TransformControls;
+
+    // Counters
+    let counterHedge = 5;
+    let counterPlatform = 1;
+    let counterStairs = 1;
+    let counterPedestal = 1;
+    let counterLetters = 1;
+    let counterObj = 1;
+
+    // User Saved Layout State
+    let monumentState = {
+      platform: { type: 'platform', radius: 2.8, thickness: 0.45, color: '#cfcdc7', posX: 0, posY: 0.38, posZ: 0, rotY: 0 },
+      stairs: { type: 'stairs', stepCount: 3, stepWidth: 0.42, stepHeight: 0.15, arcDeg: 360, color: '#8A5A43', posX: 0, posY: 0.15, posZ: 0, rotY: 0 },
+      pedestal: { type: 'pedestal', posX: 0, posY: 0.825, posZ: -0.4, len: 4.7, height: 0.75, thickness: 0.55, rotY: 0, color: '#171717' },
+      letters: { type: 'letters', posX: 0, posY: 1.95, posZ: -0.4, scale: 1, color: '#C89E2C' },
+      hedge_1: { type: 'hedge', innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 2.6, angleStart: 0, color: '#82B238', posX: -1.21, posY: 0.2, posZ: -0.89, rotY: -0.38 },
+      hedge_2: { type: 'hedge', innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4, angleStart: 0, color: '#82B238', posX: 0.08, posY: 0, posZ: 1.34, rotY: 0.74 },
+      hedge_3: { type: 'hedge', innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4, angleStart: 0, color: '#82B238', posX: 1.41, posY: 0, posZ: -1.81, rotY: 0.4 },
+      hedge_4: { type: 'hedge', innerR: 4.2, depth: 1.45, height: 0.8, arcLength: 2.6, angleStart: 0, color: '#82B238', posX: 0.79, posY: 0.25, posZ: -1.32, rotY: -1.12 }
+    };
+
+    let selectedObjectId = 'hedge_1';
+
+    let objectDefinitions = [
+      { id: 'platform', name: '🏛️ Grey Circular Platform', badge: 'Base', deletable: true },
+      { id: 'stairs', name: '🪜 Front Symmetrical Stairs', badge: 'Stairs', deletable: true },
+      { id: 'pedestal', name: '⬛ Black Pedestal Wall', badge: 'Sign', deletable: true },
+      { id: 'letters', name: '🔤 Gold NUM Letters', badge: 'Sign', deletable: true },
+      { id: 'hedge_1', name: '🌿 Hedge Bed #1', badge: 'Hedge', deletable: true },
+      { id: 'hedge_2', name: '🌿 Hedge Bed #2', badge: 'Hedge', deletable: true },
+      { id: 'hedge_3', name: '🌿 Hedge Bed #3', badge: 'Hedge', deletable: true },
+      { id: 'hedge_4', name: '🌿 Hedge Bed #4', badge: 'Hedge', deletable: true }
+    ];
+
+    // --- Undo / Redo History Stack ---
+    const undoStack = [];
+    const redoStack = [];
+    let isPerformingUndoRedo = false;
+
+    function saveStateToHistory() {
+      if (isPerformingUndoRedo) return;
+      const snapshot = JSON.parse(JSON.stringify({
+        state: monumentState,
+        defs: objectDefinitions,
+        selected: selectedObjectId
+      }));
+      undoStack.push(snapshot);
+      if (undoStack.length > 50) undoStack.shift();
+      redoStack.length = 0;
+    }
+
+    function undo() {
+      if (undoStack.length === 0) return;
+      isPerformingUndoRedo = true;
+      const currentSnapshot = JSON.parse(JSON.stringify({
+        state: monumentState,
+        defs: objectDefinitions,
+        selected: selectedObjectId
+      }));
+      redoStack.push(currentSnapshot);
+
+      const previous = undoStack.pop();
+      monumentState = previous.state;
+      objectDefinitions = previous.defs;
+      selectedObjectId = previous.selected;
+
+      rebuildEntireScene();
+      isPerformingUndoRedo = false;
+      showToast("↩️ Undo (Ctrl+Z)");
+    }
+
+    function redo() {
+      if (redoStack.length === 0) return;
+      isPerformingUndoRedo = true;
+      const currentSnapshot = JSON.parse(JSON.stringify({
+        state: monumentState,
+        defs: objectDefinitions,
+        selected: selectedObjectId
+      }));
+      undoStack.push(currentSnapshot);
+
+      const next = redoStack.pop();
+      monumentState = next.state;
+      objectDefinitions = next.defs;
+      selectedObjectId = next.selected;
+
+      rebuildEntireScene();
+      isPerformingUndoRedo = false;
+      showToast("↪️ Redo (Ctrl+Y)");
+    }
+
+    // --- Render Engine Setup ---
+    const container = document.getElementById('viewport-container');
+    const canvas = document.getElementById('canvas3d');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#0f1318');
+    scene.fog = new THREE.FogExp2('#0f1318', 0.02);
+
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0, 9, 14);
+
+    const orbitControls = new OrbitControls(camera, canvas);
+    orbitControls.enableDamping = true;
+    orbitControls.dampingFactor = 0.05;
+    orbitControls.target.set(0, 0.8, 0);
+
+    const transformControls = new TransformControls(camera, canvas);
+    transformControls.setSize(0.85);
+    scene.add(transformControls);
+
+    transformControls.addEventListener('dragging-changed', (e) => {
+      orbitControls.enabled = !e.value;
+      if (e.value) {
+        saveStateToHistory();
+      }
+    });
+
+    transformControls.addEventListener('change', () => {
+      const obj = transformControls.object;
+      if (!obj) return;
+      
+      const stateObj = monumentState[selectedObjectId];
+      if (stateObj) {
+        stateObj.posX = parseFloat(obj.position.x.toFixed(2));
+        stateObj.posY = parseFloat(obj.position.y.toFixed(2));
+        stateObj.posZ = parseFloat(obj.position.z.toFixed(2));
+        stateObj.rotY = parseFloat(obj.rotation.y.toFixed(2));
+        renderDynamicInspector();
+        updateJsonOutput();
+      }
+    });
+
+    // --- Lighting ---
+    const ambientLight = new THREE.AmbientLight('#ffffff', 0.65);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight('#fff5e6', 1.8);
+    dirLight.position.set(10, 15, 12);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    scene.add(dirLight);
+
+    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const raycaster = new THREE.Raycaster();
+
+    const grid = new THREE.GridHelper(30, 30, '#2e3a4a', '#1e2632');
+    grid.position.y = -0.01;
+    scene.add(grid);
+
+    // --- Scene Meshes Store ---
+    let meshes = {};
+    let monumentGroup = new THREE.Group();
+    scene.add(monumentGroup);
+
+    function initMonumentScene() {
+      monumentGroup.clear();
+      meshes = {};
+
+      objectDefinitions.forEach((def) => {
+        const state = monumentState[def.id];
+        if (!state) return;
+
+        if (def.id === 'platform' || state.type === 'platform') {
+          const platGeo = new THREE.CylinderGeometry(state.radius, state.radius, state.thickness, 64);
+          const platMat = new THREE.MeshStandardMaterial({ color: state.color, roughness: 0.8 });
+          const mesh = new THREE.Mesh(platGeo, platMat);
+          mesh.position.set(state.posX || 0, state.posY || 0.38, state.posZ || 0);
+          mesh.rotation.y = state.rotY || 0;
+          mesh.receiveShadow = true;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (def.id === 'stairs' || state.type === 'stairs') {
+          const group = new THREE.Group();
+          group.position.set(state.posX || 0, state.posY || 0.15, state.posZ || 0);
+          group.rotation.y = state.rotY || 0;
+          meshes[def.id] = group;
+          monumentGroup.add(group);
+          rebuildStairsForId(def.id);
+        } else if (def.id === 'pedestal' || state.type === 'pedestal') {
+          const pedGeo = new THREE.BoxGeometry(state.len, state.height, state.thickness);
+          const pedMat = new THREE.MeshStandardMaterial({ color: state.color, roughness: 0.2, metalness: 0.3 });
+          const mesh = new THREE.Mesh(pedGeo, pedMat);
+          mesh.position.set(state.posX, state.posY, state.posZ);
+          mesh.rotation.y = state.rotY || 0;
+          mesh.castShadow = true;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (def.id === 'letters' || state.type === 'letters') {
+          const numGeo = new THREE.BoxGeometry(2.6, 1.2, 0.15);
+          const numMat = new THREE.MeshStandardMaterial({ color: state.color, roughness: 0.3, metalness: 0.6 });
+          const mesh = new THREE.Mesh(numGeo, numMat);
+          mesh.position.set(state.posX, state.posY, state.posZ);
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (state.type === 'hedge' || def.id.startsWith('hedge')) {
+          const mesh = new THREE.Mesh();
+          mesh.position.set(state.posX || 0, state.posY || 0, state.posZ || 0);
+          mesh.rotation.y = state.rotY || 0;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (state.type === 'palm') {
+          const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, state.height || 6, 8);
+          const trunkMat = new THREE.MeshStandardMaterial({ color: '#5a4634', roughness: 0.9 });
+          const mesh = new THREE.Mesh(trunkGeo, trunkMat);
+          mesh.position.set(state.posX, state.posY || 3, state.posZ);
+          mesh.rotation.y = state.rotY || 0;
+          mesh.castShadow = true;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (state.type === 'lamp') {
+          const lampGeo = new THREE.CylinderGeometry(0.08, 0.12, state.height || 4, 8);
+          const lampMat = new THREE.MeshStandardMaterial({ color: state.color || '#dcdad4', roughness: 0.6 });
+          const mesh = new THREE.Mesh(lampGeo, lampMat);
+          mesh.position.set(state.posX, state.posY || 2, state.posZ);
+          mesh.rotation.y = state.rotY || 0;
+          mesh.castShadow = true;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        } else if (state.type === 'box') {
+          const boxGeo = new THREE.BoxGeometry(state.sizeX || 1.5, state.sizeY || 0.6, state.sizeZ || 0.8);
+          const boxMat = new THREE.MeshStandardMaterial({ color: state.color || '#a0a5aa', roughness: 0.8 });
+          const mesh = new THREE.Mesh(boxGeo, boxMat);
+          mesh.position.set(state.posX, state.posY || 0.3, state.posZ);
+          mesh.rotation.y = state.rotY || 0;
+          mesh.castShadow = true;
+          meshes[def.id] = mesh;
+          monumentGroup.add(mesh);
+        }
+      });
+
+      rebuildHedges();
+      renderObjectMenu();
+    }
+
+    function rebuildEntireScene() {
+      transformControls.detach();
+      initMonumentScene();
+      if (objectDefinitions.length > 0) {
+        selectObject(selectedObjectId && monumentState[selectedObjectId] ? selectedObjectId : objectDefinitions[0].id);
+      }
+      updateJsonOutput();
+    }
+
+    function rebuildStairsForId(id) {
+      const group = meshes[id];
+      const state = monumentState[id];
+      if (!group || !state) return;
+      group.clear();
+
+      const FRONT_ANGLE = Math.PI / 2;
+      const STAIR_ARC = ((state.arcDeg || 360) * Math.PI) / 180;
+      const cylinderFrontAngle = Math.PI / 2 - FRONT_ANGLE;
+      const arcStart = cylinderFrontAngle - STAIR_ARC / 2;
+      const arcLen = STAIR_ARC;
+      const baseRadius = monumentState.platform ? monumentState.platform.radius : 2.8;
+
+      for (let i = 0; i < (state.stepCount || 3); i++) {
+        const r = baseRadius + ((state.stepCount || 3) - i) * (state.stepWidth || 0.42);
+        const stepGeo = new THREE.CylinderGeometry(r, r, state.stepHeight || 0.15, 48, 1, false, arcStart, arcLen);
+        const stepMat = new THREE.MeshStandardMaterial({ color: state.color || '#8A5A43', roughness: 0.9 });
+        const stepMesh = new THREE.Mesh(stepGeo, stepMat);
+        stepMesh.position.y = i * (state.stepHeight || 0.15) + (state.stepHeight || 0.15) / 2;
+        stepMesh.castShadow = true;
+        group.add(stepMesh);
+      }
+    }
+
+    function buildHedgeGeometry(angleStart, angleEnd, innerR, depth, height, baseColorHex) {
+      const profile = [
+        [0.00, 0.00], [0.02, 0.35], [0.06, 0.70], [0.12, 0.90],
+        [0.22, 0.98], [0.35, 1.00], [0.65, 1.00], [0.78, 0.98],
+        [0.88, 0.90], [0.94, 0.70], [0.98, 0.35], [1.00, 0.00]
+      ];
+      const angularSegments = 48;
+      const crossSegments = profile.length;
+
+      const taperAt = (u) => {
+        const startEase = Math.sin(Math.min(1, u / 0.12) * Math.PI / 2);
+        const endEase = Math.sin(Math.min(1, (1 - u) / 0.12) * Math.PI / 2);
+        return Math.min(startEase, endEase);
+      };
+
+      const pos = [];
+      const col = [];
+      const baseColor = new THREE.Color(baseColorHex);
+
+      for (let i = 0; i <= angularSegments; i++) {
+        const u = i / angularSegments;
+        const angle = angleStart + (angleEnd - angleStart) * u;
+        const taper = taperAt(u);
+
+        for (let j = 0; j < crossSegments; j++) {
+          const [rFrac, yFrac] = profile[j];
+          const wave1 = Math.sin(i * 1.8) * Math.cos(j * 1.5);
+          const wave2 = Math.cos(i * 3.2) * Math.sin(j * 2.8);
+          const rJitter = 1 + 0.012 * wave1 + 0.008 * wave2;
+          const yJitter = 1 + 0.015 * wave1 + 0.010 * wave2;
+
+          const radius = innerR + rFrac * depth * taper * rJitter;
+          const y = yFrac * height * taper * yJitter;
+
+          pos.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+
+          const jitter = 0.90 + 0.10 * Math.sin(i * 1.2) * Math.cos(j * 1.8);
+          col.push(baseColor.r * jitter, baseColor.g * jitter, baseColor.b * jitter);
+        }
+      }
+
+      const idx = [];
+      for (let i = 0; i < angularSegments; i++) {
+        for (let j = 0; j < crossSegments - 1; j++) {
+          const a = i * crossSegments + j;
+          const b = a + 1;
+          const c = a + crossSegments;
+          const d = c + 1;
+          idx.push(a, c, b, b, c, d);
+        }
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    function rebuildHedges() {
+      objectDefinitions.filter(o => o.badge === 'Hedge').forEach(def => {
+        const state = monumentState[def.id];
+        if (!state || !meshes[def.id]) return;
+        const midR = state.innerR + state.depth / 2;
+        const span = state.arcLength / midR;
+        const geo = buildHedgeGeometry(
+          state.angleStart || 0,
+          (state.angleStart || 0) + span,
+          state.innerR, state.depth, state.height, state.color
+        );
+        if (meshes[def.id].geometry) meshes[def.id].geometry.dispose();
+        meshes[def.id].geometry = geo;
+        meshes[def.id].material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, side: THREE.DoubleSide });
+        meshes[def.id].position.set(state.posX || 0, state.posY || 0, state.posZ || 0);
+        meshes[def.id].rotation.y = state.rotY || 0;
+      });
+    }
+
+    // --- Dynamic Object Addition via Drag & Drop or Palette ---
+    function addObjectAtDropPosition(type, dropX = 0, dropZ = 0) {
+      saveStateToHistory();
+      let id, name, badge;
+
+      if (type === 'hedge') {
+        id = `hedge_${counterHedge++}`;
+        name = `🌿 Hedge Bed #${counterHedge - 1}`;
+        badge = 'Hedge';
+        monumentState[id] = { type, innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4.0, angleStart: 0, color: '#82B238', posX: parseFloat(dropX.toFixed(2)), posY: 0, posZ: parseFloat(dropZ.toFixed(2)), rotY: 0 };
+      } else if (type === 'platform') {
+        id = `platform_${counterPlatform++}`;
+        name = `🏛️ Platform #${counterPlatform - 1}`;
+        badge = 'Base';
+        monumentState[id] = { type, radius: 2.8, thickness: 0.45, color: '#cfcdc7', posX: parseFloat(dropX.toFixed(2)), posY: 0.38, posZ: parseFloat(dropZ.toFixed(2)), rotY: 0 };
+      } else if (type === 'stairs') {
+        id = `stairs_${counterStairs++}`;
+        name = `🪜 Stairs Tier #${counterStairs - 1}`;
+        badge = 'Stairs';
+        monumentState[id] = { type, stepCount: 3, stepWidth: 0.42, stepHeight: 0.15, arcDeg: 360, color: '#8A5A43', posX: parseFloat(dropX.toFixed(2)), posY: 0.15, posZ: parseFloat(dropZ.toFixed(2)), rotY: 0 };
+      } else if (type === 'pedestal') {
+        id = `pedestal_${counterPedestal++}`;
+        name = `⬛ Pedestal Wall #${counterPedestal - 1}`;
+        badge = 'Sign';
+        monumentState[id] = { type, len: 4.7, height: 0.75, thickness: 0.55, color: '#171717', posX: parseFloat(dropX.toFixed(2)), posY: 0.825, posZ: parseFloat(dropZ.toFixed(2)), rotY: 0 };
+      } else if (type === 'letters') {
+        id = `letters_${counterLetters++}`;
+        name = `🔤 Sign Letters #${counterLetters - 1}`;
+        badge = 'Sign';
+        monumentState[id] = { type, scale: 1.0, color: '#C89E2C', posX: parseFloat(dropX.toFixed(2)), posY: 1.95, posZ: parseFloat(dropZ.toFixed(2)) };
+      } else if (type === 'palm') {
+        id = `palm_${counterObj++}`;
+        name = `🌴 Sugar Palm #${counterObj - 1}`;
+        badge = 'Palm';
+        monumentState[id] = { type, height: 6.0, color: '#4a6b32', posX: parseFloat(dropX.toFixed(2)), posY: 3, posZ: parseFloat(dropZ.toFixed(2)) };
+      } else if (type === 'lamp') {
+        id = `lamp_${counterObj++}`;
+        name = `💡 Lamp Post #${counterObj - 1}`;
+        badge = 'Lamp';
+        monumentState[id] = { type, height: 4.0, color: '#dcdad4', posX: parseFloat(dropX.toFixed(2)), posY: 2, posZ: parseFloat(dropZ.toFixed(2)) };
+      } else if (type === 'box') {
+        id = `box_${counterObj++}`;
+        name = `📦 Custom Box #${counterObj - 1}`;
+        badge = 'Box';
+        monumentState[id] = { type, sizeX: 1.5, sizeY: 0.6, sizeZ: 0.8, color: '#a0a5aa', posX: parseFloat(dropX.toFixed(2)), posY: 0.3, posZ: parseFloat(dropZ.toFixed(2)) };
+      }
+
+      objectDefinitions.push({ id, name, badge, deletable: true });
+      rebuildEntireScene();
+      selectObject(id);
+    }
+
+    function deleteObject(id) {
+      const defIndex = objectDefinitions.findIndex(o => o.id === id);
+      if (defIndex !== -1) {
+        saveStateToHistory();
+        objectDefinitions.splice(defIndex, 1);
+        delete monumentState[id];
+
+        if (meshes[id]) {
+          monumentGroup.remove(meshes[id]);
+          if (meshes[id].geometry) meshes[id].geometry.dispose();
+          delete meshes[id];
+        }
+
+        transformControls.detach();
+        if (objectDefinitions.length > 0) {
+          selectObject(objectDefinitions[0].id);
+        } else {
+          selectedObjectId = null;
+          renderObjectMenu();
+          renderDynamicInspector();
+        }
+        updateJsonOutput();
+        showToast("🗑️ Element deleted");
+      }
+    }
+
+    // --- HTML5 Drag & Drop Palette Event Handling ---
+    let draggedType = null;
+
+    document.querySelectorAll('.palette-card').forEach((card) => {
+      card.addEventListener('dragstart', (e) => {
+        draggedType = e.currentTarget.getAttribute('data-type');
+        e.dataTransfer.setData('text/plain', draggedType);
+      });
+      card.addEventListener('click', (e) => {
+        const type = e.currentTarget.getAttribute('data-type');
+        addObjectAtDropPosition(type, (Math.random()-0.5)*4, (Math.random()-0.5)*4);
+      });
+    });
+
+    canvas.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    });
+
+    canvas.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(new THREE.Vector2(mouseX, mouseY), camera);
+      const intersectionPoint = new THREE.Vector3();
+      if (raycaster.ray.intersectPlane(groundPlane, intersectionPoint)) {
+        const type = draggedType || e.dataTransfer.getData('text/plain');
+        if (type) {
+          addObjectAtDropPosition(type, intersectionPoint.x, intersectionPoint.z);
+        }
+      }
+    });
+
+    // --- Render Object Menu ---
+    function renderObjectMenu() {
+      const listEl = document.getElementById('object-list-items');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      objectDefinitions.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = `object-item ${item.id === selectedObjectId ? 'selected' : ''}`;
+        
+        let html = `<span>${item.name}</span><div class="actions"><span class="badge">${item.badge}</span>`;
+        html += `<button class="btn-del" title="Delete object">🗑️</button>`;
+        html += `</div>`;
+
+        div.innerHTML = html;
+        div.addEventListener('click', (e) => {
+          if (e.target.classList.contains('btn-del')) {
+            e.stopPropagation();
+            deleteObject(item.id);
+          } else {
+            selectObject(item.id);
+          }
+        });
+        listEl.appendChild(div);
+      });
+    }
+
+    function selectObject(id) {
+      selectedObjectId = id;
+      renderObjectMenu();
+      renderDynamicInspector();
+
+      const mesh = meshes[id];
+      if (mesh) {
+        transformControls.attach(mesh);
+      } else {
+        transformControls.detach();
+      }
+    }
+
+    // --- Render Dynamic Inspector UI ---
+    function renderDynamicInspector() {
+      const containerEl = document.getElementById('dynamic-controls');
+      const titleEl = document.getElementById('selected-object-name');
+      const def = objectDefinitions.find((o) => o.id === selectedObjectId);
+      
+      titleEl.textContent = `Selected: ${def ? def.name : (selectedObjectId || 'None')}`;
+      containerEl.innerHTML = '';
+
+      if (!selectedObjectId || !monumentState[selectedObjectId]) {
+        containerEl.innerHTML = '<p style="font-size:12px; color:#7b8e9b;">Select an object or add a new one from the palette.</p>';
+        return;
+      }
+
+      const stateObj = monumentState[selectedObjectId];
+
+      // Delete Button for selected object
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-danger';
+      delBtn.textContent = '🗑️ Delete Selected Element';
+      delBtn.addEventListener('click', () => deleteObject(selectedObjectId));
+      containerEl.appendChild(delBtn);
+
+      // Generic Position Controls
+      if ('posX' in stateObj) {
+        const posTitle = document.createElement('div');
+        posTitle.className = 'section-title';
+        posTitle.textContent = '3D Position & Offset';
+        containerEl.appendChild(posTitle);
+
+        ['posX', 'posY', 'posZ'].forEach((axis) => {
+          containerEl.appendChild(createRangeControl(axis, stateObj[axis], -10, 10, 0.05, (v) => {
+            saveStateToHistory();
+            stateObj[axis] = v;
+            if (meshes[selectedObjectId]) {
+              meshes[selectedObjectId].position[axis.slice(-1).toLowerCase()] = v;
+            }
+            updateJsonOutput();
+          }));
+        });
+
+        if ('rotY' in stateObj) {
+          containerEl.appendChild(createRangeControl('rotY (Rotation Y rad)', stateObj.rotY || 0, -3.14, 3.14, 0.02, (v) => {
+            saveStateToHistory();
+            stateObj.rotY = v;
+            if (meshes[selectedObjectId]) {
+              meshes[selectedObjectId].rotation.y = v;
+            }
+            updateJsonOutput();
+          }));
+        }
+      }
+
+      // Specific Parameters
+      const paramTitle = document.createElement('div');
+      paramTitle.className = 'section-title';
+      paramTitle.textContent = 'Geometry Parameters';
+      containerEl.appendChild(paramTitle);
+
+      if (stateObj.type === 'hedge' || selectedObjectId.startsWith('hedge')) {
+        containerEl.appendChild(createRangeControl('innerR (Inner Radius)', stateObj.innerR, 3.0, 6.0, 0.05, (v) => {
+          saveStateToHistory(); stateObj.innerR = v; rebuildHedges(); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('depth (Radial Depth)', stateObj.depth, 0.5, 3.5, 0.05, (v) => {
+          saveStateToHistory(); stateObj.depth = v; rebuildHedges(); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('height (Hedge Height)', stateObj.height, 0.3, 1.5, 0.02, (v) => {
+          saveStateToHistory(); stateObj.height = v; rebuildHedges(); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('arcLength (Arc Length)', stateObj.arcLength, 2.0, 9.0, 0.1, (v) => {
+          saveStateToHistory(); stateObj.arcLength = v; rebuildHedges(); updateJsonOutput();
+        }));
+        containerEl.appendChild(createColorControl('color (Foliage Color)', stateObj.color, (v) => {
+          saveStateToHistory(); stateObj.color = v; rebuildHedges(); updateJsonOutput();
+        }));
+      } else if (stateObj.type === 'box') {
+        containerEl.appendChild(createRangeControl('Width (X)', stateObj.sizeX, 0.2, 5.0, 0.1, (v) => {
+          saveStateToHistory(); stateObj.sizeX = v; updateCustomBox(selectedObjectId);
+        }));
+        containerEl.appendChild(createRangeControl('Height (Y)', stateObj.sizeY, 0.2, 5.0, 0.1, (v) => {
+          saveStateToHistory(); stateObj.sizeY = v; updateCustomBox(selectedObjectId);
+        }));
+        containerEl.appendChild(createRangeControl('Depth (Z)', stateObj.sizeZ, 0.2, 5.0, 0.1, (v) => {
+          saveStateToHistory(); stateObj.sizeZ = v; updateCustomBox(selectedObjectId);
+        }));
+        containerEl.appendChild(createColorControl('Color', stateObj.color, (v) => {
+          saveStateToHistory(); stateObj.color = v; updateCustomBox(selectedObjectId);
+        }));
+      } else if (selectedObjectId === 'platform' || stateObj.type === 'platform') {
+        containerEl.appendChild(createRangeControl('radius', stateObj.radius, 2.5, 6.0, 0.1, (v) => {
+          saveStateToHistory(); stateObj.radius = v;
+          if (meshes[selectedObjectId]) {
+            meshes[selectedObjectId].geometry.dispose();
+            meshes[selectedObjectId].geometry = new THREE.CylinderGeometry(v, v, stateObj.thickness, 64);
+          }
+          rebuildStairsForId('stairs'); rebuildHedges(); updateJsonOutput();
+        }));
+      } else if (selectedObjectId === 'stairs' || stateObj.type === 'stairs') {
+        containerEl.appendChild(createRangeControl('arcDeg (Stair Arc Degrees 0-360)', stateObj.arcDeg || 360, 0, 360, 1, (v) => {
+          saveStateToHistory(); stateObj.arcDeg = v; rebuildStairsForId(selectedObjectId); rebuildHedges(); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('stepCount (Step Count)', stateObj.stepCount || 3, 1, 10, 1, (v) => {
+          saveStateToHistory(); stateObj.stepCount = v; rebuildStairsForId(selectedObjectId); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('stepWidth (Tread Width)', stateObj.stepWidth || 0.42, 0.1, 1.5, 0.02, (v) => {
+          saveStateToHistory(); stateObj.stepWidth = v; rebuildStairsForId(selectedObjectId); updateJsonOutput();
+        }));
+        containerEl.appendChild(createRangeControl('stepHeight (Riser Height)', stateObj.stepHeight || 0.15, 0.05, 0.5, 0.01, (v) => {
+          saveStateToHistory(); stateObj.stepHeight = v; rebuildStairsForId(selectedObjectId); updateJsonOutput();
+        }));
+      }
+    }
+
+    function updateCustomBox(id) {
+      const state = monumentState[id];
+      if (!state || !meshes[id]) return;
+      meshes[id].geometry.dispose();
+      meshes[id].geometry = new THREE.BoxGeometry(state.sizeX, state.sizeY, state.sizeZ);
+      meshes[id].material.color.set(state.color);
+      updateJsonOutput();
+    }
+
+    // Editable Number Input synchronized live with Range Slider
+    function createRangeControl(label, val, min, max, step, onChange) {
+      const div = document.createElement('div');
+      div.className = 'control-group';
+      div.innerHTML = `
+        <div class="control-label">
+          <span>${label}</span>
+          <input type="number" class="val-input" min="${min}" max="${max}" step="${step}" value="${val.toFixed(2)}">
+        </div>
+        <input type="range" min="${min}" max="${max}" step="${step}" value="${val}">
+      `;
+      const slider = div.querySelector('input[type=range]');
+      const numInput = div.querySelector('input[type=number]');
+
+      slider.addEventListener('input', (e) => {
+        const v = parseFloat(e.target.value);
+        numInput.value = v.toFixed(2);
+        onChange(v);
+      });
+
+      numInput.addEventListener('input', (e) => {
+        const v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          slider.value = v;
+          onChange(v);
+        }
+      });
+      return div;
+    }
+
+    function createColorControl(label, valHex, onChange) {
+      const div = document.createElement('div');
+      div.className = 'control-group';
+      div.innerHTML = `
+        <div class="control-label"><span>${label}</span><span class="val" style="font-family:monospace; font-weight:bold; color:#82B238;">${valHex.toUpperCase()}</span></div>
+        <input type="color" value="${valHex}" style="width:100%; height:30px; border:none; cursor:pointer; background:none;">
+      `;
+      const input = div.querySelector('input');
+      const valEl = div.querySelector('.val');
+      input.addEventListener('input', (e) => {
+        valEl.textContent = e.target.value.toUpperCase();
+        onChange(e.target.value);
+      });
+      return div;
+    }
+
+    function updateJsonOutput() {
+      document.getElementById('json-output').value = JSON.stringify(monumentState, null, 2);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // --- Undo / Redo Event Handlers ---
+    document.getElementById('btn-undo').addEventListener('click', undo);
+    document.getElementById('btn-redo').addEventListener('click', redo);
+
+    // --- Gizmo Mode Buttons ---
+    document.getElementById('btn-mode-translate').addEventListener('click', (e) => {
+      transformControls.setMode('translate');
+      setActiveGizmoBtn(e.target);
+    });
+    document.getElementById('btn-mode-rotate').addEventListener('click', (e) => {
+      transformControls.setMode('rotate');
+      setActiveGizmoBtn(e.target);
+    });
+    document.getElementById('btn-mode-scale').addEventListener('click', (e) => {
+      transformControls.setMode('scale');
+      setActiveGizmoBtn(e.target);
+    });
+    function setActiveGizmoBtn(btn) {
+      document.querySelectorAll('.gizmo-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // --- Camera Presets ---
+    function animateCamera(targetPos, targetLookAt) {
+      const startPos = camera.position.clone();
+      const startTarget = orbitControls.target.clone();
+      const duration = 500;
+      const startTime = performance.now();
+
+      function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = 0.5 - Math.cos(progress * Math.PI) / 2;
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        orbitControls.target.lerpVectors(startTarget, targetLookAt, ease);
+        orbitControls.update();
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    document.getElementById('btn-cam-front').addEventListener('click', () => animateCamera(new THREE.Vector3(0, 1.8, 12), new THREE.Vector3(0, 0.8, 0)));
+    document.getElementById('btn-cam-top').addEventListener('click', () => animateCamera(new THREE.Vector3(0, 16, 0.01), new THREE.Vector3(0, 0, 0)));
+    document.getElementById('btn-cam-fl').addEventListener('click', () => animateCamera(new THREE.Vector3(-9, 6, 9), new THREE.Vector3(0, 0.6, 0)));
+    document.getElementById('btn-cam-fr').addEventListener('click', () => animateCamera(new THREE.Vector3(9, 6, 9), new THREE.Vector3(0, 0.6, 0)));
+
+    // --- Copy JSON ---
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      const textarea = document.getElementById('json-output');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        showToast("Copied Full Monument JSON to Clipboard!");
+      });
+    });
+
+    // Keybindings
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+        e.preventDefault();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        redo();
+        e.preventDefault();
+      } else if (e.key === 'w' || e.key === 'W') {
+        transformControls.setMode('translate'); setActiveGizmoBtn(document.getElementById('btn-mode-translate'));
+      } else if (e.key === 'e' || e.key === 'E') {
+        transformControls.setMode('rotate'); setActiveGizmoBtn(document.getElementById('btn-mode-rotate'));
+      } else if (e.key === 'r' || e.key === 'R') {
+        transformControls.setMode('scale'); setActiveGizmoBtn(document.getElementById('btn-mode-scale'));
+      } else if (e.key === 'Delete') {
+        if (selectedObjectId) {
+          deleteObject(selectedObjectId);
+        }
+      }
+    });
+
+    // --- Initialize ---
+    initMonumentScene();
+    selectObject('hedge_1');
+    updateJsonOutput();
+
+    // --- Loop & Resize ---
+    function animate() {
+      requestAnimationFrame(animate);
+      orbitControls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+  </script>
+</body>
+</html>

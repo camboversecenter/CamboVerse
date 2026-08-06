@@ -127,7 +127,7 @@ const BUILDING_KINDS = [
   { kind: "great-hall",         label: "Great Hall",         w: 32,  d: 50, resizable: true,  fixedRot: false },
   { kind: "shrine",             label: "Shrine",             w: 8,   d: 8,  resizable: false, fixedRot: true  },
   { kind: "main-gate",          label: "Main Gate",          w: 15,  d: 6,  resizable: false, fixedRot: false },
-  { kind: "monument",           label: "Monument",           w: 25,  d: 12, resizable: false, fixedRot: false },
+  { kind: "monument",           label: "Monument",           w: 19,  d: 19, resizable: false, fixedRot: false },
   { kind: "sports-field",       label: "Sports Field",       w: 120, d: 75, resizable: true,  fixedRot: true  },
 ];
 const POOL_KIND = { kind: "pool", label: "Pool", w: 30, d: 18, resizable: true, fixedRot: false, isPool: true };
@@ -141,7 +141,7 @@ const WALL_HEIGHT_M = 4;
 // quadrilateral: the east boundary slants outward and the north edge tilts.
 const INITIAL_BUILDINGS = [
   { id: "gate",         kind: "main-gate",          label: "Main Entrance",        x: -3,    z: 249,   rotation: 3.07,    w: 15,    d: 6,    resizable: false },
-  { id: "monument",     kind: "monument",           label: "NUM Monument",         x: -12,   z: 126.5, rotation: Math.PI, w: 25,    d: 12,   resizable: false },
+  { id: "monument",     kind: "monument",           label: "NUM Monument",         x: -12,   z: 126.5, rotation: Math.PI, w: 19,    d: 19,   resizable: false },
   { id: "teaching",     kind: "teaching-block",     label: "Teaching Block",       x: -16,   z: -90.1, rotation: 0,       w: 53,    d: 16.1, resizable: true },
   { id: "construction", kind: "construction-block", label: "New Block (const.)",   x: -66,   z: -89.5, rotation: 0,       w: 42,    d: 16.1, resizable: true },
   { id: "parking-0",    kind: "parking-canopy",     label: "Parking Canopy 1",     x: 40.1,  z: 91.2,  rotation: 1.567,   w: 92.5,  d: 12.4, resizable: true },

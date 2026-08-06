@@ -71,6 +71,45 @@ export function paveTexture(repeat = 12): Texture {
   }, [repeat, repeat]);
 }
 
+/**
+ * Radial "sunburst" plaza paving — wedge slabs radiating from a centre point,
+ * for a circular platform. Meant for a single non-repeating `circleGeometry`:
+ * its default UVs put the centre at (0.5, 0.5) and the rim at the texture
+ * edge, so the wedges/rings drawn here line up with the geometry's own
+ * radius automatically — no custom UV work needed, unlike a tiling texture.
+ */
+export function radialPaveTexture(wedges = 28): Texture {
+  return tex(`radial:${wedges}`, 512, (ctx, s) => {
+    const r = rand(5);
+    const cx = s / 2, cy = s / 2, R = s / 2;
+    for (let i = 0; i < wedges; i++) {
+      const a0 = (i / wedges) * Math.PI * 2;
+      const a1 = ((i + 1) / wedges) * Math.PI * 2;
+      const g = 178 + (i % 2) * 8 + r() * 12;
+      ctx.fillStyle = `rgb(${g | 0},${(g - 2) | 0},${(g - 7) | 0})`;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R, a0, a1);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.strokeStyle = "rgba(118,116,110,0.5)";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < wedges; i++) {
+      const a = (i / wedges) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.stroke();
+    }
+    for (const frac of [0.36, 0.68, 0.94]) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * frac, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+}
+
 /** Poured concrete / asphalt roadway. Same rule: about 8 m per repeat. */
 export function roadTexture(repeat = 10): Texture {
   return tex(`road:${repeat}`, 256, (ctx, s) => {

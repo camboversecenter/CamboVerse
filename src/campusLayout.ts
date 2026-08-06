@@ -89,10 +89,12 @@ export const CAMPUS_WALLS: LayoutSegment[] = [
 /** Plan size for components that take no size prop, so framing still works. */
 const KIND_SIZE: Record<string, [number, number]> = {
   "main-gate": [15, 6],
-  // The monument is an 11.5 m plinth, but its curved steps and the clipped
-  // hedges either side carry it out to roughly 25 m across — which is what
+  // The monument is a circular plaza — steps + hedge mounds carry it out to
+  // ~16 m, and the palm ring a bit further to ~18 m across (see
+  // EntranceMonument's palmR in CampusBuildings.tsx) — which is what
   // planting has to keep clear of and what the page camera has to frame.
-  monument: [25, 12],
+  // Square-ish footprint since it's round, not oblong.
+  monument: [19, 19],
   shrine: [8, 8],
 };
 
