@@ -462,6 +462,34 @@ function useFigure(detail: Detail) {
 export const BODY_STAGE: [number, number, number] = [44, 22, 26];
 
 /**
+ * Raycasting is off for anything that is not the thing you are trying to tap.
+ *
+ * On the organs layer the ribcage is drawn *in front of* the liver, stomach and
+ * heart, so it caught almost every tap aimed at them and the panel jumped to
+ * "Skeleton". The bones stay visible — they are what places the organs — but
+ * they stop being a target until you switch to the skeleton layer, where they
+ * are the subject.
+ */
+const NO_PICK = () => null;
+
+/**
+ * The selected part glows and everything else steps back.
+ *
+ * A tinted `emissive` alone was almost invisible against a dark red organ under
+ * a bright environment. Lifting the whole surface and dropping everything else
+ * to a third is what actually reads on a phone in daylight.
+ */
+function highlight(isSelected: boolean, anySelected: boolean) {
+  return {
+    emissive: isSelected ? "#ffd9a0" : "#000000",
+    emissiveIntensity: isSelected ? 0.42 : 0,
+    transparent: anySelected && !isSelected,
+    opacity: anySelected && !isSelected ? 0.32 : 1,
+    depthWrite: !(anySelected && !isSelected),
+  };
+}
+
+/**
  * An organ that eases out of the body and back again.
  *
  * The movement is the explanation: a student watches the liver leave the space
@@ -546,7 +574,8 @@ export function Body({
             sheen={0.5}
             sheenColor="#e8b49a"
             sheenRoughness={0.7}
-            emissive={selected === "skin" ? "#4a2b1e" : "#000000"}
+            emissive={selected === "skin" ? "#ffd9a0" : "#000000"}
+            emissiveIntensity={selected === "skin" ? 0.3 : 0}
           />
         </mesh>
       )}
@@ -554,7 +583,7 @@ export function Body({
       {/* the outline of the figure stays as a ghost once you go inside, so the
           organs never float in a void with nothing to place them against */}
       {!showSkin && (
-        <mesh geometry={figure}>
+        <mesh geometry={figure} raycast={NO_PICK}>
           <meshPhysicalMaterial
             color={BODY.skin}
             roughness={0.8}
@@ -567,24 +596,28 @@ export function Body({
       )}
 
       {showBones && (
-        <group onClick={pick("skeleton")}>
-          {[skeleton.merged, skeleton.skull, skeleton.jaw].map((g, i) => (
-            <mesh
-              key={i}
-              geometry={g}
-              position={i === 1 ? [0, 73, 0] : i === 2 ? [0, 66, 3.5] : [0, 0, 0]}
-              castShadow={layer === "frame"}
-            >
-              <meshPhysicalMaterial
-                color={i === 0 ? BODY.bone : BODY.boneDeep}
-                roughness={0.55}
-                clearcoat={0.2}
-                transparent={boneOpacity < 1}
-                opacity={boneOpacity}
-                emissive={selected === "skeleton" ? "#4a4436" : "#000000"}
-              />
-            </mesh>
-          ))}
+        <group onClick={layer === "frame" ? pick("skeleton") : undefined}>
+          {[skeleton.merged, skeleton.skull, skeleton.jaw].map((g, i) => {
+            const hl = highlight(selected === "skeleton", !!selected && layer === "frame");
+            return (
+              <mesh
+                key={i}
+                geometry={g}
+                position={i === 1 ? [0, 73, 0] : i === 2 ? [0, 66, 3.5] : [0, 0, 0]}
+                castShadow={layer === "frame"}
+                raycast={layer === "frame" ? undefined : NO_PICK}
+              >
+                <meshPhysicalMaterial
+                  color={i === 0 ? BODY.bone : BODY.boneDeep}
+                  roughness={0.55}
+                  clearcoat={0.2}
+                  {...hl}
+                  transparent={hl.transparent || boneOpacity < 1}
+                  opacity={hl.transparent ? hl.opacity : boneOpacity}
+                />
+              </mesh>
+            );
+          })}
         </group>
       )}
 
@@ -615,9 +648,10 @@ export function Body({
                     clearcoatRoughness={0.28}
                     sheen={0.3}
                     sheenColor="#ffd9cf"
-                    transparent={!out && extracted !== null}
-                    opacity={!out && extracted !== null ? 0.25 : 1}
-                    emissive={selected === o.id ? "#3a1210" : "#000000"}
+                    {...highlight(selected === o.id, !!selected || extracted !== null)}
+                    transparent={(!!selected && selected !== o.id) || (extracted !== null && !out)}
+                    opacity={(!!selected && selected !== o.id) || (extracted !== null && !out) ? 0.28 : 1}
+                    depthWrite={!((!!selected && selected !== o.id) || (extracted !== null && !out))}
                   />
                 </mesh>
               </Extractable>
@@ -631,9 +665,10 @@ export function Body({
                   color={BODY.airway}
                   roughness={0.6}
                   clearcoat={0.2}
-                  transparent={extracted !== null}
-                  opacity={extracted !== null ? 0.25 : 1}
-                  emissive={selected === "airways" ? "#5b5340" : "#000000"}
+                  {...highlight(selected === "airways", !!selected || extracted !== null)}
+                  transparent={(!!selected && selected !== "airways") || extracted !== null}
+                  opacity={(!!selected && selected !== "airways") || extracted !== null ? 0.28 : 1}
+                  depthWrite={!((!!selected && selected !== "airways") || extracted !== null)}
                 />
               </mesh>
             ))}
@@ -694,7 +729,8 @@ export function SingleOrgan({
     e.stopPropagation();
     onPick(organId);
   };
-  const glow = selected === organId ? "#3a1210" : "#000000";
+  const glow = selected === organId ? "#ffd9a0" : "#000000";
+  const glowI = selected === organId ? 0.35 : 0;
 
   if (organId === "skeleton") {
     return (
@@ -708,7 +744,7 @@ export function SingleOrgan({
           >
             <meshPhysicalMaterial
               color={i === 0 ? BODY.bone : BODY.boneDeep}
-              roughness={0.5} clearcoat={0.25} emissive={selected === organId ? "#4a4436" : "#000000"}
+              roughness={0.5} clearcoat={0.25} emissive={glow} emissiveIntensity={glowI}
             />
           </mesh>
         ))}
@@ -721,7 +757,10 @@ export function SingleOrgan({
       <group position={[0, -44, 0]} onClick={pick}>
         {[trachea, tree].filter(Boolean).map((g, i) => (
           <mesh key={i} geometry={g as BufferGeometry} castShadow>
-            <meshPhysicalMaterial color={BODY.airway} roughness={0.55} clearcoat={0.3} emissive={glow} />
+            <meshPhysicalMaterial
+              color={BODY.airway} roughness={0.55} clearcoat={0.3}
+              emissive={glow} emissiveIntensity={glowI}
+            />
           </mesh>
         ))}
       </group>
@@ -740,6 +779,7 @@ export function SingleOrgan({
             sheen={0.3}
             sheenColor="#ffd9cf"
             emissive={glow}
+            emissiveIntensity={glowI}
           />
         </mesh>
       ))}

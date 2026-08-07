@@ -39,13 +39,16 @@ function TheSpecimen({
  * and a 15 cm pancreas rendered three times too far away. Setting it here, on
  * every change of framing, is what makes the jump land correctly.
  */
-function FrameCamera({ dist, centre, size }: { dist: number; centre: number; size: number }) {
+function FrameCamera({ dist, aim, size }: { dist: number; aim: number; size: number }) {
   const camera = useThree((s) => s.camera);
   useEffect(() => {
-    camera.position.set(dist * 0.4, centre + size * 0.06, dist);
-    camera.lookAt(0, centre, 0);
+    camera.position.set(dist * 0.4, aim + size * 0.24, dist);
+    camera.lookAt(0, aim, 0);
     camera.updateProjectionMatrix();
-  }, [camera, dist, centre, size]);
+    // deps deliberately exclude `aim`'s panel-driven changes: re-framing on
+    // every sheet toggle would yank the camera out from under the student.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [camera, dist, size]);
   return null;
 }
 
@@ -123,16 +126,20 @@ export function SpecimenView({
   // Frame off the horizontal field of view: on a portrait phone it is barely
   // 29° against the 45° vertical, so sizing off height alone hangs the specimen
   // off the sides of the screen.
-  const dist = useMemo(() => {
+  const { dist, visibleH } = useMemo(() => {
     const aspect = Math.min(2.2, Math.max(0.45, window.innerWidth / window.innerHeight));
     const halfV = Math.tan((45 * Math.PI) / 360);
     const halfH = Math.atan(halfV * aspect);
     const margin = 1.18;
-    return Math.max(
+    const d = Math.max(
       (specimen.spanU * 0.5 * margin) / Math.tan(halfH),
       (specimen.sizeU * 0.5 * margin) / halfV,
       18,
     );
+    // How much world height the frame covers at that distance. The camera sits
+    // off-axis, so this is the flat-on figure and slightly conservative, which
+    // is the right direction to be wrong in.
+    return { dist: d, visibleH: 2 * d * halfV };
   }, [specimen.sizeU, specimen.spanU]);
 
   // Same rule as the building pages: the orbit target lands at the centre of the
@@ -141,7 +148,13 @@ export function SpecimenView({
   // mass sits a little above its origin (the heart's apex hangs below it), hence
   // the 0.15 rather than 0.
   const centre = specimen.centreU ?? specimen.sizeU * 0.15;
-  const aim = centre - (info ? specimen.sizeU * 0.35 : 0);
+  // Lift the exhibit into the band above the open sheet — but only as far as
+  // there is slack for. Shifting by a fixed fraction of the *exhibit's* height
+  // worked for a 13 cm heart and pushed a 175 cm figure's head clean off the
+  // top of the screen. The shift belongs to the frame, not to the object, and
+  // it stops at whatever room is actually left around it.
+  const slack = Math.max(0, visibleH / 2 - specimen.sizeU * 0.42);
+  const aim = centre - (info ? Math.min(visibleH * 0.26, slack) : 0);
 
   return (
     <div className="lab">
@@ -162,7 +175,7 @@ export function SpecimenView({
         <XR store={store}>
           <color attach="background" args={["#101a22"]} />
           <StudioLight />
-          <FrameCamera dist={dist} centre={centre} size={specimen.sizeU} />
+          <FrameCamera dist={dist} aim={aim} size={specimen.sizeU} />
           {/* A specimen light rig, not a landscape one: a key from the front-left,
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}

@@ -43,6 +43,11 @@ invitation: a contributor can see exactly where their work would go.
 
 ## Taking things apart
 
+Selecting a part **lifts it and steps everything else back** — the chosen organ
+gains an emissive glow and the rest drop to about a third opacity. A tinted
+emissive alone was almost invisible against a dark red organ under a bright
+environment; on a phone in daylight it has to be unmistakable.
+
 An exhibit can declare `extractable: true`, and then tapping a part pulls it
 clear of the model: it eases out, enlarges, turns slowly so every side is
 visible, and **leaves its space empty behind it**. The rest of the exhibit fades
@@ -85,11 +90,22 @@ different depending on which screen you reached it from would quietly teach that
 there are two of them. The heart and lungs are the exceptions: they have richer
 bespoke models because they have internal structure worth its own exhibit.
 
-> **One trap worth knowing.** react-three-fiber reads the `camera` prop *once,
-> at canvas creation*. Teleporting re-renders the same `SpecimenView` rather
-> than remounting it, so the camera kept the body's distance and a 15 cm
-> pancreas rendered three times too far away. `FrameCamera` sets it on every
-> change of framing.
+> **Three traps worth knowing**, all found by trying to tap an organ rather than
+> by reading the code:
+>
+> - react-three-fiber reads the `camera` prop *once, at canvas creation*.
+>   Teleporting re-renders the same `SpecimenView` rather than remounting it, so
+>   the camera kept the body's distance and a 15 cm pancreas rendered three times
+>   too far away. `FrameCamera` sets it on every change of framing.
+> - **Anything drawn in front of a target must stop being a target.** The ribcage
+>   is drawn over the liver, stomach and heart on the organs layer, and it caught
+>   almost every tap meant for them. Bones now take `raycast={() => null}` unless
+>   the skeleton layer is showing, where they are the subject.
+> - **Lift the exhibit by a fraction of the frame, not of the object.** Shifting
+>   up by 35% of the *exhibit's* height cleared the sheet for a 13 cm heart and
+>   pushed a 175 cm figure's head clean off the top — which then made every tap
+>   land somewhere unexpected. The shift is now a fraction of the visible frame,
+>   clamped to whatever slack is left around the object.
 
 ## How realistic can this get?
 
