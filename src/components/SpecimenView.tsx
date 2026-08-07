@@ -8,6 +8,7 @@ import { Body, SingleOrgan } from "./LabBody";
 import { Lever, GearTrain, Engine } from "./LabMachines";
 import { Water, Methane, SaltCrystal, Carbon } from "./LabChemistry";
 import { BurnMethane, MakeWater, Neutralise } from "./LabReactions";
+import { TreadlePump, BiogasDigester } from "./LabFarm";
 import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
 
@@ -37,6 +38,8 @@ function TheSpecimen({
     case "burn-methane": return <BurnMethane {...machine} />;
     case "make-water": return <MakeWater {...machine} />;
     case "neutralise": return <Neutralise {...machine} />;
+    case "treadle-pump": return <TreadlePump {...machine} />;
+    case "biogas": return <BiogasDigester {...machine} />;
     case "human-body":
       return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
     case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;

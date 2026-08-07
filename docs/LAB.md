@@ -190,6 +190,26 @@ bespoke models because they have internal structure worth its own exhibit.
 >   land somewhere unexpected. The shift is now a fraction of the visible frame,
 >   clamped to whatever slack is left around the object.
 
+## Cross-linking exhibits
+
+A part can name another exhibit with `detail`, and the panel offers to jump
+there. It is how an organ opens its own screen inside the body, and it is how
+subjects join up:
+
+```ts
+{ id: "gas", name: "Gas — mostly methane", layer: "cutaway",
+  at: [0, 34, 30], detail: "methane", blurb: "…" }
+```
+
+The biogas digester is the case worth copying. Its gas links to the **Methane**
+exhibit in chemistry, and its stove links to the **Making fire** experiment — so
+a student can follow one substance from a heap of manure in an agriculture
+exhibit to a blue flame under a pot, crossing two subjects, without ever leaving
+the Lab. Back always returns the way they came.
+
+Look for those links when adding anything. A lab where the shelves never refer
+to each other is a filing cabinet.
+
 ## How realistic can this get?
 
 Worth being straight about the ceiling, because it is set by two constraints we
@@ -386,6 +406,8 @@ always presents Ultra. Auto-detected, overridable from the button top-right.
 - [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) — the whole figure, the skeleton, and the extraction wrapper
 - [`src/components/LabMachines.tsx`](../src/components/LabMachines.tsx) — the lever, the gear train and the engine, and how a machine animates itself
 - [`src/components/LabChemistry.tsx`](../src/components/LabChemistry.tsx) — atoms, bonds, lattices, and the three molecular representations
+- [`src/components/LabReactions.tsx`](../src/components/LabReactions.tsx) — the experiments, and the reaction clock
+- [`src/components/LabFarm.tsx`](../src/components/LabFarm.tsx) — the treadle pump and the biogas digester
 - [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) — the in-browser studio environment
 - [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
 - [`TODO.md`](../TODO.md) — the contributor task board

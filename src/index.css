@@ -3601,10 +3601,12 @@ select.farm-modal-note { appearance: none; }
 .lab-knob input[type="range"] { width: 100%; accent-color: #4aa3c4; }
 
 .lab-readout {
-  /* fixed screen size, so a long caption has to wrap rather than run off the
-     edge of a phone */
+  /* Fixed screen size, so a long caption has to wrap rather than run off the
+     edge of a phone. `width: max-content` matters: drei's Html wrapper shrinks
+     to its minimum content width without it, and a five-word readout collapses
+     into a tall one-word column. */
   padding: 4px 10px; border-radius: 8px; text-align: center;
-  max-width: min(300px, calc(100vw - 40px)); white-space: normal;
+  width: max-content; max-width: min(290px, calc(100vw - 44px)); white-space: normal;
   background: rgba(10, 20, 26, 0.88); color: #eef6fa;
   border: 1px solid rgba(120, 200, 226, 0.5);
   font: 600 11px system-ui, sans-serif;
