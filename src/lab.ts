@@ -182,6 +182,25 @@ export interface Specimen {
   organOf?: string;
   /** Where this exhibit came from, so its back button says so. */
   parentOf?: string;
+  /**
+   * This exhibit moves, and gets a Run/Stop control.
+   *
+   * A machine explained standing still is a diagram. Most of what a four-stroke
+   * engine or a gear train has to teach is *sequence* — what happens when, and
+   * in what order — which a static model cannot show at all. Motion is to a
+   * machine what the layer buttons are to an organ.
+   */
+  animated?: boolean;
+  /**
+   * One adjustable number, with a slider. Machines usually have exactly one
+   * parameter worth playing with — where the fulcrum sits, how steep the ramp
+   * is — and letting a student move it themselves is the difference between
+   * being told about mechanical advantage and finding it.
+   *
+   * The model draws its own readout in the scene, next to the thing that
+   * changes, rather than in the panel where it would be a number in a table.
+   */
+  knob?: { label: string; min: number; max: number; step: number; value: number; unit: string };
 }
 
 export const SPECIMENS: Specimen[] = [
@@ -431,6 +450,166 @@ export const SPECIMENS: Specimen[] = [
     sizeU: 24,
     spanU: 23,
     reallife: "Each lung is roughly 25 cm tall. Together they hold about 6 litres of air when full.",
+  },
+  {
+    id: "lever",
+    name: "The lever",
+    khmer: null,
+    english: "Move the fulcrum and watch the effort change",
+    subject: "physics",
+    topic: "Simple machines",
+    animated: true,
+    knob: { label: "Fulcrum, from the load end", min: 10, max: 110, step: 5, value: 30, unit: " cm" },
+    layers: [
+      { id: "whole", label: "The lever", hint: "Just the beam, the fulcrum and the load" },
+      { id: "cutaway", label: "Forces", hint: "Show the load and the effort in newtons" },
+      { id: "frame", label: "Arms", hint: "The two distances that decide everything" },
+    ],
+    about: [
+      "A lever trades distance for force. Push a long way with a small force at one end and the other end moves a short way with a large one. Nothing is created — the work is the same either way.",
+      "Slide the fulcrum and watch. Close to the load, the effort arm is long and lifting is easy. Close to the effort, you need more force than the load weighs.",
+      "It is the oldest machine there is, and it is in a crowbar, a wheelbarrow, a pair of scissors, an oar, and your own forearm.",
+    ],
+    parts: [
+      { id: "beam", name: "Beam", khmer: null, layer: "whole", at: [30, 10, 0],
+        blurb: "The rigid bar. It has to be stiff — if it bends, the effort goes into bending it rather than into lifting the load." },
+      { id: "fulcrum", name: "Fulcrum", khmer: null, layer: "whole", at: [0, -22, 0],
+        blurb: "The pivot. Where you put it is the whole design: it sets the length of both arms, and their ratio is the advantage." },
+      { id: "load", name: "Load", khmer: null, layer: "cutaway", at: [-46, 18, 0],
+        blurb: "What you are trying to lift — 100 N here, about the weight of a 10 kg sack of rice." },
+      { id: "effort", name: "Effort", khmer: null, layer: "cutaway", at: [52, 18, 0],
+        blurb: "The force you apply. With the fulcrum near the load this is much smaller than the load — but you have to move it much further." },
+    ],
+    quiz: [
+      {
+        q: "To lift a heavy load with the least effort, the fulcrum should be…",
+        options: ["Close to the load", "Close to the effort", "Exactly in the middle", "It makes no difference"],
+        answer: 0,
+        why: "Close to the load. That makes the effort arm long and the load arm short, and the advantage is one divided by the other.",
+      },
+      {
+        q: "A lever gives you more force. What do you give up?",
+        options: ["Nothing", "Distance — the effort moves further", "Time only", "Weight"],
+        answer: 1,
+        why: "Work is force times distance, and the lever does not change the work. More force at the load means the effort end travels proportionally further.",
+      },
+    ],
+    sizeU: 62,
+    spanU: 152,
+    centreU: 0,
+    reallife: "The beam is 1.2 m — about the length of a crowbar. The load is 100 N, roughly a 10 kg sack.",
+  },
+  {
+    id: "gear-train",
+    name: "Gears",
+    khmer: null,
+    english: "Three meshed gears, and what a ratio actually does",
+    subject: "physics",
+    topic: "Simple machines",
+    animated: true,
+    layers: [
+      { id: "whole", label: "Running", hint: "The gears as they mesh" },
+      { id: "cutaway", label: "Axles", hint: "Show what each gear turns on" },
+      { id: "frame", label: "Gears only", hint: "Drop the backing plate" },
+    ],
+    about: [
+      "Two meshed gears always turn opposite ways, and their speeds are set by their tooth counts: ten teeth driving thirty means three turns in for one turn out.",
+      "Watch the small red gear and the large brass one. They turn the same way — which surprises most people — because the middle gear reverses the direction twice. That is the only job an idler has.",
+      "Slower out means stronger out. A bicycle in low gear, a motorbike pulling away, a rice mill: all the same trade.",
+    ],
+    parts: [
+      { id: "driver", name: "Driver (10 teeth)", khmer: null, layer: "whole", at: [-34, -18, 0],
+        blurb: "The input. Every turn of this gear moves ten teeth along, whatever it is meshed with." },
+      { id: "idler", name: "Idler (20 teeth)", khmer: null, layer: "whole", at: [0, -28, 0],
+        blurb: "In the middle, changing nothing about the final ratio — only the direction. Remove it and the output would run backwards." },
+      { id: "driven", name: "Driven (30 teeth)", khmer: null, layer: "whole", at: [40, -38, 0],
+        blurb: "The output. Three times slower than the driver, and about three times stronger for it." },
+    ],
+    quiz: [
+      {
+        q: "A 10-tooth gear drives a 30-tooth gear. The big gear turns…",
+        options: ["3 times faster", "3 times slower", "At the same speed", "Backwards only"],
+        answer: 1,
+        why: "Three times slower. Each turn of the small gear moves 10 teeth, and the big gear needs 30 to complete one turn.",
+      },
+      {
+        q: "What is the idler gear in the middle for?",
+        options: ["To go faster", "To change the ratio", "To reverse the direction", "To store energy"],
+        answer: 2,
+        why: "Direction only. It adds a second reversal, so input and output turn the same way. It has no effect on the overall ratio.",
+      },
+    ],
+    sizeU: 92,
+    spanU: 122,
+    centreU: 0,
+    reallife: "Gears this size would sit inside a hand drill or a small gearbox.",
+  },
+  {
+    id: "engine",
+    name: "Four-stroke engine",
+    khmer: null,
+    english: "One cylinder, four strokes, two turns of the crank",
+    subject: "physics",
+    topic: "Engines",
+    animated: true,
+    knob: { label: "Speed", min: 0, max: 100, step: 5, value: 30, unit: "%" },
+    layers: [
+      { id: "whole", label: "Assembled", hint: "The engine from outside" },
+      { id: "cutaway", label: "Cut away", hint: "See into the cylinder while it runs" },
+      { id: "frame", label: "Moving parts", hint: "Just piston, rod and crankshaft" },
+    ],
+    about: [
+      "Four strokes, in order: pull the mixture in, squeeze it, burn it, push the waste out. Then start again. The whole cycle takes TWO turns of the crankshaft, which is the part hardest to see in a drawing and obvious the moment it moves.",
+      "Only one of the four strokes actually produces power. The other three are paid for by the flywheel's momentum, which is why a single-cylinder engine thumps and a four-cylinder one hums.",
+      "Turn it down to a crawl with the speed slider and watch one valve at a time.",
+    ],
+    parts: [
+      { id: "piston", name: "Piston", khmer: null, layer: "cutaway", at: [-13, 8, 0],
+        blurb: "Slides up and down the bore, sealing against the wall with rings. It converts the pressure of burning fuel into a push." },
+      { id: "rod", name: "Connecting rod", khmer: null, layer: "cutaway", at: [-13, -8, 0],
+        blurb: "Links the piston to the crank. It has to swing as well as push, which is why the piston's motion is not a simple sine wave." },
+      { id: "crank", name: "Crankshaft", khmer: null, layer: "frame", at: [0, -30, 0],
+        blurb: "Turns the piston's straight-line push into rotation. Its offset sets the stroke length — how far the piston travels." },
+      { id: "cylinder", name: "Cylinder", khmer: null, layer: "cutaway", at: [13, 12, 0],
+        blurb: "The bore the piston runs in. Its volume, times the number of cylinders, is what people mean by a 125 cc engine." },
+      { id: "intake", name: "Intake valve", khmer: null, layer: "cutaway", at: [-12, 30, 0],
+        blurb: "Opens on the first stroke to let the fuel and air mixture in, then stays shut for the other three." },
+      { id: "exhaust", name: "Exhaust valve", khmer: null, layer: "cutaway", at: [14, 30, 0],
+        blurb: "Opens on the last stroke to let the burnt gas out. If the timing of these two is wrong, the engine will not run at all." },
+      { id: "plug", name: "Spark plug", khmer: null, layer: "whole", at: [0, 38, 0],
+        blurb: "Fires at the top of the compression stroke. A few degrees early or late and the engine loses power or knocks." },
+      { id: "block", name: "Engine block", khmer: null, layer: "whole", at: [-18, 6, 0],
+        blurb: "The casting everything else lives in. It carries the heat away and holds the crankshaft in line with the bore." },
+    ],
+    quiz: [
+      {
+        q: "How many turns of the crankshaft make one complete four-stroke cycle?",
+        options: ["Half a turn", "One turn", "Two turns", "Four turns"],
+        answer: 2,
+        why: "Two. Each stroke is half a turn, and there are four strokes — which is why the valves open only once every other revolution.",
+      },
+      {
+        q: "Which stroke actually produces power?",
+        options: ["Intake", "Compression", "Power", "Exhaust"],
+        answer: 2,
+        why: "Only the third. The other three are driven by momentum stored in the flywheel from the last power stroke.",
+      },
+      {
+        q: "What is the compression stroke for?",
+        options: [
+          "Cooling the engine",
+          "Squeezing the mixture so it burns with more force",
+          "Pushing out exhaust",
+          "Drawing in fuel",
+        ],
+        answer: 1,
+        why: "Squeezing the fuel and air into a small space makes the burn far more forceful. More compression means more power from the same fuel — up to the point where it ignites early and knocks.",
+      },
+    ],
+    sizeU: 82,
+    spanU: 36,
+    centreU: 4,
+    reallife: "About the size of the single-cylinder engine in a 125 cc motorbike.",
   },
   {
     id: "organ-brain",

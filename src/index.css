@@ -3580,3 +3580,31 @@ select.farm-modal-note { appearance: none; }
   font: 700 12px system-ui, sans-serif;
 }
 .lab-open:hover { background: #24697f; }
+
+/* Machines: the run control, the knob, and in-scene readouts */
+.lab-run.on { background: #b23a34; border-color: #b23a34; color: #fff; }
+
+.lab-knob {
+  position: fixed; z-index: 17; left: 50%; transform: translateX(-50%);
+  /* clears the layer row even when the run button wraps it onto a second line */
+  top: calc(env(safe-area-inset-top, 0) + 132px);
+  width: min(360px, calc(100vw - 32px));
+  background: rgba(18, 30, 38, 0.78); border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px; padding: 8px 14px 10px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.lab-knob label {
+  display: flex; justify-content: space-between; gap: 10px; align-items: baseline;
+  font: 600 11.5px system-ui, sans-serif; color: #c6dae4; margin-bottom: 5px;
+}
+.lab-knob label b { font: 800 13px system-ui, sans-serif; color: #eef6fa; }
+.lab-knob input[type="range"] { width: 100%; accent-color: #4aa3c4; }
+
+.lab-readout {
+  padding: 4px 9px; border-radius: 8px; white-space: nowrap; text-align: center;
+  background: rgba(10, 20, 26, 0.88); color: #eef6fa;
+  border: 1px solid rgba(120, 200, 226, 0.5);
+  font: 600 11px system-ui, sans-serif;
+}
+.lab-readout b { display: block; font: 800 12.5px system-ui, sans-serif; }
+.lab-readout span { display: block; font-weight: 500; opacity: 0.8; font-size: 10.5px; }

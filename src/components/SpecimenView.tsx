@@ -5,6 +5,7 @@ import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
 import { Heart, Lungs, type Detail } from "./LabOrgans";
 import { Body, SingleOrgan } from "./LabBody";
+import { Lever, GearTrain, Engine } from "./LabMachines";
 import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
 
@@ -13,15 +14,20 @@ import { subjectById, type LabLayer, type Specimen } from "../lab";
  * everything else in the Lab is data.
  */
 function TheSpecimen({
-  id, organOf, layer, detail, onPick, selected, extracted,
+  id, organOf, layer, detail, onPick, selected, extracted, running, knob,
 }: {
   id: string; organOf?: string; layer: LabLayer; detail: Detail;
   onPick: (partId: string) => void; selected: string | null; extracted: string | null;
+  running: boolean; knob: number;
 }) {
   // An organ pulled out of the body onto its own screen: the same geometry the
   // body uses, drawn alone.
   if (organOf) return <SingleOrgan organId={organOf} detail={detail} onPick={onPick} selected={selected} />;
+  const machine = { layer, detail, onPick, selected, running, knob };
   switch (id) {
+    case "lever": return <Lever {...machine} />;
+    case "gear-train": return <GearTrain {...machine} />;
+    case "engine": return <Engine {...machine} />;
     case "human-body":
       return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
     case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
@@ -112,6 +118,11 @@ export function SpecimenView({
   // Which part has been pulled clear of the exhibit. Only one at a time: the
   // empty space it leaves behind is half of what the extraction teaches.
   const [extracted, setExtracted] = useState<string | null>(null);
+  // Machines run by default: a student who lands on an engine should see it
+  // turning, not have to discover a button before anything happens.
+  const [running, setRunning] = useState(true);
+  const [knob, setKnob] = useState(specimen.knob?.value ?? 0);
+  useEffect(() => { setKnob(specimen.knob?.value ?? 0); }, [specimen.knob?.value, specimen.id]);
   const [spin, setSpin] = useState(true);
   const [info, setInfo] = useState(true);
 
@@ -199,6 +210,8 @@ export function SpecimenView({
               onPick={setPicked}
               selected={picked}
               extracted={extracted}
+              running={running}
+              knob={knob}
             />
             {/* A pin on the selected part only. Every label at once is how an
                 anatomy diagram works on paper and how nothing works on a phone. */}
@@ -262,10 +275,37 @@ export function SpecimenView({
             {l.label}
           </button>
         ))}
-        <button className="lab-layer" onClick={() => setSpin((v) => !v)}>
+        <button className="lab-layer" onClick={() => setSpin((v) => !v)} title="Turn the exhibit">
           {spin ? "⏸" : "▶"}
         </button>
+        {specimen.animated && (
+          <button
+            className={running ? "lab-layer lab-run on" : "lab-layer lab-run"}
+            onClick={() => setRunning((v) => !v)}
+            title="Run the mechanism"
+          >
+            {running ? "⏹ Stop it" : "▶ Run it"}
+          </button>
+        )}
       </div>
+
+      {specimen.knob && (
+        <div className="lab-knob">
+          <label htmlFor="lab-knob-input">
+            {specimen.knob.label}
+            <b>{knob}{specimen.knob.unit}</b>
+          </label>
+          <input
+            id="lab-knob-input"
+            type="range"
+            min={specimen.knob.min}
+            max={specimen.knob.max}
+            step={specimen.knob.step}
+            value={knob}
+            onChange={(e) => setKnob(Number(e.target.value))}
+          />
+        </div>
+      )}
 
       {!info && (
         <button className="bld-show" onClick={() => setInfo(true)}>

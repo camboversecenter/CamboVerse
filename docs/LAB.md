@@ -41,6 +41,30 @@ invitation: a contributor can see exactly where their work would go.
    worse than a missing one. Leave `khmer: null` and the interface prints
    "Khmer term needed" — which is honest, and turns the gap into a task.
 
+## Machines: motion and one knob
+
+Organs peel back; machines **move**. A four-stroke engine standing still is a
+cross-section in a textbook — almost everything it has to teach is *sequence*:
+which valve is open, which way the crank is turning, what the piston is doing
+while that happens. Motion is to a machine what the layer buttons are to an
+organ, so an exhibit can declare:
+
+```ts
+animated: true,        // adds a Run / Stop control; machines run on arrival
+knob: { label: "Fulcrum, from the load end",
+        min: 10, max: 110, step: 5, value: 30, unit: " cm" },
+```
+
+`knob` is **one** adjustable number with a slider. Machines usually have exactly
+one parameter worth playing with — where the fulcrum sits, how fast it runs —
+and letting a student move it is the difference between being told about
+mechanical advantage and finding it.
+
+The model draws its **own readout in the scene**, beside the thing that changes,
+rather than in the panel where it would be a number in a table. Readouts use
+drei's `Html` **without** `distanceFactor`, so they stay at a fixed screen size:
+a number is there to be read, and a wide exhibit shrank them to nothing.
+
 ## Taking things apart
 
 Selecting a part **lifts it and steps everything else back** — the chosen organ
@@ -101,6 +125,9 @@ bespoke models because they have internal structure worth its own exhibit.
 >   is drawn over the liver, stomach and heart on the organs layer, and it caught
 >   almost every tap meant for them. Bones now take `raycast={() => null}` unless
 >   the skeleton layer is showing, where they are the subject.
+> - **Merged geometries must agree about indices.** `CylinderGeometry` is
+>   indexed and `ExtrudeGeometry` is not, and `mergeGeometries` refuses a mix —
+>   the gear silently failed to build. `toNonIndexed()` on the hub is the fix.
 > - **Lift the exhibit by a fraction of the frame, not of the object.** Shifting
 >   up by 35% of the *exhibit's* height cleared the sheet for a 13 cm heart and
 >   pushed a 175 cm figure's head clean off the top — which then made every tap
@@ -208,6 +235,7 @@ The procedural vocabulary already there:
 | `branchTree({ from, dir, length, radius, levels })` | anything that divides and divides again — a bronchial tree, a vascular bed, a river delta |
 | `loft(rings, seg, cap)` *(LabBody)* | one continuous surface through a stack of elliptical cross-sections — a torso, a limb, a chimney, a hull |
 | `longBone(length, shaft, head)` *(LabBody)* | a shaft that swells at both ends — a bone, a dumbbell, a turned baluster |
+| `gearGeometry(teeth, radius, thick)` *(LabMachines)* | a spur gear — a hub with teeth standing off its rim |
 | `labNoise(seed, a, b, c)` | deterministic wobble, so a render is reproducible |
 
 **Honour `detail`.** `normal` is the low-end-phone baseline and must stay
@@ -300,6 +328,7 @@ always presents Ultra. Auto-detected, overridable from the button top-right.
 - [`src/components/SpecimenView.tsx`](../src/components/SpecimenView.tsx) — an exhibit's page
 - [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) — the procedural vocabulary
 - [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) — the whole figure, the skeleton, and the extraction wrapper
+- [`src/components/LabMachines.tsx`](../src/components/LabMachines.tsx) — the lever, the gear train and the engine, and how a machine animates itself
 - [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) — the in-browser studio environment
 - [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
 - [`TODO.md`](../TODO.md) — the contributor task board
