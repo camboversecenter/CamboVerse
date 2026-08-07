@@ -65,6 +65,30 @@ rather than in the panel where it would be a number in a table. Readouts use
 drei's `Html` **without** `distanceFactor`, so they stay at a fixed screen size:
 a number is there to be read, and a wide exhibit shrank them to nothing.
 
+## Chemistry: the layers *are* the lesson
+
+The Lab's three layers turn out to be exactly the three ways chemists draw a
+molecule, which is a lucky fit worth stating:
+
+| layer | representation | what it is honest about |
+|---|---|---|
+| `whole` | space-filling | how much room the molecule really takes up |
+| `cutaway` | ball-and-stick | which atom is joined to which |
+| `frame` | bonds only | the shape, with the atoms out of the way |
+
+**None of the three is "the real one."** Space-filling is closest to the volume a
+molecule occupies and useless for seeing structure; ball-and-stick shows the
+connections and lies about the spacing. A student should meet all three and know
+why each exists — so here the layer buttons are the teaching, not a convenience.
+
+Scale is **1 Å = 20 units**, with standard CPK colours and both radii (van der
+Waals for space-filling, covalent for ball-and-stick) in
+[`LabChemistry.tsx`](../src/components/LabChemistry.tsx).
+
+`running` is **thermal motion**. Molecules are never still, and a student who
+only ever sees the frozen ball-and-stick picture comes away believing they are.
+The amplitude is exaggerated; real vibration is a few percent of a bond length.
+
 ## Taking things apart
 
 Selecting a part **lifts it and steps everything else back** — the chosen organ
@@ -329,6 +353,7 @@ always presents Ultra. Auto-detected, overridable from the button top-right.
 - [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) — the procedural vocabulary
 - [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) — the whole figure, the skeleton, and the extraction wrapper
 - [`src/components/LabMachines.tsx`](../src/components/LabMachines.tsx) — the lever, the gear train and the engine, and how a machine animates itself
+- [`src/components/LabChemistry.tsx`](../src/components/LabChemistry.tsx) — atoms, bonds, lattices, and the three molecular representations
 - [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) — the in-browser studio environment
 - [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
 - [`TODO.md`](../TODO.md) — the contributor task board

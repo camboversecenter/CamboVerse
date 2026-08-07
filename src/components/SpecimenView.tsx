@@ -6,6 +6,7 @@ import { ACESFilmicToneMapping } from "three";
 import { Heart, Lungs, type Detail } from "./LabOrgans";
 import { Body, SingleOrgan } from "./LabBody";
 import { Lever, GearTrain, Engine } from "./LabMachines";
+import { Water, Methane, SaltCrystal, Carbon } from "./LabChemistry";
 import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
 
@@ -28,6 +29,10 @@ function TheSpecimen({
     case "lever": return <Lever {...machine} />;
     case "gear-train": return <GearTrain {...machine} />;
     case "engine": return <Engine {...machine} />;
+    case "water": return <Water {...machine} />;
+    case "methane": return <Methane {...machine} />;
+    case "salt": return <SaltCrystal {...machine} />;
+    case "carbon": return <Carbon {...machine} />;
     case "human-body":
       return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
     case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
