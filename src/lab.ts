@@ -146,6 +146,13 @@ export interface Specimen {
    */
   sizeU: number;
   /**
+   * The y of the model's visual centre, if it is not a little above the origin.
+   * The body is modelled from the navel, so its centre is 0; an organ modelled
+   * from its base sits above. Framing aims here, and getting it wrong points the
+   * camera at a figure's chest and cuts its feet off.
+   */
+  centreU?: number;
+  /**
    * Its full bounding **width**. Framing needs both: on a portrait phone the
    * horizontal field of view is barely 29° against the 45° vertical, so width
    * is almost always the binding constraint and sizing off height alone leaves
@@ -154,9 +161,115 @@ export interface Specimen {
   spanU: number;
   /** Real-world size, said plainly, because a model on a screen has no scale. */
   reallife: string;
+  /**
+   * Whether tapping a part pulls it clear of the exhibit to be examined. Set by
+   * the model component's own support for it — see `LabBody`. An exhibit that
+   * is already a single object has nothing to extract.
+   */
+  extractable?: boolean;
 }
 
 export const SPECIMENS: Specimen[] = [
+  {
+    id: "human-body",
+    name: "The human body",
+    khmer: "រាងកាយមនុស្ស",
+    english: "A whole figure — peel back the skin, pull an organ out to look at it",
+    subject: "biology",
+    topic: "The body as a whole",
+    layers: [
+      { id: "whole", label: "Skin", hint: "The figure as you see a person" },
+      { id: "cutaway", label: "Organs", hint: "Skin to a ghost, organs in place" },
+      { id: "frame", label: "Skeleton", hint: "Bones only" },
+    ],
+    about: [
+      "Start with the whole figure, then use the layer buttons to look inside. On the Organs layer the skin fades to a ghost so you can still see where everything sits relative to the body.",
+      "Tap any organ to pull it out. It floats clear of the body, turns slowly so you can see every side, and leaves its space empty behind it — which is half the point, because knowing where an organ lives is as useful as knowing its shape.",
+      "The body faces you, so its right side is on your left. That is how every anatomy diagram is drawn, and it is why the liver appears on the left of your screen.",
+    ],
+    parts: [
+      {
+        id: "skin", name: "Skin", khmer: "ស្បែក",
+        blurb: "The body's largest organ, and the first one people forget is an organ at all. It keeps water in, keeps infection out, and does much of the work of holding your temperature steady.",
+        layer: "whole", at: [0, 30, 14],
+      },
+      {
+        id: "brain", name: "Brain", khmer: "ខួរក្បាល",
+        blurb: "About 1.4 kg, and using roughly a fifth of the body's energy while being a fiftieth of its weight. The folds are there to fit more surface into the skull.",
+        layer: "cutaway", at: [0, 82, 0],
+      },
+      {
+        id: "heart", name: "Heart", khmer: "បេះដូង",
+        blurb: "Sits between the lungs, tilted so its point aims down and to the left. Beats roughly 100,000 times a day without being asked. Open the heart's own exhibit to see inside it.",
+        layer: "cutaway", at: [6, 34, 10],
+      },
+      {
+        id: "lungs", name: "Lungs", khmer: "សួត",
+        blurb: "Two spongy bags either side of the heart. The right has three lobes, the left only two — the heart takes the space where the third would be.",
+        layer: "cutaway", at: [-16, 38, 6],
+      },
+      {
+        id: "airways", name: "Windpipe and bronchi", khmer: "បំពង់ខ្យល់",
+        blurb: "Air's route in: down the windpipe, then a split into each lung and about twenty more splits after that.",
+        layer: "cutaway", at: [0, 47, 6],
+      },
+      {
+        id: "liver", name: "Liver", khmer: "ថ្លើម",
+        blurb: "The largest internal organ, tucked under the ribs on the body's right. It cleans the blood, stores sugar, and makes the bile that helps digest fat. It is the only organ that regrows.",
+        layer: "cutaway", at: [-16, 14, 8],
+      },
+      {
+        id: "stomach", name: "Stomach", khmer: "ក្រពះ",
+        blurb: "A muscular bag on the left that mixes food with acid strong enough to dissolve metal, and is stopped from digesting itself only by a layer of mucus it rebuilds constantly.",
+        layer: "cutaway", at: [14, 14, 6],
+      },
+      {
+        id: "intestines", name: "Intestines", khmer: "ពោះវៀន",
+        blurb: "About seven metres of tube, coiled to fit. Almost everything your body takes from food, it takes here.",
+        layer: "cutaway", at: [0, -4, 12],
+      },
+      {
+        id: "kidneys", name: "Kidneys", khmer: "តម្រងនោម",
+        blurb: "A pair at the back, either side of the spine. Between them they filter your entire blood volume about forty times a day.",
+        layer: "cutaway", at: [-14, 2, -12],
+      },
+      {
+        id: "bladder", name: "Bladder", khmer: null,
+        blurb: "A stretchy bag sitting low in the pelvis that holds what the kidneys have filtered out until you decide otherwise.",
+        layer: "cutaway", at: [0, -24, 10],
+      },
+      {
+        id: "skeleton", name: "Skeleton", khmer: "គ្រោងឆ្អឹង",
+        blurb: "206 bones in an adult — a baby starts with about 270 and fuses some together while growing. It is scaffolding, armour and a factory: most of your blood cells are made inside the big bones.",
+        layer: "frame", at: [0, 44, -14],
+      },
+    ],
+    quiz: [
+      {
+        q: "The liver sits mostly on which side of the body?",
+        options: ["The body's left", "The body's right", "Exactly in the middle", "Behind the spine"],
+        answer: 1,
+        why: "The body's right, tucked under the lower ribs. Because the figure faces you, that puts it on the LEFT of your screen — the same flip every anatomy diagram has.",
+      },
+      {
+        q: "Which of these is an organ?",
+        options: ["Skin", "Blood", "Bone marrow only", "None of them"],
+        answer: 0,
+        why: "Skin is the body's largest organ. People rarely think of it as one because it is on the outside.",
+      },
+      {
+        q: "Roughly how many bones does an adult skeleton have?",
+        options: ["About 60", "About 206", "About 500", "It varies with height"],
+        answer: 1,
+        why: "About 206. A newborn has roughly 270; several fuse together during growth, which is why the adult count is lower.",
+      },
+    ],
+    sizeU: 180,
+    spanU: 62,
+    centreU: 0,
+    extractable: true,
+    reallife: "Modelled at 175 cm — an average adult. Every organ inside is at life size relative to it.",
+  },
   {
     id: "heart",
     name: "The human heart",
@@ -271,27 +384,27 @@ export const SPECIMENS: Specimen[] = [
       {
         id: "bronchi", name: "Main bronchi", khmer: null,
         blurb: "The windpipe's first split — one tube into each lung. The right one is wider and more upright, which is why something swallowed the wrong way usually ends up in the right lung.",
-        layer: "frame", at: [3.4, 6.6, 0],
+        layer: "frame", at: [-3.4, 6.6, 0],
       },
       {
         id: "tree", name: "Bronchial tree", khmer: null,
         blurb: "Each bronchus divides again and again, roughly twenty times over, spreading air through the whole lung. Laid flat, the airway surface would cover a tennis court.",
-        layer: "frame", at: [-4.6, 2.0, 0],
+        layer: "frame", at: [4.6, 2.0, 0],
       },
       {
         id: "right-lung", name: "Right lung", khmer: "សួតខាងស្តាំ",
         blurb: "The larger lung, in three lobes — upper, middle and lower — divided by two deep fissures.",
-        layer: "whole", at: [7.5, 1.0, 2.5],
+        layer: "whole", at: [-7.5, 1.0, 2.5],
       },
       {
         id: "left-lung", name: "Left lung", khmer: "សួតខាងឆ្វេង",
         blurb: "Two lobes rather than three, and smaller, because the heart takes a bite out of its front edge — the cardiac notch.",
-        layer: "whole", at: [-7.5, 1.0, 2.5],
+        layer: "whole", at: [7.5, 1.0, 2.5],
       },
       {
         id: "notch", name: "Cardiac notch", khmer: null,
         blurb: "The scoop in the front edge of the left lung where the heart sits against it. Anatomy making room for a neighbour.",
-        layer: "whole", at: [-3.4, -0.5, 4.2],
+        layer: "whole", at: [3.4, -0.5, 4.2],
       },
     ],
     quiz: [

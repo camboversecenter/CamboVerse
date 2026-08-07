@@ -386,25 +386,25 @@ export function Lungs({
 
   // right lung: three lobes, stacked with fissures between them
   const rUpper = useMemo(() => organBlob({
-    r: [4.2, 4.4, 3.9], lumps: 0.05, seed: 21, seg, flatten: { axis: "x", sign: -1, amount: 0.34 },
+    r: [4.2, 4.4, 3.9], lumps: 0.05, seed: 21, seg, flatten: { axis: "x", sign: 1, amount: 0.34 },
   }), [seg]);
   const rMiddle = useMemo(() => organBlob({
-    r: [4.0, 2.6, 3.7], lumps: 0.05, seed: 23, seg, flatten: { axis: "x", sign: -1, amount: 0.34 },
+    r: [4.0, 2.6, 3.7], lumps: 0.05, seed: 23, seg, flatten: { axis: "x", sign: 1, amount: 0.34 },
   }), [seg]);
   const rLower = useMemo(() => organBlob({
     r: [4.3, 4.8, 4.0], taper: 0.55, lumps: 0.05, seed: 27, seg,
-    flatten: { axis: "x", sign: -1, amount: 0.34 },
+    flatten: { axis: "x", sign: 1, amount: 0.34 },
   }), [seg]);
 
   // left lung: two lobes, and the heart's bite out of the front-medial edge
   const lUpper = useMemo(() => organBlob({
     r: [3.9, 4.8, 3.8], lumps: 0.05, seed: 31, seg,
-    flatten: { axis: "x", sign: 1, amount: 0.34 },
-    notch: { at: [0.75, -0.5, 0.7], radius: 1.05, depth: 0.6 },
+    flatten: { axis: "x", sign: -1, amount: 0.34 },
+    notch: { at: [-0.75, -0.5, 0.7], radius: 1.05, depth: 0.6 },
   }), [seg]);
   const lLower = useMemo(() => organBlob({
     r: [4.0, 4.6, 3.9], taper: 0.55, lumps: 0.05, seed: 37, seg,
-    flatten: { axis: "x", sign: 1, amount: 0.34 },
+    flatten: { axis: "x", sign: -1, amount: 0.34 },
   }), [seg]);
 
   const trachea = useMemo(() => vessel([
@@ -413,18 +413,18 @@ export function Lungs({
 
   // the right main bronchus is wider and more upright than the left — the
   // reason an inhaled object usually ends up in the right lung
-  const mainR = useMemo(() => vessel([[0, 8.6, 0], [1.8, 7.7, 0.1], [3.6, 7.0, 0.2]], 0.62, 10, 9), []);
-  const mainL = useMemo(() => vessel([[0, 8.6, 0], [-2.0, 7.9, 0.1], [-4.0, 7.4, 0.2]], 0.5, 10, 9), []);
+  const mainR = useMemo(() => vessel([[0, 8.6, 0], [-1.8, 7.7, 0.1], [-3.6, 7.0, 0.2]], 0.62, 10, 9), []);
+  const mainL = useMemo(() => vessel([[0, 8.6, 0], [2.0, 7.9, 0.1], [4.0, 7.4, 0.2]], 0.5, 10, 9), []);
 
   // Six generations fills the lung volume and still costs only a few thousand
   // triangles per side, because every tube is merged into one geometry. Real
   // airways manage about twenty; the page says so rather than pretending.
   const treeR = useMemo(() => branchTree({
-    from: [3.6, 7.0, 0.2], dir: [0.5, -0.85, 0.08], length: 3.4, radius: 0.44,
+    from: [-3.6, 7.0, 0.2], dir: [-0.5, -0.85, 0.08], length: 3.4, radius: 0.44,
     levels: detail === "ultra" ? 6 : 5, spread: 0.62, twist: 1.1, seed: 5,
   }), [detail]);
   const treeL = useMemo(() => branchTree({
-    from: [-4.0, 7.4, 0.2], dir: [-0.45, -0.88, 0.08], length: 3.3, radius: 0.38,
+    from: [4.0, 7.4, 0.2], dir: [0.45, -0.88, 0.08], length: 3.3, radius: 0.38,
     levels: detail === "ultra" ? 6 : 5, spread: 0.62, twist: 1.3, seed: 9,
   }), [detail]);
 
@@ -454,27 +454,27 @@ export function Lungs({
       {showLung && (
         <>
           <group onClick={pick("right-lung")}>
-            <mesh geometry={rUpper} position={[6.6, 6.2, 0]} castShadow={layer === "whole"}>
+            <mesh geometry={rUpper} position={[-6.6, 6.2, 0]} castShadow={layer === "whole"}>
               {tissue("right-lung")}
             </mesh>
-            <mesh geometry={rMiddle} position={[6.9, 1.6, 0.6]} castShadow={layer === "whole"}>
+            <mesh geometry={rMiddle} position={[-6.9, 1.6, 0.6]} castShadow={layer === "whole"}>
               {tissue("right-lung", true)}
             </mesh>
-            <mesh geometry={rLower} position={[6.8, -2.8, -0.3]} castShadow={layer === "whole"}>
+            <mesh geometry={rLower} position={[-6.8, -2.8, -0.3]} castShadow={layer === "whole"}>
               {tissue("right-lung")}
             </mesh>
           </group>
           <group onClick={pick("left-lung")}>
-            <mesh geometry={lUpper} position={[-6.6, 5.4, 0]} castShadow={layer === "whole"}>
+            <mesh geometry={lUpper} position={[6.6, 5.4, 0]} castShadow={layer === "whole"}>
               {tissue("left-lung")}
             </mesh>
-            <mesh geometry={lLower} position={[-6.8, -2.4, -0.3]} castShadow={layer === "whole"}>
+            <mesh geometry={lLower} position={[6.8, -2.4, -0.3]} castShadow={layer === "whole"}>
               {tissue("left-lung", true)}
             </mesh>
           </group>
           {/* the notch is part of the left lung's surface, so it gets a marker
               rather than a mesh — a hotspot on a shape, which is what it is */}
-          <mesh position={[-3.4, 0.2, 3.4]} onClick={pick("notch")} visible={layer === "whole"}>
+          <mesh position={[3.4, 0.2, 3.4]} onClick={pick("notch")} visible={layer === "whole"}>
             <sphereGeometry args={[0.55, 12, 10]} />
             <meshStandardMaterial
               color={selected === "notch" ? "#ffd27a" : "#e8b978"}
@@ -506,22 +506,6 @@ export function Lungs({
       </group>
     </group>
   );
-}
-
-/* --------------------------------------------------------------- picker --- */
-
-/** Draw whichever specimen this is. One place to add the next organ. */
-export function TheSpecimen({
-  id, layer, detail, onPick, selected,
-}: {
-  id: string; layer: LabLayer; detail: Detail;
-  onPick: (partId: string) => void; selected: string | null;
-}) {
-  switch (id) {
-    case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
-    case "lungs": return <Lungs layer={layer} detail={detail} onPick={onPick} selected={selected} />;
-    default: return null;
-  }
 }
 
 /** Exported so the next organ can reuse the same deterministic noise. */

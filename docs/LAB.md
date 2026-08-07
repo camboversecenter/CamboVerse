@@ -41,6 +41,56 @@ invitation: a contributor can see exactly where their work would go.
    worse than a missing one. Leave `khmer: null` and the interface prints
    "Khmer term needed" — which is honest, and turns the gap into a task.
 
+## Taking things apart
+
+An exhibit can declare `extractable: true`, and then tapping a part pulls it
+clear of the model: it eases out, enlarges, turns slowly so every side is
+visible, and **leaves its space empty behind it**. The rest of the exhibit fades
+to a quarter opacity so the extracted piece is unambiguous.
+
+The empty socket is half the teaching. Knowing where the liver lives — under the
+ribs, on the body's right — is as useful as knowing its shape, and a part that
+simply vanished and reappeared enlarged would teach only the second thing.
+
+Implementing it is one wrapper. `LabBody`'s `Extractable` lerps position and
+scale toward a target every frame, frame-rate independent, so it survives being
+interrupted halfway by a different part being picked.
+
+## How realistic can this get?
+
+Worth being straight about the ceiling, because it is set by two constraints we
+are not going to drop.
+
+**What raises realism, and is in use:**
+
+- **A procedural studio environment** ([`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts)).
+  This is the biggest single lever. A wet organ reads as wet almost entirely
+  through the *shape* of its specular highlight; a directional light gives one
+  hard dot, an environment map gives the whole surface something to reflect.
+  Generated in-browser through `PMREMGenerator` rather than downloaded, so there
+  is no HDRI file and nothing crosses the network.
+- **`MeshPhysicalMaterial`** with clearcoat for the wet sheen and sheen for the
+  soft fall-off at grazing angles that makes skin look like skin.
+- **Continuous surfaces.** The first figure stacked separate blobs for chest,
+  belly and hips and read as a wooden artist's mannequin — every join was a
+  visible seam. Lofting one surface through a stack of elliptical
+  cross-sections removed the seams by removing the joins.
+- **Higher tessellation in Ultra**, roughly double Normal's.
+
+**What we will not do, and what that costs:**
+
+- **No scanned meshes.** Photoreal anatomy essentially means a licensed scan or
+  a commercial atlas asset. Neither can ship in a Digital Public Good, and a
+  reconstruction traced from one is a derivative of it.
+- **No large texture sets.** Skin pores, vessel tracery and subsurface maps are
+  where the last of the realism lives, and they are megabytes. The
+  ~$150-Android-over-4G constraint is a hard requirement, not a goal.
+
+So the honest description is **a good stylised anatomical model, not a medical
+atlas**. Recognisable, correctly arranged, right proportions — and no muscle
+layer, no fascia, no facial features, and surfaces smooth where real tissue is
+not. Say that on the page rather than letting a student assume otherwise.
+
 ## Adding an exhibit
 
 ### 1. The data
@@ -92,10 +142,11 @@ Fields worth getting right:
 
 ### 2. The model
 
-Add a function to [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx)
-(rename or split the file once there is a second subject in it) and a `case` to
-`TheSpecimen`. It takes `layer`, `detail`, `onPick` and `selected`, and returns a
-group.
+Add a function in `src/components/` — one file per subject once there is more
+than one — and a `case` to `TheSpecimen` in
+[`SpecimenView.tsx`](../src/components/SpecimenView.tsx), which is the single
+place a new exhibit is plugged in. It takes `layer`, `detail`, `onPick`,
+`selected` and (if extractable) `extracted`, and returns a group.
 
 The procedural vocabulary already there:
 
@@ -104,6 +155,8 @@ The procedural vocabulary already there:
 | `organBlob({ r, taper, lean, lumps, notch, flatten, seg })` | a soft continuous mass — a sphere displaced until it stops looking like one |
 | `vessel(points, radius)` | a tube swept along a smooth curve — a vessel, an airway, a pipe, a cable |
 | `branchTree({ from, dir, length, radius, levels })` | anything that divides and divides again — a bronchial tree, a vascular bed, a river delta |
+| `loft(rings, seg, cap)` *(LabBody)* | one continuous surface through a stack of elliptical cross-sections — a torso, a limb, a chimney, a hull |
+| `longBone(length, shaft, head)` *(LabBody)* | a shaft that swells at both ends — a bone, a dumbbell, a turned baluster |
 | `labNoise(seed, a, b, c)` | deterministic wobble, so a render is reproducible |
 
 **Honour `detail`.** `normal` is the low-end-phone baseline and must stay
@@ -150,11 +203,15 @@ coronary arteries
 
 **Biology — the lungs:** main bronchi · bronchial tree · cardiac notch
 
+**Biology — the whole body:** bladder
+
 **Subjects:** Earth and sky · Agriculture and engineering
 
-Already confirmed: បេះដូង (heart) · សួត (lung) · សួតខាងស្តាំ (right lung) ·
-សួតខាងឆ្វេង (left lung) · បំពង់ខ្យល់ (windpipe) · ជីវវិទ្យា (biology) ·
-រូបវិទ្យា (physics) · គីមីវិទ្យា (chemistry)
+Already confirmed: រាងកាយមនុស្ស (human body) · បេះដូង (heart) · សួត (lung) ·
+សួតខាងស្តាំ (right lung) · សួតខាងឆ្វេង (left lung) · បំពង់ខ្យល់ (windpipe) ·
+ស្បែក (skin) · ខួរក្បាល (brain) · ថ្លើម (liver) · ក្រពះ (stomach) ·
+ពោះវៀន (intestines) · តម្រងនោម (kidneys) · គ្រោងឆ្អឹង (skeleton) ·
+ជីវវិទ្យា (biology) · រូបវិទ្យា (physics) · គីមីវិទ្យា (chemistry)
 
 If you know a term is wrong, that is worth an issue on its own.
 
@@ -186,5 +243,7 @@ always presents Ultra. Auto-detected, overridable from the button top-right.
 - [`src/components/LabView.tsx`](../src/components/LabView.tsx) — the hub
 - [`src/components/SpecimenView.tsx`](../src/components/SpecimenView.tsx) — an exhibit's page
 - [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) — the procedural vocabulary
+- [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) — the whole figure, the skeleton, and the extraction wrapper
+- [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) — the in-browser studio environment
 - [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
 - [`TODO.md`](../TODO.md) — the contributor task board

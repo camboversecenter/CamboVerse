@@ -1,10 +1,50 @@
 import { useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
-import { TheSpecimen, type Detail } from "./LabOrgans";
+import { Heart, Lungs, type Detail } from "./LabOrgans";
+import { Body } from "./LabBody";
+import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
+
+/**
+ * Draw whichever exhibit this is. The one place a new exhibit is plugged in —
+ * everything else in the Lab is data.
+ */
+function TheSpecimen({
+  id, layer, detail, onPick, selected, extracted,
+}: {
+  id: string; layer: LabLayer; detail: Detail;
+  onPick: (partId: string) => void; selected: string | null; extracted: string | null;
+}) {
+  switch (id) {
+    case "human-body":
+      return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
+    case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
+    case "lungs": return <Lungs layer={layer} detail={detail} onPick={onPick} selected={selected} />;
+    default: return null;
+  }
+}
+
+/**
+ * The studio environment, built once per canvas and shared by every material.
+ *
+ * This is what makes a wet surface read as wet: an organ's realism is almost
+ * entirely in the shape of its specular highlight, and a directional light can
+ * only give it one hard dot. Generated in-browser rather than downloaded — no
+ * CDN, no HDRI file, nothing crosses the network.
+ */
+function StudioLight() {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  useEffect(() => {
+    const env = studioEnvironment(gl, { intensity: 1 });
+    scene.environment = env;
+    return () => { scene.environment = null; env.dispose(); };
+  }, [gl, scene]);
+  return null;
+}
 
 /**
  * One **specimen's page**: the model turning on a stand, its parts nameable by
@@ -41,6 +81,9 @@ export function SpecimenView({
   const [layer, setLayer] = useState<LabLayer>("whole");
   const [nav, setNav] = useState<Nav>("explore");
   const [picked, setPicked] = useState<string | null>(null);
+  // Which part has been pulled clear of the exhibit. Only one at a time: the
+  // empty space it leaves behind is half of what the extraction teaches.
+  const [extracted, setExtracted] = useState<string | null>(null);
   const [spin, setSpin] = useState(true);
   const [info, setInfo] = useState(true);
 
@@ -72,23 +115,28 @@ export function SpecimenView({
   // sheet, and centring it is right once the sheet is dismissed. A specimen's
   // mass sits a little above its origin (the heart's apex hangs below it), hence
   // the 0.15 rather than 0.
-  const aim = specimen.sizeU * (info ? -0.35 : 0.15);
+  const centre = specimen.centreU ?? specimen.sizeU * 0.15;
+  const aim = centre - (info ? specimen.sizeU * 0.35 : 0);
 
   return (
     <div className="lab">
       <Canvas
         dpr={detail === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [dist * 0.4, specimen.sizeU * 0.18, dist], fov: 45, near: 0.4, far: 400 }}
+        camera={{
+          position: [dist * 0.4, centre + specimen.sizeU * 0.06, dist],
+          fov: 45, near: 0.4, far: 800,
+        }}
         gl={{ antialias: detail === "ultra", powerPreference: "high-performance" }}
         shadows={detail === "ultra"}
         onCreated={({ gl }) => {
           gl.toneMapping = ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.1;
         }}
-        onPointerMissed={() => setPicked(null)}
+        onPointerMissed={() => { setPicked(null); setExtracted(null); }}
       >
         <XR store={store}>
           <color attach="background" args={["#101a22"]} />
+          <StudioLight />
           {/* A specimen light rig, not a landscape one: a key from the front-left,
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}
@@ -110,10 +158,11 @@ export function SpecimenView({
               detail={detail}
               onPick={setPicked}
               selected={picked}
+              extracted={extracted}
             />
             {/* A pin on the selected part only. Every label at once is how an
                 anatomy diagram works on paper and how nothing works on a phone. */}
-            {part && (
+            {part && extracted !== part.id && (
               <Html
                 position={part.at}
                 center
@@ -216,9 +265,19 @@ export function SpecimenView({
                       </span>}
                 </div>
                 <p className="bld-about">{part.blurb}</p>
-                <button className="lab-clear" onClick={() => setPicked(null)}>
-                  ← All parts
-                </button>
+                <div className="lab-actions">
+                  {specimen.extractable && part.layer !== "whole" && (
+                    <button
+                      className={extracted === part.id ? "lab-extract on" : "lab-extract"}
+                      onClick={() => setExtracted((e) => (e === part.id ? null : part.id))}
+                    >
+                      {extracted === part.id ? "↩ Put it back" : "⤴ Take it out"}
+                    </button>
+                  )}
+                  <button className="lab-clear" onClick={() => { setPicked(null); setExtracted(null); }}>
+                    ← All parts
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -243,6 +302,7 @@ export function SpecimenView({
                   className={picked === p.id ? "lab-chip on" : "lab-chip"}
                   onClick={() => {
                     setPicked(p.id);
+                    if (extracted && extracted !== p.id) setExtracted(null);
                     // Jump to the layer the part actually lives in, otherwise
                     // tapping "Left ventricle" highlights something hidden.
                     if (p.layer !== "whole" && layer === "whole") setLayer(p.layer);

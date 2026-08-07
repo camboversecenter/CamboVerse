@@ -3564,3 +3564,12 @@ select.farm-modal-note { appearance: none; }
   font: 600 0.76rem system-ui, sans-serif; color: #7f95a2; margin: 10px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 9px;
 }
+
+.lab-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.lab-actions .lab-clear { margin-top: 0; }
+.lab-extract {
+  padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #b23a34; background: #b23a34; color: #fff;
+  font: 700 12px system-ui, sans-serif;
+}
+.lab-extract.on { background: transparent; color: #b23a34; }
