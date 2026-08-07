@@ -3601,7 +3601,10 @@ select.farm-modal-note { appearance: none; }
 .lab-knob input[type="range"] { width: 100%; accent-color: #4aa3c4; }
 
 .lab-readout {
-  padding: 4px 9px; border-radius: 8px; white-space: nowrap; text-align: center;
+  /* fixed screen size, so a long caption has to wrap rather than run off the
+     edge of a phone */
+  padding: 4px 10px; border-radius: 8px; text-align: center;
+  max-width: min(300px, calc(100vw - 40px)); white-space: normal;
   background: rgba(10, 20, 26, 0.88); color: #eef6fa;
   border: 1px solid rgba(120, 200, 226, 0.5);
   font: 600 11px system-ui, sans-serif;

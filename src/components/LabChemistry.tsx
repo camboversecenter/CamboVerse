@@ -27,12 +27,12 @@ import type { MachineProps } from "./LabMachines";
  * are the standard CPK values in the same units.
  */
 
-const ANGSTROM = 20;
+export const ANGSTROM = 20;
 
-type Element = "H" | "C" | "N" | "O" | "Na" | "Cl";
+export type Element = "H" | "C" | "N" | "O" | "Na" | "Cl";
 
 /** CPK colours, and the two radii the representations need. */
-const ELEMENT: Record<Element, { color: string; vdw: number; ball: number; name: string }> = {
+export const ELEMENT: Record<Element, { color: string; vdw: number; ball: number; name: string }> = {
   H:  { color: "#f4f4f4", vdw: 1.20 * ANGSTROM, ball: 0.32 * ANGSTROM, name: "Hydrogen" },
   C:  { color: "#3a3a3a", vdw: 1.70 * ANGSTROM, ball: 0.55 * ANGSTROM, name: "Carbon" },
   N:  { color: "#3050f8", vdw: 1.55 * ANGSTROM, ball: 0.52 * ANGSTROM, name: "Nitrogen" },
@@ -41,8 +41,8 @@ const ELEMENT: Record<Element, { color: string; vdw: number; ball: number; name:
   Cl: { color: "#3fc93f", vdw: 1.67 * ANGSTROM, ball: 0.72 * ANGSTROM, name: "Chlorine" },
 };
 
-type Atom = { el: Element; at: [number, number, number]; id?: string };
-type Bond = [number, number];
+export type Atom = { el: Element; at: [number, number, number]; id?: string };
+export type Bond = [number, number];
 
 /** A stick between two atoms, as geometry so a lattice's worth can be merged. */
 function bondGeometry(a: Vector3, b: Vector3, r: number, seg: number): BufferGeometry {
@@ -64,8 +64,8 @@ function bondGeometry(a: Vector3, b: Vector3, r: number, seg: number): BufferGeo
  * amplitude is exaggerated; real vibration at room temperature is a few percent
  * of a bond length.
  */
-function Structure({
-  atoms, bonds, layer, detail, running, onPick, selected, ionic = false,
+export function Structure({
+  atoms, bonds, layer, detail, running, onPick, selected, ionic = false, dim = 1,
 }: {
   atoms: Atom[];
   bonds: Bond[];
@@ -76,6 +76,8 @@ function Structure({
   selected: string | null;
   /** An ionic lattice has no bonds to draw — the "sticks" are just neighbours. */
   ionic?: boolean;
+  /** Fade the whole structure — used by reactions to cross-fade reactants out. */
+  dim?: number;
 }) {
   const seg = detail === "ultra" ? 24 : 12;
   const jitter = useRef<Group[]>([]);
@@ -131,9 +133,9 @@ function Structure({
                   metalness={0.05}
                   emissive={sel ? "#ffd9a0" : "#000000"}
                   emissiveIntensity={sel ? 0.45 : 0}
-                  transparent={any && !sel}
-                  opacity={any && !sel ? 0.34 : 1}
-                  depthWrite={!(any && !sel)}
+                  transparent={(any && !sel) || dim < 1}
+                  opacity={(any && !sel ? 0.34 : 1) * dim}
+                  depthWrite={!(any && !sel) && dim > 0.98}
                 />
               </mesh>
             </group>
@@ -149,8 +151,9 @@ function Structure({
             metalness={0.2}
             emissive={selected === (ionic ? "lattice" : "bond") ? "#ffd9a0" : "#000000"}
             emissiveIntensity={selected === (ionic ? "lattice" : "bond") ? 0.45 : 0}
-            transparent={any && selected !== (ionic ? "lattice" : "bond")}
-            opacity={any && selected !== (ionic ? "lattice" : "bond") ? 0.3 : 1}
+            transparent={(any && selected !== (ionic ? "lattice" : "bond")) || dim < 1}
+            opacity={(any && selected !== (ionic ? "lattice" : "bond") ? 0.3 : 1) * dim}
+            depthWrite={dim > 0.98}
           />
         </mesh>
       )}
@@ -158,7 +161,7 @@ function Structure({
   );
 }
 
-function Readout({ at, children }: { at: [number, number, number]; children: React.ReactNode }) {
+export function Readout({ at, children }: { at: [number, number, number]; children: React.ReactNode }) {
   return (
     <Html position={at} center occlude={false} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
       <div className="lab-readout">{children}</div>
@@ -396,3 +399,86 @@ export function Carbon({ layer, detail, onPick, selected, running }: MachineProp
     </group>
   );
 }
+
+/* ------------------------------------------------------------- molecules --- */
+
+export type MoleculeSpec = { formula: string; atoms: Atom[]; bonds: Bond[] };
+
+const A = ANGSTROM;
+const tetra = (d: number) => {
+  const k = d / Math.sqrt(3);
+  return [[k, k, k], [-k, -k, k], [-k, k, -k], [k, -k, -k]] as [number, number, number][];
+};
+
+/**
+ * The molecules the reactions are made of, at real bond lengths and angles.
+ *
+ * Kept here rather than in each reaction so that water is the same water
+ * wherever it turns up — as a product of burning methane, as a product of
+ * neutralisation, and as its own exhibit.
+ */
+export const MOLECULE: Record<string, MoleculeSpec> = {
+  H2O: {
+    formula: "H₂O",
+    atoms: [
+      { el: "O", at: [0, 0, 0], id: "oxygen" },
+      { el: "H", at: [Math.sin(0.912) * 0.96 * A, Math.cos(0.912) * 0.96 * A, 0], id: "hydrogen" },
+      { el: "H", at: [-Math.sin(0.912) * 0.96 * A, Math.cos(0.912) * 0.96 * A, 0], id: "hydrogen" },
+    ],
+    bonds: [[0, 1], [0, 2]],
+  },
+  CH4: {
+    formula: "CH₄",
+    atoms: [
+      { el: "C", at: [0, 0, 0], id: "carbon" },
+      ...tetra(1.09 * A).map((at) => ({ el: "H" as const, at, id: "hydrogen" })),
+    ],
+    bonds: [[0, 1], [0, 2], [0, 3], [0, 4]],
+  },
+  O2: {
+    formula: "O₂",
+    atoms: [
+      { el: "O", at: [-0.605 * A, 0, 0], id: "oxygen" },
+      { el: "O", at: [0.605 * A, 0, 0], id: "oxygen" },
+    ],
+    bonds: [[0, 1]],
+  },
+  H2: {
+    formula: "H₂",
+    atoms: [
+      { el: "H", at: [-0.37 * A, 0, 0], id: "hydrogen" },
+      { el: "H", at: [0.37 * A, 0, 0], id: "hydrogen" },
+    ],
+    bonds: [[0, 1]],
+  },
+  CO2: {
+    formula: "CO₂",
+    atoms: [
+      { el: "C", at: [0, 0, 0], id: "carbon" },
+      { el: "O", at: [-1.16 * A, 0, 0], id: "oxygen" },
+      { el: "O", at: [1.16 * A, 0, 0], id: "oxygen" },
+    ],
+    bonds: [[0, 1], [0, 2]],
+  },
+  HCl: {
+    formula: "HCl",
+    atoms: [
+      { el: "H", at: [-0.635 * A, 0, 0], id: "hydrogen" },
+      { el: "Cl", at: [0.635 * A, 0, 0], id: "chlorine" },
+    ],
+    bonds: [[0, 1]],
+  },
+  NaOH: {
+    formula: "NaOH",
+    atoms: [
+      { el: "Na", at: [-1.2 * A, 0, 0], id: "sodium" },
+      { el: "O", at: [0.3 * A, 0, 0], id: "oxygen" },
+      { el: "H", at: [0.9 * A, 0.55 * A, 0], id: "hydrogen" },
+    ],
+    bonds: [[0, 1], [1, 2]],
+  },
+  // The products of neutralisation are ions in solution, not an NaCl molecule.
+  // Drawing them apart is the honest picture and reinforces the salt exhibit.
+  NaIon: { formula: "Na⁺", atoms: [{ el: "Na", at: [0, 0, 0], id: "sodium" }], bonds: [] },
+  ClIon: { formula: "Cl⁻", atoms: [{ el: "Cl", at: [0, 0, 0], id: "chloride" }], bonds: [] },
+};

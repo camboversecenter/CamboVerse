@@ -89,6 +89,38 @@ Waals for space-filling, covalent for ball-and-stick) in
 only ever sees the frozen ball-and-stick picture comes away believing they are.
 The amplitude is exaggerated; real vibration is a few percent of a bond length.
 
+## Experiments: reactions, not objects
+
+Every other exhibit is a *thing*. An experiment is an *event*: reactants
+approach, bonds break and reform, products separate, energy goes in or comes
+out, and it loops.
+
+The loop is the point. The hardest idea in school chemistry is that atoms are
+**rearranged rather than created or destroyed**, and the way to make it land is
+to let a student count the atoms before and count them again after. Every
+experiment's caption says exactly that.
+
+A reaction is data — reactants, products, whether it gives out energy, and what
+that looks like — over the molecule library in
+[`LabChemistry.tsx`](../src/components/LabChemistry.tsx). Water is the same water
+whether it turns up as a product of combustion, a product of neutralisation, or
+its own exhibit.
+
+> **These are models, not recipes.** Nothing here tells anyone how to make
+> anything; they are molecular animations of reactions already in every syllabus,
+> and each exhibit says plainly that the real versions are dangerous and belong
+> in a school laboratory with a teacher. Keep that line in anything added here.
+
+Two performance notes, both learned the hard way:
+
+- **Animate through refs, never through React state.** The first reaction clock
+  read its phase during render and forced an update every frame, re-rendering
+  every atom sixty times a second. Positions and visibility are set on refs
+  inside `useFrame`, and the component renders once.
+- **The camera's far plane has to follow the framing distance.** A fixed 800 was
+  fine for a 13 cm heart and clipped a 3 m-wide reaction *entirely* — the scene
+  rendered empty, with no error.
+
 ## Taking things apart
 
 Selecting a part **lifts it and steps everything else back** — the chosen organ

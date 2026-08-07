@@ -7,6 +7,7 @@ import { Heart, Lungs, type Detail } from "./LabOrgans";
 import { Body, SingleOrgan } from "./LabBody";
 import { Lever, GearTrain, Engine } from "./LabMachines";
 import { Water, Methane, SaltCrystal, Carbon } from "./LabChemistry";
+import { BurnMethane, MakeWater, Neutralise } from "./LabReactions";
 import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
 
@@ -33,6 +34,9 @@ function TheSpecimen({
     case "methane": return <Methane {...machine} />;
     case "salt": return <SaltCrystal {...machine} />;
     case "carbon": return <Carbon {...machine} />;
+    case "burn-methane": return <BurnMethane {...machine} />;
+    case "make-water": return <MakeWater {...machine} />;
+    case "neutralise": return <Neutralise {...machine} />;
     case "human-body":
       return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
     case "heart": return <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
@@ -55,6 +59,8 @@ function FrameCamera({ dist, aim, size }: { dist: number; aim: number; size: num
   useEffect(() => {
     camera.position.set(dist * 0.4, aim + size * 0.24, dist);
     camera.lookAt(0, aim, 0);
+    const persp = camera as typeof camera & { far: number; near: number };
+    persp.far = Math.max(600, dist * 4);
     camera.updateProjectionMatrix();
     // deps deliberately exclude `aim`'s panel-driven changes: re-framing on
     // every sheet toggle would yank the camera out from under the student.
@@ -178,7 +184,12 @@ export function SpecimenView({
         dpr={detail === "normal" ? [1, 1.5] : [1, 2]}
         camera={{
           position: [dist * 0.4, centre + specimen.sizeU * 0.06, dist],
-          fov: 45, near: 0.4, far: 800,
+          fov: 45,
+          near: 0.4,
+          // The far plane has to follow the framing distance. A fixed 800 was
+          // fine for a 13 cm heart and clipped a 3.6 m-wide reaction entirely —
+          // the scene simply rendered empty.
+          far: Math.max(600, dist * 4),
         }}
         gl={{ antialias: detail === "ultra", powerPreference: "high-performance" }}
         shadows={detail === "ultra"}
