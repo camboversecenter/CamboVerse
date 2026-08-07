@@ -107,6 +107,12 @@ export interface LabPart {
   layer: LabLayer;
   /** Roughly where its label should float, in specimen space (1 unit ≈ 1 cm). */
   at: [number, number, number];
+  /**
+   * The exhibit this part opens on its own. Set on the body's organs, so a
+   * student who wants the kidney can go straight to it rather than squinting at
+   * something 4 cm tall inside a 175 cm figure.
+   */
+  detail?: string;
 }
 
 export interface QuizItem {
@@ -167,6 +173,15 @@ export interface Specimen {
    * is already a single object has nothing to extract.
    */
   extractable?: boolean;
+  /**
+   * Render one organ from the body's organ set (`LabBody.useOrgans`) rather
+   * than a bespoke model. The same geometry the body uses — an organ that
+   * looked different depending on which screen you reached it from would
+   * quietly teach that there are two of them.
+   */
+  organOf?: string;
+  /** Where this exhibit came from, so its back button says so. */
+  parentOf?: string;
 }
 
 export const SPECIMENS: Specimen[] = [
@@ -188,61 +203,48 @@ export const SPECIMENS: Specimen[] = [
       "The body faces you, so its right side is on your left. That is how every anatomy diagram is drawn, and it is why the liver appears on the left of your screen.",
     ],
     parts: [
-      {
-        id: "skin", name: "Skin", khmer: "ស្បែក",
-        blurb: "The body's largest organ, and the first one people forget is an organ at all. It keeps water in, keeps infection out, and does much of the work of holding your temperature steady.",
-        layer: "whole", at: [0, 30, 14],
-      },
-      {
-        id: "brain", name: "Brain", khmer: "ខួរក្បាល",
-        blurb: "About 1.4 kg, and using roughly a fifth of the body's energy while being a fiftieth of its weight. The folds are there to fit more surface into the skull.",
-        layer: "cutaway", at: [0, 82, 0],
-      },
-      {
-        id: "heart", name: "Heart", khmer: "បេះដូង",
-        blurb: "Sits between the lungs, tilted so its point aims down and to the left. Beats roughly 100,000 times a day without being asked. Open the heart's own exhibit to see inside it.",
-        layer: "cutaway", at: [6, 34, 10],
-      },
-      {
-        id: "lungs", name: "Lungs", khmer: "សួត",
-        blurb: "Two spongy bags either side of the heart. The right has three lobes, the left only two — the heart takes the space where the third would be.",
-        layer: "cutaway", at: [-16, 38, 6],
-      },
-      {
-        id: "airways", name: "Windpipe and bronchi", khmer: "បំពង់ខ្យល់",
-        blurb: "Air's route in: down the windpipe, then a split into each lung and about twenty more splits after that.",
-        layer: "cutaway", at: [0, 47, 6],
-      },
-      {
-        id: "liver", name: "Liver", khmer: "ថ្លើម",
-        blurb: "The largest internal organ, tucked under the ribs on the body's right. It cleans the blood, stores sugar, and makes the bile that helps digest fat. It is the only organ that regrows.",
-        layer: "cutaway", at: [-16, 14, 8],
-      },
-      {
-        id: "stomach", name: "Stomach", khmer: "ក្រពះ",
-        blurb: "A muscular bag on the left that mixes food with acid strong enough to dissolve metal, and is stopped from digesting itself only by a layer of mucus it rebuilds constantly.",
-        layer: "cutaway", at: [14, 14, 6],
-      },
-      {
-        id: "intestines", name: "Intestines", khmer: "ពោះវៀន",
-        blurb: "About seven metres of tube, coiled to fit. Almost everything your body takes from food, it takes here.",
-        layer: "cutaway", at: [0, -4, 12],
-      },
-      {
-        id: "kidneys", name: "Kidneys", khmer: "តម្រងនោម",
-        blurb: "A pair at the back, either side of the spine. Between them they filter your entire blood volume about forty times a day.",
-        layer: "cutaway", at: [-14, 2, -12],
-      },
-      {
-        id: "bladder", name: "Bladder", khmer: null,
-        blurb: "A stretchy bag sitting low in the pelvis that holds what the kidneys have filtered out until you decide otherwise.",
-        layer: "cutaway", at: [0, -24, 10],
-      },
-      {
-        id: "skeleton", name: "Skeleton", khmer: "គ្រោងឆ្អឹង",
-        blurb: "206 bones in an adult — a baby starts with about 270 and fuses some together while growing. It is scaffolding, armour and a factory: most of your blood cells are made inside the big bones.",
-        layer: "frame", at: [0, 44, -14],
-      },
+      { id: "skin", name: "Skin", khmer: "ស្បែក", layer: "whole", at: [0, 30, 14],
+        blurb: "The body's largest organ, and the one people forget is an organ at all. It keeps water in, keeps infection out, and does much of the work of holding your temperature steady." },
+      { id: "brain", name: "Brain", khmer: "ខួរក្បាល", layer: "cutaway", at: [0, 82, 0], detail: "organ-brain",
+        blurb: "About 1.4 kg, using roughly a fifth of the body's energy while being a fiftieth of its weight. The folds are there to fit more surface into the skull." },
+      { id: "spinal-cord", name: "Spinal cord", khmer: null, layer: "cutaway", at: [0, 40, -14], detail: "organ-spinal-cord",
+        blurb: "The bundle of nerves running down inside the spine, carrying every message between the brain and the rest of you." },
+      { id: "thyroid", name: "Thyroid", khmer: null, layer: "cutaway", at: [0, 55, 10], detail: "organ-thyroid",
+        blurb: "A small gland in the neck that sets the speed everything else runs at — how fast you burn energy, how fast you grow." },
+      { id: "heart", name: "Heart", khmer: "បេះដូង", layer: "cutaway", at: [8, 34, 10], detail: "heart",
+        blurb: "Sits between the lungs, tilted so its point aims down and to the left. Beats roughly 100,000 times a day without being asked." },
+      { id: "great-vessels", name: "Aorta and vena cava", khmer: null, layer: "cutaway", at: [-8, 46, -12], detail: "organ-great-vessels",
+        blurb: "The two largest blood vessels. The aorta leaves the heart and arches over before running down the back of the body; the vena cava brings everything back." },
+      { id: "lungs", name: "Lungs", khmer: "សួត", layer: "cutaway", at: [-16, 40, 6], detail: "lungs",
+        blurb: "Two spongy bags either side of the heart. The right has three lobes, the left only two — the heart takes the space where the third would be." },
+      { id: "airways", name: "Windpipe and bronchi", khmer: "បំពង់ខ្យល់", layer: "cutaway", at: [0, 48, 6], detail: "organ-airways",
+        blurb: "Air's route in: down the windpipe, then a split into each lung and about twenty more splits after that." },
+      { id: "diaphragm", name: "Diaphragm", khmer: null, layer: "cutaway", at: [-16, 22, 6], detail: "organ-diaphragm",
+        blurb: "The dome of muscle under the lungs that actually does the breathing. It flattens to pull air in and relaxes to push it out — you are not lifting your ribs, you are moving this." },
+      { id: "oesophagus", name: "Oesophagus", khmer: null, layer: "cutaway", at: [8, 44, -8], detail: "organ-oesophagus",
+        blurb: "The tube from throat to stomach. It does not drop food — it squeezes it along, which is why you can swallow upside down." },
+      { id: "liver", name: "Liver", khmer: "ថ្លើម", layer: "cutaway", at: [-18, 19, 8], detail: "organ-liver",
+        blurb: "The largest internal organ, under the ribs on the body's right. It cleans the blood, stores sugar, and makes bile. The only organ that regrows." },
+      { id: "gallbladder", name: "Gallbladder", khmer: null, layer: "cutaway", at: [-12, 10, 10], detail: "organ-gallbladder",
+        blurb: "A small bag tucked under the liver that stores the bile the liver makes, and squeezes it out when fatty food arrives." },
+      { id: "stomach", name: "Stomach", khmer: "ក្រពះ", layer: "cutaway", at: [16, 16, 6], detail: "organ-stomach",
+        blurb: "A muscular bag on the left that mixes food with acid strong enough to dissolve metal, and is stopped from digesting itself only by mucus it rebuilds constantly." },
+      { id: "pancreas", name: "Pancreas", khmer: null, layer: "cutaway", at: [10, 6, -10], detail: "organ-pancreas",
+        blurb: "Behind the stomach, doing two jobs at once: making the juice that digests your food, and making the insulin that controls your blood sugar." },
+      { id: "spleen", name: "Spleen", khmer: null, layer: "cutaway", at: [18, 16, -6], detail: "organ-spleen",
+        blurb: "On the left behind the stomach. It filters the blood, retires worn-out red cells, and is part of the immune system." },
+      { id: "small-intestine", name: "Small intestine", khmer: "ពោះវៀនតូច", layer: "cutaway", at: [0, 2, 12], detail: "organ-small-intestine",
+        blurb: "About six metres of tube, coiled to fit. Almost everything your body takes from food, it takes here." },
+      { id: "large-intestine", name: "Large intestine", khmer: "ពោះវៀនធំ", layer: "cutaway", at: [-14, 8, 8], detail: "organ-large-intestine",
+        blurb: "The frame around the small intestine: up the right, across, down the left. Shorter and wider, and its job is mostly reclaiming water." },
+      { id: "kidneys", name: "Kidneys", khmer: "តម្រងនោម", layer: "cutaway", at: [-16, 4, -12], detail: "organ-kidneys",
+        blurb: "A pair at the back, either side of the spine. Between them they filter your entire blood volume about forty times a day." },
+      { id: "ureters", name: "Ureters", khmer: null, layer: "cutaway", at: [10, -8, -8], detail: "organ-ureters",
+        blurb: "Two narrow tubes carrying what the kidneys have filtered down to the bladder. They squeeze it along rather than letting it trickle." },
+      { id: "bladder", name: "Bladder", khmer: null, layer: "cutaway", at: [0, -24, 10], detail: "organ-bladder",
+        blurb: "A stretchy bag low in the pelvis that holds what the kidneys filtered out until you decide otherwise." },
+      { id: "skeleton", name: "Skeleton", khmer: "គ្រោងឆ្អឹង", layer: "frame", at: [0, 44, -14], detail: "organ-skeleton",
+        blurb: "206 bones in an adult — a baby starts with about 270 and fuses some while growing. Scaffolding, armour and a factory: most of your blood cells are made inside the big bones." },
     ],
     quiz: [
       {
@@ -430,12 +432,490 @@ export const SPECIMENS: Specimen[] = [
     spanU: 23,
     reallife: "Each lung is roughly 25 cm tall. Together they hold about 6 litres of air when full.",
   },
+  {
+    id: "organ-brain",
+    name: "Brain",
+    khmer: "ខួរក្បាល",
+    english: "The organ that runs everything else",
+    subject: "biology",
+    topic: "Nervous system",
+    organOf: "brain",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Three pounds of tissue using a fifth of your energy. The wrinkles are not decoration: folding lets far more surface fit inside a skull, and surface is where the thinking happens.",
+      "It floats in fluid inside the skull, which is what stops it bruising every time you walk.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What are the brain's folds for?", options: ["Cooling it", "Fitting more surface into the skull", "Holding it in place", "Storing fat"], answer: 1,
+        why: "Folding packs a much larger surface into the same volume. The surface layer is where most of the processing happens, so more of it in the same skull is worth having." },
+    ],
+    sizeU: 16,
+    spanU: 20,
+    reallife: "About 1.4 kg — roughly 2% of your weight, using about 20% of your energy.",
+  },
+  {
+    id: "organ-spinal-cord",
+    name: "Spinal cord",
+    khmer: null,
+    english: "The cable between brain and body",
+    subject: "biology",
+    topic: "Nervous system",
+    organOf: "spinal-cord",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Every message between your brain and the rest of you travels down this, protected inside the bones of the spine.",
+      "Some things never reach the brain at all: pull your hand off something hot and the spinal cord has already decided before you feel it.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Why is the spinal cord inside the spine?", options: ["To keep it warm", "Because bone protects it", "To make you taller", "It is not — it runs outside"], answer: 1,
+        why: "The vertebrae form a bony tunnel. Nerve tissue does not heal like skin, so it is worth armouring." },
+    ],
+    sizeU: 74,
+    spanU: 10,
+    reallife: "About 45 cm long and roughly as thick as your little finger.",
+  },
+  {
+    id: "organ-thyroid",
+    name: "Thyroid",
+    khmer: null,
+    english: "The gland that sets your speed",
+    subject: "biology",
+    topic: "Endocrine system",
+    organOf: "thyroid",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "A small butterfly-shaped gland across the front of the windpipe. What it releases decides how fast every cell in your body burns energy.",
+      "Too little and everything slows down; too much and everything races. In Cambodia, iodised salt exists largely to keep this gland supplied.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What does the thyroid mostly control?", options: ["How fast you burn energy", "How much you sleep", "Your blood type", "How tall you will be"], answer: 0,
+        why: "It sets your metabolic rate — the speed the whole body runs at. Growth is affected too, but the rate is the main job." },
+    ],
+    sizeU: 6,
+    spanU: 9,
+    reallife: "About 5 cm across and 25 g — small for something that sets the pace of everything.",
+  },
+  {
+    id: "organ-great-vessels",
+    name: "Aorta and vena cava",
+    khmer: null,
+    english: "The body's two largest blood vessels",
+    subject: "biology",
+    topic: "Circulatory system",
+    organOf: "great-vessels",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "The aorta leaves the top of the heart, arches over, and runs down the back of the chest and abdomen. Everything the body receives leaves through it.",
+      "The vena cava runs alongside, bringing it all back. Red here means oxygen-rich and blue means oxygen-poor — a convention, not the real colour.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "The aorta carries blood…", options: ["To the lungs", "Away from the heart to the body", "From the body to the heart", "Only during exercise"], answer: 1,
+        why: "Away from the heart. Arteries carry blood away, veins bring it back — the pulmonary artery is the one exception that carries oxygen-poor blood." },
+    ],
+    sizeU: 66,
+    spanU: 20,
+    reallife: "The aorta is about as thick as a garden hose — roughly 2.5 cm across.",
+  },
+  {
+    id: "organ-airways",
+    name: "Windpipe and bronchi",
+    khmer: "បំពង់ខ្យល់",
+    english: "Air's route into the lungs",
+    subject: "biology",
+    topic: "Respiratory system",
+    organOf: "airways",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Down the windpipe, then a split into each lung, then about twenty more splits until the tubes are thinner than a hair.",
+      "The right branch is wider and more upright, which is why something swallowed the wrong way usually ends up in the right lung.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Why does an inhaled object usually end up in the right lung?", options: ["The right lung is bigger", "The right bronchus is wider and more upright", "People breathe in on the right", "It does not — the left is more common"], answer: 1,
+        why: "Geometry. The right main bronchus leaves the windpipe at a shallower angle, so anything falling takes that route." },
+    ],
+    sizeU: 22,
+    spanU: 18,
+    reallife: "The windpipe is about 12 cm long and held open by C-shaped rings of cartilage.",
+  },
+  {
+    id: "organ-diaphragm",
+    name: "Diaphragm",
+    khmer: null,
+    english: "The muscle that does the breathing",
+    subject: "biology",
+    topic: "Respiratory system",
+    organOf: "diaphragm",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "A dome of muscle under the lungs. Flatten it and the chest cavity grows, so air is pulled in; relax it and the dome rises, pushing air out.",
+      "You are not really lifting your ribs when you breathe — you are moving this. Hiccups are it twitching.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What actually pulls air into your lungs?", options: ["The lungs expanding on their own", "The diaphragm flattening", "Swallowing air", "The heart pushing"], answer: 1,
+        why: "Lungs have no muscle of their own. The diaphragm flattens, the chest cavity gets bigger, pressure drops, and air follows." },
+    ],
+    sizeU: 14,
+    spanU: 32,
+    reallife: "A sheet about 35 cm across, separating the chest from the abdomen.",
+  },
+  {
+    id: "organ-oesophagus",
+    name: "Oesophagus",
+    khmer: null,
+    english: "The tube from throat to stomach",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "oesophagus",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Not a drainpipe: rings of muscle squeeze along it in a wave, pushing food down whether you are upright, lying flat or upside down.",
+      "A ring at the bottom stays shut to keep stomach acid where it belongs. When it leaks, that is heartburn.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "How does food get down the oesophagus?", options: ["It falls", "Muscles squeeze it along in a wave", "Water washes it down", "Air pressure"], answer: 1,
+        why: "Peristalsis — a travelling wave of muscle contraction. Gravity helps but is not required." },
+    ],
+    sizeU: 38,
+    spanU: 12,
+    reallife: "About 25 cm long in an adult.",
+  },
+  {
+    id: "organ-liver",
+    name: "Liver",
+    khmer: "ថ្លើម",
+    english: "The body's chemical works",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "liver",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "The largest organ inside you, sitting under the ribs on the body's right. It cleans the blood, stores sugar for later, breaks down medicines and alcohol, and makes bile.",
+      "It is also the only organ that regrows. Remove most of it and what is left will rebuild.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Which of these is NOT a job of the liver?", options: ["Storing sugar", "Making bile", "Pumping blood", "Breaking down alcohol"], answer: 2,
+        why: "Pumping is the heart's job. The liver does the other three and several hundred more." },
+    ],
+    sizeU: 14,
+    spanU: 22,
+    reallife: "About 1.5 kg — the heaviest organ inside the body.",
+  },
+  {
+    id: "organ-gallbladder",
+    name: "Gallbladder",
+    khmer: null,
+    english: "The bile store under the liver",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "gallbladder",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "A small green bag holding the bile the liver makes, concentrated and ready. Eat something fatty and it squeezes.",
+      "It can be removed and you manage without it — bile just trickles continuously instead of arriving when needed.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What does the gallbladder store?", options: ["Blood", "Bile", "Urine", "Acid"], answer: 1,
+        why: "Bile, made by the liver. Its job is timing: releasing a concentrated dose when fatty food arrives." },
+    ],
+    sizeU: 8,
+    spanU: 6,
+    reallife: "About 8 cm long and shaped like a small pear.",
+  },
+  {
+    id: "organ-stomach",
+    name: "Stomach",
+    khmer: "ក្រពះ",
+    english: "An acid bag with muscular walls",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "stomach",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "It churns food and mixes it with acid strong enough to dissolve metal. What stops it digesting itself is a layer of mucus it rebuilds constantly.",
+      "It holds about a litre and a half comfortably. Very little is actually absorbed here — the stomach's job is breaking things down, not taking them in.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Why does the stomach not digest itself?", options: ["Its acid is weak", "A layer of mucus protects it", "It is made of bone", "It only makes acid at night"], answer: 1,
+        why: "The lining constantly replaces a mucus barrier. When that barrier fails you get an ulcer." },
+    ],
+    sizeU: 18,
+    spanU: 15,
+    reallife: "Holds about 1.5 litres, and stretches to several times its empty size.",
+  },
+  {
+    id: "organ-pancreas",
+    name: "Pancreas",
+    khmer: null,
+    english: "Two glands in one organ",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "pancreas",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Behind the stomach, doing two unrelated jobs. Most of it makes the juice that digests your food. Small islands of cells inside it make insulin.",
+      "When those islands stop working, that is diabetes — which is why an organ most people cannot point to matters so much.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What does the pancreas make besides digestive juice?", options: ["Bile", "Insulin", "Blood cells", "Adrenaline"], answer: 1,
+        why: "Insulin, from small clusters of cells scattered through it. It is the hormone that lets your cells take sugar out of the blood." },
+    ],
+    sizeU: 8,
+    spanU: 20,
+    reallife: "About 15 cm long, tucked behind the stomach where you cannot feel it.",
+  },
+  {
+    id: "organ-spleen",
+    name: "Spleen",
+    khmer: null,
+    english: "The blood's filter",
+    subject: "biology",
+    topic: "Circulatory system",
+    organOf: "spleen",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "On the left behind the stomach. It pulls worn-out red blood cells out of circulation and recycles the iron, and it is part of the immune system.",
+      "You can live without it, but you are more open to certain infections afterwards.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What does the spleen mainly do?", options: ["Makes bile", "Filters blood and recycles old red cells", "Digests fat", "Stores urine"], answer: 1,
+        why: "It filters blood, retires old red cells, and holds a reserve of immune cells." },
+    ],
+    sizeU: 12,
+    spanU: 10,
+    reallife: "About 12 cm long — roughly the size of a clenched fist.",
+  },
+  {
+    id: "organ-small-intestine",
+    name: "Small intestine",
+    khmer: "ពោះវៀនតូច",
+    english: "Where food actually becomes you",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "small-intestine",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "About six metres of tube, coiled to fit. Almost everything your body takes from food, it takes here.",
+      "Its lining is covered in tiny folds and finger-like projections, so the surface available for absorption is enormous — far larger than the tube itself suggests.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Why is the small intestine so long and folded?", options: ["To store food", "To maximise the surface that can absorb", "To make room for the stomach", "To slow you down"], answer: 1,
+        why: "Absorption happens across a surface, so more surface means more nutrition from the same meal. Length plus folds plus microscopic projections multiply it enormously." },
+    ],
+    sizeU: 18,
+    spanU: 18,
+    reallife: "About 6 m long and 2.5 cm wide — longer than the large intestine despite the name.",
+  },
+  {
+    id: "organ-large-intestine",
+    name: "Large intestine",
+    khmer: "ពោះវៀនធំ",
+    english: "The water-reclaiming frame",
+    subject: "biology",
+    topic: "Digestive system",
+    organOf: "large-intestine",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "It frames the small intestine: up the right side, across, down the left. Wider than the small intestine but much shorter, hence the name.",
+      "Its main job is taking back water. It is also home to most of the bacteria you carry, which do real work for you.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What is the large intestine's main job?", options: ["Absorbing nutrients", "Reclaiming water", "Making acid", "Storing bile"], answer: 1,
+        why: "Most nutrition has already been absorbed upstream. This stretch reclaims water and forms what is left into waste." },
+    ],
+    sizeU: 32,
+    spanU: 26,
+    reallife: "About 1.5 m long and 6 cm wide.",
+  },
+  {
+    id: "organ-kidneys",
+    name: "Kidneys",
+    khmer: "តម្រងនោម",
+    english: "A pair of filters at the back",
+    subject: "biology",
+    topic: "Urinary system",
+    organOf: "kidneys",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Either side of the spine, behind everything else. Between them they filter your entire blood volume about forty times a day.",
+      "They do more than filter: they decide how much water you keep, help set your blood pressure, and signal when more red blood cells are needed.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Roughly how often do the kidneys filter all your blood?", options: ["Once a day", "About 40 times a day", "Once a week", "Continuously but only while asleep"], answer: 1,
+        why: "Around 40 times a day — about 180 litres filtered, of which nearly all the water is put straight back." },
+    ],
+    sizeU: 14,
+    spanU: 10,
+    reallife: "Each about 11 cm long — roughly the size of a computer mouse.",
+  },
+  {
+    id: "organ-ureters",
+    name: "Ureters",
+    khmer: null,
+    english: "The tubes down to the bladder",
+    subject: "biology",
+    topic: "Urinary system",
+    organOf: "ureters",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "Two narrow tubes from the kidneys to the bladder. Like the oesophagus, they squeeze their contents along rather than letting them trickle.",
+      "They enter the bladder at an angle, so a full bladder pinches them shut and nothing travels back up.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Why do the ureters enter the bladder at an angle?", options: ["To make them longer", "So a full bladder pinches them shut", "To reach the kidneys", "No reason — it is random"], answer: 1,
+        why: "The angle makes a one-way valve. Pressure in a full bladder closes them, so urine cannot be pushed back toward the kidneys." },
+    ],
+    sizeU: 24,
+    spanU: 20,
+    reallife: "About 25 cm each, and only 3–4 mm wide.",
+  },
+  {
+    id: "organ-bladder",
+    name: "Bladder",
+    khmer: null,
+    english: "A stretchy holding tank",
+    subject: "biology",
+    topic: "Urinary system",
+    organOf: "bladder",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "It sits low in the pelvis and stretches as it fills. Nerves in its wall report how full it is long before it is actually full.",
+      "It holds around 400–600 ml comfortably. The urge starts at about half that.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "What tells you the bladder is filling?", options: ["Its weight", "Stretch sensors in its wall", "The kidneys", "The stomach"], answer: 1,
+        why: "Nerve endings in the muscular wall respond to stretch, and report earlier and more insistently as it fills." },
+    ],
+    sizeU: 10,
+    spanU: 11,
+    reallife: "Holds about half a litre comfortably.",
+  },
+  {
+    id: "organ-skeleton",
+    name: "Skeleton",
+    khmer: "គ្រោងឆ្អឹង",
+    english: "206 bones — scaffolding, armour and a factory",
+    subject: "biology",
+    topic: "Skeletal system",
+    organOf: "skeleton",
+    parentOf: "human-body",
+    centreU: 0,
+    layers: [
+      { id: "whole", label: "Whole", hint: "The organ on its own" },
+    ],
+    about: [
+      "It holds you up, protects what is soft, and gives muscles something to pull against. Bone is living tissue, constantly being taken down and rebuilt.",
+      "It is also a factory: most of your blood cells are made in the marrow inside the big bones.",
+    ],
+    parts: [],
+    quiz: [
+      { q: "Where are most blood cells made?", options: ["In the heart", "In bone marrow", "In the liver", "In the spleen"], answer: 1,
+        why: "Bone marrow, especially in the pelvis, ribs, spine and the ends of the long bones. The liver does it before you are born." },
+    ],
+    sizeU: 180,
+    spanU: 62,
+    reallife: "206 bones in an adult. A newborn has about 270; several fuse during growth.",
+  },
 ];
 
 export const specimenById = (id: string) => SPECIMENS.find((s) => s.id === id) ?? null;
 
-/** Exhibits in a subject, in registry order. */
+/**
+ * Exhibits listed on the hub for a subject.
+ *
+ * An exhibit with a `parentOf` is reached by tapping its organ inside the
+ * parent — listing all eighteen of them on the hub as well would bury the
+ * three that are actually starting points.
+ */
 export const specimensOfSubject = (subjectId: string) =>
+  SPECIMENS.filter((s) => s.subject === subjectId && !s.parentOf);
+
+/** Everything in a subject, children included — for counting, not for listing. */
+export const allOfSubject = (subjectId: string) =>
   SPECIMENS.filter((s) => s.subject === subjectId);
 
 /** The topics present within a subject, in the order they first appear. */

@@ -56,6 +56,41 @@ Implementing it is one wrapper. `LabBody`'s `Extractable` lerps position and
 scale toward a target every frame, frame-rate independent, so it survives being
 interrupted halfway by a different part being picked.
 
+## Teleporting between exhibits
+
+A part can name the exhibit it opens:
+
+```ts
+{ id: "pancreas", name: "Pancreas", khmer: null, layer: "cutaway",
+  at: [10, 6, -10], detail: "organ-pancreas", blurb: "…" }
+```
+
+Tap it inside the body, then **Open pancreas →**, and you land on its own
+screen. Back returns to the body, not the hub — the Lab keeps a stack, so the
+route in is the route out.
+
+An exhibit reached that way declares `parentOf`, which keeps it off the hub. All
+eighteen organ screens listed beside the three starting points would bury them.
+
+Most organ screens set `organOf` rather than shipping a model of their own:
+
+```ts
+organOf: "pancreas",     // draw this organ from LabBody's organ set
+parentOf: "human-body",
+centreU: 0,              // SingleOrgan centres on its own bounding box
+```
+
+That is the **same geometry the body uses**, drawn alone. An organ that looked
+different depending on which screen you reached it from would quietly teach that
+there are two of them. The heart and lungs are the exceptions: they have richer
+bespoke models because they have internal structure worth its own exhibit.
+
+> **One trap worth knowing.** react-three-fiber reads the `camera` prop *once,
+> at canvas creation*. Teleporting re-renders the same `SpecimenView` rather
+> than remounting it, so the camera kept the body's distance and a 15 cm
+> pancreas rendered three times too far away. `FrameCamera` sets it on every
+> change of framing.
+
 ## How realistic can this get?
 
 Worth being straight about the ceiling, because it is set by two constraints we
@@ -203,7 +238,12 @@ coronary arteries
 
 **Biology — the lungs:** main bronchi · bronchial tree · cardiac notch
 
-**Biology — the whole body:** bladder
+**Biology — the whole body:** spinal cord · thyroid · aorta and vena cava ·
+diaphragm · oesophagus · gallbladder · pancreas · spleen · ureters · bladder
+
+**Deliberately not modelled:** the reproductive organs. Whether and how they
+appear in a school tool is a decision for Cambodian educators and the Ministry,
+not for whoever happens to be writing the geometry.
 
 **Subjects:** Earth and sky · Agriculture and engineering
 

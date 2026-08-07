@@ -41,14 +41,20 @@ export function App() {
   const [buildingId, setBuildingId] = useState<string | null>(null);
   // 🔬 Learning Lab: a directory, then one specimen's page.
   const [labOpen, setLabOpen] = useState(false);
-  const [specimenId, setSpecimenId] = useState<string | null>(null);
+  // A stack, not a single id: an organ's screen is reached from inside the body
+  // it belongs to, and Back has to return there rather than to the hub.
+  const [specimenStack, setSpecimenStack] = useState<string[]>([]);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
   const spot = SPOTS.find((s) => s.id === spotId) ?? null;
   const building = buildingId ? buildingById(buildingId) ?? null : null;
   const site = siteId ? siteById(siteId) ?? null : null;
+  const specimenId = specimenStack[specimenStack.length - 1] ?? null;
   const specimen = specimenId ? specimenById(specimenId) ?? null : null;
+  const parent = specimenStack.length > 1
+    ? specimenById(specimenStack[specimenStack.length - 2])
+    : null;
 
   /** Leave the whole Buildings stack in one go, from any depth. */
   const closeBuildings = () => {
@@ -106,11 +112,16 @@ export function App() {
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
       ) : specimen ? (
-        <SpecimenView specimen={specimen} onBack={() => setSpecimenId(null)} />
+        <SpecimenView
+          specimen={specimen}
+          onBack={() => setSpecimenStack((st) => st.slice(0, -1))}
+          onOpenSpecimen={(id) => setSpecimenStack((st) => [...st, id])}
+          backLabel={parent ? `← ${parent.name}` : "← Lab"}
+        />
       ) : labOpen ? (
         <LabView
           onBackToMap={() => setLabOpen(false)}
-          onOpenSpecimen={(id) => setSpecimenId(id)}
+          onOpenSpecimen={(id) => setSpecimenStack([id])}
         />
       ) : building ? (
         // A building's own page — reached from the directory, or by tapping it

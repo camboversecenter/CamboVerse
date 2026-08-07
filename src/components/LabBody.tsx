@@ -45,6 +45,14 @@ export const BODY = {
   kidney: "#8f4a44",
   bladder: "#d6c07a",
   airway: "#e6dcc8",
+  gutDeep: "#b07458",
+  nerve: "#e4dfc4",
+  gland: "#c98f6a",
+  spleen: "#7a3a48",
+  muscle: "#b45c52",
+  bile: "#7d9a52",
+  artery: "#c0392b",
+  vein: "#5566a6",
 } as const;
 
 /* --------------------------------------------------------------- helpers --- */
@@ -252,64 +260,124 @@ function useSkeleton(detail: Detail) {
 
 /* --------------------------------------------------------------- organs --- */
 
-type OrganDef = {
+export type OrganDef = {
+  /** Matches a `LabPart.id`, and a specimen id for the organ's own screen. */
   id: string;
   geo: BufferGeometry;
+  /** Where it sits in the body. */
   at: [number, number, number];
   color: string;
-  /** Where it flies to when the student pulls it out. */
-  stage?: [number, number, number];
+  /** How much to enlarge it when it is pulled out of the body. */
   stageScale?: number;
+  /** Roughly how big it is on its own, so its detail screen can frame it. */
+  ownSize?: [number, number];
 };
 
-function useOrgans(detail: Detail): OrganDef[] {
+/**
+ * Every organ, built once and used twice: arranged inside the figure here, and
+ * rendered alone on its own detail screen. One source, so an organ can never
+ * look like two different things depending on which screen you are on.
+ *
+ * Deliberately not modelled: the reproductive organs. Whether and how they
+ * appear in a school tool is a decision for Cambodian educators and the
+ * Ministry, not for whoever happens to be writing the geometry.
+ */
+export function useOrgans(detail: Detail): OrganDef[] {
   const seg = SEG[detail];
   return useMemo(() => {
-    const brain = organBlob({ r: [7.4, 6.2, 8.4], lumps: 0.14, seed: 61, seg });
-    const heart = organBlob({ r: [5.0, 6.0, 4.4], taper: 0.18, lean: 0.5, lumps: 0.05, seed: 2, seg });
-    // right lung is the bigger of the two and sits at −x, because the figure
-    // faces +z (see the note at the top of this file)
-    const lungR = organBlob({
-      r: [5.8, 11.5, 5.0], taper: 0.5, lumps: 0.05, seed: 21, seg,
+    const blob = (o: Parameters<typeof organBlob>[0]) => organBlob({ ...o, seg });
+
+    const brain = blob({ r: [7.4, 6.2, 8.4], lumps: 0.16, seed: 61 });
+    const cord = vessel([[0, 56, -5], [0, 30, -6.5], [0, 6, -6], [0, -12, -5]], 0.9, 20, 8);
+    const thyroid = blob({ r: [3.4, 2.0, 1.8], lumps: 0.08, seed: 63 });
+    const heart = blob({ r: [5.0, 6.0, 4.4], taper: 0.18, lean: 0.5, lumps: 0.05, seed: 2 });
+
+    // The great vessels: the aorta arching over the heart and down the back of
+    // the abdomen, and the vena cava running beside it.
+    const aorta = vessel([
+      [1, 36, 1], [0, 43, -1], [-3, 46, -3], [-5, 42, -5],
+      [-4, 30, -6], [-3, 10, -6], [-2, -8, -6], [-3, -16, -5],
+    ], 1.3, 26, detail === "ultra" ? 12 : 8);
+    const cava = vessel([
+      [4, 44, -3], [4, 34, -4], [4, 16, -5], [4, -4, -5], [4, -14, -4],
+    ], 1.2, 18, detail === "ultra" ? 12 : 8);
+
+    // right lung sits at −x, because the figure faces +z (see the file header)
+    const lungR = blob({
+      r: [5.8, 11.5, 5.0], taper: 0.5, lumps: 0.05, seed: 21,
       flatten: { axis: "x", sign: 1, amount: 0.34 },
     });
-    const lungL = organBlob({
-      r: [5.4, 11.2, 4.8], taper: 0.5, lumps: 0.05, seed: 31, seg,
+    const lungL = blob({
+      r: [5.4, 11.2, 4.8], taper: 0.5, lumps: 0.05, seed: 31,
       flatten: { axis: "x", sign: -1, amount: 0.34 },
       notch: { at: [-0.75, -0.2, 0.7], radius: 1.0, depth: 0.55 },
     });
-    const liver = organBlob({
-      r: [8.8, 4.8, 6.2], lumps: 0.05, seed: 71, seg,
+
+    // the diaphragm: a shallow dome, the sheet of muscle that does the breathing
+    const diaphragm = blob({ r: [14.5, 3.4, 9.8], taper: 0.85, lumps: 0.04, seed: 65 });
+
+    const oesophagus = vessel([[0, 52, -3], [0, 40, -3.5], [1, 30, -3], [3, 22, -1]], 1.1, 16, 9);
+    const liver = blob({
+      r: [8.8, 4.8, 6.2], lumps: 0.05, seed: 71,
       flatten: { axis: "x", sign: 1, amount: 0.5 },
     });
-    const stomach = organBlob({ r: [5.4, 7.2, 4.2], taper: 0.42, lean: -0.4, lumps: 0.09, seed: 73, seg });
-    const kidney = organBlob({
-      r: [3.0, 5.2, 2.8], lumps: 0.05, seed: 79, seg,
+    const gallbladder = blob({ r: [1.5, 2.6, 1.5], taper: 0.5, lumps: 0.05, seed: 72 });
+    const stomach = blob({ r: [5.4, 7.2, 4.2], taper: 0.42, lean: -0.4, lumps: 0.09, seed: 73 });
+    const pancreas = blob({
+      r: [7.5, 1.7, 1.9], lumps: 0.1, seed: 74,
+      flatten: { axis: "z", sign: -1, amount: 0.2 },
+    });
+    const spleen = blob({ r: [2.4, 4.2, 3.0], lumps: 0.06, seed: 75 });
+    const kidney = blob({
+      r: [3.0, 5.2, 2.8], lumps: 0.05, seed: 79,
       notch: { at: [-0.95, 0, 0], radius: 0.8, depth: 0.55 },
     });
-    const bladder = organBlob({ r: [4.2, 3.6, 3.6], lumps: 0.05, seed: 83, seg });
+    const ureters = mergeGeometries([
+      vessel([[-6.5, 1, -5], [-5, -6, -3], [-3, -14, -1]], 0.42, 12, 7),
+      vessel([[6.5, -1, -5], [5, -7, -3], [3, -14, -1]], 0.42, 12, 7),
+    ], false) ?? new BufferGeometry();
+    const bladder = blob({ r: [4.2, 3.6, 3.6], lumps: 0.05, seed: 83 });
 
-    // the gut: one long coiled tube, which is exactly what it is
+    // the small intestine: one long coiled tube, which is exactly what it is
     const coil: [number, number, number][] = [];
-    for (let i = 0; i <= 60; i++) {
-      const t = i / 60;
-      const a = t * Math.PI * 6.2;
-      const r = 7.6 - t * 2.0;
-      coil.push([Math.cos(a) * r, 2 - t * 14, Math.sin(a) * r * 0.55 + 1]);
+    for (let i = 0; i <= 64; i++) {
+      const t = i / 64;
+      const a = t * Math.PI * 6.4;
+      const r = 6.4 - t * 1.6;
+      coil.push([Math.cos(a) * r, 0 - t * 11, Math.sin(a) * r * 0.55 + 1]);
     }
-    const gut = vessel(coil, 2.1, detail === "ultra" ? 90 : 48, detail === "ultra" ? 10 : 7);
+    const smallGut = vessel(coil, 1.7, detail === "ultra" ? 96 : 52, detail === "ultra" ? 10 : 7);
+
+    // the large intestine frames it: up the right, across, down the left
+    const largeGut = vessel([
+      [-8.5, -13, 1], [-9.5, -4, 1], [-9.5, 6, 1],
+      [-4, 9, 1], [4, 9, 1],
+      [9.5, 6, 1], [9.5, -4, 1], [8, -12, 1],
+      [3, -15, 1], [0, -17, 1],
+    ], 2.4, detail === "ultra" ? 60 : 34, detail === "ultra" ? 12 : 8);
 
     return [
-      { id: "brain", geo: brain, at: [0, 72, -1], color: BODY.brain, stageScale: 2.4 },
-      { id: "heart", geo: heart, at: [2.5, 32, 2], color: BODY.heart, stageScale: 2.6 },
-      { id: "lungs", geo: lungR, at: [-8.5, 34, 0], color: BODY.lung, stageScale: 1.6 },
-      { id: "lungs", geo: lungL, at: [8.5, 34, 0], color: BODY.lung, stageScale: 1.6 },
-      { id: "liver", geo: liver, at: [-4.5, 17, 2], color: BODY.liver, stageScale: 1.9 },
-      { id: "stomach", geo: stomach, at: [5.5, 15, 1], color: BODY.stomach, stageScale: 2.2 },
-      { id: "kidneys", geo: kidney, at: [-6.5, 5, -5.5], color: BODY.kidney, stageScale: 3.2 },
-      { id: "kidneys", geo: kidney, at: [6.5, 3, -5.5], color: BODY.kidney, stageScale: 3.2 },
-      { id: "intestines", geo: gut, at: [0, 2, 1], color: BODY.gut, stageScale: 1.6 },
-      { id: "bladder", geo: bladder, at: [0, -16, 3], color: BODY.bladder, stageScale: 3.4 },
+      { id: "brain", geo: brain, at: [0, 72, -1], color: BODY.brain, stageScale: 2.4, ownSize: [14, 18] },
+      { id: "spinal-cord", geo: cord, at: [0, 0, 0], color: BODY.nerve, stageScale: 1.2, ownSize: [70, 8] },
+      { id: "thyroid", geo: thyroid, at: [0, 51, 4], color: BODY.gland, stageScale: 5, ownSize: [5, 8] },
+      { id: "heart", geo: heart, at: [2.5, 32, 2], color: BODY.heart, stageScale: 2.6, ownSize: [14, 12] },
+      { id: "great-vessels", geo: aorta, at: [0, 0, 0], color: BODY.artery, stageScale: 1.2, ownSize: [64, 16] },
+      { id: "great-vessels", geo: cava, at: [0, 0, 0], color: BODY.vein, stageScale: 1.2, ownSize: [64, 16] },
+      { id: "lungs", geo: lungR, at: [-8.5, 34, 0], color: BODY.lung, stageScale: 1.6, ownSize: [26, 24] },
+      { id: "lungs", geo: lungL, at: [8.5, 34, 0], color: BODY.lung, stageScale: 1.6, ownSize: [26, 24] },
+      { id: "diaphragm", geo: diaphragm, at: [0, 24, -1], color: BODY.muscle, stageScale: 1.5, ownSize: [12, 30] },
+      { id: "oesophagus", geo: oesophagus, at: [0, 0, 0], color: BODY.gut, stageScale: 1.3, ownSize: [36, 10] },
+      { id: "liver", geo: liver, at: [-4.5, 17, 2], color: BODY.liver, stageScale: 1.9, ownSize: [12, 20] },
+      { id: "gallbladder", geo: gallbladder, at: [-4, 12, 4], color: BODY.bile, stageScale: 5, ownSize: [7, 5] },
+      { id: "stomach", geo: stomach, at: [5.5, 15, 1], color: BODY.stomach, stageScale: 2.2, ownSize: [16, 13] },
+      { id: "pancreas", geo: pancreas, at: [1, 10, -2], color: BODY.gland, stageScale: 2.4, ownSize: [6, 18] },
+      { id: "spleen", geo: spleen, at: [9, 15, -3], color: BODY.spleen, stageScale: 3.4, ownSize: [10, 8] },
+      { id: "kidneys", geo: kidney, at: [-6.5, 5, -5.5], color: BODY.kidney, stageScale: 3.2, ownSize: [12, 8] },
+      { id: "kidneys", geo: kidney, at: [6.5, 3, -5.5], color: BODY.kidney, stageScale: 3.2, ownSize: [12, 8] },
+      { id: "ureters", geo: ureters, at: [0, 0, 0], color: BODY.bile, stageScale: 1.4, ownSize: [22, 18] },
+      { id: "small-intestine", geo: smallGut, at: [0, 4, 1], color: BODY.gut, stageScale: 1.6, ownSize: [16, 16] },
+      { id: "large-intestine", geo: largeGut, at: [0, 4, 0], color: BODY.gutDeep, stageScale: 1.6, ownSize: [30, 24] },
+      { id: "bladder", geo: bladder, at: [0, -16, 3], color: BODY.bladder, stageScale: 3.4, ownSize: [9, 10] },
     ];
   }, [seg, detail]);
 }
@@ -572,6 +640,109 @@ export function Body({
           </group>
         </>
       )}
+    </group>
+  );
+}
+
+/* ------------------------------------------------------- one organ alone --- */
+
+/**
+ * One organ on its own screen, centred and standing still.
+ *
+ * It is the *same geometry* the body uses, not a second model of the same
+ * thing — an organ that looked different depending on which screen you reached
+ * it from would quietly teach that there are two of them.
+ *
+ * Paired organs (lungs, kidneys) keep both halves and their real separation,
+ * because "there are two, and they are not identical" is most of the lesson.
+ */
+export function SingleOrgan({
+  organId, detail = "ultra", onPick, selected,
+}: {
+  organId: string;
+  detail?: Detail;
+  onPick?: (partId: string) => void;
+  selected?: string | null;
+}) {
+  const organs = useOrgans(detail);
+  const skeleton = useSkeleton(detail);
+  const mine = organs.filter((o) => o.id === organId);
+
+  // Centre the set on its own bounding box rather than the body's origin, so a
+  // kidney does not appear off in the corner where it lives in the abdomen.
+  const centre = useMemo(() => {
+    if (!mine.length) return [0, 0, 0] as [number, number, number];
+    const b = { x: 0, y: 0, z: 0 };
+    for (const o of mine) { b.x += o.at[0]; b.y += o.at[1]; b.z += o.at[2]; }
+    return [b.x / mine.length, b.y / mine.length, b.z / mine.length] as [number, number, number];
+  }, [mine]);
+
+  const airways = organId === "airways";
+  const trachea = useMemo(
+    () => (airways ? vessel([[0, 52, 0], [0, 44, 0], [0, 39, 0]], 1.5, 8, 10) : null), [airways]);
+  const tree = useMemo(() => (airways ? mergeGeometries([
+    vessel([[0, 39, 0], [-3, 36.5, 0], [-6, 35, 0]], 1.0, 6, 9),
+    vessel([[0, 39, 0], [3.2, 36, 0], [6.5, 34.5, 0]], 0.9, 6, 9),
+    branchTree({ from: [-6, 35, 0], dir: [-0.4, -0.9, 0], length: 5, radius: 0.75,
+      levels: detail === "ultra" ? 5 : 4, spread: 0.6, twist: 1.1, seed: 5 }),
+    branchTree({ from: [6.5, 34.5, 0], dir: [0.4, -0.9, 0], length: 4.8, radius: 0.7,
+      levels: detail === "ultra" ? 5 : 4, spread: 0.6, twist: 1.3, seed: 9 }),
+  ], false) : null), [airways, detail]);
+
+  const pick = (e: { stopPropagation: () => void }) => {
+    if (!onPick) return;
+    e.stopPropagation();
+    onPick(organId);
+  };
+  const glow = selected === organId ? "#3a1210" : "#000000";
+
+  if (organId === "skeleton") {
+    return (
+      <group position={[0, 0, 0]} onClick={pick}>
+        {[skeleton.merged, skeleton.skull, skeleton.jaw].map((g, i) => (
+          <mesh
+            key={i}
+            geometry={g}
+            position={i === 1 ? [0, 73, 0] : i === 2 ? [0, 66, 3.5] : [0, 0, 0]}
+            castShadow
+          >
+            <meshPhysicalMaterial
+              color={i === 0 ? BODY.bone : BODY.boneDeep}
+              roughness={0.5} clearcoat={0.25} emissive={selected === organId ? "#4a4436" : "#000000"}
+            />
+          </mesh>
+        ))}
+      </group>
+    );
+  }
+
+  if (airways) {
+    return (
+      <group position={[0, -44, 0]} onClick={pick}>
+        {[trachea, tree].filter(Boolean).map((g, i) => (
+          <mesh key={i} geometry={g as BufferGeometry} castShadow>
+            <meshPhysicalMaterial color={BODY.airway} roughness={0.55} clearcoat={0.3} emissive={glow} />
+          </mesh>
+        ))}
+      </group>
+    );
+  }
+
+  return (
+    <group position={[-centre[0], -centre[1], -centre[2]]} onClick={pick}>
+      {mine.map((o, i) => (
+        <mesh key={i} geometry={o.geo} position={o.at} castShadow receiveShadow>
+          <meshPhysicalMaterial
+            color={o.color}
+            roughness={0.32}
+            clearcoat={0.6}
+            clearcoatRoughness={0.26}
+            sheen={0.3}
+            sheenColor="#ffd9cf"
+            emissive={glow}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }

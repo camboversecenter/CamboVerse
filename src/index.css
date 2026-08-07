@@ -3573,3 +3573,10 @@ select.farm-modal-note { appearance: none; }
   font: 700 12px system-ui, sans-serif;
 }
 .lab-extract.on { background: transparent; color: #b23a34; }
+
+.lab-open {
+  padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #2c7d99; background: #2c7d99; color: #fff;
+  font: 700 12px system-ui, sans-serif;
+}
+.lab-open:hover { background: #24697f; }

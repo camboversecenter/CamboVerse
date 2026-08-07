@@ -4,7 +4,7 @@ import { Html, OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping } from "three";
 import { Heart, Lungs, type Detail } from "./LabOrgans";
-import { Body } from "./LabBody";
+import { Body, SingleOrgan } from "./LabBody";
 import { studioEnvironment } from "../lib/studioEnv";
 import { subjectById, type LabLayer, type Specimen } from "../lab";
 
@@ -13,11 +13,14 @@ import { subjectById, type LabLayer, type Specimen } from "../lab";
  * everything else in the Lab is data.
  */
 function TheSpecimen({
-  id, layer, detail, onPick, selected, extracted,
+  id, organOf, layer, detail, onPick, selected, extracted,
 }: {
-  id: string; layer: LabLayer; detail: Detail;
+  id: string; organOf?: string; layer: LabLayer; detail: Detail;
   onPick: (partId: string) => void; selected: string | null; extracted: string | null;
 }) {
+  // An organ pulled out of the body onto its own screen: the same geometry the
+  // body uses, drawn alone.
+  if (organOf) return <SingleOrgan organId={organOf} detail={detail} onPick={onPick} selected={selected} />;
   switch (id) {
     case "human-body":
       return <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
@@ -25,6 +28,25 @@ function TheSpecimen({
     case "lungs": return <Lungs layer={layer} detail={detail} onPick={onPick} selected={selected} />;
     default: return null;
   }
+}
+
+/**
+ * Re-frame the camera when the exhibit changes.
+ *
+ * react-three-fiber reads the `camera` prop **once, at canvas creation**. Since
+ * teleporting from the body to one of its organs re-renders the same
+ * `SpecimenView` rather than remounting it, the camera kept the body's distance
+ * and a 15 cm pancreas rendered three times too far away. Setting it here, on
+ * every change of framing, is what makes the jump land correctly.
+ */
+function FrameCamera({ dist, centre, size }: { dist: number; centre: number; size: number }) {
+  const camera = useThree((s) => s.camera);
+  useEffect(() => {
+    camera.position.set(dist * 0.4, centre + size * 0.06, dist);
+    camera.lookAt(0, centre, 0);
+    camera.updateProjectionMatrix();
+  }, [camera, dist, centre, size]);
+  return null;
 }
 
 /**
@@ -70,10 +92,13 @@ function detectViewMode(): Detail {
 }
 
 export function SpecimenView({
-  specimen, onBack,
+  specimen, onBack, onOpenSpecimen, backLabel = "← Lab",
 }: {
   specimen: Specimen;
   onBack: () => void;
+  /** Teleport to another exhibit — an organ's own screen, from inside the body. */
+  onOpenSpecimen: (id: string) => void;
+  backLabel?: string;
 }) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
   const [vrSupported, setVrSupported] = useState(false);
@@ -137,6 +162,7 @@ export function SpecimenView({
         <XR store={store}>
           <color attach="background" args={["#101a22"]} />
           <StudioLight />
+          <FrameCamera dist={dist} centre={centre} size={specimen.sizeU} />
           {/* A specimen light rig, not a landscape one: a key from the front-left,
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}
@@ -154,6 +180,7 @@ export function SpecimenView({
           <group>
             <TheSpecimen
               id={specimen.id}
+              organOf={specimen.organOf}
               layer={layer}
               detail={detail}
               onPick={setPicked}
@@ -195,7 +222,7 @@ export function SpecimenView({
       </Canvas>
 
       <div className="cls-top">
-        <button className="backbtn" onClick={onBack}>← Lab</button>
+        <button className="backbtn" onClick={onBack}>{backLabel}</button>
         <span className="cls-title">🔬 {specimen.name}</span>
         <button
           className="grove-quality"
@@ -266,6 +293,11 @@ export function SpecimenView({
                 </div>
                 <p className="bld-about">{part.blurb}</p>
                 <div className="lab-actions">
+                  {part.detail && (
+                    <button className="lab-open" onClick={() => onOpenSpecimen(part.detail!)}>
+                      Open {part.name.toLowerCase()} →
+                    </button>
+                  )}
                   {specimen.extractable && part.layer !== "whole" && (
                     <button
                       className={extracted === part.id ? "lab-extract on" : "lab-extract"}
