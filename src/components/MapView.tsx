@@ -21,6 +21,7 @@ export function MapView({
   onOpenSakYant,
   onOpenGrove,
   onOpenBuildings,
+  onOpenLab,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -35,6 +36,7 @@ export function MapView({
   onOpenSakYant: () => void;
   onOpenGrove: () => void;
   onOpenBuildings: () => void;
+  onOpenLab: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -95,6 +97,7 @@ export function MapView({
         {/* One button, not one per building. Sites and buildings are listed on
             the Buildings page itself (BuildingsHome). */}
         <button className="campus-btn" onClick={onOpenBuildings}>🏛 Buildings</button>
+        <button className="lab-btn" onClick={onOpenLab}>🔬 Learning Lab</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>

@@ -12,10 +12,13 @@ import { VillageView } from "./components/VillageView";
 import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
+import { LabView } from "./components/LabView";
+import { SpecimenView } from "./components/SpecimenView";
 import { BuildingsHome } from "./components/BuildingsHome";
 import { BuildingsView } from "./components/BuildingsView";
 import { BuildingView } from "./components/BuildingView";
 import { buildingById, siteById } from "./buildings";
+import { specimenById } from "./lab";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -36,12 +39,16 @@ export function App() {
   const [buildingsOpen, setBuildingsOpen] = useState(false);
   const [siteId, setSiteId] = useState<string | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
+  // 🔬 Learning Lab: a directory, then one specimen's page.
+  const [labOpen, setLabOpen] = useState(false);
+  const [specimenId, setSpecimenId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
   const spot = SPOTS.find((s) => s.id === spotId) ?? null;
   const building = buildingId ? buildingById(buildingId) ?? null : null;
   const site = siteId ? siteById(siteId) ?? null : null;
+  const specimen = specimenId ? specimenById(specimenId) ?? null : null;
 
   /** Leave the whole Buildings stack in one go, from any depth. */
   const closeBuildings = () => {
@@ -98,6 +105,13 @@ export function App() {
         <SakYantView onBackToMap={() => setSakYantOpen(false)} />
       ) : groveOpen ? (
         <GroveGardenView onBackToMap={() => setGroveOpen(false)} />
+      ) : specimen ? (
+        <SpecimenView specimen={specimen} onBack={() => setSpecimenId(null)} />
+      ) : labOpen ? (
+        <LabView
+          onBackToMap={() => setLabOpen(false)}
+          onOpenSpecimen={(id) => setSpecimenId(id)}
+        />
       ) : building ? (
         // A building's own page — reached from the directory, or by tapping it
         // inside a site. Back goes wherever you came from.
@@ -133,6 +147,7 @@ export function App() {
           onOpenFashion={() => setFashionOpen(true)}
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
+          onOpenLab={() => setLabOpen(true)}
           onOpenBuildings={() => setBuildingsOpen(true)}
         />
       )}

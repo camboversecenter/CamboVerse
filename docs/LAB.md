@@ -1,0 +1,190 @@
+# The Learning Lab
+
+**Anything easier to understand in your hands than on a page.** Turn it around,
+take it apart layer by layer, test yourself.
+
+The Lab is a **container, not a subject**. Human anatomy is only what it opened
+with, because organs are the clearest case of "a thing a classroom cannot put on
+a bench". A rice mill, a water pump, a lever, a benzene ring, the monsoon, the
+solar system — all of it belongs here, each under its own subject.
+
+Built for Cambodian students first, and open to everyone.
+
+---
+
+## The shape
+
+Three levels, so that adding a **subject** is data, and adding an **exhibit** is
+data plus one model function.
+
+```
+SUBJECT              Biology · Physics · Chemistry · Earth and sky · Agriculture
+  └── topic          "Circulatory system", "Simple machines", "Rice processing"
+        └── EXHIBIT  the heart · a lever · a treadle pump
+```
+
+Everything lives in [`src/lab.ts`](../src/lab.ts). Subjects with nothing in them
+yet are **still listed on the hub**, greyed out. An empty shelf is the
+invitation: a contributor can see exactly where their work would go.
+
+## The three rules
+
+1. **Procedural, always.** Geometry is written in code from description — never
+   traced from a scan, a photograph, a CAD file or a copyrighted illustration.
+   That is a licensing decision as much as a technical one: a Digital Public
+   Good cannot ship an atlas figure it does not own. It also happens to be what
+   keeps an exhibit inside the ~$150-Android budget.
+2. **Say what it is.** These are **schematic teaching models**. Structure,
+   proportion and behaviour follow the standard account; nothing here is a
+   measurement, a scan or survey data. Every exhibit page says so.
+3. **Never guess a Khmer term.** A wrong technical term in a teaching tool is
+   worse than a missing one. Leave `khmer: null` and the interface prints
+   "Khmer term needed" — which is honest, and turns the gap into a task.
+
+## Adding an exhibit
+
+### 1. The data
+
+Add a `Specimen` to `SPECIMENS` in [`src/lab.ts`](../src/lab.ts):
+
+```ts
+{
+  id: "treadle-pump",
+  name: "Treadle pump",
+  khmer: null,                       // null until a Khmer speaker confirms it
+  english: "A foot-powered irrigation pump",
+  subject: "agri",                   // must match a Subject id
+  topic: "Irrigation",
+  layers: [                          // YOUR words, not "Whole/Inside/Tubes"
+    { id: "whole",   label: "Assembled", hint: "The pump as it stands in a field" },
+    { id: "cutaway", label: "Cylinders", hint: "See-through, showing the pistons" },
+    { id: "frame",   label: "Water path", hint: "Just the pipes and valves" },
+  ],
+  about: ["…", "…"],
+  parts: [
+    { id: "piston", name: "Piston", khmer: null,
+      blurb: "…", layer: "cutaway", at: [0, 1.2, 0] },
+  ],
+  quiz: [
+    { q: "…", options: ["…", "…"], answer: 0, why: "…" },
+  ],
+  sizeU: 140,                        // full bounding HEIGHT, 1 unit ≈ 1 cm
+  spanU: 90,                         // full bounding WIDTH
+  reallife: "About waist height, and light enough for one person to carry.",
+}
+```
+
+Fields worth getting right:
+
+- **`layers`** are three slots with fixed ids (`whole` / `cutaway` / `frame`) and
+  labels you choose. Hard-coding "Tubes only" is what made the first version an
+  anatomy viewer; an engine peels back to moving parts, a molecule switches
+  representation.
+- **`sizeU` and `spanU`** both matter. On a portrait phone the horizontal field
+  of view is barely 29° against the 45° vertical, so **width is almost always
+  the binding constraint** — sizing off height alone hangs the exhibit off the
+  sides of the screen.
+- **`part.layer`** is the layer that part is visible in. Tapping its name in the
+  list switches to that layer, so a student never taps a label for something
+  hidden.
+- **`quiz[].why`** is shown whether the answer was right or wrong. Getting it
+  right by luck should still teach you why.
+
+### 2. The model
+
+Add a function to [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx)
+(rename or split the file once there is a second subject in it) and a `case` to
+`TheSpecimen`. It takes `layer`, `detail`, `onPick` and `selected`, and returns a
+group.
+
+The procedural vocabulary already there:
+
+| Helper | For |
+|---|---|
+| `organBlob({ r, taper, lean, lumps, notch, flatten, seg })` | a soft continuous mass — a sphere displaced until it stops looking like one |
+| `vessel(points, radius)` | a tube swept along a smooth curve — a vessel, an airway, a pipe, a cable |
+| `branchTree({ from, dir, length, radius, levels })` | anything that divides and divides again — a bronchial tree, a vascular bed, a river delta |
+| `labNoise(seed, a, b, c)` | deterministic wobble, so a render is reproducible |
+
+**Honour `detail`.** `normal` is the low-end-phone baseline and must stay
+usable: fewer segments, fewer recursion levels, no shadows. Degrade the detail,
+never the content — a student in Normal mode sees the same parts, the same
+labels and the same quiz.
+
+### 3. Check it
+
+```bash
+npm run typecheck
+npm run build
+npm run dev            # then 🔬 Learning Lab
+```
+
+Look at it in **Normal** as well as Ultra, and on a narrow window. Normal is what
+most students will actually see.
+
+## Adding a subject
+
+An entry in `SUBJECTS`, and nothing else:
+
+```ts
+{ id: "civics", name: "Civics and government", khmer: null,
+  blurb: "How a commune council works, and where the money goes.", icon: "🏛" }
+```
+
+It appears immediately under "Shelves waiting to be filled" until its first
+exhibit lands.
+
+---
+
+## Khmer terms waiting on a reviewer
+
+These are `null` in the data, so the interface currently shows **"Khmer term
+needed"** next to them. Filling them in is a real contribution and needs a Khmer
+speaker who knows the subject — **not a machine translation**, and ideally
+matching the terms used in MoEYS textbooks so a student meets the same word in
+class and here.
+
+**Biology — the heart:** heart muscle / myocardium · left ventricle · right
+ventricle · left atrium · right atrium · aorta · pulmonary trunk · venae cavae ·
+coronary arteries
+
+**Biology — the lungs:** main bronchi · bronchial tree · cardiac notch
+
+**Subjects:** Earth and sky · Agriculture and engineering
+
+Already confirmed: បេះដូង (heart) · សួត (lung) · សួតខាងស្តាំ (right lung) ·
+សួតខាងឆ្វេង (left lung) · បំពង់ខ្យល់ (windpipe) · ជីវវិទ្យា (biology) ·
+រូបវិទ្យា (physics) · គីមីវិទ្យា (chemistry)
+
+If you know a term is wrong, that is worth an issue on its own.
+
+---
+
+## The AI tutor
+
+Not built. The seam is [`LabTutor`](../src/lab.ts) — one method, given the
+exhibit, the selected part, the question and the language.
+
+Two rules for whoever wires one in:
+
+- **The Lab must keep working without it.** A student on a slow connection with
+  no credit is the normal case, not the edge case. Every lesson — model, labels,
+  layers, quiz — already works offline and must continue to.
+- **Tell the model what these are.** Schematic teaching models, not clinical or
+  engineering references. Otherwise it will confidently invent detail the
+  geometry never claimed.
+
+## View modes
+
+The Lab follows CamboVerse's three modes ([`AGENTS.md`](../AGENTS.md)):
+**Normal** for a low-end phone, **Ultra** for a capable device, and **VR**, which
+always presents Ultra. Auto-detected, overridable from the button top-right.
+
+## Where this fits
+
+- [`src/lab.ts`](../src/lab.ts) — subjects, exhibits, parts, quizzes, the tutor seam
+- [`src/components/LabView.tsx`](../src/components/LabView.tsx) — the hub
+- [`src/components/SpecimenView.tsx`](../src/components/SpecimenView.tsx) — an exhibit's page
+- [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) — the procedural vocabulary
+- [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
+- [`TODO.md`](../TODO.md) — the contributor task board

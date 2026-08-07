@@ -99,6 +99,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 - [`examples/treasure-hunt/`](./examples/treasure-hunt/) — a **reference partner app**: one self‑contained HTML file that composes every rail end‑to‑end (scene → learning credentials → a real local reward).
 
 **Features**
+- [`docs/LAB.md`](./docs/LAB.md) — the **🔬 Learning Lab**: anything easier to understand in your hands than on a page — an organ, a machine, a molecule, a monsoon. Turn it around, peel back the layers, test yourself. Adding an exhibit is a data entry plus one model function.
 - [`docs/AI_GUIDE.md`](./docs/AI_GUIDE.md) — **Kiri**, the multilingual AI tour guide (setup, grounding, roadmap).
 - **Khmer Alphabet Classroom** — every Khmer letter as a 3D tile in both the **Normal** and **Moul** shapes (embedded Google Khmer fonts), viewable in 3D and VR. Help grow it via the [task board](./TODO.md#grow-the-khmer-alphabet-classroom).
 
