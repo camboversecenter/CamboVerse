@@ -11,7 +11,7 @@ import { KHMER_FONTS, type KhmerLetter } from "../khmer";
  * using `letter.display` (which already includes the dotted-circle
  * placeholder — see the `dv()` helper in khmer.ts).
  */
-export const NEEDS_SHAPED_RENDER = new Set(["ើ", "ឿ", "ៀ", "ោ", "ៅ", "ុំ", "ាំ"]);
+export const NEEDS_SHAPED_RENDER = new Set(["ើ", "ឿ", "ៀ", "ោ", "ៅ", "ុំ", "ាំ", "ុះ", "េះ", "ោះ"]);
 
 /**
  * Rasterizes shaped text (e.g. "◌" + a wrap-around vowel) to a data URL,

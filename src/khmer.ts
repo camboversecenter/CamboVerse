@@ -86,6 +86,7 @@ export const KHMER_GROUPS: KhmerGroup[] = [
       dv("ុ", "o", "u"), dv("ូ", "ou", "u"), dv("ួ", "uo", "uo"), dv("ើ", "aeu", "eu"), dv("ឿ", "eua", "eua"),
       dv("ៀ", "ie", "ie"), dv("េ", "e", "e"), dv("ែ", "ae", "ee"), dv("ៃ", "ai", "ey"), dv("ោ", "ao", "oo"),
       dv("ៅ", "au", "ou"), dv("ុំ", "om", "um"), dv("ំ", "am", "um"), dv("ាំ", "am", "oam"), dv("ះ", "ah", "eah"),
+      dv("ុះ", "oh", "uh"), dv("េះ", "eh", "ih"), dv("ោះ", "aoh", "uoh"),
     ],
   },
   {

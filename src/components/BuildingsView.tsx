@@ -14,7 +14,7 @@ import {
   ConstructionBlock, Props, MainGate, Pool,
 } from "./CampusBuildings";
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
-import { paveTexture, roadTexture, hedgeTexture } from "../lib/campusTexture";
+import { paveTexture, roadTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
 import {
   CAMPUS_BUILDINGS, CAMPUS_POOLS, CAMPUS_ROADS, CAMPUS_WALLS,
@@ -442,7 +442,6 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
   }, []);
   const pave = useMemo(() => paveTexture(metresRepeat(104, 104, PAVER_M)[0]), []);
   const road = useMemo(() => roadTexture(metresRepeat(120, 120, PAVER_M)[0]), []);
-  const hedge = useMemo(() => hedgeTexture(), []);
   const ultra = mode === "ultra";
 
   const { mangoTrees, bananaTrees } = useMemo(() => {
@@ -535,6 +534,23 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
     return list;
   }, []);
 
+  // Palm trees flanking the NUM Monument: 2 rows of 4 on each side (16 total),
+  // set back past the flanking hedge beds so trunks don't clip into them.
+  const monumentPalms = useMemo(() => {
+    const [cx, cz] = [-12, 126.5]; // EntranceMonument's own position below
+    const rowOffsets = [10, 14];
+    const zOffsets = [-6, -2, 2, 6];
+    const list: { pos: [number, number, number]; spin: number }[] = [];
+    for (const side of [-1, 1]) {
+      rowOffsets.forEach((rowOffset, li) => {
+        zOffsets.forEach((zOffset, zi) => {
+          list.push({ pos: [cx + side * rowOffset, 0, cz + zOffset], spin: (li * 4 + zi) * 1.3 });
+        });
+      });
+    }
+    return list;
+  }, []);
+
   // The neighbourhood the campus sits in: rows of pitched-roof houses in a grid.
   const houses = useMemo(() => {
     const out: { pos: [number, number, number]; rot: number; scale: number }[] = [];
@@ -609,7 +625,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       </Tappable>
       {/* The NUM Monument sign where the avenue meets the campus */}
       <Tappable id="monument" onOpen={onOpenBuilding}>
-        <EntranceMonument position={[-12, 0, 126.5]} rotation={3.142} />
+        <EntranceMonument position={[-12, 0, 126.5]} rotation={0} />
       </Tappable>
       <Tappable id="teaching" onOpen={onOpenBuilding}>
         <TeachingBlock position={[-16, 0, -90.1]} w={53} d={16.1} floors={4} onRoomClick={(r: string) => onOpenBuilding('teaching', r)} />
@@ -665,13 +681,8 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         <cylinderGeometry args={[0.09, 0.12, 5.2, 6]} />
         <meshStandardMaterial color="#dcdad4" roughness={0.6} />
       </Props>
-      {/* clipped hedge beds flanking the monument at the head of the avenue */}
-      {[-1, 1].map((s) => (
-        <mesh key={s} position={[-12 + s * 17, 0.5, 126.5]} castShadow receiveShadow>
-          <boxGeometry args={[16, 1, 4]} />
-          <meshStandardMaterial map={hedge} roughness={0.95} />
-        </mesh>
-      ))}
+      {/* palm trees flanking the monument, 2 rows of 4 per side */}
+      {monumentPalms.map((p, i) => <Palm key={`mon-palm-${i}`} position={p.pos} scale={1.15} spin={p.spin} />)}
 
       {/* --- the neighbourhood beyond the wall --- */}
       <Props items={houses}>

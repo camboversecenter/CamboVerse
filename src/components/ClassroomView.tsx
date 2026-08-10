@@ -10,6 +10,7 @@ import { makeGlyphTexture } from "../lib/glyphTexture";
 import { getIdentity, earnedAchievements } from "../lib/identity";
 import { GLYPH_PATHS } from "../glyphPaths";
 import { KHMER_GROUPS, KHMER_FONTS, type KhmerShape, type KhmerLetter } from "../khmer";
+import { playLetterAudio } from "../lib/letterAudio";
 
 /**
  * The Khmer Alphabet Classroom — every Khmer letter as a 3D tile on a board,
@@ -120,7 +121,10 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
                   texture={textures[i]}
                   position={[x, y, 0]}
                   selected={selected?.char === l.char}
-                  onSelect={() => setSelected(l)}
+                  onSelect={() => {
+                    setSelected(l);
+                    playLetterAudio(l.char);
+                  }}
                 />
               );
             })}

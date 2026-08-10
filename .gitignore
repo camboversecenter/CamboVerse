@@ -37,8 +37,6 @@ scripts/.stroke-preview.html
 # Internal stroke-order authoring tool — not part of the app, never commit
 public/stroke-editor.html
 
-# Letter pronunciation feature — work in progress, not wired into the app
-# yet (paused mid-verification). Keep the generated clips + generator script
-# on disk for later, but don't let them slip into a commit until it's done.
-public/audio/
-scripts/generate-audio.mjs
+# Internal monument-layout authoring tool — not part of the app, never commit
+public/monument-editor.html
+
