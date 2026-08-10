@@ -1126,19 +1126,7 @@ function FrontHedgeBed({
   );
 }
 
-/**
- * TEMPORARY hardscape-inspection switch. When true, `EntranceMonument` hides
- * its four `HedgeMass` planting instances and draws local axes, a FRONT=+Z
- * arrow, an origin marker, a bounding box and per-tier wireframes instead —
- * so the platform/stairs/pedestal/letters can be inspected with nothing
- * else in the way. Exported so `BuildingView.tsx` can hide the site's own
- * palm pair for the same page. Flip back to `false` (or delete this block
- * and its call sites) once the hardscape geometry is confirmed correct —
- * none of this changes the monument's actual geometry.
- */
-export const DEBUG_MONUMENT = true;
-
-export function EntranceMonument({ position = [0, 0, 0] as [number, number, number], rotation = 0 }) {
+export function EntranceMonument({ position = [0, 0, 0] as [number, number, number], rotation = 0, scale = 1.5 }) {
   const radialPave = useMemo(() => radialPaveTexture(), []);
 
   // Saved Layout Config from 3D Editor
@@ -1152,29 +1140,34 @@ export function EntranceMonument({ position = [0, 0, 0] as [number, number, numb
   const STAIR_ARC = (360 * Math.PI) / 180;
   const stairsPos: [number, number, number] = [0, 0.15, 0];
 
-  const WALL_LEN = 4.7;
-  const WALL_H = 0.75;
+  const WALL_LEN = 3.8;
+  const WALL_H = 1.02;
   const WALL_T = 0.55;
-  const pedestalPos: [number, number, number] = [0, 0.825, -0.4];
+  const pedestalPos: [number, number, number] = [-0.02, 0.82, -0.03];
 
-  const H = 1.5, GAP = H * 0.1;
+  // Letters are sized off the pedestal's own length (not a fixed constant) so
+  // they always read as sitting on the bar instead of overhanging it — 0.72
+  // is the same width:pedestal ratio the original hand-tuned proportions had.
+  const LETTER_FIT = 0.72;
+  const H = (WALL_LEN * LETTER_FIT) / 2.2, GAP = H * 0.1;
   const GOLD = "#C89E2C";
+  const STROKE = H * 0.16;
   const wN = H * 0.62, wU = H * 0.58, wM = H * 0.8;
   const totalW = wN + GAP + wU + GAP + wM;
   const xN = -totalW / 2 + wN / 2;
   const xU = xN + wN / 2 + GAP + wU / 2;
   const xM = xU + wU / 2 + GAP + wM / 2;
-  const lettersPos: [number, number, number] = [0, 1.95, -0.4];
+  const lettersPos: [number, number, number] = [0, pedestalPos[1] + WALL_H / 2 + H / 2 + 0.06, -0.03];
 
   const hedgesConfig = [
-    { id: "hedge_1", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 2.6, color: "#82B238", pos: [-1.21, 0.2, -0.89] as [number, number, number], rotY: -0.38 },
-    { id: "hedge_2", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4.0, color: "#82B238", pos: [0.08, 0, 1.34] as [number, number, number], rotY: 0.74 },
-    { id: "hedge_3", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 4.0, color: "#82B238", pos: [1.41, 0, -1.81] as [number, number, number], rotY: 0.4 },
-    { id: "hedge_4", innerR: 4.2, depth: 1.45, height: 0.8, arcLength: 2.6, color: "#82B238", pos: [0.79, 0.25, -1.32] as [number, number, number], rotY: -1.12 },
+    { id: "hedge_1", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 2.6, color: "#82B238", pos: [-1.19, 0.05, -1] as [number, number, number], rotY: -0.46, mirror: false },
+    { id: "hedge_2", innerR: 4.2, depth: 1.8, height: 0.76, arcLength: 2.7, color: "#82B238", pos: [-1.32, 0, 0.93] as [number, number, number], rotY: 0.87, mirror: false },
+    { id: "hedge_3", innerR: 4.2, depth: 1.8, height: 0.76, arcLength: 2.7, color: "#82B238", pos: [1.32, 0, 0.93] as [number, number, number], rotY: -0.87, mirror: true },
+    { id: "hedge_4", innerR: 4.2, depth: 1.8, height: 0.75, arcLength: 2.6, color: "#82B238", pos: [1.19, 0.05, -1] as [number, number, number], rotY: 0.46, mirror: true },
   ];
 
   return (
-    <group position={position} rotation={[0, rotation, 0]}>
+    <group position={position} rotation={[0, rotation, 0]} scale={scale}>
       {/* 360-Degree Symmetrical Stairs Stack */}
       <group position={stairsPos}>
         {Array.from({ length: STEPS }, (_, i) => (
@@ -1203,9 +1196,9 @@ export function EntranceMonument({ position = [0, 0, 0] as [number, number, numb
         <meshStandardMaterial color="#171717" roughness={0.2} metalness={0.3} />
       </mesh>
       <group position={lettersPos}>
-        <mesh position={[xN, 0, 0]} castShadow><boxGeometry args={[wN, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
-        <mesh position={[xU, 0, 0]} castShadow><boxGeometry args={[wU, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
-        <mesh position={[xM, 0, 0]} castShadow><boxGeometry args={[wM, H, 0.15]} /><meshStandardMaterial color={GOLD} roughness={0.3} metalness={0.6} /></mesh>
+        <LetterN cx={xN} h={H} stroke={STROKE} depth={0.15} baseY={-H / 2} color={GOLD} />
+        <LetterU cx={xU} h={H} stroke={STROKE} depth={0.15} baseY={-H / 2} color={GOLD} />
+        <LetterM cx={xM} h={H} stroke={STROKE} depth={0.15} baseY={-H / 2} color={GOLD} />
       </group>
 
       {/* Custom Placed Hedge Beds */}
@@ -1213,7 +1206,7 @@ export function EntranceMonument({ position = [0, 0, 0] as [number, number, numb
         const midR = h.innerR + h.depth / 2;
         const span = h.arcLength / midR;
         return (
-          <group key={h.id} position={h.pos} rotation={[0, h.rotY, 0]}>
+          <group key={h.id} position={h.pos} rotation={[0, h.rotY, 0]} scale={[h.mirror ? -1 : 1, 1, 1]}>
             <FrontHedgeBed
               angleStart={0}
               angleEnd={span}
