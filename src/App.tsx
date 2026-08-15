@@ -13,12 +13,15 @@ import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
 import { LabView } from "./components/LabView";
+import { CeremonyHome } from "./components/CeremonyHome";
+import { CeremonyView } from "./components/CeremonyView";
 import { SpecimenView } from "./components/SpecimenView";
 import { BuildingsHome } from "./components/BuildingsHome";
 import { BuildingsView } from "./components/BuildingsView";
 import { BuildingView } from "./components/BuildingView";
 import { buildingById, siteById } from "./buildings";
 import { specimenById } from "./lab";
+import { templateById } from "./ceremony";
 import { SPOTS } from "./spots";
 
 export function App() {
@@ -45,6 +48,9 @@ export function App() {
   // A stack, not a single id: an organ's screen is reached from inside the body
   // it belongs to, and Back has to return there rather than to the hub.
   const [specimenStack, setSpecimenStack] = useState<string[]>([]);
+  // 🎊 Ceremonies: the directory, then one ceremony staged in its setting.
+  const [ceremoniesOpen, setCeremoniesOpen] = useState(false);
+  const [ceremonyId, setCeremonyId] = useState<string | null>(null);
   const [warping, setWarping] = useState(false);
   const busy = useRef(false);
 
@@ -53,6 +59,7 @@ export function App() {
   const site = siteId ? siteById(siteId) ?? null : null;
   const specimenId = specimenStack[specimenStack.length - 1] ?? null;
   const specimen = specimenId ? specimenById(specimenId) ?? null : null;
+  const ceremony = ceremonyId ? templateById(ceremonyId) : null;
   const parent = specimenStack.length > 1
     ? specimenById(specimenStack[specimenStack.length - 2])
     : null;
@@ -125,6 +132,13 @@ export function App() {
           onOpenSpecimen={(id) => setSpecimenStack((st) => [...st, id])}
           backLabel={parent ? `← ${parent.name}` : "← Lab"}
         />
+      ) : ceremony ? (
+        <CeremonyView template={ceremony} onBack={() => setCeremonyId(null)} />
+      ) : ceremoniesOpen ? (
+        <CeremonyHome
+          onBackToMap={() => setCeremoniesOpen(false)}
+          onOpenCeremony={(id) => setCeremonyId(id)}
+        />
       ) : labOpen ? (
         <LabView
           onBackToMap={() => setLabOpen(false)}
@@ -168,6 +182,7 @@ export function App() {
           onOpenSakYant={() => setSakYantOpen(true)}
           onOpenGrove={() => setGroveOpen(true)}
           onOpenLab={() => setLabOpen(true)}
+          onOpenCeremonies={() => setCeremoniesOpen(true)}
           onOpenBuildings={() => setBuildingsOpen(true)}
         />
       )}
