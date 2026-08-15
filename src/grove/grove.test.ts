@@ -17,8 +17,12 @@ import observationRes from "./fixtures/observation.json";
 describe("Grove verify (against real signed fixtures)", () => {
   const observations = (bundle as { observations: GardenObservation[] }).observations;
 
-  it("has the expected sample world (3 observations)", () => {
-    expect(observations).toHaveLength(3);
+  // Deliberately not a fixed count. The bundle is a sample world that grows as
+  // contributors add signed records, and a hard-coded 3 turned a perfectly good
+  // fourth observation into a red build. What matters is that there are some
+  // and that every one of them verifies — which the next test asserts.
+  it("has a sample world to verify", () => {
+    expect(observations.length).toBeGreaterThan(0);
   });
 
   it("verifies every observation in the export bundle (path A)", async () => {
