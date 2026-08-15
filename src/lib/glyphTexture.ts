@@ -10,7 +10,7 @@ import { CanvasTexture, SRGBColorSpace } from "three";
 export function makeGlyphTexture(
   display: string,
   roman: string,
-  opts: { family: string; fg?: string; bg?: string; size?: number } = { family: "Noto Sans Khmer" },
+  opts: { family: string; fg?: string; bg?: string; size?: number } = { family: "Siemreap" },
 ): CanvasTexture {
   const size = opts.size ?? 256;
   const w = size;

@@ -137,7 +137,7 @@ export function LetterQuiz({
           </button>
         </div>
         <p className="quiz-q">What sound does this letter make?</p>
-        <div className="quiz-glyph" style={{ fontFamily: `'${family}', 'Noto Sans Khmer', serif` }}>
+        <div className="quiz-glyph" style={{ fontFamily: `'${family}', 'Siemreap', serif` }}>
           {q.glyph}
         </div>
         <div className="quiz-options">

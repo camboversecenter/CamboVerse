@@ -33,3 +33,10 @@ public/models/local/*
 # build-only font cache for glyph-path extraction
 scripts/.fontcache/
 scripts/.stroke-preview.html
+
+# Internal stroke-order authoring tool — not part of the app, never commit
+public/stroke-editor.html
+
+# Internal monument-layout authoring tool — not part of the app, never commit
+public/monument-editor.html
+

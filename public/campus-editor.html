@@ -1,0 +1,1273 @@
+<!doctype html>
+<meta charset="utf8">
+<title>Campus layout editor</title>
+<style>
+  body { background:#1a1f14; color:#efe4cb; font:14px sans-serif; margin:0; padding:16px; }
+  h1 { font-size:16px; margin:0 0 4px; }
+  p { margin:4px 0 12px; color:#c9bd9a; max-width:900px; }
+  .wrap { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  .stage { background:#2a3320; border-radius:8px; }
+  svg { width:840px; height:780px; display:block; border-radius:8px; }
+  .panel { min-width:300px; max-width:340px; }
+  button { background:#3a4a2a; color:#efe4cb; border:1px solid #5a6a3a; border-radius:6px; padding:8px 12px; margin:3px 4px 3px 0; cursor:pointer; font-size:13px; }
+  button:hover { background:#4a5a3a; }
+  button.danger { background:#5a2a2a; border-color:#7a3a3a; }
+  button.danger:hover { background:#6a3a3a; }
+  button.active { outline:2px solid #c9a227; }
+  input[type=number], input[type=text] { background:#2a3320; color:#efe4cb; border:1px solid #5a6a3a; border-radius:4px; padding:5px; font-size:13px; width:90px; }
+  select { background:#2a3320; color:#efe4cb; border:1px solid #5a6a3a; border-radius:4px; padding:5px; font-size:13px; }
+  textarea { width:100%; height:220px; background:#0f130a; color:#a8e0a0; font:12px monospace; border:1px solid #3a4a2a; border-radius:6px; padding:8px; box-sizing:border-box; }
+  .row { margin:8px 0; }
+  .hint { color:#8a9a6a; font-size:12px; }
+  .field { display:flex; justify-content:space-between; align-items:center; margin:4px 0; }
+  .field label { color:#c9bd9a; }
+  .selbox { border:1px solid #3a4a2a; border-radius:6px; padding:10px; margin:10px 0; background:#222b18; min-height:40px; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#c9bd9a; margin:6px 0 14px; }
+  .swatch { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+</style>
+
+<h1>NUM campus layout editor</h1>
+<p>
+  Controls follow Canva's conventions. <b>Click</b> to select, <b>Shift+click</b> to add/remove items
+  from the selection, <b>left-click-drag on empty ground</b> to box-select several at once. Drag any
+  selected item to move it (or the whole group together); a plain click on one member of an ad-hoc
+  (non-grouped) selection drops back to selecting just that one. <b>Ctrl/Cmd+G</b> locks the current
+  selection into a real group — from then on, <i>any</i> member always acts as the whole group: clicking
+  it selects everyone, and dragging it (even straight off, with nothing pre-selected) moves everyone —
+  a grouped object can no longer be picked individually. Press <b>Ctrl/Cmd+G again</b> on a locked group
+  to ungroup it (or <b>Ctrl/Cmd+Shift+G</b> — same thing).
+  <b>Arrow keys</b> nudge the selection 1 m (<b>Shift+arrow</b> = 10 m). <b>Delete</b>/<b>Backspace</b>
+  removes selected road(s) — buildings can't be deleted, only moved/resized. <b>Escape</b> deselects,
+  <b>Ctrl/Cmd+A</b> selects everything, <b>Ctrl/Cmd+Z</b> undoes any number of changes. Select a
+  resizable building and <b>drag the gold corner box</b> to resize it (or type exact Width/Depth in the
+  panel). Select a rotatable building and <b>drag the cyan circle on its stalk</b> to spin it around its
+  centre — a live degree readout follows the cursor, and holding <b>Shift while rotating</b> snaps to 15°
+  steps (or just type exact degrees in the panel). With <b>2+ items selected</b>, the same cyan handle
+  appears above the whole group to rotate everyone around its shared centre (orbit <i>and</i> spin in
+  place, Canva-style; roads just orbit), plus three gold scale handles at the group's bounding box —
+  the <b>corner</b> handle scales width and height together (and road widths), while the <b>side</b>
+  handles each scale just one axis (width-only or height-only), all away from the fixed opposite corner,
+  including each building's own size where resizable.
+  <b>+ Road</b> / <b>+ Wall</b> take two clicks (start point, end point); <b>+ Pool</b> and
+  <b>+ Building</b> take one click to drop the footprint, which you then drag/resize/rotate like
+  anything else. A wall is a road that stands up, so it also gets a <i>Height</i>; a pool is a water
+  surface, so it has no facing. <b>+ Building</b> places an instance of an existing 3D component —
+  pick which one from the dropdown, since the editor can't invent new geometry.
+  World units are metres — same coordinate system as
+  <code>BuildingsView.tsx</code>. This editor only ever changes
+  <i>position / rotation / size / road layout</i> — it never touches how a building is modelled.
+</p>
+<div class="legend">
+  <span><span class="swatch" style="background:#6f8fd6"></span>Buildings (drag to move)</span>
+  <span><span class="swatch" style="background:#c9a227"></span>Resize handle (drag when selected)</span>
+  <span><span class="swatch" style="background:#7fd1e0"></span>Rotate handle (drag when selected)</span>
+  <span><span class="swatch" style="background:#3f9fc4"></span>Pools</span>
+  <span><span class="swatch" style="background:#9a9a95"></span>Roads</span>
+  <span><span class="swatch" style="background:#c9b98a"></span>Walkways</span>
+  <span><span class="swatch" style="background:#cdbfae"></span>Walls</span>
+  <span><span class="swatch" style="background:#e0803c"></span>Group-selected (box-select on empty ground)</span>
+</div>
+
+<div class="wrap">
+  <div class="stage">
+    <svg id="svg" viewBox="0 0 840 780">
+      <g id="grid"></g>
+      <g id="roads"></g>
+      <g id="buildings"></g>
+      <g id="handles"></g>
+      <g id="groupOverlay"></g>
+      <g id="marqueeG"></g>
+    </svg>
+  </div>
+  <div class="panel">
+    <div class="row">
+      <button id="undoBtn">↶ Undo (Ctrl+Z)</button>
+      <button id="deleteBtn" class="danger">Delete selected</button>
+      <button id="resetBtn" class="danger">Reset all</button>
+    </div>
+    <div class="row">
+      <button id="addRoadBtn">+ Road</button>
+      <button id="addWallBtn">+ Wall</button>
+      <button id="addPoolBtn">+ Pool</button>
+      <button id="addGateBtn">+ Gate</button>
+    </div>
+    <div class="row">
+      <button id="addBuildingBtn">+ Building</button>
+      <select id="kindSelect" title="Which existing 3D component to place"></select>
+    </div>
+    <div class="hint" id="modeHint">Click a building or road to select it.</div>
+    <div class="selbox" id="selPanel">Nothing selected.</div>
+    <div class="row">
+      <button id="exportBtn">Export JSON</button>
+      <button id="copyBtn">Copy to clipboard</button>
+      <button id="loadBtn">Load JSON below</button>
+    </div>
+    <textarea id="output" placeholder="Click Export to see the layout JSON here, or paste a previously exported layout and click Load..."></textarea>
+  </div>
+</div>
+
+<script type="module">
+/* ---------------------------------------------------------------- data --- */
+// Starting layout: read directly out of src/components/BuildingsView.tsx.
+// position is [x, 0, z] and rotation is radians around Y, matching the
+// `position`/`rotation` props passed to each component there.
+// `resizable: false` marks buildings whose source component has no size prop
+// at all (MainGate/EntranceMonument/Shrine take only position+rotation) — so
+// there is nothing in the real code a resized value could be applied to.
+// What "+ Building" can place. The editor cannot invent 3D geometry, so a new
+// building must be an instance of a component that already exists in
+// src/components/CampusBuildings.tsx — `kind` is the name the export carries
+// so the scene knows which component to render. `pool` is the exception: it
+// is not a component but a flat water surface, which is why it draws blue and
+// gets no front-facing arrow.
+const BUILDING_KINDS = [
+  { kind: "teaching-block",     label: "Teaching Block",     w: 60,  d: 15, resizable: true,  fixedRot: false },
+  { kind: "construction-block", label: "New Block",          w: 46,  d: 18, resizable: true,  fixedRot: false },
+  { kind: "parking-canopy",     label: "Parking Canopy",     w: 64,  d: 13, resizable: true,  fixedRot: false },
+  { kind: "great-hall",         label: "Great Hall",         w: 32,  d: 50, resizable: true,  fixedRot: false },
+  { kind: "shrine",             label: "Shrine",             w: 8,   d: 8,  resizable: false, fixedRot: true  },
+  { kind: "main-gate",          label: "Main Gate",          w: 15,  d: 6,  resizable: false, fixedRot: false },
+  { kind: "monument",           label: "Monument",           w: 19,  d: 19, resizable: false, fixedRot: false },
+  { kind: "sports-field",       label: "Sports Field",       w: 120, d: 75, resizable: true,  fixedRot: true  },
+];
+const POOL_KIND = { kind: "pool", label: "Pool", w: 30, d: 18, resizable: true, fixedRot: false, isPool: true };
+
+/** Default height for a new boundary wall, in metres. */
+const WALL_HEIGHT_M = 4;
+
+// Positions/sizes read off the NUM master-plan board, calibrated on the
+// football pitch (~105 x 68 m). The board is an oblique render, so depth is
+// foreshortened ~0.77x versus width — corrected for here. The site is a
+// quadrilateral: the east boundary slants outward and the north edge tilts.
+const INITIAL_BUILDINGS = [
+  { id: "gate",         kind: "main-gate",          label: "Main Entrance",        x: -3,    z: 249,   rotation: 3.07,    w: 15,    d: 6,    resizable: false },
+  { id: "monument",     kind: "monument",           label: "NUM Monument",         x: -12,   z: 126.5, rotation: Math.PI, w: 19,    d: 19,   resizable: false },
+  { id: "teaching",     kind: "teaching-block",     label: "Teaching Block",       x: -16,   z: -90.1, rotation: 0,       w: 53,    d: 16.1, resizable: true },
+  { id: "construction", kind: "construction-block", label: "New Block (const.)",   x: -66,   z: -89.5, rotation: 0,       w: 42,    d: 16.1, resizable: true },
+  { id: "parking-0",    kind: "parking-canopy",     label: "Parking Canopy 1",     x: 40.1,  z: 91.2,  rotation: 1.567,   w: 92.5,  d: 12.4, resizable: true },
+  { id: "parking-1",    kind: "parking-canopy",     label: "Parking Canopy 2",     x: 59.9,  z: 90.2,  rotation: 1.567,   w: 79.2,  d: 12.5, resizable: true },
+  { id: "parking-2",    kind: "parking-canopy",     label: "Parking Canopy 3",     x: 81.5,  z: 89.7,  rotation: 1.567,   w: 86.4,  d: 12.5, resizable: true },
+  { id: "hall",         kind: "great-hall",         label: "The Great Hall",       x: 63.2,  z: -49.4, rotation: 0,       w: 50.3,  d: 76.8, resizable: true },
+  { id: "shrine",       kind: "shrine",             label: "Campus Shrine",        x: 83.8,  z: 6.3,   rotation: 0, fixedRot: true, w: 8,     d: 8,  resizable: false },
+  { id: "field",        kind: "sports-field",       label: "Sports Field",         x: -55.7, z: 79,    rotation: 0, fixedRot: true, w: 120.4, d: 66, resizable: true },
+  { id: "teaching-block-khmgey", kind: "teaching-block", label: "Sport Bathroom", x: -56.2, z: 158,  rotation: 0,     w: 38.6,  d: 8,    resizable: true, added: true },
+  { id: "main-gate-dj2hjk", kind: "main-gate",      label: "West Gate",            x: -128.5, z: 34.6, rotation: -1.58, w: 15,   d: 6,    resizable: false, added: true },
+  { id: "pool-ani4gy",  kind: "pool",               label: "Pool",                 x: -117.2, z: -21.1, rotation: 0,    w: 30,    d: 93.8, resizable: true, isPool: true, added: true },
+];
+
+const INITIAL_ROADS = [
+  { id: "avenue-lane-out", kind: "road",    widthM: 14,   x1: -10,    z1: 152,    x2: -3,    z2: 249 },
+  { id: "avenue-walk-l",   kind: "walkway", widthM: 2.3,  x1: -18,    z1: 152.7,  x2: -11,   z2: 249.7 },
+  { id: "avenue-walk-r",   kind: "walkway", widthM: 2.3,  x1: -3.1,   z1: 151.3,  x2: 3.9,   z2: 248.3 },
+  { id: "south-perimeter", kind: "road",    widthM: 10,   x1: -140.1, z1: 148.9,  x2: 178.7, z2: 145.9 },
+  { id: "north-perimeter", kind: "road",    widthM: 10,   x1: -138.5, z1: -115.6, x2: 128.2, z2: -132.5 },
+  { id: "west-perimeter",  kind: "road",    widthM: 9.5,  x1: -139,   z1: -119.6, x2: -138.5, z2: 154.1 },
+  { id: "east-perimeter",  kind: "road",    widthM: 10,   x1: 122.7,  z1: -138.1, x2: 174,   z2: 150 },
+  { id: "middle-horiz",    kind: "road",    widthM: 10,   x1: -135.5, z1: 35,     x2: 150.4, z2: 34.5 },
+  { id: "central-vert",    kind: "road",    widthM: 10,   x1: 20.5,   z1: -118.2, x2: 21.5,  z2: 142.8 },
+  { id: "road-jcrjrw",     kind: "road",    widthM: 10,   x1: 16.9,   z1: -69.5,  x2: -90.5, z2: -69 },
+  { id: "road-b14lw1",     kind: "road",    widthM: 10,   x1: -95,    z1: 33,     x2: -95,   z2: -112 },
+  { id: "road-upcm9l",     kind: "road",    widthM: 10,   x1: 101,    z1: 39,     x2: 102.5, z2: 142.4 },
+  { id: "road-xlueh9",     kind: "road",    widthM: 10,   x1: 17.4,   z1: -39.2,  x2: -90.1, z2: -39.6, added: true },
+  // Boundary walls. `wall-4u4f9r` from an earlier export is dropped: its start
+  // and end points were identical (a double-click), so it had no length to draw.
+  { id: "wall-ubcfdu", kind: "wall", widthM: 0.5, heightM: 4, x1: -19,    z1: 162.7,  x2: -12.8, z2: 250.3, added: true },
+  { id: "wall-upehtn", kind: "wall", widthM: 0.5, heightM: 4, x1: -0.5,   z1: 162.8,  x2: 6.1,   z2: 248.6, added: true },
+  { id: "wall-38v12i", kind: "wall", widthM: 0.5, heightM: 4, x1: -1.1,   z1: 163.2,  x2: 183.2, z2: 161.6, added: true },
+  { id: "wall-gzpyay", kind: "wall", widthM: 0.5, heightM: 4, x1: 182.7,  z1: 161.7,  x2: 129,   z2: -137.8, added: true },
+  { id: "wall-vsoh40", kind: "wall", widthM: 0.5, heightM: 4, x1: -131,   z1: -119.9, x2: 130,   z2: -138.3, added: true },
+  { id: "wall-v939fs", kind: "wall", widthM: 0.5, heightM: 4, x1: -144.9, z1: 164.7,  x2: -145.4, z2: -117.9, added: true },
+  { id: "wall-psu6uu", kind: "wall", widthM: 0.5, heightM: 4, x1: -144.9, z1: 164.2,  x2: -19.4, z2: 164.2, added: true },
+];
+
+let buildings = structuredClone(INITIAL_BUILDINGS);
+let roads = structuredClone(INITIAL_ROADS);
+let selected = null; // { type: "building"|"road", id, handle?: "1"|"2"|"mid" }
+let groupSelection = null; // { buildingIds: string[], roadIds: string[] } — mutually exclusive with `selected`
+let groups = []; // persistent groups made with Ctrl+G: [{ id, buildingIds, roadIds }]
+// What clicking empty ground will place, if anything:
+//   null                              → normal select/marquee behaviour
+//   { shape: "segment", kind }        → two clicks: a road, walkway or wall
+//   { shape: "rect", kind }           → one click: a building or a pool
+let placeMode = null;
+let pendingPoint = null;
+let lastInteractionWasGroupMove = false;
+
+/* ----------------------------------------------------------------- undo --- */
+const history = [];
+const MAX_HISTORY = 100;
+function snapshot() {
+  history.push(JSON.stringify({ buildings, roads, groups }));
+  if (history.length > MAX_HISTORY) history.shift();
+}
+function undo() {
+  if (!history.length) return;
+  const prev = JSON.parse(history.pop());
+  buildings = prev.buildings;
+  roads = prev.roads;
+  groups = prev.groups || [];
+  if (groupSelection) {
+    groupSelection.buildingIds = groupSelection.buildingIds.filter((id) => buildings.some((b) => b.id === id));
+    groupSelection.roadIds = groupSelection.roadIds.filter((id) => roads.some((r) => r.id === id));
+    if (!groupSelection.buildingIds.length && !groupSelection.roadIds.length) groupSelection = null;
+  }
+  if (selected) {
+    const stillExists = selected.type === "building"
+      ? buildings.some((b) => b.id === selected.id)
+      : roads.some((r) => r.id === selected.id);
+    if (!stillExists) selected = null;
+  }
+  redraw();
+}
+document.getElementById("undoBtn").addEventListener("click", undo);
+
+/* ------------------------------------------------------- keyboard (Canva-style) */
+// Ctrl/Cmd+Z undo · Escape deselect · Delete/Backspace removes selected road(s)
+// · arrow keys nudge the selection (Shift = bigger step) · Ctrl/Cmd+A selects all.
+function isEditableFocused() {
+  const t = document.activeElement;
+  return !!t && (t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA");
+}
+const ARROW_DELTA = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+window.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z") {
+    e.preventDefault();
+    undo();
+    return;
+  }
+  if (isEditableFocused()) return; // let text/number fields handle their own keys
+
+  if (e.key === "Escape") {
+    select(null);
+    return;
+  }
+  if ((e.key === "Delete" || e.key === "Backspace") && (selected || groupSelection)) {
+    e.preventDefault();
+    document.getElementById("deleteBtn").click();
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+    e.preventDefault();
+    selected = null;
+    groupSelection = { buildingIds: buildings.map((b) => b.id), roadIds: roads.map((r) => r.id) };
+    redraw();
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") {
+    e.preventDefault();
+    snapshot();
+    // Ctrl+G toggles: press it again on an already-locked group to ungroup.
+    // Ctrl+Shift+G still works too, as an explicit "ungroup" either way.
+    if (e.shiftKey || isSelectionLocked(selectionAsLists())) ungroupSelected();
+    else groupSelected();
+    return;
+  }
+  if (ARROW_DELTA[e.key] && (selected || groupSelection)) {
+    e.preventDefault();
+    const [sx_, sz_] = ARROW_DELTA[e.key];
+    const step = e.shiftKey ? 10 : 1;
+    const dx = sx_ * step, dz = sz_ * step;
+    snapshot();
+    const nudgeBuilding = (id) => { const b = buildings.find((x) => x.id === id); b.x = round1(b.x + dx); b.z = round1(b.z + dz); };
+    const nudgeRoad = (id) => {
+      const r = roads.find((x) => x.id === id);
+      r.x1 = round1(r.x1 + dx); r.z1 = round1(r.z1 + dz);
+      r.x2 = round1(r.x2 + dx); r.z2 = round1(r.z2 + dz);
+    };
+    if (selected) {
+      if (selected.type === "building") nudgeBuilding(selected.id); else nudgeRoad(selected.id);
+    } else {
+      groupSelection.buildingIds.forEach(nudgeBuilding);
+      groupSelection.roadIds.forEach(nudgeRoad);
+    }
+    redraw();
+  }
+});
+
+/* ------------------------------------------------------------ world<->svg */
+// World bounds cover the campus core (buildings + road grid).
+// Wide enough that the uniform scale still fits the whole z range: the site
+// runs from the north perimeter (z ≈ -133) to the gate at the far end of the
+// entrance avenue (z ≈ 250).
+const MINX = -215, MAXX = 215, MINZ = -145, MAXZ = 254;
+const SCALE = 840 / (MAXX - MINX); // px per metre, uniform on both axes
+function sx(x) { return (x - MINX) * SCALE; }
+function sy(z) { return (z - MINZ) * SCALE; }
+function wx(px) { return px / SCALE + MINX; }
+function wz(py) { return py / SCALE + MINZ; }
+
+const svg = document.getElementById("svg");
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs) => {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+};
+
+/* -------------------------------------------------------------- drawing --- */
+function drawGrid() {
+  const g = document.getElementById("grid");
+  g.innerHTML = "";
+  g.appendChild(el("rect", { x: 0, y: 0, width: 840, height: sy(MAXZ), fill: "#4a5a3a" }));
+  for (let x = Math.ceil(MINX / 20) * 20; x <= MAXX; x += 20) {
+    g.appendChild(el("line", { x1: sx(x), y1: 0, x2: sx(x), y2: sy(MAXZ), stroke: "#3a4a2a", "stroke-width": x === 0 ? 1.6 : 0.6 }));
+  }
+  for (let z = Math.ceil(MINZ / 20) * 20; z <= MAXZ; z += 20) {
+    g.appendChild(el("line", { x1: 0, y1: sy(z), x2: 840, y2: sy(z), stroke: "#3a4a2a", "stroke-width": z === 0 ? 1.6 : 0.6 }));
+  }
+  // Compass — north is -z (up on screen).
+  const cx = 800, cy = 30;
+  g.appendChild(el("line", { x1: cx, y1: cy + 16, x2: cx, y2: cy - 16, stroke: "#efe4cb", "stroke-width": 1.4, "marker-end": "" }));
+  const arrow = el("path", { d: `M ${cx - 5} ${cy - 10} L ${cx} ${cy - 18} L ${cx + 5} ${cy - 10} Z`, fill: "#efe4cb" });
+  g.appendChild(arrow);
+  const label = el("text", { x: cx, y: cy - 20, fill: "#efe4cb", "font-size": 11, "text-anchor": "middle" });
+  label.textContent = "N";
+  g.appendChild(label);
+}
+
+function roadColor(kind) {
+  if (kind === "walkway") return "#c9b98a";
+  if (kind === "wall") return "#cdbfae";
+  return "#9a9a95";
+}
+/** Walls are thin in plan, so give them a floor width on screen to stay grabbable. */
+function segmentPx(r) {
+  return Math.max(r.kind === "wall" ? 4 : 2, r.widthM * SCALE);
+}
+
+function drawRoads() {
+  const g = document.getElementById("roads");
+  const h = document.getElementById("handles");
+  g.innerHTML = "";
+  h.innerHTML = "";
+  for (const r of roads) {
+    const isSel = selected && selected.type === "road" && selected.id === r.id;
+    const inGroup = groupSelection && groupSelection.roadIds.includes(r.id);
+    const line = el("line", {
+      x1: sx(r.x1), y1: sy(r.z1), x2: sx(r.x2), y2: sy(r.z2),
+      stroke: roadColor(r.kind), "stroke-width": segmentPx(r),
+      "stroke-linecap": "butt", opacity: isSel || inGroup ? 1 : 0.85,
+    });
+    line.style.cursor = "move";
+    line.addEventListener("pointerdown", (e) => {
+      e.stopPropagation(); // always — even the shift branch must not leak to the marquee starter below
+      if (e.shiftKey) return; // shift-click is a pure toggle — see the click listener
+      beginObjectDrag(e, "road", r.id, () => startDragRoad(e, r, "mid"));
+    });
+    line.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (e.shiftKey) { toggleGroupMember("road", r.id); return; }
+      if (lastInteractionWasGroupMove) { lastInteractionWasGroupMove = false; return; }
+      clickSelect("road", r.id);
+    });
+    g.appendChild(line);
+
+    if (inGroup) {
+      const outline = el("line", {
+        x1: sx(r.x1), y1: sy(r.z1), x2: sx(r.x2), y2: sy(r.z2),
+        stroke: "#e0803c", "stroke-width": segmentPx(r) + 3, opacity: 0.4,
+      });
+      g.insertBefore(outline, line);
+    }
+
+    if (isSel) {
+      const outline = el("line", {
+        x1: sx(r.x1), y1: sy(r.z1), x2: sx(r.x2), y2: sy(r.z2),
+        stroke: "#c9a227", "stroke-width": segmentPx(r) + 3, opacity: 0.35,
+      });
+      g.insertBefore(outline, line);
+
+      for (const end of ["1", "2"]) {
+        const hx = sx(r["x" + end]), hy = sy(r["z" + end]);
+        const c = el("circle", { cx: hx, cy: hy, r: 7, fill: "#c9a227", stroke: "#1a1f14", "stroke-width": 1.5 });
+        c.style.cursor = "grab";
+        c.addEventListener("pointerdown", (e) => { e.stopPropagation(); startDragRoad(e, r, end); });
+        h.appendChild(c);
+      }
+    }
+  }
+}
+
+function drawBuildings() {
+  const g = document.getElementById("buildings");
+  g.innerHTML = "";
+  for (const b of buildings) {
+    const isSel = selected && selected.type === "building" && selected.id === b.id;
+    const inGroup = groupSelection && groupSelection.buildingIds.includes(b.id);
+    const deg = (b.rotation * 180) / Math.PI;
+    const grp = el("g", { transform: `translate(${sx(b.x)},${sy(b.z)}) rotate(${deg})` });
+    const rw = b.w * SCALE, rd = b.d * SCALE;
+    const rect = el("rect", {
+      x: -rw / 2, y: -rd / 2, width: rw, height: rd,
+      fill: b.isPool ? (isSel ? "#5fc6e8" : "#3f9fc4") : (isSel ? "#8fb0f0" : "#6f8fd6"),
+      stroke: inGroup ? "#e0803c" : "#1a1f14", "stroke-width": inGroup ? 3.5 : 1.5,
+      rx: b.isPool ? Math.min(rw, rd) / 5 : 3,
+    });
+    rect.style.cursor = "move";
+    grp.appendChild(rect);
+    // Front-facing indicator (matches Three.js rotation.y: forward = local +Z).
+    // A pool has no front, so it doesn't get one.
+    if (!b.isPool) {
+      const arrow = el("path", { d: `M ${-6} ${rd / 2 - 2} L 0 ${rd / 2 + 10} L 6 ${rd / 2 - 2} Z`, fill: "#efe4cb" });
+      grp.appendChild(arrow);
+    }
+    grp.style.cursor = "move";
+    grp.addEventListener("pointerdown", (e) => {
+      e.stopPropagation(); // always — even the shift branch must not leak to the marquee starter below
+      if (e.shiftKey) return; // shift-click is a pure toggle — see the click listener
+      beginObjectDrag(e, "building", b.id, () => startDragBuilding(e, b));
+    });
+    grp.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (e.shiftKey) { toggleGroupMember("building", b.id); return; }
+      if (lastInteractionWasGroupMove) { lastInteractionWasGroupMove = false; return; }
+      clickSelect("building", b.id);
+    });
+
+    // Resize handle: a small box at the bottom-right corner (local frame, so
+    // it rotates with the building). Drag it to grow/shrink w/d around the
+    // building's centre. Only shown for buildings whose source component
+    // actually has a size prop.
+    if (b.resizable && isSel) {
+      const handle = el("rect", {
+        x: rw / 2 - 6, y: rd / 2 - 6, width: 12, height: 12,
+        fill: "#c9a227", stroke: "#1a1f14", "stroke-width": 1.5, rx: 2,
+      });
+      handle.style.cursor = "nwse-resize";
+      handle.addEventListener("pointerdown", (e) => startResizeBuilding(e, b));
+      grp.appendChild(handle);
+    }
+
+    // Rotate handle: a circle on a stalk above the building (opposite the
+    // front-facing arrow), Canva-style. Drag it around the centre to set the
+    // rotation; hold Shift while dragging to snap to 15° steps. Only shown
+    // for buildings whose source component actually has a rotation prop.
+    if (!b.fixedRot && isSel) {
+      const stalkLen = 18;
+      grp.appendChild(el("line", {
+        x1: 0, y1: -rd / 2, x2: 0, y2: -rd / 2 - stalkLen,
+        stroke: "#efe4cb", "stroke-width": 1.2,
+      }));
+      const rotHandle = el("circle", {
+        cx: 0, cy: -rd / 2 - stalkLen, r: 7, fill: "#7fd1e0", stroke: "#1a1f14", "stroke-width": 1.5,
+      });
+      rotHandle.style.cursor = "grab";
+      rotHandle.addEventListener("pointerdown", (e) => startRotateBuilding(e, b));
+      grp.appendChild(rotHandle);
+    }
+    // Live degree readout while actively rotating (drawn in world space, not
+    // inside the rotating group, so the text itself stays upright/readable).
+    if (drag && drag.type === "rotate-building" && drag.id === b.id) {
+      const readout = el("text", {
+        x: sx(b.x), y: sy(b.z) - rd / 2 - 34, fill: "#7fd1e0", "font-size": 13, "font-weight": "bold", "text-anchor": "middle",
+      });
+      readout.textContent = `${drag.liveDeg}°`;
+      readout.style.pointerEvents = "none";
+      g.appendChild(readout);
+    }
+    g.appendChild(grp);
+
+    const label = el("text", {
+      x: sx(b.x), y: sy(b.z) - rd / 2 - 5, fill: "#efe4cb", "font-size": 11, "text-anchor": "middle",
+    });
+    label.textContent = b.label;
+    label.style.pointerEvents = "none";
+    g.appendChild(label);
+  }
+}
+
+// Group bounding box + pivot in world units: building centres and road
+// endpoints, whichever the current group contains.
+function groupBounds(lists) {
+  const pts = [];
+  for (const id of lists.buildingIds) { const b = buildings.find((x) => x.id === id); if (b) pts.push([b.x, b.z]); }
+  for (const id of lists.roadIds) { const r = roads.find((x) => x.id === id); if (r) pts.push([r.x1, r.z1], [r.x2, r.z2]); }
+  if (!pts.length) return null;
+  const xs = pts.map((p) => p[0]), zs = pts.map((p) => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
+  return { minX, maxX, minZ, maxZ, cx: (minX + maxX) / 2, cz: (minZ + maxZ) / 2 };
+}
+
+// Group rotate handle: shown above the group's bounding box whenever 2+
+// items are selected. Dragging it spins every member around the group's
+// shared centre — buildings orbit AND spin in place (unless fixedRot),
+// roads just orbit (both endpoints), same as Canva's group-rotate.
+function drawGroupOverlay() {
+  const g = document.getElementById("groupOverlay");
+  g.innerHTML = "";
+  if (!groupSelection) return;
+  const b = groupBounds(groupSelection);
+  if (!b) return;
+  const stalkTopY = sy(b.minZ) - 10 - 24;
+  g.appendChild(el("rect", {
+    x: sx(b.minX) - 10, y: sy(b.minZ) - 10, width: sx(b.maxX) - sx(b.minX) + 20, height: sy(b.maxZ) - sy(b.minZ) + 20,
+    fill: "none", stroke: "#e0803c", "stroke-width": 1, "stroke-dasharray": "5 4", opacity: 0.6,
+  }));
+  g.appendChild(el("line", { x1: sx(b.cx), y1: sy(b.minZ) - 10, x2: sx(b.cx), y2: stalkTopY, stroke: "#efe4cb", "stroke-width": 1.2 }));
+  const handle = el("circle", { cx: sx(b.cx), cy: stalkTopY, r: 9, fill: "#7fd1e0", stroke: "#1a1f14", "stroke-width": 1.5 });
+  handle.style.cursor = "grab";
+  handle.addEventListener("pointerdown", (e) => startGroupRotate(e));
+  g.appendChild(handle);
+
+  if (drag && drag.type === "rotate-group") {
+    const readout = el("text", {
+      x: sx(b.cx), y: stalkTopY - 14, fill: "#7fd1e0", "font-size": 13, "font-weight": "bold", "text-anchor": "middle",
+    });
+    readout.textContent = `${drag.liveDeg >= 0 ? "+" : ""}${drag.liveDeg}°`;
+    readout.style.pointerEvents = "none";
+    g.appendChild(readout);
+  }
+
+  // Group scale handles — same visual language as a single building's resize
+  // handle. The CORNER handle scales width and height together (uniform);
+  // the two EDGE handles scale just one axis, like a side handle in any
+  // design tool. All three scale away from the same fixed opposite corner
+  // (the anchor), plus each building's own w/d (only the axis being scaled,
+  // only where resizable) and — uniform scale only — each road's widthM.
+  const cornerX = sx(b.maxX) + 10, cornerY = sy(b.maxZ) + 10;
+  const cornerHandle = el("rect", {
+    x: cornerX - 6, y: cornerY - 6, width: 12, height: 12,
+    fill: "#c9a227", stroke: "#1a1f14", "stroke-width": 1.5, rx: 2,
+  });
+  cornerHandle.style.cursor = "nwse-resize";
+  cornerHandle.addEventListener("pointerdown", (e) => startGroupScale(e, null));
+  g.appendChild(cornerHandle);
+
+  // A side handle only makes sense if the group actually has some extent
+  // along that axis — if every selected item shares the same X (or Z), that
+  // axis's "original size" is zero and a ratio against it would explode.
+  const MIN_AXIS_EXTENT = 0.5; // metres
+  if (b.maxX - b.minX > MIN_AXIS_EXTENT) {
+    const widthY = sy(b.cz);
+    const widthHandle = el("rect", {
+      x: cornerX - 5, y: widthY - 8, width: 10, height: 16,
+      fill: "#c9a227", stroke: "#1a1f14", "stroke-width": 1.5, rx: 2,
+    });
+    widthHandle.style.cursor = "ew-resize";
+    widthHandle.addEventListener("pointerdown", (e) => startGroupScale(e, "x"));
+    g.appendChild(widthHandle);
+  }
+  if (b.maxZ - b.minZ > MIN_AXIS_EXTENT) {
+    const heightX = sx(b.cx);
+    const heightHandle = el("rect", {
+      x: heightX - 8, y: cornerY - 5, width: 16, height: 10,
+      fill: "#c9a227", stroke: "#1a1f14", "stroke-width": 1.5, rx: 2,
+    });
+    heightHandle.style.cursor = "ns-resize";
+    heightHandle.addEventListener("pointerdown", (e) => startGroupScale(e, "z"));
+    g.appendChild(heightHandle);
+  }
+
+  if (drag && drag.type === "scale-group") {
+    const label = drag.axis === "x" ? `W ${Math.round(drag.liveScaleX * 100)}%`
+      : drag.axis === "z" ? `H ${Math.round(drag.liveScaleZ * 100)}%`
+      : `${Math.round(drag.liveScaleX * 100)}%`;
+    const readout = el("text", {
+      x: cornerX, y: cornerY + 22, fill: "#c9a227", "font-size": 13, "font-weight": "bold", "text-anchor": "middle",
+    });
+    readout.textContent = label;
+    readout.style.pointerEvents = "none";
+    g.appendChild(readout);
+  }
+}
+
+function redraw() { drawRoads(); drawBuildings(); drawGroupOverlay(); drawSelPanel(); }
+
+/* ------------------------------------------------------------- dragging --- */
+let drag = null;
+
+function startDragBuilding(e, b) {
+  e.stopPropagation();
+  snapshot();
+  select("building", b.id);
+  drag = { type: "building", id: b.id, startPx: e.clientX, startPy: e.clientY, orig: { x: b.x, z: b.z } };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function startResizeBuilding(e, b) {
+  e.stopPropagation();
+  snapshot();
+  select("building", b.id);
+  drag = { type: "resize-building", id: b.id, startPx: e.clientX, startPy: e.clientY, orig: { w: b.w, d: b.d } };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function startRotateBuilding(e, b) {
+  e.stopPropagation();
+  snapshot();
+  select("building", b.id);
+  drag = { type: "rotate-building", id: b.id, liveDeg: Math.round((b.rotation * 180) / Math.PI) };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function startDragRoad(e, r, part) {
+  e.stopPropagation();
+  snapshot();
+  select("road", r.id);
+  drag = {
+    type: "road", id: r.id, part, startPx: e.clientX, startPy: e.clientY,
+    orig: { x1: r.x1, z1: r.z1, x2: r.x2, z2: r.z2 },
+  };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function startGroupDrag(e) {
+  e.stopPropagation();
+  snapshot();
+  drag = {
+    type: "group", startPx: e.clientX, startPy: e.clientY, moved: false,
+    origBuildings: groupSelection.buildingIds.map((id) => { const b = buildings.find((x) => x.id === id); return { id, x: b.x, z: b.z }; }),
+    origRoads: groupSelection.roadIds.map((id) => { const r = roads.find((x) => x.id === id); return { id, x1: r.x1, z1: r.z1, x2: r.x2, z2: r.z2 }; }),
+  };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+// Routes a pointerdown on a building/road to the right kind of drag: if it's
+// already part of the active selection, or belongs to a locked (Ctrl+G)
+// group even when nothing is selected yet, drag the whole group — a grouped
+// object can never be picked up and moved on its own. Otherwise `startSolo`.
+function beginObjectDrag(e, type, id, startSolo) {
+  if (groupSelection && (type === "building" ? groupSelection.buildingIds : groupSelection.roadIds).includes(id)) {
+    startGroupDrag(e);
+    return;
+  }
+  const locked = idsOfObject(type, id);
+  if (locked.buildingIds.length + locked.roadIds.length > 1) {
+    selected = null;
+    groupSelection = locked;
+    startGroupDrag(e);
+    return;
+  }
+  startSolo(e);
+}
+function startGroupRotate(e) {
+  e.stopPropagation();
+  snapshot();
+  const b = groupBounds(groupSelection);
+  const rect = svg.getBoundingClientRect();
+  const f = svgScaleFactor();
+  const mx = (e.clientX - rect.left) / f, my = (e.clientY - rect.top) / f;
+  const vx = mx - sx(b.cx), vy = my - sy(b.cz);
+  drag = {
+    type: "rotate-group", pivot: { x: b.cx, z: b.cz }, startAngle: Math.atan2(vx, -vy), liveDeg: 0,
+    origBuildings: groupSelection.buildingIds.map((id) => {
+      const bd = buildings.find((x) => x.id === id);
+      return { id, x: bd.x, z: bd.z, rotation: bd.rotation, fixedRot: bd.fixedRot };
+    }),
+    origRoads: groupSelection.roadIds.map((id) => {
+      const r = roads.find((x) => x.id === id);
+      return { id, x1: r.x1, z1: r.z1, x2: r.x2, z2: r.z2 };
+    }),
+  };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function startGroupScale(e, axis) {
+  e.stopPropagation();
+  snapshot();
+  const b = groupBounds(groupSelection);
+  const anchor = { x: b.minX, z: b.minZ }; // opposite corner stays fixed, like a normal resize handle
+  drag = {
+    type: "scale-group", axis: axis || null, anchor,
+    startDistX: Math.abs(b.maxX - anchor.x) || 1,
+    startDistZ: Math.abs(b.maxZ - anchor.z) || 1,
+    liveScaleX: 1, liveScaleZ: 1,
+    origBuildings: groupSelection.buildingIds.map((id) => {
+      const bd = buildings.find((x) => x.id === id);
+      return { id, x: bd.x, z: bd.z, w: bd.w, d: bd.d, resizable: bd.resizable };
+    }),
+    origRoads: groupSelection.roadIds.map((id) => {
+      const r = roads.find((x) => x.id === id);
+      return { id, x1: r.x1, z1: r.z1, x2: r.x2, z2: r.z2, widthM: r.widthM };
+    }),
+  };
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragEnd);
+}
+function svgScaleFactor() {
+  const rect = svg.getBoundingClientRect();
+  return rect.width / 840; // css px per svg unit
+}
+function onDragMove(e) {
+  if (!drag) return;
+  const f = svgScaleFactor();
+  const dx = (e.clientX - drag.startPx) / f / SCALE;
+  const dz = (e.clientY - drag.startPy) / f / SCALE;
+  if (drag.type === "building") {
+    const b = buildings.find((x) => x.id === drag.id);
+    b.x = round1(drag.orig.x + dx);
+    b.z = round1(drag.orig.z + dz);
+  } else if (drag.type === "resize-building") {
+    const b = buildings.find((x) => x.id === drag.id);
+    // The handle sits at the local (+w/2, +d/2) corner, which rotates with
+    // the building — so the drag delta has to be rotated back into the
+    // building's own frame before it can grow w/d. Resize is symmetric
+    // around the centre (the position you already placed doesn't move).
+    const rad = b.rotation;
+    const localDx = dx * Math.cos(rad) - dz * Math.sin(rad);
+    const localDz = dx * Math.sin(rad) + dz * Math.cos(rad);
+    b.w = Math.max(2, round1(drag.orig.w + 2 * localDx));
+    b.d = Math.max(2, round1(drag.orig.d + 2 * localDz));
+  } else if (drag.type === "rotate-building") {
+    const b = buildings.find((x) => x.id === drag.id);
+    // Absolute angle from the (fixed) building centre to the current mouse
+    // position, in the same basis the SVG `rotate()` transform actually uses
+    // — not a relative delta, so the handle always points straight at the
+    // cursor. atan2(vx, -vy) matches: unrotated, the handle sits due "north"
+    // (screen-up) of the centre, and increasing rotation sweeps it clockwise.
+    const rect = svg.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / f;
+    const my = (e.clientY - rect.top) / f;
+    const vx = mx - sx(b.x), vy = my - sy(b.z);
+    let ang = Math.atan2(vx, -vy);
+    if (e.shiftKey) {
+      const step = Math.PI / 12; // 15°
+      ang = Math.round(ang / step) * step;
+    }
+    b.rotation = round3(ang);
+    drag.liveDeg = Math.round((ang * 180) / Math.PI);
+  } else if (drag.type === "rotate-group") {
+    // A RELATIVE delta from where the drag started (not an absolute angle
+    // like single-building rotate — the group has no one "current" facing).
+    // Every member's offset from the shared pivot gets rotated by that delta
+    // (orbit), and buildings that support their own rotation prop spin by
+    // the same delta too (fixedRot ones, e.g. Shrine/Field, only orbit).
+    const rect = svg.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / f;
+    const my = (e.clientY - rect.top) / f;
+    const vx = mx - sx(drag.pivot.x), vy = my - sy(drag.pivot.z);
+    let delta = Math.atan2(vx, -vy) - drag.startAngle;
+    if (e.shiftKey) {
+      const step = Math.PI / 12; // 15°
+      delta = Math.round(delta / step) * step;
+    }
+    const cosD = Math.cos(delta), sinD = Math.sin(delta);
+    for (const ob of drag.origBuildings) {
+      const b = buildings.find((x) => x.id === ob.id);
+      const ox = ob.x - drag.pivot.x, oz = ob.z - drag.pivot.z;
+      b.x = round1(drag.pivot.x + ox * cosD - oz * sinD);
+      b.z = round1(drag.pivot.z + ox * sinD + oz * cosD);
+      if (!ob.fixedRot) b.rotation = round3(ob.rotation + delta);
+    }
+    for (const or_ of drag.origRoads) {
+      const r = roads.find((x) => x.id === or_.id);
+      const o1x = or_.x1 - drag.pivot.x, o1z = or_.z1 - drag.pivot.z;
+      const o2x = or_.x2 - drag.pivot.x, o2z = or_.z2 - drag.pivot.z;
+      r.x1 = round1(drag.pivot.x + o1x * cosD - o1z * sinD);
+      r.z1 = round1(drag.pivot.z + o1x * sinD + o1z * cosD);
+      r.x2 = round1(drag.pivot.x + o2x * cosD - o2z * sinD);
+      r.z2 = round1(drag.pivot.z + o2x * sinD + o2z * cosD);
+    }
+    drag.liveDeg = Math.round((delta * 180) / Math.PI);
+  } else if (drag.type === "scale-group") {
+    // Scale from the anchor (the bounding box's opposite corner, fixed): how
+    // far the cursor now sits from the anchor along each axis, versus how
+    // far the original corner sat. The CORNER handle (axis=null) scales X
+    // and Z together (uniform, and road widthM scales too); either EDGE
+    // handle (axis="x"/"z") scales only that one axis, leaving the other —
+    // and road widths — untouched, like a side handle in any design tool.
+    const rect = svg.getBoundingClientRect();
+    const mx = wx((e.clientX - rect.left) / f);
+    const mz = wz((e.clientY - rect.top) / f);
+    let scaleX = 1, scaleZ = 1;
+    if (drag.axis === "x") {
+      scaleX = Math.max(0.1, Math.abs(mx - drag.anchor.x) / drag.startDistX);
+      if (e.shiftKey) scaleX = Math.round(scaleX * 20) / 20;
+    } else if (drag.axis === "z") {
+      scaleZ = Math.max(0.1, Math.abs(mz - drag.anchor.z) / drag.startDistZ);
+      if (e.shiftKey) scaleZ = Math.round(scaleZ * 20) / 20;
+    } else {
+      const dist = Math.hypot(mx - drag.anchor.x, mz - drag.anchor.z);
+      const startDist = Math.hypot(drag.startDistX, drag.startDistZ) || 1;
+      let s = Math.max(0.1, dist / startDist);
+      if (e.shiftKey) s = Math.round(s * 20) / 20;
+      scaleX = scaleZ = s;
+    }
+    for (const ob of drag.origBuildings) {
+      const b = buildings.find((x) => x.id === ob.id);
+      b.x = round1(drag.anchor.x + (ob.x - drag.anchor.x) * scaleX);
+      b.z = round1(drag.anchor.z + (ob.z - drag.anchor.z) * scaleZ);
+      if (ob.resizable) {
+        b.w = Math.max(2, round1(ob.w * scaleX));
+        b.d = Math.max(2, round1(ob.d * scaleZ));
+      }
+    }
+    for (const or_ of drag.origRoads) {
+      const r = roads.find((x) => x.id === or_.id);
+      r.x1 = round1(drag.anchor.x + (or_.x1 - drag.anchor.x) * scaleX);
+      r.z1 = round1(drag.anchor.z + (or_.z1 - drag.anchor.z) * scaleZ);
+      r.x2 = round1(drag.anchor.x + (or_.x2 - drag.anchor.x) * scaleX);
+      r.z2 = round1(drag.anchor.z + (or_.z2 - drag.anchor.z) * scaleZ);
+      if (!drag.axis) r.widthM = Math.max(0.5, round1(or_.widthM * scaleX));
+    }
+    drag.liveScaleX = scaleX;
+    drag.liveScaleZ = scaleZ;
+  } else if (drag.type === "group") {
+    if (Math.abs(dx) > 0.05 || Math.abs(dz) > 0.05) drag.moved = true;
+    for (const ob of drag.origBuildings) {
+      const b = buildings.find((x) => x.id === ob.id);
+      b.x = round1(ob.x + dx); b.z = round1(ob.z + dz);
+    }
+    for (const or_ of drag.origRoads) {
+      const r = roads.find((x) => x.id === or_.id);
+      r.x1 = round1(or_.x1 + dx); r.z1 = round1(or_.z1 + dz);
+      r.x2 = round1(or_.x2 + dx); r.z2 = round1(or_.z2 + dz);
+    }
+  } else {
+    const r = roads.find((x) => x.id === drag.id);
+    if (drag.part === "mid") {
+      r.x1 = round1(drag.orig.x1 + dx); r.z1 = round1(drag.orig.z1 + dz);
+      r.x2 = round1(drag.orig.x2 + dx); r.z2 = round1(drag.orig.z2 + dz);
+    } else {
+      r["x" + drag.part] = round1(drag.orig["x" + drag.part] + dx);
+      r["z" + drag.part] = round1(drag.orig["z" + drag.part] + dz);
+    }
+  }
+  redraw();
+}
+function onDragEnd() {
+  if (drag && drag.type === "group" && drag.moved) {
+    lastInteractionWasGroupMove = true;
+    // Safety net: the browser fires `click` synchronously right after this, which
+    // consumes the flag itself — but if mouseup lands outside the dragged element
+    // (or a drag gets cancelled) no click follows, so this would otherwise stick
+    // forever and swallow the next unrelated click. A 0ms timeout runs after any
+    // same-tick click has already been handled, so it only clears leftovers.
+    setTimeout(() => { lastInteractionWasGroupMove = false; }, 0);
+  }
+  drag = null;
+  window.removeEventListener("pointermove", onDragMove);
+  window.removeEventListener("pointerup", onDragEnd);
+}
+function round1(n) { return Math.round(n * 10) / 10; }
+
+/* ----------------------------------------------------------- placing new --- */
+const IDLE_HINT = "Click a building, pool, road or wall to select it.";
+const PLACE_BUTTONS = {
+  road: "addRoadBtn", wall: "addWallBtn", pool: "addPoolBtn",
+  gate: "addGateBtn", building: "addBuildingBtn",
+};
+function clearPlaceMode() {
+  placeMode = null;
+  pendingPoint = null;
+  for (const id of Object.values(PLACE_BUTTONS)) document.getElementById(id).classList.remove("active");
+  document.getElementById("modeHint").textContent = IDLE_HINT;
+}
+function setPlaceMode(btnKey, mode, hint) {
+  const wasActive = placeMode && placeMode.btnKey === btnKey;
+  clearPlaceMode();
+  if (wasActive) return; // clicking the same button again cancels
+  placeMode = { ...mode, btnKey };
+  document.getElementById(PLACE_BUTTONS[btnKey]).classList.add("active");
+  document.getElementById("modeHint").textContent = hint;
+}
+document.getElementById("addRoadBtn").addEventListener("click", () => {
+  setPlaceMode("road", { shape: "segment", kind: "road" }, "Click a start point, then an end point, to draw a road.");
+});
+document.getElementById("addWallBtn").addEventListener("click", () => {
+  setPlaceMode("wall", { shape: "segment", kind: "wall" }, "Click a start point, then an end point, to draw a wall.");
+});
+document.getElementById("addPoolBtn").addEventListener("click", () => {
+  setPlaceMode("pool", { shape: "rect", kind: "pool" }, "Click where the pool should go — then drag/resize it like a building.");
+});
+// A gate is just the main-gate component, but common enough to deserve its
+// own button rather than making you pick it out of the dropdown each time.
+document.getElementById("addGateBtn").addEventListener("click", () => {
+  setPlaceMode("gate", { shape: "rect", kind: "main-gate" }, "Click where the gate should go — then rotate it to face the road.");
+});
+document.getElementById("addBuildingBtn").addEventListener("click", () => {
+  const kind = document.getElementById("kindSelect").value;
+  const spec = BUILDING_KINDS.find((k) => k.kind === kind);
+  setPlaceMode("building", { shape: "rect", kind }, `Click where the ${spec.label} should go.`);
+});
+
+// Populate the "which component" picker.
+{
+  const sel = document.getElementById("kindSelect");
+  for (const k of BUILDING_KINDS) {
+    const o = document.createElement("option");
+    o.value = k.kind; o.textContent = k.label;
+    sel.appendChild(o);
+  }
+}
+
+/** A fresh id that can't collide with an existing one. */
+function newId(prefix) { return prefix + "-" + Math.random().toString(36).slice(2, 8); }
+
+svg.addEventListener("click", (e) => {
+  if (!placeMode) return; // plain clicks/drags on empty ground are handled by the marquee pointerdown flow below
+  const rect = svg.getBoundingClientRect();
+  const f = svgScaleFactor();
+  const x = round1(wx((e.clientX - rect.left) / f));
+  const z = round1(wz((e.clientY - rect.top) / f));
+
+  if (placeMode.shape === "rect") {
+    // One click drops the footprint; size/rotation are adjusted afterwards.
+    const spec = placeMode.kind === "pool" ? POOL_KIND : BUILDING_KINDS.find((k) => k.kind === placeMode.kind);
+    const id = newId(placeMode.kind);
+    snapshot(); // state *before* the push, so undo removes it again
+    buildings.push({
+      id, kind: spec.kind, label: spec.label, x, z, rotation: 0,
+      w: spec.w, d: spec.d, resizable: spec.resizable, fixedRot: spec.fixedRot,
+      isPool: !!spec.isPool, added: true,
+    });
+    clearPlaceMode();
+    select("building", id);
+    return;
+  }
+
+  // Segment (road / walkway / wall): first click sets the start, second finishes.
+  if (!pendingPoint) {
+    pendingPoint = { x, z };
+    document.getElementById("modeHint").textContent = "Now click the end point.";
+    return;
+  }
+  const isWall = placeMode.kind === "wall";
+  const id = newId(isWall ? "wall" : "road");
+  snapshot(); // state *before* the push, so undo removes it again
+  roads.push({
+    id, kind: placeMode.kind, widthM: isWall ? 0.5 : 10,
+    ...(isWall ? { heightM: WALL_HEIGHT_M } : {}),
+    x1: pendingPoint.x, z1: pendingPoint.z, x2: x, z2: z, added: true,
+  });
+  clearPlaceMode();
+  select("road", id);
+});
+
+/* ---------------------------------------------------------- marquee select */
+let marquee = null; // { startSx, startSy, curSx, curSy, moved } in svg px, while left-drag is in progress
+svg.addEventListener("pointerdown", (e) => {
+  if (placeMode || e.button !== 0) return; // placement uses its own click flow; only left button starts a marquee
+  const rect = svg.getBoundingClientRect();
+  const f = svgScaleFactor();
+  const startSx = (e.clientX - rect.left) / f;
+  const startSy = (e.clientY - rect.top) / f;
+  marquee = { startSx, startSy, curSx: startSx, curSy: startSy, moved: false };
+  window.addEventListener("pointermove", onMarqueeMove);
+  window.addEventListener("pointerup", onMarqueeEnd);
+});
+function onMarqueeMove(e) {
+  if (!marquee) return;
+  const rect = svg.getBoundingClientRect();
+  const f = svgScaleFactor();
+  marquee.curSx = (e.clientX - rect.left) / f;
+  marquee.curSy = (e.clientY - rect.top) / f;
+  if (Math.abs(marquee.curSx - marquee.startSx) > 3 || Math.abs(marquee.curSy - marquee.startSy) > 3) marquee.moved = true;
+  drawMarquee();
+}
+function onMarqueeEnd() {
+  window.removeEventListener("pointermove", onMarqueeMove);
+  window.removeEventListener("pointerup", onMarqueeEnd);
+  if (!marquee) return;
+  const wasMoved = marquee.moved;
+  const box = marquee;
+  marquee = null;
+  clearMarqueeRect();
+  if (!wasMoved) { select(null); return; } // a plain click on empty ground: just deselect
+  const x1 = wx(Math.min(box.startSx, box.curSx)), x2 = wx(Math.max(box.startSx, box.curSx));
+  const z1 = wz(Math.min(box.startSy, box.curSy)), z2 = wz(Math.max(box.startSy, box.curSy));
+  const inBox = (x, z) => x >= x1 && x <= x2 && z >= z1 && z <= z2;
+  let buildingIds = buildings.filter((b) => inBox(b.x, b.z)).map((b) => b.id);
+  let roadIds = roads.filter((r) => inBox(r.x1, r.z1) && inBox(r.x2, r.z2)).map((r) => r.id);
+  if (buildingIds.length + roadIds.length === 0) { select(null); return; }
+  // Catching one member of a locked group pulls the whole group in, Canva-style.
+  const bSet = new Set(buildingIds), rSet = new Set(roadIds);
+  for (const gr of groups) {
+    if (gr.buildingIds.some((id) => bSet.has(id)) || gr.roadIds.some((id) => rSet.has(id))) {
+      gr.buildingIds.forEach((id) => bSet.add(id));
+      gr.roadIds.forEach((id) => rSet.add(id));
+    }
+  }
+  buildingIds = [...bSet]; roadIds = [...rSet];
+  selected = null;
+  groupSelection = { buildingIds, roadIds };
+  redraw();
+}
+function drawMarquee() {
+  const g = document.getElementById("marqueeG");
+  g.innerHTML = "";
+  if (!marquee) return;
+  const x = Math.min(marquee.startSx, marquee.curSx), y = Math.min(marquee.startSy, marquee.curSy);
+  const w = Math.abs(marquee.curSx - marquee.startSx), h = Math.abs(marquee.curSy - marquee.startSy);
+  g.appendChild(el("rect", { x, y, width: w, height: h, fill: "#c9a227", opacity: 0.18, stroke: "#c9a227", "stroke-width": 1.2, "stroke-dasharray": "4 3" }));
+}
+function clearMarqueeRect() { document.getElementById("marqueeG").innerHTML = ""; }
+
+/* ---------------------------------------------------------------- select --- */
+function select(type, id) {
+  selected = type ? { type, id } : null;
+  groupSelection = null;
+  redraw();
+}
+// The persistent group (if any, from Ctrl+G) that a building/road belongs to,
+// expressed the same way `groupSelection` is: as a flat id list.
+function idsOfObject(type, id) {
+  const g = groups.find((gr) => (type === "building" ? gr.buildingIds : gr.roadIds).includes(id));
+  if (g) return { buildingIds: [...g.buildingIds], roadIds: [...g.roadIds] };
+  return { buildingIds: type === "building" ? [id] : [], roadIds: type === "road" ? [id] : [] };
+}
+function selectionAsLists() {
+  if (groupSelection) return { buildingIds: [...groupSelection.buildingIds], roadIds: [...groupSelection.roadIds] };
+  if (selected) return selected.type === "building" ? { buildingIds: [selected.id], roadIds: [] } : { buildingIds: [], roadIds: [selected.id] };
+  return { buildingIds: [], roadIds: [] };
+}
+function setSelectionFromLists(lists) {
+  const total = lists.buildingIds.length + lists.roadIds.length;
+  if (total === 0) { select(null); return; }
+  if (total === 1) {
+    if (lists.buildingIds.length) select("building", lists.buildingIds[0]); else select("road", lists.roadIds[0]);
+    return;
+  }
+  selected = null;
+  groupSelection = { buildingIds: lists.buildingIds, roadIds: lists.roadIds };
+  redraw();
+}
+// Plain click, Canva-style: clicking any member of a locked (Ctrl+G) group
+// selects the whole group, same as clicking the group as one object.
+function clickSelect(type, id) {
+  const g = idsOfObject(type, id);
+  if (g.buildingIds.length + g.roadIds.length > 1) setSelectionFromLists(g);
+  else select(type, id);
+}
+// Shift+click, Canva-style: add/remove one item — or, if it belongs to a
+// locked group, the whole group at once — from the current selection.
+function toggleGroupMember(type, id) {
+  const target = idsOfObject(type, id);
+  const cur = selectionAsLists();
+  const allPresent = target.buildingIds.length + target.roadIds.length > 0
+    && target.buildingIds.every((x) => cur.buildingIds.includes(x))
+    && target.roadIds.every((x) => cur.roadIds.includes(x));
+  const next = allPresent
+    ? { buildingIds: cur.buildingIds.filter((x) => !target.buildingIds.includes(x)), roadIds: cur.roadIds.filter((x) => !target.roadIds.includes(x)) }
+    : { buildingIds: [...new Set([...cur.buildingIds, ...target.buildingIds])], roadIds: [...new Set([...cur.roadIds, ...target.roadIds])] };
+  setSelectionFromLists(next);
+}
+// True if the given selection is exactly one existing locked (Ctrl+G) group.
+function isSelectionLocked(lists) {
+  return groups.some((gr) =>
+    gr.buildingIds.length === lists.buildingIds.length && gr.roadIds.length === lists.roadIds.length
+    && gr.buildingIds.every((id) => lists.buildingIds.includes(id))
+    && gr.roadIds.every((id) => lists.roadIds.includes(id)));
+}
+// Ctrl+G: lock the current selection (2+ items) into a persistent group —
+// clicking any one member from now on selects the whole thing, like Canva.
+function groupSelected() {
+  const cur = selectionAsLists();
+  if (cur.buildingIds.length + cur.roadIds.length < 2) return;
+  for (const gr of groups) {
+    gr.buildingIds = gr.buildingIds.filter((id) => !cur.buildingIds.includes(id));
+    gr.roadIds = gr.roadIds.filter((id) => !cur.roadIds.includes(id));
+  }
+  groups = groups.filter((gr) => gr.buildingIds.length + gr.roadIds.length > 1);
+  groups.push({ id: "group-" + Math.random().toString(36).slice(2, 8), buildingIds: cur.buildingIds, roadIds: cur.roadIds });
+  setSelectionFromLists(cur);
+}
+// Ctrl+G again (already a locked group) — or Ctrl+Shift+G — ungroups: dissolves
+// any locked group the current selection touches.
+function ungroupSelected() {
+  const cur = selectionAsLists();
+  groups = groups.filter((gr) =>
+    !gr.buildingIds.some((id) => cur.buildingIds.includes(id)) && !gr.roadIds.some((id) => cur.roadIds.includes(id)));
+  redraw();
+}
+// Keeps `groups` consistent after a road is deleted or the layout is reset.
+function pruneGroups() {
+  for (const gr of groups) {
+    gr.buildingIds = gr.buildingIds.filter((id) => buildings.some((b) => b.id === id));
+    gr.roadIds = gr.roadIds.filter((id) => roads.some((r) => r.id === id));
+  }
+  groups = groups.filter((gr) => gr.buildingIds.length + gr.roadIds.length > 1);
+}
+function drawSelPanel() {
+  const panel = document.getElementById("selPanel");
+  panel.innerHTML = "";
+  if (groupSelection) {
+    const n = groupSelection.buildingIds.length, m = groupSelection.roadIds.length;
+    const isLocked = isSelectionLocked(groupSelection);
+    panel.appendChild(fieldRow("Group selected", `${n} building${n === 1 ? "" : "s"}, ${m} road${m === 1 ? "" : "s"}`));
+    panel.appendChild(fieldRow("", isLocked ? "Grouped — Ctrl/Cmd+G again to ungroup" : "Ctrl/Cmd+G to group"));
+    panel.appendChild(fieldRow("", "Drag any highlighted piece to move the whole group. Click empty ground to clear."));
+    panel.appendChild(fieldRow("", "Drag the cyan handle above the group to rotate everyone around its centre."));
+    panel.appendChild(fieldRow("", "Gold corner handle scales width+height together; the side handles scale just one."));
+    return;
+  }
+  if (!selected) { panel.textContent = "Nothing selected."; return; }
+  if (selected.type === "building") {
+    const b = buildings.find((x) => x.id === selected.id);
+    panel.appendChild(fieldRow(b.isPool ? "Pool" : "Building", b.label));
+    if (!b.isPool) panel.appendChild(fieldRow("Component", b.kind));
+    panel.appendChild(numberField("X (m)", b.x, (v) => { b.x = v; redraw(); }));
+    panel.appendChild(numberField("Z (m)", b.z, (v) => { b.z = v; redraw(); }));
+    if (!b.fixedRot) {
+      panel.appendChild(numberField("Rotation (deg)", round1((b.rotation * 180) / Math.PI), (v) => { b.rotation = (v * Math.PI) / 180; redraw(); }));
+    } else {
+      panel.appendChild(fieldRow("Rotation", "fixed (not adjustable in source)"));
+    }
+    if (b.resizable) {
+      panel.appendChild(numberField("Width (m)", b.w, (v) => { b.w = Math.max(2, v); redraw(); }, 0.5));
+      panel.appendChild(numberField("Depth (m)", b.d, (v) => { b.d = Math.max(2, v); redraw(); }, 0.5));
+      panel.appendChild(fieldRow("", "or drag the gold corner box on the canvas"));
+    } else {
+      panel.appendChild(fieldRow("Size", "fixed (not adjustable in source)"));
+    }
+  } else {
+    const r = roads.find((x) => x.id === selected.id);
+    panel.appendChild(fieldRow(r.kind === "wall" ? "Wall" : "Road", r.id));
+    panel.appendChild(selectField("Kind", r.kind, ["road", "walkway", "wall"], (v) => {
+      r.kind = v;
+      // A wall needs a height to extrude; a road/walkway is flat and has none.
+      if (v === "wall" && r.heightM == null) r.heightM = WALL_HEIGHT_M;
+      if (v !== "wall") delete r.heightM;
+      redraw();
+    }));
+    panel.appendChild(numberField(r.kind === "wall" ? "Thickness (m)" : "Width (m)", r.widthM, (v) => { r.widthM = v; redraw(); }, 0.5));
+    if (r.kind === "wall") {
+      panel.appendChild(numberField("Height (m)", r.heightM ?? WALL_HEIGHT_M, (v) => { r.heightM = Math.max(0.2, v); redraw(); }, 0.2));
+    }
+    panel.appendChild(numberField("X1 (m)", r.x1, (v) => { r.x1 = v; redraw(); }));
+    panel.appendChild(numberField("Z1 (m)", r.z1, (v) => { r.z1 = v; redraw(); }));
+    panel.appendChild(numberField("X2 (m)", r.x2, (v) => { r.x2 = v; redraw(); }));
+    panel.appendChild(numberField("Z2 (m)", r.z2, (v) => { r.z2 = v; redraw(); }));
+  }
+}
+function fieldRow(label, value) {
+  const d = document.createElement("div"); d.className = "field";
+  const l = document.createElement("label"); l.textContent = label;
+  const s = document.createElement("span"); s.textContent = value;
+  d.appendChild(l); d.appendChild(s);
+  return d;
+}
+function numberField(label, value, onChange, step = 1) {
+  const d = document.createElement("div"); d.className = "field";
+  const l = document.createElement("label"); l.textContent = label;
+  const i = document.createElement("input");
+  i.type = "number"; i.value = value; i.step = step;
+  let snapshotted = false;
+  i.addEventListener("focus", () => { snapshotted = false; });
+  i.addEventListener("input", () => {
+    if (!snapshotted) { snapshot(); snapshotted = true; }
+    onChange(parseFloat(i.value) || 0);
+  });
+  d.appendChild(l); d.appendChild(i);
+  return d;
+}
+function selectField(label, value, options, onChange) {
+  const d = document.createElement("div"); d.className = "field";
+  const l = document.createElement("label"); l.textContent = label;
+  const s = document.createElement("select");
+  for (const opt of options) {
+    const o = document.createElement("option"); o.value = opt; o.textContent = opt;
+    if (opt === value) o.selected = true;
+    s.appendChild(o);
+  }
+  s.addEventListener("change", () => { snapshot(); onChange(s.value); });
+  d.appendChild(l); d.appendChild(s);
+  return d;
+}
+
+// Roads, walls, and anything YOU added (buildings, pools) can be deleted. The
+// ten original buildings can't: each one is a component the scene already
+// renders, so removing it here would silently disagree with the code.
+const canDelete = (b) => !!b && !!b.added;
+document.getElementById("deleteBtn").addEventListener("click", () => {
+  const lists = groupSelection ? selectionAsLists()
+    : selected ? selectionAsLists()
+    : null;
+  if (!lists) return;
+  const killRoads = new Set(lists.roadIds);
+  const killBuildings = new Set(
+    lists.buildingIds.filter((id) => canDelete(buildings.find((b) => b.id === id))),
+  );
+  if (!killRoads.size && !killBuildings.size) {
+    document.getElementById("modeHint").textContent =
+      "Nothing deletable selected — the original campus buildings can't be removed here.";
+    return;
+  }
+  snapshot();
+  roads = roads.filter((r) => !killRoads.has(r.id));
+  buildings = buildings.filter((b) => !killBuildings.has(b.id));
+  pruneGroups();
+  select(null);
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("Discard all edits and reload the original layout?")) return;
+  snapshot();
+  buildings = structuredClone(INITIAL_BUILDINGS);
+  roads = structuredClone(INITIAL_ROADS);
+  groups = [];
+  select(null);
+});
+
+/* --------------------------------------------------------------- export --- */
+// Four arrays out, one per kind of thing the scene has to build differently:
+// buildings are component instances, pools are water surfaces, roads are flat
+// planes, walls are extruded segments. `added: true` marks anything created
+// here that has no counterpart in the scene code yet.
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const asRect = (b) => ({
+    id: b.id, kind: b.kind, position: [b.x, 0, b.z], rotation: round3(b.rotation),
+    ...(b.resizable ? { size: [b.w, b.d] } : {}),
+    ...(b.added ? { added: true } : {}),
+  });
+  const asSegment = (r) => ({
+    id: r.id, kind: r.kind, widthM: r.widthM,
+    ...(r.kind === "wall" ? { heightM: r.heightM ?? WALL_HEIGHT_M } : {}),
+    from: [r.x1, r.z1], to: [r.x2, r.z2],
+    ...(r.added ? { added: true } : {}),
+  });
+  const out = {
+    buildings: buildings.filter((b) => !b.isPool).map(asRect),
+    pools: buildings.filter((b) => b.isPool).map(asRect),
+    roads: roads.filter((r) => r.kind !== "wall").map(asSegment),
+    walls: roads.filter((r) => r.kind === "wall").map(asSegment),
+  };
+  document.getElementById("output").value = JSON.stringify(out, null, 2);
+});
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  const ta = document.getElementById("output");
+  if (!ta.value) { ta.value = "(click Export first)"; return; }
+  await navigator.clipboard.writeText(ta.value);
+});
+document.getElementById("loadBtn").addEventListener("click", () => {
+  try {
+    const data = JSON.parse(document.getElementById("output").value);
+    snapshot();
+    // Rebuild every rect (buildings + pools) from the file, so a layout that
+    // added or removed things round-trips exactly rather than only nudging the
+    // ones that happen to already exist.
+    const rects = [...(data.buildings || []), ...(data.pools || [])];
+    if (rects.length) {
+      buildings = rects.map((b) => {
+        const spec = b.kind === "pool" ? POOL_KIND : BUILDING_KINDS.find((k) => k.kind === b.kind);
+        const existing = buildings.find((x) => x.id === b.id);
+        const base = existing || spec || POOL_KIND;
+        return {
+          id: b.id, kind: b.kind || base.kind, label: (existing && existing.label) || base.label || b.id,
+          x: b.position[0], z: b.position[2], rotation: b.rotation ?? 0,
+          w: Array.isArray(b.size) ? b.size[0] : base.w,
+          d: Array.isArray(b.size) ? b.size[1] : base.d,
+          resizable: base.resizable, fixedRot: base.fixedRot,
+          isPool: b.kind === "pool", added: !!b.added,
+        };
+      });
+    }
+    const segs = [...(data.roads || []), ...(data.walls || [])];
+    if (segs.length) {
+      roads = segs.map((r) => ({
+        id: r.id, kind: r.kind || "road", widthM: r.widthM,
+        ...(r.kind === "wall" ? { heightM: r.heightM ?? WALL_HEIGHT_M } : {}),
+        x1: r.from[0], z1: r.from[1], x2: r.to[0], z2: r.to[1], added: !!r.added,
+      }));
+    }
+    pruneGroups();
+    select(null);
+  } catch (err) {
+    alert("Couldn't parse that JSON: " + err.message);
+  }
+});
+function round3(n) { return Math.round(n * 1000) / 1000; }
+
+/* ----------------------------------------------------------------- init --- */
+drawGrid();
+redraw();
+</script>

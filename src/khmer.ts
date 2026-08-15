@@ -2,7 +2,7 @@
  * The Khmer alphabet (អក្សរខ្មែរ), as data for the Khmer Alphabet Classroom.
  *
  * Khmer letters have two written shapes:
- *  - "Normal" (Noto Sans Khmer here) — the everyday upright shapes.
+ *  - "Normal" (Siemreap here) — the everyday upright shapes.
  *  - "Moul" (អក្សរមូល) — the rounded, ceremonial shapes used for titles, temple
  *    signs, and formal headings.
  * The classroom shows every letter in both, using embedded Google fonts.
@@ -86,6 +86,7 @@ export const KHMER_GROUPS: KhmerGroup[] = [
       dv("ុ", "o", "u"), dv("ូ", "ou", "u"), dv("ួ", "uo", "uo"), dv("ើ", "aeu", "eu"), dv("ឿ", "eua", "eua"),
       dv("ៀ", "ie", "ie"), dv("េ", "e", "e"), dv("ែ", "ae", "ee"), dv("ៃ", "ai", "ey"), dv("ោ", "ao", "oo"),
       dv("ៅ", "au", "ou"), dv("ុំ", "om", "um"), dv("ំ", "am", "um"), dv("ាំ", "am", "oam"), dv("ះ", "ah", "eah"),
+      dv("ុះ", "oh", "uh"), dv("េះ", "eh", "ih"), dv("ោះ", "aoh", "uoh"),
     ],
   },
   {
@@ -120,7 +121,7 @@ export const KHMER_GROUPS: KhmerGroup[] = [
 
 /** Font families (must match the @font-face names in src/index.css). */
 export const KHMER_FONTS = {
-  normal: { label: "Normal", khmer: "អក្សរធម្មតា", family: "Noto Sans Khmer" },
+  normal: { label: "Normal", khmer: "អក្សរធម្មតា", family: "Siemreap" },
   moul: { label: "Moul", khmer: "អក្សរមូល", family: "Moul" },
 } as const;
 

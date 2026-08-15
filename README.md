@@ -17,7 +17,7 @@ Stewarded by the **CamboVerse Center** (មជ្ឈមណ្ឌលខេមប�
 
 ---
 
-## What is CamboVerse?
+## What is  CamboVerse?
 
 CamboVerse is a **mobile-first, web-first, low-bandwidth platform** that renders
 an **open 3D archive of Khmer heritage** as explorable, educational

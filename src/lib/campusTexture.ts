@@ -71,6 +71,45 @@ export function paveTexture(repeat = 12): Texture {
   }, [repeat, repeat]);
 }
 
+/**
+ * Radial "sunburst" plaza paving — wedge slabs radiating from a centre point,
+ * for a circular platform. Meant for a single non-repeating `circleGeometry`:
+ * its default UVs put the centre at (0.5, 0.5) and the rim at the texture
+ * edge, so the wedges/rings drawn here line up with the geometry's own
+ * radius automatically — no custom UV work needed, unlike a tiling texture.
+ */
+export function radialPaveTexture(wedges = 28): Texture {
+  return tex(`radial:${wedges}`, 512, (ctx, s) => {
+    const r = rand(5);
+    const cx = s / 2, cy = s / 2, R = s / 2;
+    for (let i = 0; i < wedges; i++) {
+      const a0 = (i / wedges) * Math.PI * 2;
+      const a1 = ((i + 1) / wedges) * Math.PI * 2;
+      const g = 178 + (i % 2) * 8 + r() * 12;
+      ctx.fillStyle = `rgb(${g | 0},${(g - 2) | 0},${(g - 7) | 0})`;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R, a0, a1);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.strokeStyle = "rgba(118,116,110,0.5)";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < wedges; i++) {
+      const a = (i / wedges) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.stroke();
+    }
+    for (const frac of [0.36, 0.68, 0.94]) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * frac, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+}
+
 /** Poured concrete / asphalt roadway. Same rule: about 8 m per repeat. */
 export function roadTexture(repeat = 10): Texture {
   return tex(`road:${repeat}`, 256, (ctx, s) => {
@@ -131,6 +170,71 @@ export function facadeTexture(floors = 4, bays = 16): Texture {
         // mullion
         ctx.fillStyle = "#f2f0ea";
         ctx.fillRect(x + bw * 0.48, y + fh * 0.24, bw * 0.04, fh * 0.5);
+      }
+    }
+  }, [1, 1]);
+}
+
+/** Specific layout for 7-bay teaching block (5 classrooms + 2 stairwells) */
+export function roomFacadeTexture(floors = 3, rooms = 7, type: "front" | "back" = "front"): Texture {
+  const key = `roomFacade:${floors}:${rooms}:${type}`;
+  return tex(key, 1024, (ctx, s) => { // increased resolution to 1024 for sharper details
+    ctx.fillStyle = "#f2f0ea";
+    ctx.fillRect(0, 0, s, s);
+    const fh = s / floors;
+    for (let f = 0; f < floors; f++) {
+      const y = f * fh;
+      // floor slab band
+      ctx.fillStyle = "#e6e3da";
+      ctx.fillRect(0, y + fh * 0.86, s, fh * 0.14);
+      
+      const rw = s / rooms;
+      for (let r = 0; r < rooms; r++) {
+        const x = r * rw;
+        
+        if (r === 0 || r === rooms - 1) {
+          // Louvered ends (stairwells)
+          // Draw a block with horizontal louver lines
+          ctx.fillStyle = "#8a96a3";
+          ctx.fillRect(x + rw * 0.1, y + fh * 0.1, rw * 0.8, fh * 0.7);
+          ctx.fillStyle = "#707f8e";
+          for (let ly = y + fh * 0.1; ly < y + fh * 0.8; ly += 4) {
+            ctx.fillRect(x + rw * 0.1, ly, rw * 0.8, 1.5);
+          }
+        } else {
+          // Classrooms
+          if (type === "front") {
+            // Front: Wide bank of 4 windows with small louvers above
+            // Louvers above
+            ctx.fillStyle = "#8a96a3";
+            ctx.fillRect(x + rw * 0.1, y + fh * 0.15, rw * 0.8, fh * 0.1);
+            ctx.fillStyle = "#707f8e";
+            for (let ly = y + fh * 0.15; ly < y + fh * 0.25; ly += 3) {
+              ctx.fillRect(x + rw * 0.1, ly, rw * 0.8, 1);
+            }
+            // 4 Window panes
+            const pw = (rw * 0.8 - (3 * rw * 0.04)) / 4; // pane width, with spacing
+            for (let p = 0; p < 4; p++) {
+              const px = x + rw * 0.1 + p * (pw + rw * 0.04);
+              ctx.fillStyle = "#40566b";
+              ctx.fillRect(px, y + fh * 0.3, pw, fh * 0.5);
+              // Glass highlight
+              ctx.fillStyle = "rgba(200,225,245,0.45)";
+              ctx.fillRect(px, y + fh * 0.3, pw, fh * 0.16);
+            }
+          } else {
+            // Back: 2 windows
+            ctx.fillStyle = "#40566b";
+            ctx.fillRect(x + rw * 0.15, y + fh * 0.24, rw * 0.3, fh * 0.5);
+            ctx.fillStyle = "rgba(200,225,245,0.45)";
+            ctx.fillRect(x + rw * 0.15, y + fh * 0.24, rw * 0.3, fh * 0.16);
+            
+            ctx.fillStyle = "#40566b";
+            ctx.fillRect(x + rw * 0.55, y + fh * 0.24, rw * 0.3, fh * 0.5);
+            ctx.fillStyle = "rgba(200,225,245,0.45)";
+            ctx.fillRect(x + rw * 0.55, y + fh * 0.24, rw * 0.3, fh * 0.16);
+          }
+        }
       }
     }
   }, [1, 1]);
@@ -201,14 +305,30 @@ export function signTexture(
   ctx.textBaseline = "middle";
   if (line2) {
     ctx.fillStyle = opts.fg ?? "#d8b24a";
-    ctx.font = "800 108px Georgia, 'Times New Roman', serif";
+    let f1 = 108;
+    ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line1).width > W * 0.94) {
+      f1 = Math.floor(f1 * (W * 0.94) / ctx.measureText(line1).width);
+      ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line1, W / 2, H * 0.36);
+
     ctx.fillStyle = opts.sub ?? "#f0efe9";
-    ctx.font = "600 52px Georgia, 'Times New Roman', serif";
+    let f2 = 52;
+    ctx.font = `600 ${f2}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line2).width > W * 0.94) {
+      f2 = Math.floor(f2 * (W * 0.94) / ctx.measureText(line2).width);
+      ctx.font = `600 ${f2}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line2, W / 2, H * 0.74);
   } else {
     ctx.fillStyle = opts.fg ?? "#d8b24a";
-    ctx.font = "800 128px Georgia, 'Times New Roman', serif";
+    let f1 = 128;
+    ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    if (ctx.measureText(line1).width > W * 0.94) {
+      f1 = Math.floor(f1 * (W * 0.94) / ctx.measureText(line1).width);
+      ctx.font = `800 ${f1}px Georgia, 'Times New Roman', serif`;
+    }
     ctx.fillText(line1, W / 2, H / 2);
   }
   const t = new CanvasTexture(c);
