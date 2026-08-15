@@ -7,10 +7,10 @@ and few. Its **life events** are the opposite: a wedding, a housewarming, an
 ordination, a funeral, happening thousands of times a day, all over the country,
 and almost never recorded as anything but a phone album.
 
-This is the format for both. It is data and rules only — the whole of it is
-[`src/ceremony.ts`](../src/ceremony.ts), about 700 lines, no UI yet. That is
-deliberate: the format is the part that is hard to change afterwards, and the
-part that carries the consequences.
+This is the format for both, plus the screens that walk you through one. The
+format is [`src/ceremony.ts`](../src/ceremony.ts) and it was written first,
+deliberately: it is the part that is hard to change afterwards, and the part
+that carries the consequences.
 
 ---
 
@@ -192,19 +192,42 @@ record is a normal state.
 
 ---
 
+## The screens
+
+Three files, matching the Buildings and Lab pattern — a plain-DOM directory, a
+3D stage, and the geometry behind it.
+
+| | |
+|---|---|
+| [`CeremonyHome.tsx`](../src/components/CeremonyHome.tsx) | The directory. Life events first, then the calendar. No WebGL — this is the screen someone on a slow connection reaches first. |
+| [`CeremonyView.tsx`](../src/components/CeremonyView.tsx) | One ceremony, staged: the moment stepper, the venue picker, the media rail. |
+| [`CeremonyProps.tsx`](../src/components/CeremonyProps.tsx) | The prop kit — all thirteen `PropKind`s, built at real size with their base on the ground. |
+| [`CeremonyScene.tsx`](../src/components/CeremonyScene.tsx) | The eight settings, and the light for each hour of the day. |
+
+**The stepper is the primary control**, because the sequence is the thing being
+taught. Stepping from one moment to the next re-dresses the yard: the trays come
+out, then the monks are seated, then the mat is cleared for the candles. The
+camera re-frames per moment, off the staging's own extent — seven 22 cm candles
+and an 8 m marquee cannot share one distance.
+
+Normal / Ultra / VR throughout. Normal drops segment counts, shadows and scatter
+density; VR puts you at the edge of the mat as a guest, not in the middle of it
+as the couple.
+
 ## What is not built yet
 
 In rough order of usefulness:
 
-1. **The prop kit** — procedural pavilion, offering trays, garlands, candles,
-   monk seating. This is the piece that makes a ceremony look like a ceremony,
-   and it is all geometry the Lab's techniques already cover.
-2. **The scene themes** — a yard, pagoda ground, a paddy, at each time of day.
-3. **Create from photos** — the flow a family actually uses, including the
+1. **Create from photos** — the flow a family actually uses, including the
    consent questions asked plainly and one at a time.
-4. **The embed facade players** — poster, provider name, tap to load.
-5. **Calendar ceremonies on the map** — Pchum Ben at a specific pagoda.
-6. **Game mode** — attending, taking part, doing the rituals. The user's own
+2. **People.** There are none. It is the largest single gap, and the reason a
+   few placements need the renderer to invent a table under them (see the traps
+   below). Figures are a much harder problem than props and are best attempted
+   after a family's own photographs are carrying the human content.
+3. **Season and time as controls** — both are in the format and rendered; only
+   the moment's own `timeOfDay` currently drives them.
+4. **Calendar ceremonies on the map** — Pchum Ben at a specific pagoda.
+5. **Game mode** — attending, taking part, doing the rituals. The user's own
    framing was "later", and it needs everything above it first.
 
 ## What needs a person, not a commit
@@ -259,3 +282,16 @@ present as canonical, and whether "blessing by monks" belongs where it sits.
   Two fields disagreeing about how much to reveal must be resolved by a person.
 - **Moment ids are the join.** They match the template's ids; duplicates inside
   one ceremony are an error.
+- **A marquee goes up at a *house*.** The first version of the stage raised one
+  over anything that was not indoors, which stood a pink wedding marquee over
+  Pchum Ben on pagoda ground. Getting this wrong is worse than a bare yard: it
+  says the wrong thing about the ceremony.
+- **The camera has to sit under the marquee's eave.** The canopy is opaque, so
+  any shot from above it frames a nice pink roof and none of the ceremony.
+- **A staged height implies a surface.** The templates place trays at 0.8 m and
+  blessing candles at 0.5 m, because in life a person is holding them or a table
+  is under them. With no people modelled, `Staging` supplies the table the data
+  implies — otherwise it is a row of candles hanging in mid-air.
+- **Dawn and dusk carry more ambient light than physics would give them.** Pchum
+  Ben happens before dawn and a reception runs past dusk; a correctly black yard
+  is a blank screen on a phone held outdoors, which loses the ceremony entirely.

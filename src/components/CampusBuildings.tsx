@@ -5,7 +5,7 @@ import {
 } from "three";
 import { Text, Instances, Instance } from "@react-three/drei";
 import {
-  paveTexture, glazingTexture, roofTexture, signTexture, hedgeTexture, radialPaveTexture,
+  paveTexture, glazingTexture, roofTexture, signTexture, radialPaveTexture,
 } from "../lib/campusTexture";
 
 /**
@@ -943,7 +943,7 @@ function LetterU({ cx, h, stroke, depth, baseY, color }: LetterProps) {
  * angle system (see `FRONT_ANGLE` below); `radius` is the arc the domes sit
  * on; `w`/`h` are the mass's tangential width and height.
  */
-function HedgeMass({
+export function HedgeMass({
   angleCenter, angleSpan, radius, w, h, domes, hedgeMap,
 }: {
   angleCenter: number; angleSpan: number; radius: number; w: number; h: number;
@@ -990,7 +990,7 @@ function HedgeMass({
  * continues and which way the chamfer angles, so the two calls mirror
  * exactly rather than being hand-tuned separately.
  */
-function StairBorder({
+export function StairBorder({
   side, thetaAtSide, radius, height, extraAngle, chamferLen, chamferAngle, color,
 }: {
   side: 1 | -1; thetaAtSide: number; radius: number; height: number;

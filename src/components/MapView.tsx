@@ -22,6 +22,7 @@ export function MapView({
   onOpenGrove,
   onOpenBuildings,
   onOpenLab,
+  onOpenCeremonies,
 }: {
   onEnter: (id: string) => void;
   onEnterProvince: (name: string) => void;
@@ -37,6 +38,7 @@ export function MapView({
   onOpenGrove: () => void;
   onOpenBuildings: () => void;
   onOpenLab: () => void;
+  onOpenCeremonies: () => void;
 }) {
   const [passportOpen, setPassportOpen] = useState(false);
   return (
@@ -98,6 +100,7 @@ export function MapView({
             the Buildings page itself (BuildingsHome). */}
         <button className="campus-btn" onClick={onOpenBuildings}>🏛 Buildings</button>
         <button className="lab-btn" onClick={onOpenLab}>🔬 Learning Lab</button>
+        <button className="cer-btn" onClick={onOpenCeremonies}>🎊 Ceremonies</button>
         <button className="med-btn" onClick={onOpenMeditation}>🧘 Meditation</button>
         <button className="passport-btn" onClick={() => setPassportOpen(true)}>🛂 Passport</button>
       </nav>
