@@ -2650,6 +2650,10 @@ body,
 .grove-timeline input { flex: 1; accent-color: #6fdca0; }
 .grove-date { font: 600 0.74rem monospace; color: #bff0cf; width: 76px; text-align: right; }
 .grove-foot { font: 500 0.72rem/1.45 system-ui, sans-serif; color: #b8d8c6; margin: 8px 0 0; text-align: center; }
+/* The citation link in the CO₂ footer. Underlined rather than colour-only, so
+   it still reads as a link for anyone who cannot separate it by hue. */
+.grove-cite { color: #d8f0e2; text-decoration: underline; text-underline-offset: 2px; }
+.grove-cite:hover, .grove-cite:focus-visible { color: #ffffff; }
 
 .grove-tag {
   background: rgba(16, 32, 24, 0.85); color: #eafff2; border: 1px solid rgba(120, 220, 160, 0.3);
