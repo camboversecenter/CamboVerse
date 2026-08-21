@@ -150,9 +150,14 @@ export class CsbClient {
   /**
    * Chain status for a Grove plot, by its plot id string.
    *
-   * The plot string is hashed locally and only the hash is sent: the chain files
-   * groves under `keccak256(plot)` and never sees the name, so neither does this
-   * request. Returns `{ available: false }` rather than throwing when CSB is not
+   * The plot string is hashed locally and only the hash is sent, so neither CSB
+   * nor this request ever receives the name. That is true about what is
+   * transmitted and it is NOT a privacy guarantee: plot names are short and
+   * speakable by necessity, so a name is recoverable FROM an anchored
+   * `keccak256(plot)` by anyone willing to try, and iAny's publish worker serves
+   * the name in clear for any published record. See CSB `3245244`.
+   *
+   * Returns `{ available: false }` rather than throwing when CSB is not
    * configured or not reachable — an unanchored garden is a normal garden, and a
    * viewer that broke when the chain was down would be a worse viewer.
    */
