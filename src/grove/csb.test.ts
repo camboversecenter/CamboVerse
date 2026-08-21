@@ -3,8 +3,12 @@
  *
  * Two properties matter more than the rest, and both are about failure:
  *
- *  1. The plot NAME never leaves the browser — only keccak256 of it. A garden's
- *     id is frequently its owner's name.
+ *  1. The plot NAME never leaves the browser — only keccak256 of it. That bounds
+ *     what this client transmits; it does not make the name private. A garden's
+ *     id is frequently its owner's name, which is exactly why the hash is not
+ *     protection: such names are short and guessable, so the hash inverts. The
+ *     test below fixes what the request carries, and claims nothing beyond it.
+ *     See CSB `3245244`.
  *  2. A chain that is down, absent, or lying must degrade to "no extra
  *     provenance", never to a broken garden. The signed records already carry
  *     the whole of what this viewer promises; the chain is additive.
@@ -90,7 +94,7 @@ function stubFetch(handler: (url: string) => unknown, status = 200) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("CsbClient", () => {
-  it("sends only the hash of the plot, never its name", async () => {
+  it("puts the hash of the plot in the query, not the plot name", async () => {
     const seen = stubFetch(() => verifiedStatus());
     await new CsbClient("https://csb.example").plotStatus(PLOT);
 
