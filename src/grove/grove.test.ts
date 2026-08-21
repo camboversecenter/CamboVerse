@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
   verifyObservation, verifyAttestation, trustScore, estimateCarbon,
-  type GardenObservation, type Attestation,
+  measureBasis, estimateBasis,
+  type GardenObservation, type Attestation, type Measure,
 } from "./grove";
 import { buildPlots } from "./garden";
 import { GroveClient, type VerifiedRecord } from "./client";
@@ -168,5 +169,78 @@ describe("Grove garden mapping (buildPlots)", () => {
     expect(plots[0].chains).toHaveLength(1); // one growth chain
     expect(plots[0].count).toBe(1); // one plant
     expect(plots[0].timeline).toHaveLength(2); // observed twice
+  });
+});
+
+/**
+ * The attribution classifier (docs/REFERENCES.md).
+ *
+ * `estimateBasis` exists so the interface can say which method produced a
+ * number, instead of crediting Chave et al. (2014) for a chain that sometimes
+ * ends in a height guess of ours. It has one job and one failure mode: drifting
+ * out of step with `estimateCarbon`'s branches, so that the label stops
+ * describing the arithmetic. These tests pin the two together.
+ */
+describe("estimateBasis — what actually backs a CO₂ figure", () => {
+  it("calls it measured only when both DBH and height were measured", () => {
+    expect(measureBasis({ method: "dbh_height", dbh_cm: 20, height_m: 9 })).toBe("measured");
+  });
+
+  it("flags DBH without height as our own height model, not as Chave Eq. 4", () => {
+    expect(measureBasis({ method: "dbh", dbh_cm: 20 })).toBe("modelled-height");
+  });
+
+  it("flags height without DBH as the crude in-house branch", () => {
+    expect(measureBasis({ method: "height", height_m: 4 })).toBe("height-only");
+  });
+
+  it("separates a supplied biomass — no allometry ran at all", () => {
+    expect(measureBasis({ method: "manual", biomassKg: 120 })).toBe("supplied");
+  });
+
+  it("treats a manual record with no biomass as contributing nothing", () => {
+    expect(measureBasis({ method: "manual" })).toBe("none");
+  });
+
+  it("labels a garden by its weakest record, not its best", () => {
+    // One unmeasured height is enough to make the whole total a rough estimate:
+    // the number on screen is a sum, and a sum inherits its worst term.
+    expect(estimateBasis([
+      { method: "dbh_height", dbh_cm: 30, height_m: 12 },
+      { method: "dbh", dbh_cm: 18 },
+    ])).toBe("modelled-height");
+
+    expect(estimateBasis([
+      { method: "dbh_height", dbh_cm: 30, height_m: 12 },
+      { method: "height", height_m: 3 },
+    ])).toBe("height-only");
+  });
+
+  it("stays measured when every record was fully measured", () => {
+    expect(estimateBasis([
+      { method: "dbh_height", dbh_cm: 30, height_m: 12 },
+      { method: "dbh_height", dbh_cm: 11, height_m: 5 },
+    ])).toBe("measured");
+  });
+
+  it("is 'none' for an empty garden", () => {
+    expect(estimateBasis([])).toBe("none");
+  });
+
+  it("agrees with estimateCarbon about which records produce a number", () => {
+    // The contract that matters: 'none' must mean zero, and every other basis
+    // must mean a non-zero estimate. If these ever disagree, the footer is
+    // describing a calculation that did not happen.
+    const cases: Measure[] = [
+      { method: "dbh_height", dbh_cm: 20, height_m: 9 },
+      { method: "dbh", dbh_cm: 20 },
+      { method: "height", height_m: 4 },
+      { method: "manual", biomassKg: 120 },
+      { method: "manual" },
+    ];
+    for (const m of cases) {
+      const zero = estimateCarbon(m, "mango").biomassKg === 0;
+      expect(measureBasis(m) === "none", JSON.stringify(m)).toBe(zero);
+    }
   });
 });

@@ -86,8 +86,15 @@ a low-end phone's budget.
 
 ## Honesty & privacy (BRIDGE.md §4–5)
 
-- **`co2Kg` is rendered as "≈ N kg CO₂ estimated"** — a conservative estimate
-  (Chave et al. 2014 allometry), **never** a tradable token or carbon credit.
+- **`co2Kg` is rendered as "≈ N kg CO₂ estimated"** — **never** a tradable token
+  or carbon credit. The estimate is *four* things stacked, only one of which is
+  Chave et al. (2014): the biomass model is that paper's **Eq. 4**, the carbon
+  fraction is an IPCC default, `44/12` is stoichiometry, and wood density is an
+  in-house seven-species table. When height was not measured, an **in-house
+  approximation** stands in for it that appears in no published paper. The footer
+  wording changes with what was actually measured, and
+  [`docs/REFERENCES.md`](./docs/REFERENCES.md) maps every component to its real
+  source — including the two entries still marked `UNVERIFIED`.
 - **`trust` (0–100)** is a visual confidence cue: a lone self-claim renders more
   **translucent**; a **community-attested** record renders **solid**
   (`trustOpacity`). Trust is recomputed **locally** from attestations that

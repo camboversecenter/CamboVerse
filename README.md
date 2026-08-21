@@ -95,6 +95,7 @@ See [`STRATEGY.md`](./STRATEGY.md) for the full technical & strategic framework.
 **Build on CamboVerse** *(for ecosystem apps)*
 - [`docs/API.md`](./docs/API.md) — the `/v1` rails contract (also linked above).
 - [`GROVE_INTEGRATION.md`](./GROVE_INTEGRATION.md) — reading **Grove** (device-signed garden/carbon records) into a **verified virtual garden** (🌱 Grove Garden). CamboVerse verifies every record itself — no trust in any server.
+- [`docs/REFERENCES.md`](./docs/REFERENCES.md) — **what the numbers are founded on.** Every published model, constant and in-house assumption behind the CO₂ estimate, mapped to the line of code that uses it. Anything unconfirmed is marked `UNVERIFIED` rather than guessed. Read this before citing CamboVerse in a paper.
 - [`sdk/`](./sdk/) — a tiny **dependency‑free JS SDK** wrapping the rails (browser + Node), so partners don't hand‑roll `fetch`.
 - [`examples/treasure-hunt/`](./examples/treasure-hunt/) — a **reference partner app**: one self‑contained HTML file that composes every rail end‑to‑end (scene → learning credentials → a real local reward).
 

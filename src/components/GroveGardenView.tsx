@@ -12,6 +12,7 @@ import {
   CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
   anchorCall, anchorLink, TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
 } from "../grove/csb";
+import { estimateBasis, type EstimateBasis } from "../grove/grove";
 import { grassTexture, soilTexture } from "../lib/groundTexture";
 import {
   BroadleafPlant, PalmPlant, BananaPlant, PapayaPlant, Seedling,
@@ -32,6 +33,42 @@ import demoBundle from "../grove/fixtures/grove-bundle.json";
  * The tiers change *detail, never content*: the same species at the same scale.
  */
 export type ViewMode = "normal" | "ultra";
+
+/** Where the full method-to-source mapping lives. */
+const REFERENCES_URL =
+  "https://github.com/camboversecenter/CamboVerse/blob/main/docs/REFERENCES.md";
+
+/**
+ * What the CO₂ figure is actually founded on, in the reader's words.
+ *
+ * The old footer said "a conservative estimate (Chave 2014 allometry)" whatever
+ * had been measured. That credited one published pantropical model for a number
+ * whose weakest component — when height was not measured — is a height guess of
+ * ours that appears in no paper at all. The wording now moves with the data:
+ * name Chave et al. (2014) Eq. 4 only where Eq. 4 was actually the thing that
+ * ran, and say plainly when it was not.
+ *
+ * "Never a tradable credit" survives every branch. That claim does not depend on
+ * how well the number was measured.
+ */
+function basisNote(basis: EstimateBasis): string {
+  switch (basis) {
+    case "measured":
+      return "CO₂ is an estimate — Chave et al. (2014) Eq. 4 from measured DBH and height,"
+        + " IPCC carbon fraction. Never a tradable credit.";
+    case "modelled-height":
+      return "CO₂ is a rough estimate — height was not measured for every plant, so an"
+        + " in-house approximation stands in for it. Never a tradable credit.";
+    case "height-only":
+      return "CO₂ is a rough estimate — trunk diameter was not measured, so an in-house"
+        + " approximation deliberately under-counts. Never a tradable credit.";
+    case "supplied":
+      return "CO₂ is an estimate — biomass was supplied by the recorder rather than"
+        + " derived from a measurement. Never a tradable credit.";
+    default:
+      return "CO₂ is an estimate. Never a tradable credit.";
+  }
+}
 
 function detectViewMode(): ViewMode {
   if (typeof navigator === "undefined") return "ultra";
@@ -67,6 +104,12 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
 
   const plots = useMemo(() => buildPlots(records, coarseGps), [records, coarseGps]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
+  // What actually backs the CO₂ figure on screen. A total is only as
+  // well-founded as its flimsiest record, so the weakest basis labels the lot.
+  const basis = useMemo(
+    () => estimateBasis(records.map((r) => r.observation.measure)),
+    [records],
+  );
   const span = useMemo(() => {
     const first = Math.min(...plots.map((p) => p.firstAt));
     const last = Math.max(...plots.map((p) => p.lastAt));
@@ -302,8 +345,10 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           <span className="grove-date">{span.dur > 1 ? new Date(now).toISOString().slice(0, 10) : "—"}</span>
         </div>
         <p className="grove-foot">
-          CO₂ is a conservative <b>estimate</b> (Chave 2014 allometry), never a tradable credit. Every
-          record is verified on this device — nothing here is trusted from a server.
+          {basisNote(basis)}{" "}
+          <a className="grove-cite" href={REFERENCES_URL} target="_blank" rel="noreferrer noopener">
+            Sources
+          </a>. Every record is verified on this device — nothing here is trusted from a server.
         </p>
       </div>
 
