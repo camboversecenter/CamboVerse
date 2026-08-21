@@ -183,9 +183,73 @@ export function estimateCarbon(measure: Measure, species = ''): { biomassKg: num
   return { biomassKg, co2Kg }
 }
 
-/** Rough height from DBH when height wasn't measured (H ≈ 3·D^0.5, capped). */
+/**
+ * Rough height from DBH when height wasn't measured (H ≈ 3·D^0.5, capped).
+ *
+ * **This is ours, not anybody's published model.** It appears in no paper, it is
+ * not fitted to data, and it must never be described as part of the Chave et
+ * al. (2014) method. Chave et al. (2014) Eq. 6/7 give a fitted alternative using
+ * the environmental stress factor E; we have not implemented it. See
+ * `docs/REFERENCES.md`.
+ */
 function estHeightFromDbh(dbh_cm: number): number {
   return Math.min(30, 3 * Math.sqrt(dbh_cm))
+}
+
+/* ------------------------------------------------------- what backs a number --- */
+
+/**
+ * Which method actually produced a number — so the interface can say so.
+ *
+ * A CO₂ figure on this screen is four separate things stacked together, and only
+ * one of them is Chave et al. (2014). Labelling the whole number "Chave 2014
+ * allometry" credited a published pantropical model for a chain that includes an
+ * IPCC default, bare stoichiometry, a seven-row wood-density table of ours, and
+ * — when height was not measured — a height guess that exists in no literature
+ * at all. `docs/REFERENCES.md` maps every component to its real source.
+ *
+ * Ordered weakest-last: a garden is only as well-founded as its flimsiest
+ * record, so a total is labelled by the worst basis in it.
+ */
+export type EstimateBasis =
+  /** Nothing measurable — contributes zero. */
+  | 'none'
+  /** DBH *and* height measured: Chave et al. (2014) Eq. 4 as published. */
+  | 'measured'
+  /** Above-ground biomass supplied directly by the recorder; no allometry ran. */
+  | 'supplied'
+  /** DBH measured, height inferred by our own `estHeightFromDbh`. */
+  | 'modelled-height'
+  /** Height only, no DBH: our own crude stand-in, deliberately under-estimating. */
+  | 'height-only'
+
+/** Weakest last. */
+const BASIS_ORDER: EstimateBasis[] = ['none', 'measured', 'supplied', 'modelled-height', 'height-only']
+
+/**
+ * Classify one measurement, mirroring `estimateCarbon`'s branches exactly.
+ *
+ * Deliberately a separate read-only function rather than an extra return value:
+ * this is a labelling concern, and the carbon path should not be touched to
+ * serve it.
+ */
+export function measureBasis(measure: Measure): EstimateBasis {
+  if (measure.method === 'manual' && measure.biomassKg != null) return 'supplied'
+  if (measure.dbh_cm != null && measure.dbh_cm > 0) {
+    return measure.height_m != null && measure.height_m > 0 ? 'measured' : 'modelled-height'
+  }
+  if (measure.height_m != null && measure.height_m > 0) return 'height-only'
+  return 'none'
+}
+
+/** The weakest basis across many measurements — how a garden total is founded. */
+export function estimateBasis(measures: Measure[]): EstimateBasis {
+  let worst: EstimateBasis = 'none'
+  for (const m of measures) {
+    const b = measureBasis(m)
+    if (BASIS_ORDER.indexOf(b) > BASIS_ORDER.indexOf(worst)) worst = b
+  }
+  return worst
 }
 
 function round(n: number, dp: number): number {
