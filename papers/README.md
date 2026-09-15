@@ -10,6 +10,12 @@ This folder contains research papers, publications, and scholarly works related 
 - **File:** The Virtual Precinct - Place-Anchored Retail, Encounter-Based Demand, and Ground Rent as Platform Value Capture — A CamboVerse Case.pdf
 - **Description:** A case study examining how CamboVerse enables place-anchored retail through virtual commerce infrastructure, with analysis of encounter-based demand mechanisms and platform value capture through ground rent economics.
 
+### Trees, Not Tonnes: Survival-Linked Settlement for Smallholder Green Finance
+
+- **DOI:** https://doi.org/10.20944/preprints202608.1851.v1
+- **File:** Trees, Not Tonnes Survival-Linked Settlement for Smallholder Green Finance.pdf
+- **Description:** An exploration of survival-linked settlement mechanisms for smallholder green finance, proposing tree-based metrics over carbon tonnage as a more equitable and verifiable approach for financing smallholder agroforestry and environmental stewardship.
+
 ---
 
 ## Adding New Papers
