@@ -67,7 +67,9 @@ const MONUMENT_PALMS = (() => {
  * photograph are the whole contribution.
  */
 function GeneratedBuilding({ model }: { model: string }) {
-  const { scene } = useGLTF(`/models/${model}.glb`);
+  // Draco off: drei's default decoder is fetched from gstatic.com, and
+  // CamboVerse makes no third-party requests. Meshopt (bundled) stays on.
+  const { scene } = useGLTF(`/models/${model}.glb`, false, true);
   const copy = useMemo(() => {
     const c = scene.clone(true);
     c.traverse((o) => { o.castShadow = true; o.receiveShadow = true; });
