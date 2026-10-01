@@ -201,6 +201,40 @@ export type Detail = "normal" | "ultra";
 const SEG = { normal: 20, ultra: 40 } as const;
 
 /**
+ * Mirror a finished geometry across x = 0 *and* reverse its triangle winding.
+ *
+ * The heart below was first modelled as its own mirror image: right atrium and
+ * venae cavae on +X, left ventricle on −X — the opposite of the whole-body
+ * exhibit and of the real anatomy that Ultra now loads, both of which put the
+ * body's left on +X. A negative `scale` would be the one-line fix and is a
+ * trap: three.js corrects face culling for a mirrored object when it *draws* it
+ * but not when it *raycasts* it, so every tap would land on the far side of the
+ * organ. Mirroring the vertex data and swapping the winding keeps both right.
+ */
+function mirrorX(g: BufferGeometry): BufferGeometry {
+  g.scale(-1, 1, 1);
+  const index = g.index;
+  if (index) {
+    const a = index.array;
+    for (let i = 0; i < a.length; i += 3) { const t = a[i + 1]; a[i + 1] = a[i + 2]; a[i + 2] = t; }
+    index.needsUpdate = true;
+  } else {
+    for (const attr of Object.values(g.attributes)) {
+      const a = attr.array as Float32Array;
+      const n = attr.itemSize;
+      for (let v = 0; v + 2 < attr.count; v += 3) {
+        for (let k = 0; k < n; k++) {
+          const i1 = (v + 1) * n + k, i2 = (v + 2) * n + k;
+          const t = a[i1]; a[i1] = a[i2]; a[i2] = t;
+        }
+      }
+      attr.needsUpdate = true;
+    }
+  }
+  return g;
+}
+
+/**
  * The heart: a ventricular mass leaning to its apex, two atria sitting on top
  * of it, and the great vessels leaving in the directions they actually leave.
  *
@@ -219,40 +253,40 @@ export function Heart({
 }) {
   const seg = SEG[detail];
 
-  const ventricles = useMemo(() => organBlob({
+  const ventricles = useMemo(() => mirrorX(organBlob({
     r: [4.6, 5.6, 4.2], taper: 0.16, lean: -0.55, lumps: 0.05, seed: 2, seg,
-  }), [seg]);
-  const atriumL = useMemo(() => organBlob({ r: [2.5, 2.1, 2.3], lumps: 0.1, seed: 5, seg }), [seg]);
-  const atriumR = useMemo(() => organBlob({ r: [2.7, 2.2, 2.4], lumps: 0.1, seed: 8, seg }), [seg]);
+  })), [seg]);
+  const atriumL = useMemo(() => mirrorX(organBlob({ r: [2.5, 2.1, 2.3], lumps: 0.1, seed: 5, seg })), [seg]);
+  const atriumR = useMemo(() => mirrorX(organBlob({ r: [2.7, 2.2, 2.4], lumps: 0.1, seed: 8, seg })), [seg]);
 
   // chamber volumes, inside the muscle. The left ventricle's cavity is smaller
   // relative to its mass than the right's — that difference IS the lesson.
-  const lv = useMemo(() => organBlob({ r: [1.9, 4.0, 2.0], taper: 0.2, lean: -0.35, seed: 11, seg }), [seg]);
-  const rv = useMemo(() => organBlob({ r: [2.4, 3.6, 2.2], taper: 0.3, lean: 0.1, seed: 13, seg }), [seg]);
-  const la = useMemo(() => organBlob({ r: [1.7, 1.4, 1.6], seed: 17, seg }), [seg]);
-  const ra = useMemo(() => organBlob({ r: [1.9, 1.5, 1.7], seed: 19, seg }), [seg]);
+  const lv = useMemo(() => mirrorX(organBlob({ r: [1.9, 4.0, 2.0], taper: 0.2, lean: -0.35, seed: 11, seg })), [seg]);
+  const rv = useMemo(() => mirrorX(organBlob({ r: [2.4, 3.6, 2.2], taper: 0.3, lean: 0.1, seed: 13, seg })), [seg]);
+  const la = useMemo(() => mirrorX(organBlob({ r: [1.7, 1.4, 1.6], seed: 17, seg })), [seg]);
+  const ra = useMemo(() => mirrorX(organBlob({ r: [1.9, 1.5, 1.7], seed: 19, seg })), [seg]);
 
-  const aorta = useMemo(() => vessel([
+  const aorta = useMemo(() => mirrorX(vessel([
     [-1.2, 2.6, 0.4], [-1.0, 5.4, 0.0], [-0.4, 7.8, -0.6],
     [1.6, 8.8, -1.2], [3.4, 7.6, -1.6], [3.6, 4.6, -2.0], [3.4, 1.0, -2.2],
-  ], 1.05, 22, detail === "ultra" ? 14 : 8), [detail]);
+  ], 1.05, 22, detail === "ultra" ? 14 : 8)), [detail]);
 
-  const pulmTrunk = useMemo(() => vessel([
+  const pulmTrunk = useMemo(() => mirrorX(vessel([
     [1.4, 2.8, 1.8], [1.0, 5.0, 1.4], [0.2, 6.8, 0.8],
-  ], 0.95, 12, detail === "ultra" ? 14 : 8), [detail]);
-  const pulmL = useMemo(() => vessel([
+  ], 0.95, 12, detail === "ultra" ? 14 : 8)), [detail]);
+  const pulmL = useMemo(() => mirrorX(vessel([
     [0.2, 6.8, 0.8], [-2.0, 7.2, 0.2], [-4.2, 7.0, -0.4],
-  ], 0.6, 10, 8), []);
-  const pulmR = useMemo(() => vessel([
+  ], 0.6, 10, 8)), []);
+  const pulmR = useMemo(() => mirrorX(vessel([
     [0.2, 6.8, 0.8], [2.2, 7.4, 0.6], [4.4, 7.2, 0.2],
-  ], 0.6, 10, 8), []);
+  ], 0.6, 10, 8)), []);
 
-  const svc = useMemo(() => vessel([
+  const svc = useMemo(() => mirrorX(vessel([
     [4.0, 3.4, -0.2], [4.6, 6.0, -0.6], [4.6, 9.2, -0.8],
-  ], 0.85, 10, 8), []);
-  const ivc = useMemo(() => vessel([
+  ], 0.85, 10, 8)), []);
+  const ivc = useMemo(() => mirrorX(vessel([
     [3.8, 2.6, 0.2], [4.4, 0.2, 0.4], [4.4, -2.4, 0.4],
-  ], 0.85, 10, 8), []);
+  ], 0.85, 10, 8)), []);
 
   // four pulmonary veins into the left atrium
   const pv = useMemo(() => {
@@ -262,15 +296,15 @@ export function Heart({
       [[-1.6, 4.0, -1.6], [-2.4, 5.6, -2.6], [-3.2, 6.8, -3.2]],
       [[-1.2, 2.6, -1.8], [-1.6, 1.4, -2.8], [-2.0, 0.2, -3.4]],
     ];
-    return mergeGeometries(runs.map((r) => vessel(r, 0.42, 8, 7)), false) ?? new BufferGeometry();
+    return mirrorX(mergeGeometries(runs.map((r) => vessel(r, 0.42, 8, 7)), false) ?? new BufferGeometry());
   }, []);
 
   // coronary arteries, lying in the grooves on the surface
-  const coronary = useMemo(() => mergeGeometries([
+  const coronary = useMemo(() => mirrorX(mergeGeometries([
     vessel([[0.4, 2.2, 3.2], [-1.4, 0.2, 3.4], [-2.6, -2.4, 2.6], [-3.0, -4.6, 1.4]], 0.3, 12, 7),
     vessel([[1.6, 2.4, 2.6], [3.4, 1.0, 2.0], [4.2, -1.2, 0.8]], 0.28, 10, 7),
     vessel([[0.2, 2.4, -2.6], [-1.2, 0.4, -3.0], [-2.2, -2.2, -2.4]], 0.26, 10, 7),
-  ], false) ?? new BufferGeometry(), []);
+  ], false) ?? new BufferGeometry()), []);
 
   const showMuscle = layer !== "frame";
   const muscleOpacity = layer === "whole" ? 1 : 0.22;
@@ -291,7 +325,7 @@ export function Heart({
             <mesh
               key={i}
               geometry={g}
-              position={i === 0 ? [0, 0, 0] : i === 1 ? [-2.4, 3.4, -0.8] : [3.0, 3.4, 0.2]}
+              position={i === 0 ? [0, 0, 0] : i === 1 ? [2.4, 3.4, -0.8] : [-3.0, 3.4, 0.2]}
               castShadow={layer === "whole"}
             >
               <meshStandardMaterial
@@ -311,19 +345,19 @@ export function Heart({
 
       {showChambers && (
         <>
-          <mesh geometry={lv} position={[-1.5, -0.6, 0.2]} onClick={pick("lv")} scale={lift("lv")}>
+          <mesh geometry={lv} position={[1.5, -0.6, 0.2]} onClick={pick("lv")} scale={lift("lv")}>
             <meshStandardMaterial color={ORGAN.chamberOxy} roughness={0.35}
               emissive={selected === "lv" ? "#7a2018" : "#000000"} />
           </mesh>
-          <mesh geometry={rv} position={[1.9, -0.8, 0.6]} onClick={pick("rv")} scale={lift("rv")}>
+          <mesh geometry={rv} position={[-1.9, -0.8, 0.6]} onClick={pick("rv")} scale={lift("rv")}>
             <meshStandardMaterial color={ORGAN.chamberDeoxy} roughness={0.35}
               emissive={selected === "rv" ? "#26305e" : "#000000"} />
           </mesh>
-          <mesh geometry={la} position={[-2.4, 3.4, -0.8]} onClick={pick("la")} scale={lift("la")}>
+          <mesh geometry={la} position={[2.4, 3.4, -0.8]} onClick={pick("la")} scale={lift("la")}>
             <meshStandardMaterial color={ORGAN.chamberOxy} roughness={0.35}
               emissive={selected === "la" ? "#7a2018" : "#000000"} />
           </mesh>
-          <mesh geometry={ra} position={[3.0, 3.4, 0.2]} onClick={pick("ra")} scale={lift("ra")}>
+          <mesh geometry={ra} position={[-3.0, 3.4, 0.2]} onClick={pick("ra")} scale={lift("ra")}>
             <meshStandardMaterial color={ORGAN.chamberDeoxy} roughness={0.35}
               emissive={selected === "ra" ? "#26305e" : "#000000"} />
           </mesh>

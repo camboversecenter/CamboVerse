@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
-import { ACESFilmicToneMapping } from "three";
+import { ACESFilmicToneMapping, Vector3 } from "three";
 import { Heart, Lungs, type Detail } from "./LabOrgans";
+import { RealHeart, realModelFor, type Anchors } from "./LabRealModels";
 import { Body, SingleOrgan } from "./LabBody";
 import { Lever, GearTrain, Engine } from "./LabMachines";
 import { Water, Methane, SaltCrystal, Carbon } from "./LabChemistry";
@@ -57,18 +58,32 @@ function TheSpecimen({
  * and a 15 cm pancreas rendered three times too far away. Setting it here, on
  * every change of framing, is what makes the jump land correctly.
  */
-function FrameCamera({ dist, aim, size }: { dist: number; aim: number; size: number }) {
+function FrameCamera({ id, dist, aim, size }: { id: string; dist: number; aim: number; size: number }) {
   const camera = useThree((s) => s.camera);
+  const controls = useThree((s) => s.controls) as unknown as { target: Vector3 } | null;
+  const framedFor = useRef<string | null>(null);
   useEffect(() => {
-    camera.position.set(dist * 0.4, aim + size * 0.24, dist);
-    camera.lookAt(0, aim, 0);
-    const persp = camera as typeof camera & { far: number; near: number };
+    const target = new Vector3(0, aim, 0);
+    // How far the standard three-quarter view sits from its target.
+    const reach = Math.hypot(dist * 0.4, size * 0.24, dist);
+    if (framedFor.current !== id) {
+      // A new exhibit: the standard three-quarter view.
+      camera.position.set(dist * 0.4, aim + size * 0.24, dist);
+      framedFor.current = id;
+    } else {
+      // Same exhibit, new framing — the notes sheet opened or closed. Move in or
+      // out along the student's *current* line of sight. Re-aiming instead would
+      // yank the view they had turned to out from under them, which is why the
+      // first version refused to re-frame at all and cropped the body's head.
+      const from = controls?.target ?? target;
+      const dir = camera.position.clone().sub(from).normalize();
+      camera.position.copy(target).addScaledVector(dir, reach);
+    }
+    camera.lookAt(target);
+    const persp = camera as typeof camera & { far: number };
     persp.far = Math.max(600, dist * 4);
     camera.updateProjectionMatrix();
-    // deps deliberately exclude `aim`'s panel-driven changes: re-framing on
-    // every sheet toggle would yank the camera out from under the student.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [camera, dist, size]);
+  }, [camera, controls, id, dist, aim, size]);
   return null;
 }
 
@@ -148,7 +163,34 @@ export function SpecimenView({
   const part = picked ? specimen.parts.find((p) => p.id === picked) ?? null : null;
   const subject = subjectById(specimen.subject);
 
-  // Frame off the horizontal field of view: on a portrait phone it is barely
+  // Real anatomy in Ultra (and so in VR), where an exhibit has it. Normal keeps
+  // the procedural model: same parts, same labels, same questions, a fraction
+  // of the weight. Degrade the detail, never the content.
+  const real = detail === "ultra" ? realModelFor(specimen.id) : null;
+  // Label anchors from the real model, keyed by the file they came from so a
+  // stale set can never be applied to a different exhibit.
+  const [anchorSet, setAnchorSet] = useState<{ url: string; at: Anchors } | null>(null);
+  const realUrl = real?.url ?? null;
+  const onAnchors = useCallback((at: Anchors) => {
+    if (realUrl) setAnchorSet({ url: realUrl, at });
+  }, [realUrl]);
+  const anchors = real && anchorSet?.url === real.url ? anchorSet.at : null;
+
+  /**
+   * Fit the exhibit to the part of the screen that is actually clear.
+   *
+   * Open, the notes sheet covers the bottom ~44% and the header and layer
+   * buttons the top ~10%, leaving a band about 46% of the screen tall whose
+   * centre sits ~17% above the screen's. The first version sized the exhibit
+   * to the *whole* screen and then lifted it by 26% of the frame: that put a
+   * standing figure's centre under the header, so its head went off the top
+   * while its feet were still behind the sheet. Fitting to the band, and
+   * centring on it, is what keeps a 175 cm figure and a 13 cm heart both whole.
+   */
+  const BAND = info ? 0.46 : 0.82;
+  const LIFT = info ? 0.17 : 0;
+
+  // Frame off the horizontal field of view too: on a portrait phone it is barely
   // 29° against the 45° vertical, so sizing off height alone hangs the specimen
   // off the sides of the screen.
   const { dist, visibleH } = useMemo(() => {
@@ -158,28 +200,20 @@ export function SpecimenView({
     const margin = 1.18;
     const d = Math.max(
       (specimen.spanU * 0.5 * margin) / Math.tan(halfH),
-      (specimen.sizeU * 0.5 * margin) / halfV,
+      (specimen.sizeU * 0.5 * margin) / (halfV * BAND),
       18,
     );
     // How much world height the frame covers at that distance. The camera sits
     // off-axis, so this is the flat-on figure and slightly conservative, which
     // is the right direction to be wrong in.
     return { dist: d, visibleH: 2 * d * halfV };
-  }, [specimen.sizeU, specimen.spanU]);
+  }, [specimen.sizeU, specimen.spanU, BAND]);
 
-  // Same rule as the building pages: the orbit target lands at the centre of the
-  // viewport, so aiming low lifts the specimen into the clear band above an open
-  // sheet, and centring it is right once the sheet is dismissed. A specimen's
-  // mass sits a little above its origin (the heart's apex hangs below it), hence
-  // the 0.15 rather than 0.
+  // The orbit target lands at the centre of the viewport, so aiming *low* lifts
+  // the exhibit up into the clear band. A specimen's mass sits a little above
+  // its origin (the heart's apex hangs below it), hence the 0.15 rather than 0.
   const centre = specimen.centreU ?? specimen.sizeU * 0.15;
-  // Lift the exhibit into the band above the open sheet — but only as far as
-  // there is slack for. Shifting by a fixed fraction of the *exhibit's* height
-  // worked for a 13 cm heart and pushed a 175 cm figure's head clean off the
-  // top of the screen. The shift belongs to the frame, not to the object, and
-  // it stops at whatever room is actually left around it.
-  const slack = Math.max(0, visibleH / 2 - specimen.sizeU * 0.42);
-  const aim = centre - (info ? Math.min(visibleH * 0.26, slack) : 0);
+  const aim = centre - visibleH * LIFT;
 
   return (
     <div className="lab">
@@ -205,7 +239,7 @@ export function SpecimenView({
         <XR store={store}>
           <color attach="background" args={["#101a22"]} />
           <StudioLight />
-          <FrameCamera dist={dist} aim={aim} size={specimen.sizeU} />
+          <FrameCamera id={specimen.id} dist={dist} aim={aim} size={specimen.sizeU} />
           {/* A specimen light rig, not a landscape one: a key from the front-left,
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}
@@ -221,31 +255,53 @@ export function SpecimenView({
           <directionalLight position={[-22, 8, -18]} intensity={0.7} color="#9fc4ff" />
 
           <group>
-            <TheSpecimen
-              id={specimen.id}
-              organOf={specimen.organOf}
-              layer={layer}
-              detail={detail}
-              onPick={setPicked}
-              selected={picked}
-              extracted={extracted}
-              running={running}
-              knob={knob}
-            />
+            {real ? (
+              // While the real model downloads, the student is looking at the
+              // procedural one — never a blank stage.
+              <Suspense fallback={
+                <TheSpecimen
+                  id={specimen.id} organOf={specimen.organOf} layer={layer} detail={detail}
+                  onPick={setPicked} selected={picked} extracted={extracted}
+                  running={running} knob={knob}
+                />
+              }>
+                <RealHeart
+                  model={real} layer={layer} onPick={setPicked} selected={picked}
+                  onAnchors={onAnchors}
+                />
+              </Suspense>
+            ) : (
+              <TheSpecimen
+                id={specimen.id}
+                organOf={specimen.organOf}
+                layer={layer}
+                detail={detail}
+                onPick={setPicked}
+                selected={picked}
+                extracted={extracted}
+                running={running}
+                knob={knob}
+              />
+            )}
             {/* A pin on the selected part only. Every label at once is how an
                 anatomy diagram works on paper and how nothing works on a phone. */}
             {part && extracted !== part.id && (
               <Html
-                position={part.at}
+                position={anchors?.[part.id] ?? part.at}
                 center
                 distanceFactor={specimen.sizeU * 2.6}
                 occlude={false}
                 zIndexRange={[20, 0]}
                 style={{ pointerEvents: "none" }}
               >
-                <div className="lab-pin">
-                  <b>{part.name}</b>
-                  {part.khmer && <span className="khmer">{part.khmer}</span>}
+                {/* A zero-size anchor exactly on the part, with the label lifted
+                    above it on a stem. Centred on the point, the label used to
+                    sit squarely on top of the organ it was naming. */}
+                <div className="lab-pin-anchor">
+                  <div className="lab-pin">
+                    <b>{part.name}</b>
+                    {part.khmer && <span className="khmer">{part.khmer}</span>}
+                  </div>
                 </div>
               </Html>
             )}
@@ -259,6 +315,7 @@ export function SpecimenView({
             maxDistance={dist * 2.4}
             enableDamping
             dampingFactor={0.08}
+            makeDefault
             target={[0, aim, 0]}
             autoRotate={spin && nav === "explore"}
             autoRotateSpeed={0.55}
@@ -421,11 +478,25 @@ export function SpecimenView({
           <Quiz specimen={specimen} />
         )}
 
-        <p className="bld-note">
-          A <b>schematic teaching model</b>, built in code from description —
-          not a scan, not a measurement, and not accurate enough for anything
-          professional. Structure and proportion are right; fine detail is not.
-        </p>
+        {real ? (
+          // CC BY-SA requires attribution wherever the work is shown.
+          <p className="bld-note">
+            <b>Real anatomy</b> from{" "}
+            <a href={real.credit.href} target="_blank" rel="noreferrer noopener">Z-Anatomy</a>,{" "}
+            <a href={real.credit.licenceHref} target="_blank" rel="noreferrer noopener">
+              {real.credit.licence}
+            </a>
+            , simplified to load on a phone. Colours follow the classroom
+            convention — red where blood is rich in oxygen, blue where it is not.
+            Switch to <b>Normal</b> for the lighter diagram.
+          </p>
+        ) : (
+          <p className="bld-note">
+            A <b>schematic teaching model</b>, built in code from description —
+            not a scan, not a measurement, and not accurate enough for anything
+            professional. Structure and proportion are right; fine detail is not.
+          </p>
+        )}
       </div>
     </div>
   );

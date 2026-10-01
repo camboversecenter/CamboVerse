@@ -231,19 +231,84 @@ are not going to drop.
   cross-sections removed the seams by removing the joins.
 - **Higher tessellation in Ultra**, roughly double Normal's.
 
-**What we will not do, and what that costs:**
+That is where procedural geometry tops out: **a good stylised model, not
+anatomy.** Recognisable, correctly arranged, right proportions — and smooth
+where real tissue is not. Past that point, more code does not help.
 
-- **No scanned meshes.** Photoreal anatomy essentially means a licensed scan or
-  a commercial atlas asset. Neither can ship in a Digital Public Good, and a
-  reconstruction traced from one is a derivative of it.
-- **No large texture sets.** Skin pores, vessel tracery and subsurface maps are
-  where the last of the realism lives, and they are megabytes. The
-  ~$150-Android-over-4G constraint is a hard requirement, not a goal.
+### Real anatomy, in Ultra and VR
 
-So the honest description is **a good stylised anatomical model, not a medical
-atlas**. Recognisable, correctly arranged, right proportions — and no muscle
-layer, no fascia, no facial features, and surfaces smooth where real tissue is
-not. Say that on the page rather than letting a student assume otherwise.
+An earlier version of this page said real anatomical meshes could not ship in a
+Digital Public Good. That was too strong. *Commercial* atlases and scans under
+NonCommercial or NoDerivatives terms cannot; an **openly-licensed anatomical
+dataset can**, and one exists:
+[Z-Anatomy](https://github.com/LluisV/z-anatomy), **CC BY-SA 4.0** — inside
+the project's licence rules.
+
+The heart is the first exhibit to use it. The split follows the view-mode rule
+exactly:
+
+| Tier | Heart | Weight |
+|---|---|---|
+| **Normal** | the procedural model, unchanged | built in code, no download |
+| **Ultra** / **VR** | real anatomy from Z-Anatomy | **313 KB**, ~44k triangles, fetched only when the heart is opened in Ultra |
+
+Same parts, same labels, same questions in both. Degrade the detail, never the
+content. While the real model downloads, the procedural one stays on screen, so
+the stage is never blank.
+
+What the real model can do that the diagram never could: the **Chambers**
+layer is a true coronal section. Real chambers are walls, not volumes, so the
+front of the heart is cut away with a clipping plane and the inside drawn —
+papillary muscles, valve leaflets and the ridged ventricle wall where they
+actually are.
+
+**Attribution is mandatory and shown on the page** whenever a real model is on
+screen. Anything derived from it is CC BY-SA 4.0 too — see
+[`public/models/lab/LICENSE.md`](../public/models/lab/LICENSE.md).
+
+#### Adding the next organ
+
+1. Find its structures in the source. Each Z-Anatomy system is one FBX
+   (`VisceralSystem100.fbx` for the abdominal organs, and so on);
+   `node scripts/lab/probe-fbx.mjs <file.fbx> "<regex>"` lists matching
+   structures with their size and position.
+2. Copy `scripts/lab/build-heart.mjs`, and map structures to the exhibit's
+   **own part ids** from `src/lab.ts`. Anything with no honest part to belong
+   to goes in a node of its own that is drawn but never pickable.
+3. Build, then check the output with `node scripts/lab/inspect-glb.mjs`:
+   indexed, smooth normals, and a size you would download over 4G.
+4. Register it in `REAL_MODELS` in
+   [`LabRealModels.tsx`](../src/components/LabRealModels.tsx) and add its
+   attribution.
+
+#### What we still will not do
+
+- **Commercial or NC/ND anatomy**, however good it looks.
+- **Large texture sets.** Pores, vessel tracery and subsurface maps are
+  megabytes; the ~$150-Android-over-4G constraint is a hard requirement.
+- **Ship the whole body as real meshes at once.** Each organ is its own small
+  file, fetched only when it is opened.
+
+#### Traps the heart found
+
+- **A structure's node includes its downstream branches.** The superior vena
+  cava's subtree is 67 cm tall — it runs up the neck and down the arms. Take
+  each structure's *own* geometry only.
+- **Clipping leaves floating fragments.** A vessel that leaves the clip box and
+  curves back in leaves a piece in mid-air. Keep the largest connected piece of
+  each structure the clip actually cut — and only those, because some uncut
+  structures are legitimately several separate vessels.
+- **`gltf-transform`'s `normals()` makes flat normals** and un-indexes the mesh
+  to do it — three times the vertices and a hard facet on every triangle. The
+  build computes smooth, area-weighted normals itself.
+- **drei's `useGLTF` defaults to a Draco decoder on gstatic.com.** That is a
+  third-party fetch at runtime. Always call it as `useGLTF(url, false, true)`.
+- **Never mirror with a negative scale.** three.js corrects face culling for a
+  mirrored object when it *draws* it but not when it *raycasts* it, so taps land
+  on the far side. The procedural heart was found to be modelled as its own
+  mirror image — right atrium on the body's left — and was corrected by
+  mirroring the vertex data and swapping the winding (`mirrorX` in
+  `LabOrgans.tsx`).
 
 ## Adding an exhibit
 
