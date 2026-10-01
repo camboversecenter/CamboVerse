@@ -4,7 +4,7 @@ import { Html, OrbitControls } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping, Vector3 } from "three";
 import { Heart, Lungs, type Detail } from "./LabOrgans";
-import { RealHeart, realModelFor, type Anchors } from "./LabRealModels";
+import { RealSpecimen, realModelFor, type Anchors } from "./LabRealModels";
 import { Body, SingleOrgan } from "./LabBody";
 import { Lever, GearTrain, Engine } from "./LabMachines";
 import { Water, Methane, SaltCrystal, Carbon } from "./LabChemistry";
@@ -152,6 +152,11 @@ export function SpecimenView({
   const [running, setRunning] = useState(true);
   const [knob, setKnob] = useState(specimen.knob?.value ?? 0);
   useEffect(() => { setKnob(specimen.knob?.value ?? 0); }, [specimen.knob?.value, specimen.id]);
+  // Teleporting from the body to an organ's own screen reuses this component.
+  // Without a reset the body's selection stays lit on the organ — its part ids
+  // match — and washes its colour out. The view mode is kept on purpose: a
+  // visitor who chose Ultra stays in Ultra.
+  useEffect(() => { setPicked(null); setExtracted(null); setLayer("whole"); }, [specimen.id]);
   const [spin, setSpin] = useState(true);
   const [info, setInfo] = useState(true);
 
@@ -265,9 +270,9 @@ export function SpecimenView({
                   running={running} knob={knob}
                 />
               }>
-                <RealHeart
-                  model={real} layer={layer} onPick={setPicked} selected={picked}
-                  onAnchors={onAnchors}
+                <RealSpecimen
+                  model={real} specimen={specimen} layer={layer} onPick={setPicked}
+                  selected={picked} extracted={extracted} onAnchors={onAnchors}
                 />
               </Suspense>
             ) : (

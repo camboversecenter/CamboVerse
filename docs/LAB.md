@@ -244,71 +244,125 @@ dataset can**, and one exists:
 [Z-Anatomy](https://github.com/LluisV/z-anatomy), **CC BY-SA 4.0** — inside
 the project's licence rules.
 
-The heart is the first exhibit to use it. The split follows the view-mode rule
+Every biology exhibit now uses it — the heart, the lungs, the whole body and
+all eighteen single-organ screens. The split follows the view-mode rule
 exactly:
 
-| Tier | Heart | Weight |
+| Tier | Every biology exhibit | Weight |
 |---|---|---|
 | **Normal** | the procedural model, unchanged | built in code, no download |
-| **Ultra** / **VR** | real anatomy from Z-Anatomy | **313 KB**, ~44k triangles, fetched only when the heart is opened in Ultra |
+| **Ultra** / **VR** | real anatomy from Z-Anatomy | one file per exhibit, fetched only when it is opened in Ultra |
+
+| File | Size | | File | Size |
+|---|---|---|---|---|
+| `body.glb` (skin, 19 organs, skeleton) | 852 KB | | `organ-skeleton.glb` | 435 KB |
+| `organ-brain.glb` | 527 KB | | `heart.glb` | 293 KB |
+| `lungs.glb` | 275 KB | | `organ-airways.glb` | 150 KB |
+| `organ-large-intestine.glb` | 104 KB | | `organ-spinal-cord.glb` | 89 KB |
+| `organ-small-intestine.glb` | 81 KB | | `organ-diaphragm.glb` | 66 KB |
+| `organ-liver.glb` | 58 KB | | `organ-kidneys.glb` | 53 KB |
+| `organ-stomach.glb` | 46 KB | | `organ-oesophagus.glb` | 38 KB |
+| `organ-pancreas.glb` | 28 KB | | `organ-ureters.glb` | 27 KB |
+| `organ-great-vessels.glb` | 23 KB | | `organ-bladder.glb` | 22 KB |
+| `organ-thyroid.glb` | 19 KB | | `organ-spleen.glb` | 11 KB |
+| `organ-gallbladder.glb` | 7 KB | | | |
 
 Same parts, same labels, same questions in both. Degrade the detail, never the
-content. While the real model downloads, the procedural one stays on screen, so
+content. While a real model downloads, the procedural one stays on screen, so
 the stage is never blank.
 
-What the real model can do that the diagram never could: the **Chambers**
-layer is a true coronal section. Real chambers are walls, not volumes, so the
-front of the heart is cut away with a clipping plane and the inside drawn —
-papillary muscles, valve leaflets and the ridged ventricle wall where they
-actually are.
+What the real models can do that the diagrams never could:
+
+- **The heart's Chambers layer is a true coronal section.** Real chambers are
+  walls, not volumes, so the front of the heart is cut away with a clipping
+  plane and the inside drawn — papillary muscles, valve leaflets and the ridged
+  ventricle wall where they actually are.
+- **The lungs' See-through layer shows the real bronchial tree** inside the
+  lobes, and the left lung's cardiac notch is where the heart actually sits.
+- **The body's three layers are real:** skin; the organs in place with the
+  skeleton faint behind them; the skeleton on its own. Pulling an organ out
+  leaves the space it filled empty, and teleporting to its own screen opens
+  the organ's own, more detailed file.
+
+All of them are drawn by one component, `RealSpecimen` in
+[`LabRealModels.tsx`](../src/components/LabRealModels.tsx). What differs per
+exhibit — which parts are tappable in which layer, what fades, what is cut
+open — is a small `Behaviour` object, not a separate component.
 
 **Attribution is mandatory and shown on the page** whenever a real model is on
 screen. Anything derived from it is CC BY-SA 4.0 too — see
 [`public/models/lab/LICENSE.md`](../public/models/lab/LICENSE.md).
 
-#### Adding the next organ
+#### Rebuilding, or adding an organ
 
-1. Find its structures in the source. Each Z-Anatomy system is one FBX
-   (`VisceralSystem100.fbx` for the abdominal organs, and so on);
-   `node scripts/lab/probe-fbx.mjs <file.fbx> "<regex>"` lists matching
-   structures with their size and position.
-2. Copy `scripts/lab/build-heart.mjs`, and map structures to the exhibit's
-   **own part ids** from `src/lab.ts`. Anything with no honest part to belong
-   to goes in a node of its own that is drawn but never pickable.
-3. Build, then check the output with `node scripts/lab/inspect-glb.mjs`:
+The models are built by one config-driven script. It is a contributor-side
+tool: it runs once, its output is committed, and nothing in it reaches the
+browser.
+
+1. Get Z-Anatomy's system files (`Resources/Models/FBX/` in its repository).
+2. Find the structures. `node scripts/lab/survey-fbx.mjs <file.fbx> "<regex>"`
+   lists matching structures with their own size and position;
+   `node scripts/lab/groups-fbx.mjs` lists the source's named groups.
+3. Add the model to
+   [`scripts/lab/organs.config.mjs`](../scripts/lab/organs.config.mjs): its
+   parts, mapped to the exhibit's **own part ids** from `src/lab.ts`, and a
+   triangle budget for each. Anything with no honest part to belong to goes in
+   a part of its own that is drawn but never pickable.
+4. `npm run gen:lab-anatomy -- <fbx-dir> [model …]` (or `--dry` to see what
+   would go in). Check the output with `node scripts/lab/inspect-glb.mjs`:
    indexed, smooth normals, and a size you would download over 4G.
-4. Register it in `REAL_MODELS` in
-   [`LabRealModels.tsx`](../src/components/LabRealModels.tsx) and add its
-   attribution.
+5. Register it in `REAL_MODELS` in `LabRealModels.tsx`, and add the file to
+   `public/models/lab/LICENSE.md`.
 
 #### What we still will not do
 
 - **Commercial or NC/ND anatomy**, however good it looks.
 - **Large texture sets.** Pores, vessel tracery and subsurface maps are
   megabytes; the ~$150-Android-over-4G constraint is a hard requirement.
-- **Ship the whole body as real meshes at once.** Each organ is its own small
-  file, fetched only when it is opened.
+  Colour is applied at display time from the procedural models' palettes.
+- **Real meshes in Normal mode.** Normal is what the acceptance criterion is
+  measured against, and it stays procedural.
 
-#### Traps the heart found
+#### Traps the real anatomy found
 
 - **A structure's node includes its downstream branches.** The superior vena
   cava's subtree is 67 cm tall — it runs up the neck and down the arms. Take
   each structure's *own* geometry only.
+- **Label markers.** Every named landmark has a 12-triangle pin (names ending
+  in `j`). They are not anatomy and are skipped.
+- **A third of the source's meshes are mirrored.** Paired structures are the
+  other side's mesh under a negative scale. Baked into world space they come
+  out inside out — the skin showed it as pale, patchy regions down the body's
+  left side. The build swaps their winding back as it reads them.
+- **Overlays.** The skin is ~250 region patches, and its landmark patches
+  (folds, fossae, nails, the parts of the ear) lie on top of the larger regions
+  instead of tiling with them. Simplified together they tear into dark specks;
+  kept apart they fight for depth. Names do not separate them; geometry does:
+  a patch most of whose surface lies within 1.5 mm of another patch is
+  dropped, smallest first, so where two patches cover each other one always
+  stays and no hole opens.
+- **Budgets differ by shape.** One clean tiling (the brain's gyri) simplifies
+  best as one mesh. 540 separate bones simplify best one at a time, with their
+  borders free to move — locking them kept the skeleton at 63k triangles
+  against a 42k budget.
 - **Clipping leaves floating fragments.** A vessel that leaves the clip box and
   curves back in leaves a piece in mid-air. Keep the largest connected piece of
   each structure the clip actually cut — and only those, because some uncut
   structures are legitimately several separate vessels.
+- **Real organs are open.** The stomach is open at both ends, every vessel
+  where it was cut free; with back faces culled, an opening is a hole straight
+  through. Solid parts draw both sides.
 - **`gltf-transform`'s `normals()` makes flat normals** and un-indexes the mesh
   to do it — three times the vertices and a hard facet on every triangle. The
   build computes smooth, area-weighted normals itself.
 - **drei's `useGLTF` defaults to a Draco decoder on gstatic.com.** That is a
   third-party fetch at runtime. Always call it as `useGLTF(url, false, true)`.
-- **Never mirror with a negative scale.** three.js corrects face culling for a
-  mirrored object when it *draws* it but not when it *raycasts* it, so taps land
-  on the far side. The procedural heart was found to be modelled as its own
-  mirror image — right atrium on the body's left — and was corrected by
-  mirroring the vertex data and swapping the winding (`mirrorX` in
-  `LabOrgans.tsx`).
+- **Never mirror with a negative scale at runtime either.** three.js corrects
+  face culling for a mirrored object when it *draws* it but not when it
+  *raycasts* it, so taps land on the far side. The procedural heart was found
+  to be modelled as its own mirror image — right atrium on the body's left —
+  and was corrected by mirroring the vertex data and swapping the winding
+  (`mirrorX` in `LabOrgans.tsx`).
 
 ## Adding an exhibit
 
