@@ -3488,7 +3488,21 @@ select.farm-modal-note { appearance: none; }
 }
 .lab-layer.on { background: #4aa3c4; border-color: #4aa3c4; color: #08181f; }
 
-/* the label pin on the selected part */
+/* The label pin on the selected part.
+   A zero-size anchor sits exactly on the part; the label rides above it on a
+   stem. Centred on the point, the label used to cover the very organ it named. */
+.lab-pin-anchor { position: relative; width: 0; height: 0; }
+.lab-pin-anchor::before {
+  /* the dot on the part itself */
+  content: ""; position: absolute; left: -4px; top: -4px; width: 8px; height: 8px;
+  border-radius: 50%; background: #ffd9a0; box-shadow: 0 0 0 2px rgba(10, 20, 26, 0.85);
+}
+.lab-pin-anchor::after {
+  /* the stem up to the label */
+  content: ""; position: absolute; left: -1px; bottom: 4px; width: 2px; height: 26px;
+  background: rgba(255, 217, 160, 0.85);
+}
+.lab-pin-anchor .lab-pin { position: absolute; left: 0; bottom: 30px; transform: translateX(-50%); }
 .lab-pin {
   padding: 5px 10px; border-radius: 9px; white-space: nowrap;
   background: rgba(10, 20, 26, 0.9); color: #eef6fa;

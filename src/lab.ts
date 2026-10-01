@@ -317,42 +317,42 @@ export const SPECIMENS: Specimen[] = [
       {
         id: "lv", name: "Left ventricle", khmer: null,
         blurb: "The strongest chamber. It pushes blood into the aorta and out to the whole body — its wall is roughly three times thicker than the right ventricle's.",
-        layer: "cutaway", at: [-2.4, -2.6, 1.6],
+        layer: "cutaway", at: [2.4, -2.6, 1.6],
       },
       {
         id: "rv", name: "Right ventricle", khmer: null,
         blurb: "Pushes blood the short distance to the lungs, so it needs much less force and has a thinner wall.",
-        layer: "cutaway", at: [3.0, -2.2, 2.2],
+        layer: "cutaway", at: [-3.0, -2.2, 2.2],
       },
       {
         id: "la", name: "Left atrium", khmer: null,
         blurb: "Receives blood coming back from the lungs through the four pulmonary veins, and passes it down into the left ventricle.",
-        layer: "cutaway", at: [-2.8, 3.0, -0.6],
+        layer: "cutaway", at: [2.8, 3.0, -0.6],
       },
       {
         id: "ra", name: "Right atrium", khmer: null,
         blurb: "Receives blood returning from the body through the two venae cavae, and passes it down into the right ventricle.",
-        layer: "cutaway", at: [3.4, 3.0, 0.4],
+        layer: "cutaway", at: [-3.4, 3.0, 0.4],
       },
       {
         id: "aorta", name: "Aorta", khmer: null,
         blurb: "The body's largest artery. It leaves the left ventricle, arches over, and carries oxygen-rich blood down through the chest and abdomen.",
-        layer: "frame", at: [-0.6, 8.6, -0.4],
+        layer: "frame", at: [0.6, 8.6, -0.4],
       },
       {
         id: "pulmonary-trunk", name: "Pulmonary trunk", khmer: null,
         blurb: "Carries oxygen-poor blood from the right ventricle to the lungs. It is the one artery in the body that carries blood *away* from the heart without oxygen in it.",
-        layer: "frame", at: [1.4, 6.6, 2.2],
+        layer: "frame", at: [-1.4, 6.6, 2.2],
       },
       {
         id: "vena-cava", name: "Venae cavae", khmer: null,
         blurb: "The two great veins bringing blood back from the body — one from above the heart, one from below — both emptying into the right atrium.",
-        layer: "frame", at: [5.4, 6.0, -0.8],
+        layer: "frame", at: [-5.4, 6.0, -0.8],
       },
       {
         id: "coronary", name: "Coronary arteries", khmer: null,
         blurb: "The heart's own blood supply, running in grooves across its surface. A blockage here is what a heart attack is.",
-        layer: "whole", at: [-3.6, 0.6, 3.4],
+        layer: "whole", at: [3.6, 0.6, 3.4],
       },
     ],
     quiz: [
