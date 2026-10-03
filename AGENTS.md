@@ -150,6 +150,7 @@ payments. Its capture data becomes the first entry in the Open Khmer Heritage Ar
 |---|---|
 | `STRATEGY.md` | Founding technical & strategy framework (full detail, layered for government / contributors / funders) |
 | `AGENT.md` | This file — orientation for AI agents |
+| `docs/MUSEUM.md` | Personal museum (achievement rooms): decisions, ACTIK/CamboVerse split, rules, build order — read before working on it |
 
 ## Glossary (fast reference)
 
