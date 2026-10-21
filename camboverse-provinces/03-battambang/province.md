@@ -1,6 +1,6 @@
-# Battambang (បាត់ដំបង): guide facts
+# Battambang (បាត់ដំបង): guide facts for Rachana
 
-The facts the Battambang avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Rachana uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next to it. Never
 add prices, opening hours or phone numbers that can go out of date.
 
@@ -39,6 +39,6 @@ add prices, opening hours or phone numbers that can go out of date.
 - Take care on the bamboo train and on boats; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## Her song
+## Rachana's song
 "បាត់ដំបងបណ្ដូលចិត្ត" (Battambang, Beloved): art, old streets, food and sunsets. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/battambang-beloved.mp3](./song/battambang-beloved.mp3).

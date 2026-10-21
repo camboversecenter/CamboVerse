@@ -1,4 +1,4 @@
-# Look prompts — Battambang avatar (look D)
+# Look prompts — Rachana, the Battambang avatar (look D)
 
 ## Look D (as generated)
 ```

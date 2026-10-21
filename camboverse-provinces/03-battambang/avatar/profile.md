@@ -1,7 +1,7 @@
-# Battambang avatar — profile
+# Rachana (រចនា) — the Battambang avatar
 
 - **Province:** Battambang (បាត់ដំបង), 03 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Rachana (រចនា), "creation, design", for Battambang's artists and circus school (owner's pick, 2026-10-21)
 - **Who she is:** a fictional young Khmer woman from Battambang, about 26, clearly an adult. AI-generated; she is not a
   real person and is not based on anyone's likeness.
 - **Roles:** she represents Battambang in anything: singer of the province song, tour guide, assistant, host and
