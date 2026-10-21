@@ -32,3 +32,10 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
 - Automatic likeness checks with Gemini (3.5 flash, 3.8 flash, 3.1 pro) did not work: they passed different Bunong
   women as the same person and failed real matches. Faces are checked by eye against `face.jpg` (rule in
   [SKILL.md](./SKILL.md)). A test outfit (teacher) drifted to a longer, older face and was deleted.
+
+## Avatars are more than singers (owner, 2026-10-21)
+- Each avatar is the province's **singer, tour guide and assistant** for everything about the province. Every
+  province therefore also gets `province.md` (guide facts, marked draft until checked against official sources) and a
+  `persona` block in `avatar.json` (personality, languages, style, Khmer and English greetings).
+- Guide and assistant rules: always say she or he is an AI, answer from `province.md`, never invent prices, hours or
+  phone numbers, never speak for a community, and give responsible-travel tips (for example, never ride elephants).

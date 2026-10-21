@@ -1,10 +1,14 @@
-# CamboVerse Provinces — songs and AI singers
+# CamboVerse Provinces — AI avatars for every province
 
-One Khmer song for each of Cambodia's 25 provinces. Each song gets one **fictional AI singer** whose look draws on that
-province: its landscape, local products, crafts and krama colours. Everything here is released as part of the CamboVerse
+Each of Cambodia's 25 provinces gets one **fictional AI avatar**, the face and voice of that province. The avatar is:
+- **Singer:** sings the province's own Khmer song.
+- **Tour guide:** shows visitors the province's places, food, crafts and seasons.
+- **Assistant:** answers anything about the province (travel, culture, learning) in apps, chatbots, lessons and posts.
+
+Her or his look draws on the province: its landscape, people, local products, crafts and krama colours. Everything here is released as part of the CamboVerse
 **Digital Public Good** (see [DPG.md](./DPG.md)).
 
-> ⚠️ **AI disclosure:** every singer and every image here is AI-generated. The singers are fictional and do not show
+> ⚠️ **AI disclosure:** every avatar and every image here is AI-generated. The avatars are fictional and do not show
 > any real person. The songs were made with **Suno**.
 
 ## Licences
@@ -16,14 +20,15 @@ province: its landscape, local products, crafts and krama colours. Everything he
 ## Folder layout
 ```
 NN-<province>/
-  README.md     province, singer profile, song credits, AI disclosure, how to reuse
+  README.md     province, avatar profile, song credits, AI disclosure, how to reuse
+  province.md   facts the avatar uses as a guide and assistant (places, food, culture, travel tips)
   avatar/       avatar.json, face.jpg, body.jpg, looks/, options/ (the official look's prompt), profile.md
   song/         <song>.mp3, lyrics.txt (corrected), lyrics.suno.txt (as given to Suno), rights.txt
 ```
 Files over 50 MB never go in the repo; they are attached to a GitHub Release (tag `provinces/NN-<province>`) instead.
 
 ## Province tracker
-| # | Province | Singer | Song | Media | Status |
+| # | Province | Avatar | Song | Media | Status |
 |---|---|---|---|---|---|
 | 01 | Phnom Penh (ភ្នំពេញ) | — | — | — | ⏳ not started |
 | 02 | Banteay Meanchey (បន្ទាយមានជ័យ) | — | — | — | ⏳ not started |
@@ -37,7 +42,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 10 | Kep (កែប) | — | — | — | ⏳ not started |
 | 11 | Koh Kong (កោះកុង) | — | — | — | ⏳ not started |
 | 12 | Kratie (ក្រចេះ) | — | — | — | ⏳ not started |
-| 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong singer | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics | ✅ singer picked |
+| 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong woman | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |
 | 15 | Pailin (ប៉ៃលិន) | — | — | — | ⏳ not started |
 | 16 | Preah Sihanouk (ព្រះសីហនុ) | — | — | — | ⏳ not started |
@@ -51,8 +56,8 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 24 | Takeo (តាកែវ) | — | — | — | ⏳ not started |
 | 25 | Tbong Khmum (ត្បូងឃ្មុំ) | — | — | — | ⏳ not started |
 
-Status key: ⏳ not started · 🎧 waiting for song · 🎨 looks proposed · ✅ singer picked · 📦 released
+Status key: ⏳ not started · 🎧 waiting for song · 🎨 looks proposed · ✅ avatar picked · 📦 released
 
-**Using an avatar in new images or videos** (same face, any outfit): [SKILL.md](./SKILL.md) and `tools/avatar.mjs`.
+**Using an avatar** as a singer, tour guide or assistant, in new images, videos or chat (same face, any outfit): [SKILL.md](./SKILL.md) and `tools/avatar.mjs`.
 
 Production notes: [NOTES.md](./NOTES.md)

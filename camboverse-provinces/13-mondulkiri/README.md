@@ -3,31 +3,33 @@
 | | |
 |---|---|
 | **Song** | មណ្ឌលគិរី ឋានសួគ៌ (Mondulkiri, Paradise), 3:55, tropical acoustic pop |
-| **Singer** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands |
-| **Status** | ✅ singer picked (look E), lyrics checked |
+| **Avatar** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands. She is the province's singer, tour guide and assistant |
+| **Status** | ✅ avatar picked (look E), lyrics checked, guide facts drafted (to verify) |
 
-<p><img src="avatar/face.jpg" width="240" alt="Face reference of Kiriya, the fictional Mondulkiri singer"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Kiriya in Bunong dress"></p>
+<p><img src="avatar/face.jpg" width="240" alt="Face reference of Kiriya, the fictional Mondulkiri avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Kiriya in Bunong dress"></p>
 
-> ⚠️ **AI disclosure:** this singer, her voice and every image here are AI-generated. She is fictional and does not
+> ⚠️ **AI disclosure:** Kiriya, her voice and every image here are AI-generated. She is fictional and does not
 > show any real person. The song was **made with Suno** (see [song/rights.txt](./song/rights.txt)).
 
 ## The song
 A road-trip song about leaving the busy city for the Mondulkiri highlands: waterfalls, sea-of-trees forests, grass hills,
 elephants in a conservation project, local coffee and campfire nights. Listen: [song/mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3). Lyrics: [song/lyrics.txt](./song/lyrics.txt).
 
-## The singer
-She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: an indigo-black wrap skirt with
+## Kiriya
+She is the face of Mondulkiri: she sings its song, guides visitors and answers questions about the province. Her
+guide facts are in [province.md](./province.md). She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: an indigo-black wrap skirt with
 red, white and yellow bands, a black blouse with red trim, bead necklaces and brass bangles. The owner approved this
 dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.md).
 
 ## Files
 - `avatar/`: face reference, full-body sheet, approved look, other looks (`looks/`), prompts,
   profile, `avatar.json`. To use her in new images (same face, any outfit), follow [../SKILL.md](../SKILL.md).
+- `province.md`: guide and assistant facts (places, people, travel, responsible tourism)
 - `song/`: the song ([mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3), 5.3 MB, as exported from Suno), lyrics (as
   sung to Suno and spelling-corrected), rights record
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
-"Kiriya, CamboVerse Provinces — Mondulkiri, CamboVerse Center (CC BY 4.0). AI-generated singer; song made with Suno."
+"Kiriya, CamboVerse Provinces — Mondulkiri, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
 Keep the AI disclosure when you republish her image. Do not present her as a real person or as a member of any real
 community, and do not use her image to sell or endorse anything.

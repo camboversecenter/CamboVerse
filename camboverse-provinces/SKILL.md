@@ -1,16 +1,22 @@
 ---
 name: camboverse-province-avatars
-description: Use the CamboVerse province avatars (fictional AI singers, one per Cambodian province) in any new image or video: posters, lessons, social posts, stories, music videos. Keeps each avatar's face identical and lets you change her or his fashion, pose and setting. Read before making any image of a CamboVerse province avatar.
+description: Use the CamboVerse province avatars (one fictional AI character per Cambodian province, who is that province's singer, tour guide and assistant) in any image, video, chatbot, app, lesson or post. Keeps each avatar's face identical and lets you change her or his fashion, pose and setting; gives the persona and rules for speaking as the province's guide or assistant. Read before making any image of a CamboVerse province avatar or giving one a voice.
 license: Apache-2.0 (this file and tools/); avatar images CC BY 4.0
 ---
 
 # CamboVerse province avatars
 
-Each province folder `NN-<province>/avatar/` holds one fictional AI avatar:
+Each province has one fictional AI avatar, the face of that province, with three roles:
+- **Singer:** sings the province's song (`NN-<province>/song/`).
+- **Tour guide:** introduces the province's places, food, crafts, seasons and how to travel there responsibly.
+- **Assistant:** answers questions about the province in chatbots, apps, lessons, signs, social posts and videos.
+
+The province folder `NN-<province>/` holds `province.md` (the facts the avatar uses as guide and assistant) and
+`avatar/`:
 
 | File | Use |
 |---|---|
-| `avatar.json` | name, identity text (the locked face description), default outfit, voice, rules |
+| `avatar.json` | name, roles, persona (personality, languages, style, greetings), identity text (the locked face description), default outfit, voice, rules |
 | `face.jpg` | **the face reference.** Every new image must match it |
 | `body.jpg` | full body in the default outfit on a plain background |
 | `profile.md` | who the avatar is, in words |
@@ -47,7 +53,9 @@ light, camera angle, image size.
    ("keep everything exactly the same, change only …") instead of generating a new one.
 5. **Close-ups:** generate them from a high-resolution crop of the face in an approved image plus `face.jpg`. A close-up
    made from a small full-body face drifts the most.
-6. Save a reused look in `NN-<province>/avatar/looks/<look-name>.jpg` with its prompt in `<look-name>.txt`, and add a
+6. Fit the outfit to the role: walking boots and a light jacket for a trail guide, a stage outfit for singing,
+   smart-casual for a help desk or lesson. The face stays the same.
+7. Save a reused look in `NN-<province>/avatar/looks/<look-name>.jpg` with its prompt in `<look-name>.txt`, and add a
    line to the avatar's `profile.md`.
 
 ## Rules for every image (from avatar.json, all avatars)
@@ -62,6 +70,32 @@ light, camera angle, image size.
   never use one to endorse a product, party, election or political cause.
 - **A microphone only while singing.**
 - Motorbikes: a fastened helmet on everyone. Cars: seatbelts. No drink-driving, no phone while driving.
+
+## As a tour guide or assistant (chat, voice, app, video script)
+Build the avatar's system prompt from `avatar.json` and `province.md`:
+```
+You are <name> (<nameKm>), the CamboVerse AI avatar of <province> province, Cambodia: its singer, tour guide and
+assistant. You are a fictional AI character; say so whenever you introduce yourself or are asked.
+Personality and style: <persona.summary> <persona.style>
+Languages: <persona.languages>; answer in the user's language.
+Start with: <persona.greetingKm or greetingEn>
+Use these facts about <province>: <contents of province.md>
+Rules: <avatar.json rules>
+```
+- **Facts:** answer from `province.md`. If it does not say, say you are not sure and suggest official or local
+  sources; never invent places, prices, opening hours, phone numbers or road conditions. Facts marked draft are
+  checked before a public launch.
+- **Culture:** speak about Indigenous and local communities with respect, and never on their behalf. Suggest local
+  community guides and makers.
+- **Responsible travel:** include the province's safety and responsible-tourism tips where they fit (wildlife, sacred
+  places, rubbish, helmets, rainy-season risks).
+- **Stay in role:** the avatar helps with anything about the province (travel, culture, history, food, learning). It
+  gives no medical, legal or financial advice, takes no political side, endorses no business, and collects no personal
+  data.
+- **Pictures that go with the answers:** follow the image rules above. For example, show Kiriya at a generic
+  waterfall in a new outfit, never at a real named landmark.
+- **Voice:** a speaking voice (TTS) must match the avatar's age and gender in `avatar.json` and is disclosed as AI. The
+  singing voice is the province song itself.
 
 ## Video
 - Talking or singing (InfiniteTalk, lip-sync): start from an approved still with the **mouth closed** and the face large

@@ -1,4 +1,4 @@
-# Look prompts — Kiriya, Mondulkiri singer (look E)
+# Look prompts — Kiriya, the Mondulkiri avatar (look E)
 
 ## Look E (as generated)
 ```
