@@ -1,0 +1,14 @@
+Song: បាត់ដំបងបណ្ដូលចិត្ត (Battambang, Beloved)
+Province: Battambang (បាត់ដំបង)
+Made with: Suno
+Suno song id: 2cb703d2-9a0d-4bde-8411-4e6ea9e22794
+Suno link: https://suno.com/song/2cb703d2-9a0d-4bde-8411-4e6ea9e22794
+Created: 2026-08-26T03:46:05Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 3:30 (209.8 s)
+Audio: battambang-beloved.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno ("Battombong" was spelled that way so Suno would sing it right).
+  lyrics.txt has the spelling fixes the owner approved: Battambang, បស្ចិម, ភ្នំបាណន់, ល្អាងប្រចៀវ, បំពេញអារម្មណ៍,
+  ផារ៍ពន្លឺសិល្បៈ, ដ subscripts (ក្ដៅ, ក្ដី, កាំជណ្ដើរ, បណ្ដោយ). Kept as written: រីកស្ពព, ថ្លាយង់, ឡូរី, ស្រី.
+  Stage directions in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

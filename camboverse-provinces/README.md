@@ -36,7 +36,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 |---|---|---|---|---|---|
 | 01 | Phnom Penh (ភ្នំពេញ) | — | — | — | ⏳ not started |
 | 02 | Banteay Meanchey (បន្ទាយមានជ័យ) | — | — | — | ⏳ not started |
-| 03 | Battambang (បាត់ដំបង) | — | — | — | ⏳ not started |
+| 03 | [Battambang (បាត់ដំបង)](./03-battambang/) | Khmer woman, lotus silk look (name TBD) | បាត់ដំបងបណ្ដូលចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 04 | Kampong Cham (កំពង់ចាម) | — | — | — | ⏳ not started |
 | 05 | Kampong Chhnang (កំពង់ឆ្នាំង) | — | — | — | ⏳ not started |
 | 06 | Kampong Speu (កំពង់ស្ពឺ) | — | — | — | ⏳ not started |
