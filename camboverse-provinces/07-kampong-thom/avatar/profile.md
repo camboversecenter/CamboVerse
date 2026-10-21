@@ -1,7 +1,7 @@
-# Kampong Thom avatar — profile
+# Sambo (សំបូរ) — the Kampong Thom avatar
 
 - **Province:** Kampong Thom (កំពង់ធំ), 07 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Sambo (សំបូរ), "abundant", echoing Sambor Prei Kuk (owner's pick, 2026-10-21)
 - **Who she is:** a fictional young Khmer woman from Kampong Thom, mid-20s, clearly an adult. AI-generated; she is not
   a real person and is not based on anyone's likeness.
 - **Roles:** she represents Kampong Thom in anything: singer of the province song, tour guide, assistant, host and

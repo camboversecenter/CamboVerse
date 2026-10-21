@@ -1,6 +1,6 @@
-# Kampong Thom (កំពង់ធំ): guide facts
+# Kampong Thom (កំពង់ធំ): guide facts for Sambo
 
-The facts the Kampong Thom avatar uses as a guide and assistant. **Status: draft.** Check every fact against official
+The facts Sambo uses as a guide and assistant. **Status: draft.** Check every fact against official
 or local sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next to it.
 Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,6 +34,6 @@ Never add prices, opening hours or phone numbers that can go out of date.
 - Ask before photographing people; wear a life jacket on boats; take rubbish home.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## Her song
+## Sambo's song
 "កំពង់ធំជម្រំចិត្ត": a road trip up National Road 6 to Kampong Thom. Lyrics: [song/lyrics.txt](./song/lyrics.txt),
 audio: [song/kampong-thom-shelter-of-the-heart.mp3](./song/kampong-thom-shelter-of-the-heart.mp3).

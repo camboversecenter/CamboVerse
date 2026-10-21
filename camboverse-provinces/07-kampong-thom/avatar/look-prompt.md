@@ -1,4 +1,4 @@
-# Look prompts — Kampong Thom avatar (look D)
+# Look prompts — Sambo, the Kampong Thom avatar (look D)
 
 ## Look D (as generated)
 ```
