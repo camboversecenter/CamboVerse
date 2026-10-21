@@ -8,4 +8,4 @@ Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
 Length: 3:55 (234.6 s)
 Lyrics: lyrics.suno.txt is the text as given to Suno. lyrics.txt is the same text with dictionary spelling fixes the
   owner approved (មណ្ឌលគិរី, កាយា, ឦសាន, មនោរម្យ, ក្ដី, អណ្ដែត; ភ្នាត់ removed); stage directions in brackets are omitted.
-Licence for CC BY 4.0 release: PENDING the owner's confirmation that the Suno plan used allows it.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

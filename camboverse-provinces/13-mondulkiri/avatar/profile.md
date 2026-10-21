@@ -20,6 +20,8 @@
 | `look-E-approved.jpg` | the approved look E still, with her skin made a little darker |
 | `options/looks-ABCD.jpg`, `options/looks-EFGH.jpg` | the eight looks proposed (A–D modern, E–H Bunong dress) |
 | `look-prompt.md`, `options/prompt-*.txt` | the exact prompts |
+| `avatar.json` | identity text, default outfit and rules for other agents ([../../SKILL.md](../../SKILL.md)) |
+| `looks/cafe.jpg` | other outfit: cream knit top and Bunong-weave skirt at a highland café (prompt in `cafe.txt`) |
 
 ## Rules for new images of her
 - Send `face.jpg` + `body.jpg` with every prompt, then compare the face with `face.jpg`. An earlier close-up made

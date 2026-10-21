@@ -29,3 +29,6 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   her).
 - Transcription of the full mix (no vocal stem) is rough. It is good enough to check the written lines are sung, but
   confirm outro extras ("I can feel the groove", the repeated last line) on an isolated vocal before timing.
+- Automatic likeness checks with Gemini (3.5 flash, 3.8 flash, 3.1 pro) did not work: they passed different Bunong
+  women as the same person and failed real matches. Faces are checked by eye against `face.jpg` (rule in
+  [SKILL.md](./SKILL.md)). A test outfit (teacher) drifted to a longer, older face and was deleted.

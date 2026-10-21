@@ -10,13 +10,14 @@ province: its landscape, local products, crafts and krama colours. Everything he
 ## Licences
 - Avatars, images, lyrics, timing files and karaoke data: **CC BY 4.0** ([LICENSE-MEDIA](./LICENSE-MEDIA)), credit
   "CamboVerse Provinces — CamboVerse Center".
-- Scripts: **Apache-2.0**, the repository's code licence ([../LICENSE](../LICENSE)).
+- Scripts (`tools/`): **Apache-2.0**, the repository's code licence ([../LICENSE](../LICENSE)).
+- Song rights: the owner confirmed (2026-10-21) that the Suno song rights allow a CC BY release.
 
 ## Folder layout
 ```
 NN-<province>/
   README.md     province, singer profile, song credits, AI disclosure, how to reuse
-  avatar/       face reference, full-body sheet, 4 look options, look prompt, profile.md
+  avatar/       avatar.json, face.jpg, body.jpg, looks/, look options, prompts, profile.md
   song/         lyrics.txt (corrected), lyrics.suno.txt (as given to Suno), rights.txt
 ```
 Files over 50 MB never go in the repo; they are attached to a GitHub Release (tag `provinces/NN-<province>`) instead.
@@ -51,5 +52,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 25 | Tbong Khmum (ត្បូងឃ្មុំ) | — | — | — | ⏳ not started |
 
 Status key: ⏳ not started · 🎧 waiting for song · 🎨 looks proposed · ✅ singer picked · 📦 released
+
+**Using an avatar in new images or videos** (same face, any outfit): [SKILL.md](./SKILL.md) and `tools/avatar.mjs`.
 
 Production notes: [NOTES.md](./NOTES.md)
