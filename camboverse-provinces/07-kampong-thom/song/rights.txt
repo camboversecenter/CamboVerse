@@ -1,0 +1,13 @@
+Song: កំពង់ធំជម្រំចិត្ត (Kampong Thom, Shelter of the Heart). The Suno title tag spells it កំពង់ធំជំរុំចិត្ត.
+Province: Kampong Thom (កំពង់ធំ)
+Made with: Suno
+Suno song id: 45b5307b-a6a7-4d3d-945c-68ed8f5370ce
+Suno link: https://suno.com/song/45b5307b-a6a7-4d3d-945c-68ed8f5370ce
+Created: 2026-08-25T16:21:21Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:05 (245.4 s)
+Audio: kampong-thom-shelter-of-the-heart.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno. lyrics.txt has the spelling fixes the owner approved
+  (ស្វាគមន៍, បដិមា, សំបូរព្រៃគុក, បេតិកភណ្ឌ, ជម្រំចិត្ត, ដ subscripts in កាំជណ្ដើរ/កណ្ដាល/បណ្ដែត/ក្ដី);
+  ស្ពានព្រៃប្រស់ is kept as written. Stage directions in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
