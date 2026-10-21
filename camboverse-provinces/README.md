@@ -17,7 +17,7 @@ province: its landscape, local products, crafts and krama colours. Everything he
 ```
 NN-<province>/
   README.md     province, singer profile, song credits, AI disclosure, how to reuse
-  avatar/       avatar.json, face.jpg, body.jpg, looks/, look options, prompts, profile.md
+  avatar/       avatar.json, face.jpg, body.jpg, looks/, options/ (the official look's prompt), profile.md
   song/         lyrics.txt (corrected), lyrics.suno.txt (as given to Suno), rights.txt
 ```
 Files over 50 MB never go in the repo; they are attached to a GitHub Release (tag `provinces/NN-<province>`) instead.

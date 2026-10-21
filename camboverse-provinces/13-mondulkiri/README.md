@@ -21,7 +21,7 @@ red, white and yellow bands, a black blouse with red trim, bead necklaces and br
 dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.md).
 
 ## Files
-- `avatar/`: face reference, full-body sheet, approved look, other looks (`looks/`), the eight proposed looks, prompts,
+- `avatar/`: face reference, full-body sheet, approved look, other looks (`looks/`), prompts,
   profile, `avatar.json`. To use her in new images (same face, any outfit), follow [../SKILL.md](../SKILL.md).
 - `song/`: lyrics (as sung to Suno and spelling-corrected), rights record
 
