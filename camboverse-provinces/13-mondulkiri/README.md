@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Song** | មណ្ឌលគិរី ឋានសួគ៌ (Mondulkiri, Paradise), 3:55, tropical acoustic pop |
-| **Avatar** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands. She is the province's singer, tour guide and assistant |
+| **Avatar** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands. She represents Mondulkiri in anything: singer, tour guide, assistant, host, ambassador |
 | **Status** | ✅ avatar picked (look E), lyrics checked, guide facts drafted (to verify) |
 
 <p><img src="avatar/face.jpg" width="240" alt="Face reference of Kiriya, the fictional Mondulkiri avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Kiriya in Bunong dress"></p>
@@ -16,7 +16,8 @@ A road-trip song about leaving the busy city for the Mondulkiri highlands: water
 elephants in a conservation project, local coffee and campfire nights. Listen: [song/mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3). Lyrics: [song/lyrics.txt](./song/lyrics.txt).
 
 ## Kiriya
-She is the face of Mondulkiri: she sings its song, guides visitors and answers questions about the province. Her
+She is the face of Mondulkiri and can represent the province in anything: she sings its song, guides visitors,
+answers questions, and hosts its events, lessons, campaigns and local products. Her
 guide facts are in [province.md](./province.md). She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: an indigo-black wrap skirt with
 red, white and yellow bands, a black blouse with red trim, bead necklaces and brass bangles. The owner approved this
 dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.md).
@@ -32,4 +33,5 @@ dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
 "Kiriya, CamboVerse Provinces — Mondulkiri, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
 Keep the AI disclosure when you republish her image. Do not present her as a real person or as a member of any real
-community, and do not use her image to sell or endorse anything.
+community, and use her only for Mondulkiri. Never use her for a political party, candidate or cause, or for alcohol,
+tobacco, gambling or weapons (full rules: [../SKILL.md](../SKILL.md)).

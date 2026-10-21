@@ -1,9 +1,13 @@
 # CamboVerse Provinces — AI avatars for every province
 
-Each of Cambodia's 25 provinces gets one **fictional AI avatar**, the face and voice of that province. The avatar is:
+Each of Cambodia's 25 provinces gets one **fictional AI avatar**, the face and voice of that province. The avatar
+**represents the province in anything**: as its singer, tour guide, assistant, teacher, host, presenter,
+announcer or ambassador; on tourism and cultural campaigns, lessons, events, public-service messages, local products and
+makers, apps, chatbots, signs, posters and videos. For example:
 - **Singer:** sings the province's own Khmer song.
 - **Tour guide:** shows visitors the province's places, food, crafts and seasons.
-- **Assistant:** answers anything about the province (travel, culture, learning) in apps, chatbots, lessons and posts.
+- **Assistant:** answers anything about the province (travel, culture, learning).
+- **Ambassador:** fronts the province's events, campaigns, lessons, local products and public-service messages.
 
 Her or his look draws on the province: its landscape, people, local products, crafts and krama colours. Everything here is released as part of the CamboVerse
 **Digital Public Good** (see [DPG.md](./DPG.md)).
@@ -58,6 +62,6 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 
 Status key: ⏳ not started · 🎧 waiting for song · 🎨 looks proposed · ✅ avatar picked · 📦 released
 
-**Using an avatar** as a singer, tour guide or assistant, in new images, videos or chat (same face, any outfit): [SKILL.md](./SKILL.md) and `tools/avatar.mjs`.
+**Using an avatar** for anything about its province, in new images, videos or chat (same face, any outfit): [SKILL.md](./SKILL.md) and `tools/avatar.mjs`.
 
 Production notes: [NOTES.md](./NOTES.md)

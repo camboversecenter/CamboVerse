@@ -34,7 +34,10 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   [SKILL.md](./SKILL.md)). A test outfit (teacher) drifted to a longer, older face and was deleted.
 
 ## Avatars are more than singers (owner, 2026-10-21)
-- Each avatar is the province's **singer, tour guide and assistant** for everything about the province. Every
+- Each avatar is the province's **singer, tour guide and assistant** for everything about the province. Later the same
+  day the owner widened it: **an avatar can represent anything for its assigned province** (host, ambassador, events,
+  campaigns, lessons, local products). Hard limits kept: no politics, no alcohol, tobacco, gambling or weapons, AI
+  disclosure always, and one avatar per province only. Every
   province therefore also gets `province.md` (guide facts, marked draft until checked against official sources) and a
   `persona` block in `avatar.json` (personality, languages, style, Khmer and English greetings).
 - Guide and assistant rules: always say she or he is an AI, answer from `province.md`, never invent prices, hours or
