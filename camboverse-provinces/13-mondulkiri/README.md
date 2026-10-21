@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | **Song** | មណ្ឌលគិរី ឋានសួគ៌ (Mondulkiri, Paradise), 3:55, tropical acoustic pop |
-| **Singer** | fictional AI avatar: a young Bunong woman from the Mondulkiri highlands (name to be chosen) |
+| **Singer** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands |
 | **Status** | ✅ singer picked (look E), lyrics checked |
 
-<p><img src="avatar/face.jpg" width="240" alt="Face reference of the fictional Mondulkiri singer"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of the fictional Mondulkiri singer in Bunong dress"></p>
+<p><img src="avatar/face.jpg" width="240" alt="Face reference of Kiriya, the fictional Mondulkiri singer"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Kiriya in Bunong dress"></p>
 
 > ⚠️ **AI disclosure:** this singer, her voice and every image here are AI-generated. She is fictional and does not
 > show any real person. The song was **made with Suno** (see [song/rights.txt](./song/rights.txt)).
@@ -27,6 +27,6 @@ dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
-"CamboVerse Provinces — Mondulkiri, CamboVerse Center (CC BY 4.0). AI-generated singer; song made with Suno."
+"Kiriya, CamboVerse Provinces — Mondulkiri, CamboVerse Center (CC BY 4.0). AI-generated singer; song made with Suno."
 Keep the AI disclosure when you republish her image. Do not present her as a real person or as a member of any real
 community, and do not use her image to sell or endorse anything.

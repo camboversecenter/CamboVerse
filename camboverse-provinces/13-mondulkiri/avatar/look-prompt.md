@@ -1,4 +1,4 @@
-# Look prompts — Mondulkiri singer (look E)
+# Look prompts — Kiriya, Mondulkiri singer (look E)
 
 ## Look E (as generated)
 ```
