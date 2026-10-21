@@ -13,7 +13,7 @@
 
 ## The song
 A road-trip song about leaving the busy city for the Mondulkiri highlands: waterfalls, sea-of-trees forests, grass hills,
-elephants in a conservation project, local coffee and campfire nights. Lyrics: [song/lyrics.txt](./song/lyrics.txt).
+elephants in a conservation project, local coffee and campfire nights. Listen: [song/mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3). Lyrics: [song/lyrics.txt](./song/lyrics.txt).
 
 ## The singer
 She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: an indigo-black wrap skirt with
@@ -23,7 +23,8 @@ dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.
 ## Files
 - `avatar/`: face reference, full-body sheet, approved look, other looks (`looks/`), prompts,
   profile, `avatar.json`. To use her in new images (same face, any outfit), follow [../SKILL.md](../SKILL.md).
-- `song/`: lyrics (as sung to Suno and spelling-corrected), rights record
+- `song/`: the song ([mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3), 5.3 MB, as exported from Suno), lyrics (as
+  sung to Suno and spelling-corrected), rights record
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:

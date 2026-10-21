@@ -18,7 +18,7 @@ province: its landscape, local products, crafts and krama colours. Everything he
 NN-<province>/
   README.md     province, singer profile, song credits, AI disclosure, how to reuse
   avatar/       avatar.json, face.jpg, body.jpg, looks/, options/ (the official look's prompt), profile.md
-  song/         lyrics.txt (corrected), lyrics.suno.txt (as given to Suno), rights.txt
+  song/         <song>.mp3, lyrics.txt (corrected), lyrics.suno.txt (as given to Suno), rights.txt
 ```
 Files over 50 MB never go in the repo; they are attached to a GitHub Release (tag `provinces/NN-<province>`) instead.
 
@@ -37,7 +37,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 10 | Kep (កែប) | — | — | — | ⏳ not started |
 | 11 | Koh Kong (កោះកុង) | — | — | — | ⏳ not started |
 | 12 | Kratie (ក្រចេះ) | — | — | — | ⏳ not started |
-| 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong singer | មណ្ឌលគិរី ឋានសួគ៌ | avatar, lyrics | ✅ singer picked |
+| 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong singer | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics | ✅ singer picked |
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |
 | 15 | Pailin (ប៉ៃលិន) | — | — | — | ⏳ not started |
 | 16 | Preah Sihanouk (ព្រះសីហនុ) | — | — | — | ⏳ not started |
