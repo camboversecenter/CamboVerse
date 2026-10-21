@@ -1,0 +1,11 @@
+Song: មណ្ឌលគិរី ឋានសួគ៌ (Mondulkiri, Paradise)
+Province: Mondulkiri (មណ្ឌលគិរី)
+Made with: Suno
+Suno song id: 73e2a52c-8d53-4e08-8ec0-b68ece84723b
+Suno link: https://suno.com/song/73e2a52c-8d53-4e08-8ec0-b68ece84723b
+Created: 2026-08-25T00:52:12Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 3:55 (234.6 s)
+Lyrics: lyrics.suno.txt is the text as given to Suno. lyrics.txt is the same text with dictionary spelling fixes the
+  owner approved (មណ្ឌលគិរី, កាយា, ឦសាន, មនោរម្យ, ក្ដី, អណ្ដែត; ភ្នាត់ removed); stage directions in brackets are omitted.
+Licence for CC BY 4.0 release: PENDING the owner's confirmation that the Suno plan used allows it.
