@@ -1,0 +1,13 @@
+Song: កំពតកំពូលដួងចិត្ត (Kampot, Heart of Hearts)
+Province: Kampot (កំពត)
+Made with: Suno
+Suno song id: 1a62de78-3e34-40c6-b862-818aeb571b69
+Suno link: https://suno.com/song/1a62de78-3e34-40c6-b862-818aeb571b69
+Created: 2026-08-26T06:44:52Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:32 (272.1 s)
+Audio: kampot-heart-of-hearts.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno ("Kompot" was spelled that way for Suno's pronunciation).
+  lyrics.txt has the spelling fixes the owner approved: Kampot, ឥន្ទធនូ, រូបចម្លាក់, រ៉ូមែនទិក, ព្រះវិហារ,
+  នាឡិកាយក្ស, ដ subscripts (អណ្ដែត, ក្ដៅ, ក្ដី). Stage directions in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
