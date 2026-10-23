@@ -53,7 +53,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 17 | [Preah Vihear (ព្រះវិហារ)](./17-preah-vihear/) | Santi (សន្តិ), Khmer man | ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 18 | Prey Veng (ព្រៃវែង) | — | — | — | ⏳ not started |
 | 19 | Pursat (ពោធិ៍សាត់) | — | — | — | ⏳ not started |
-| 20 | Ratanakiri (រតនគិរី) | — | — | — | ⏳ not started |
+| 20 | [Ratanakiri (រតនគិរី)](./20-ratanakiri/) | Indigenous highland woman, waterfall look (name TBD) | រតនគិរី ទឹកដីធម្មជាតិ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 21 | [Siem Reap (សៀមរាប)](./21-siem-reap/) | Seila (សិលា), Khmer man | សៀមរាប ទីក្រុងបុរាណ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 22 | Stung Treng (ស្ទឹងត្រែង) | — | — | — | ⏳ not started |
 | 23 | Svay Rieng (ស្វាយរៀង) | — | — | — | ⏳ not started |

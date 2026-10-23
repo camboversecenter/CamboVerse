@@ -68,3 +68,13 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   owner kept Theara and picked new faces for Chey (round wire glasses, hair tucked behind the ears) and Seila (tall
   pompadour, goatee), four options each. Outfits, settings, names and personas stayed; the identity text in each
   `avatar.json` now names the features that keep the face from drifting back (glasses; goatee and pompadour).
+
+## Ratanakiri (2026-10-23)
+- **Rice wine?** One model (3.1 pro) heard "ហូបស្រាពាង" (drinking jar rice wine) instead of the written chorus line.
+  A forced-choice A/B test on the 9-second line (3 models × 2 runs × 3 choruses) chose the written line 18/18. For any
+  word that would break a rule (alcohol here), run a forced-choice test before acting on one model's transcription.
+- Two Indigenous-dress looks and two modern looks were offered; the owner chose Indigenous dress again (as for
+  Mondulkiri). The dress is kept general to the highlands, not labelled as one community's, because the weaving
+  details of each community could not be checked.
+- A face crop cut too high (bun and forehead only) gave thinner, gaunter close-ups. Recrop to eyebrows-to-chin before
+  making the face reference.

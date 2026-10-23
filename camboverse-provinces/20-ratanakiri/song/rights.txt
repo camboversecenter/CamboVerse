@@ -1,0 +1,16 @@
+Song: រតនគិរី ទឹកដីធម្មជាតិ (Ratanakiri, Land of Nature)
+Province: Ratanakiri (រតនគិរី)
+Made with: Suno
+Suno song id: 827acd9e-ceca-4851-bc9a-7f0ec999180d
+Suno link: https://suno.com/song/827acd9e-ceca-4851-bc9a-7f0ec999180d
+Created: 2026-10-23T02:32:52Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:52 (292.4 s)
+Audio: ratanakiri-land-of-nature.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes] ("រាតានាក់គិរី" was spelled that way
+  for Suno's pronunciation). lyrics.txt has the fixes the owner approved: រតនគិរី, លំហែ, មរកត, ម្ដង, ស្ដាប់, រណ្ដំ;
+  ចាអ៊ុង kept as written; the sung post-chorus hum line added; production notes in brackets omitted. The wordless intro
+  chant ("ឡេឡា… ណេណេ…") is not on the sheet and has no subtitle.
+  One model heard "ហូបស្រាពាង" (jar rice wine) in the chorus; a forced-choice test (3 models × 2 runs × 3 choruses,
+  18/18) confirmed the written line "ម្ហូបស្រុកស្រែប្លែកមាត់".
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
