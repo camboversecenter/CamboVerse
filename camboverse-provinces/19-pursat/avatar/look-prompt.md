@@ -1,4 +1,4 @@
-# Look prompts — the Pursat avatar (look B)
+# Look prompts — Vireak, the Pursat avatar (look B)
 
 ## Look B (as generated)
 ```

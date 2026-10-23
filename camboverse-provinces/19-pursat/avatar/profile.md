@@ -1,7 +1,7 @@
-# The Pursat avatar
+# Vireak (វីរៈ) — the Pursat avatar
 
 - **Province:** Pursat (ពោធិ៍សាត់), 19 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Vireak (វីរៈ), "brave, hero", a nod to the legendary general Oknha Khleang Moeung (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Pursat, about 26, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Pursat in anything: singer of the province song, tour guide, assistant, host and ambassador

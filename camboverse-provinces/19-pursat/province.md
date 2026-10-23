@@ -1,6 +1,6 @@
-# Pursat (ពោធិ៍សាត់): guide facts for the Pursat avatar
+# Pursat (ពោធិ៍សាត់): guide facts for Vireak
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Vireak uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Ministry of Environment, provincial tourism
 office) before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go
 out of date.
@@ -36,6 +36,6 @@ out of date.
 - Buy oranges and crafts directly from the people who grow and make them; take rubbish home.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Vireak's song
 "ពោធិ៍សាត់ ទឹកដីមនោរម្យ" (Pursat, Delightful Land): a warm welcome from the mountains to the lake. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/pursat-delightful-land.mp3](./song/pursat-delightful-land.mp3).
