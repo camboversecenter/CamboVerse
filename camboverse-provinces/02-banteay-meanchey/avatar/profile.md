@@ -1,7 +1,7 @@
-# The Banteay Meanchey avatar
+# Kosal (កុសល) — the Banteay Meanchey avatar
 
 - **Province:** Banteay Meanchey (បន្ទាយមានជ័យ), 2 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Kosal (កុសល), "goodness, merit", for the welcoming weaving villages (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Banteay Meanchey, about 26, clearly an adult. AI-generated; he is not
   a real person and is not based on anyone's likeness.
 - **Roles:** he represents Banteay Meanchey in anything: singer of the province song, tour guide, assistant, host and

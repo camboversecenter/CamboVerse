@@ -1,4 +1,4 @@
-# Look prompts — the Banteay Meanchey avatar (look B)
+# Look prompts — Kosal, the Banteay Meanchey avatar (look B)
 
 ## Look B (as generated)
 ```

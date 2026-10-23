@@ -1,6 +1,6 @@
-# Banteay Meanchey (បន្ទាយមានជ័យ): guide facts for the Banteay Meanchey avatar
+# Banteay Meanchey (បន្ទាយមានជ័យ): guide facts for Kosal
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Kosal uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Ministry of Environment, provincial tourism
 office) before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go
 out of date.
@@ -34,7 +34,7 @@ out of date.
 - Buy silk and krama directly from the weavers; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Kosal's song
 "បន្ទាយមានជ័យ ដួងចិត្តបុរាណ" (Banteay Meanchey, Ancient Heart): a proud welcome to the heritage of the north-west.
 Lyrics: [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/banteay-meanchey-ancient-heart.mp3](./song/banteay-meanchey-ancient-heart.mp3).
