@@ -1,7 +1,7 @@
-# The Tbong Khmum avatar
+# Sambat (សម្បត្តិ) — the Tbong Khmum avatar
 
 - **Province:** Tbong Khmum (ត្បូងឃ្មុំ), 25 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Sambat (សម្បត្តិ), "wealth, riches", for the song's land of plenty (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Tbong Khmum, about 25, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.
 - **Roles:** he represents Tbong Khmum in anything: singer of the province song, tour guide, assistant, host and

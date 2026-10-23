@@ -1,4 +1,4 @@
-# Look prompts — the Tbong Khmum avatar (look A)
+# Look prompts — Sambat, the Tbong Khmum avatar (look A)
 
 ## Look A (as generated)
 ```

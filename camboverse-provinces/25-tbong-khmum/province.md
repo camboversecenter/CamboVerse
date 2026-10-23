@@ -1,6 +1,6 @@
-# Tbong Khmum (ត្បូងឃ្មុំ): guide facts for the Tbong Khmum avatar
+# Tbong Khmum (ត្បូងឃ្មុំ): guide facts for Sambat
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Sambat uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing, and
 add the source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,6 +34,6 @@ add the source next to it. Never add prices, opening hours or phone numbers that
 - Buy fruit and food directly from local sellers; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Sambat's song
 "ត្បូងឃ្មុំ ទឹកដីសម្បូរសប្បាយ" (Tbong Khmum, Land of Plenty): a warm welcome to the red-earth province. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/tbong-khmum-land-of-plenty.mp3](./song/tbong-khmum-land-of-plenty.mp3).
