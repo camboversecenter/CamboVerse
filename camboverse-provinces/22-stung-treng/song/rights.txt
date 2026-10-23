@@ -1,0 +1,15 @@
+Song: ស្ទឹងត្រែង ឋានសួគ៌ទន្លេបួន (Stung Treng, Paradise of Four Rivers)
+Province: Stung Treng (ស្ទឹងត្រែង)
+Made with: Suno
+Suno song id: bcb6127b-afb2-4634-820d-cc0d93300740
+Suno link: https://suno.com/song/bcb6127b-afb2-4634-820d-cc0d93300740
+Created: 2026-10-23T08:53:12Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:21 (260.8 s)
+Audio: stung-treng-four-rivers.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែកាយ, ផ្ដល់, កណ្ដាល, ម្ដង) and the post-chorus line added (two models confirmed it is sung); production
+  notes in brackets and the shouted backing ad-libs ("Hey!", "ស្ទឹងត្រែង!") are omitted. Focused checks with two
+  models over the whole song confirmed every written line. Kept as written, for the owner to check: ត្រីប៉ាស៊ីអ៊ី,
+  ប៉ាវ៉ា (fish names) and កោះខន (island name), spellings not confirmed.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
