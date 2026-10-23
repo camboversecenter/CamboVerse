@@ -1,6 +1,6 @@
-# Kampong Chhnang (កំពង់ឆ្នាំង): guide facts
+# Kampong Chhnang (កំពង់ឆ្នាំង): guide facts for Vichea
 
-The facts the Kampong Chhnang avatar uses as a guide and assistant. **Status: draft.** Check every fact against
+The facts Vichea uses as a guide and assistant. **Status: draft.** Check every fact against
 official or local sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next
 to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -29,7 +29,7 @@ to it. Never add prices, opening hours or phone numbers that can go out of date.
 - Wear a life jacket on boats to the floating villages, and respect the families who live there.
 - Take care on hill paths; take rubbish home. Wear a helmet on a motorbike: driver and passenger.
 
-## His song
+## Vichea's song
 "កំពង់ឆ្នាំង ទឹកដីសិប្បកម្ម" (Kampong Chhnang, Land of Crafts): an invitation to the land of pottery. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/kampong-chhnang-land-of-crafts.mp3](./song/kampong-chhnang-land-of-crafts.mp3).

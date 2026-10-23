@@ -1,4 +1,4 @@
-# Look prompts — Kampong Chhnang avatar (look A)
+# Look prompts — Vichea, the Kampong Chhnang avatar (look A)
 
 The approved still looks a little older than 26; the face reference asks for the same face, younger and smoother,
 following the owner's rule that all avatars are young and handsome.

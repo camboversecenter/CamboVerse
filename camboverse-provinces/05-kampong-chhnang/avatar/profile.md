@@ -1,7 +1,7 @@
-# Kampong Chhnang avatar — profile
+# Vichea (វិជ្ជា) — the Kampong Chhnang avatar
 
 - **Province:** Kampong Chhnang (កំពង់ឆ្នាំង), 05 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Vichea (វិជ្ជា), "skill, knowledge", for the potters' craft passed down the generations (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Kampong Chhnang, about 26, clearly an adult. AI-generated; he is
   not a real person and is not based on anyone's likeness.
 - **Roles:** he represents Kampong Chhnang in anything: singer of the province song, tour guide, assistant, host and
