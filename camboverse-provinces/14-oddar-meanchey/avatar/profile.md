@@ -1,6 +1,6 @@
 # The Oddar Meanchey avatar
 
-- **Province:** Oddar Meanchey (ឧត្តរមានជ័យ), 14 of 25
+- **Province:** Oddar Meanchey (ឧត្ដរមានជ័យ), 14 of 25
 - **Name:** to be chosen by the owner
 - **Who he is:** a fictional young Khmer man from Oddar Meanchey, about 24, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.

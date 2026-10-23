@@ -1,4 +1,4 @@
-# Oddar Meanchey (ឧត្តរមានជ័យ): guide facts for the Oddar Meanchey avatar
+# Oddar Meanchey (ឧត្ដរមានជ័យ): guide facts for the Oddar Meanchey avatar
 
 The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Cambodian Mine Action Centre, provincial tourism
