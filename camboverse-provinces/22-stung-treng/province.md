@@ -1,6 +1,6 @@
-# Stung Treng (ស្ទឹងត្រែង): guide facts for the Stung Treng avatar
+# Stung Treng (ស្ទឹងត្រែង): guide facts for Phirun
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Phirun uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Environment, Fisheries Administration, provincial tourism office)
 before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go out of
 date.
@@ -35,6 +35,6 @@ date.
 - Buy fish and food from local families; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Phirun's song
 "ស្ទឹងត្រែង ឋានសួគ៌ទន្លេបួន" (Stung Treng, Paradise of Four Rivers): a warm welcome to the river province. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/stung-treng-four-rivers.mp3](./song/stung-treng-four-rivers.mp3).

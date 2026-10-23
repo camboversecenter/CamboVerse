@@ -1,4 +1,4 @@
-# Look prompts — the Stung Treng avatar (look C)
+# Look prompts — Phirun, the Stung Treng avatar (look C)
 
 ## Look C (as generated)
 ```

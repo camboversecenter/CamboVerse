@@ -1,7 +1,7 @@
-# The Stung Treng avatar
+# Phirun (ភិរុណ) — the Stung Treng avatar
 
 - **Province:** Stung Treng (ស្ទឹងត្រែង), 22 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Phirun (ភិរុណ), "rain", for the rivers, flooded forest and waterfalls (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Stung Treng, about 26, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.
 - **Roles:** he represents Stung Treng in anything: singer of the province song, tour guide, assistant, host and
