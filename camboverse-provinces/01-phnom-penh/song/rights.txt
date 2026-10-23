@@ -1,0 +1,14 @@
+Song: ភ្នំពេញ រាជធានីកម្ពុជា (Phnom Penh, Capital of Cambodia)
+Province: Phnom Penh (ភ្នំពេញ)
+Made with: Suno
+Suno song id: 8070ae3f-6fc9-44d4-9d7a-ef0669e07e41
+Suno link: https://suno.com/song/8070ae3f-6fc9-44d4-9d7a-ef0669e07e41
+Created: 2026-10-23T03:15:14Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:37 (276.8 s)
+Audio: phnom-penh-capital-of-cambodia.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ព្រះបរមរាជវាំង, ទន្លេចតុមុខ, ក្ដី, បណ្ដែត, ក្ដៅ) and the sung post-chorus hum line added (two models
+  confirmed it is sung); production notes in brackets are omitted. Focused checks with two models confirmed all three
+  choruses (the window transcription had garbled them).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
