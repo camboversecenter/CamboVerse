@@ -13,7 +13,7 @@
 - **Voice he sings with:** one warm, resonant, proud male voice, about 30; the bridge and outro are spoken by the same
   man (checked directly: no second voice).
 - **Face:** long face with a strong nose, thick arched eyebrows, a neat short goatee, medium-brown skin, black hair in a tall wavy pompadour with short sides.
-  **Face remade 2026-10-23** (owner): the first face looked like Theara's and Seila's (the model's default young
+  **Face remade 2026-10-23** (owner): the first face looked like Theara's and Chey's (the model's default young
   Khmer man); the owner picked a new face (option 4 of four). Outfit, setting, name and persona are unchanged.
 - **Outfit (look C, owner pick 2026-10-23):** deep burgundy Khmer silk shirt with a mandarin collar and subtle gold
   woven pattern, black trousers, black leather shoes.
