@@ -45,7 +45,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 09 | Kandal (កណ្ដាល) | — | — | — | ⏳ not started |
 | 10 | [Kep (កែប)](./10-kep/) | Malis (មាលីស), Khmer woman | កែប ក្ដាមឆ្ងាញ់ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 11 | [Koh Kong (កោះកុង)](./11-koh-kong/) | Samuth (សមុទ្រ), Khmer man | កោះកុងទឹកដីសមុទ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 12 | Kratie (ក្រចេះ) | — | — | — | ⏳ not started |
+| 12 | [Kratie (ក្រចេះ)](./12-kratie/) | Khmer man, river breeze look (name TBD) | ក្រចេះ ម្លប់ដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong woman | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |
 | 15 | Pailin (ប៉ៃលិន) | — | — | — | ⏳ not started |

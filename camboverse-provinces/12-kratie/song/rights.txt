@@ -1,0 +1,14 @@
+Song: ក្រចេះ ម្លប់ដួងចិត្ត (Kratie, Shade of the Heart)
+Province: Kratie (ក្រចេះ)
+Made with: Suno
+Suno song id: 8a8e3253-decc-4d6e-9eef-51c9f6b830ae
+Suno link: https://suno.com/song/8a8e3253-decc-4d6e-9eef-51c9f6b830ae
+Created: 2026-10-23T05:28:51Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:22 (261.6 s)
+Audio: kratie-shade-of-the-heart.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ម្ដង, បណ្ដោយ, and សសរមួយរយ written the same in every chorus) and the post-chorus line added (two
+  models confirmed it is sung: "ឱណា... ទឹកដីក្រចេះ... ដើរលេងសប្បាយ"); production notes in brackets are omitted.
+  Focused checks with two models over the whole song confirmed every written line. The last ~20 s are instrumental.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
