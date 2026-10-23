@@ -1,0 +1,18 @@
+Song: ពោធិ៍សាត់ ទឹកដីមនោរម្យ (Pursat, Delightful Land)
+Province: Pursat (ពោធិ៍សាត់)
+Made with: Suno
+Suno song id: 52035bc6-df7c-4aa9-82bb-a6b7ae6aefa3
+Suno link: https://suno.com/song/52035bc6-df7c-4aa9-82bb-a6b7ae6aefa3
+Created: 2026-10-23T06:01:18Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:15 (255.0 s)
+Audio: pursat-delightful-land.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ផ្ដល់, ម្ដង, បណ្ដែត, កំពង់លួង) and the post-chorus line added (sung, then hummed); production notes
+  in brackets are omitted. Note for subtitles: in every chorus Suno sings "ក្រូចពោធិ៍សាត់ឯងឆ្ងាញ់" where the text reads
+  ផ្អែមឆ្ងាញ់ (6 of 6 forced-choice listens, three models); the written text is kept. Focused checks with two models
+  over the whole song confirmed every other written line. Kept as written, for the owner to check: ច្រកល្អៀង
+  (waterfall name not confirmed).
+Voice: the listening models disagreed (one heard a man throughout, others switched clip by clip); the vocal pitch is
+  steady through the song (median about 220–290 Hz), so one singer. The owner confirmed a male voice (2026-10-23).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
