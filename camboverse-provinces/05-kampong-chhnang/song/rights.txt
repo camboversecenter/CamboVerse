@@ -1,0 +1,14 @@
+Song: កំពង់ឆ្នាំង ទឹកដីសិប្បកម្ម (Kampong Chhnang, Land of Crafts)
+Province: Kampong Chhnang (កំពង់ឆ្នាំង)
+Made with: Suno
+Suno song id: 493a0df7-2795-40ee-83cb-a24a048818a8
+Suno link: https://suno.com/song/493a0df7-2795-40ee-83cb-a24a048818a8
+Created: 2026-10-23T03:39:07Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:40 (280.0 s)
+Audio: kampong-chhnang-land-of-crafts.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ក្ដី, អណ្ដែត, បណ្ដែត, ម្ដង); ភូមិអណ្ដែតទឹក (chorus) and ភូមិបណ្ដែតទឹក (bridge) both kept as written; the
+  sung post-chorus hum line added; production notes in brackets are omitted. Two models confirmed the choruses,
+  post-chorus and bridge.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
