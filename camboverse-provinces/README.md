@@ -35,7 +35,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | # | Province | Avatar | Song | Media | Status |
 |---|---|---|---|---|---|
 | 01 | [Phnom Penh (ភ្នំពេញ)](./01-phnom-penh/) | Penh (ពេញ), Khmer woman | ភ្នំពេញ រាជធានីកម្ពុជា | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 02 | Banteay Meanchey (បន្ទាយមានជ័យ) | — | — | — | ⏳ not started |
+| 02 | [Banteay Meanchey (បន្ទាយមានជ័យ)](./02-banteay-meanchey/) | Khmer man, heritage silk look (name TBD) | បន្ទាយមានជ័យ ដួងចិត្តបុរាណ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 03 | [Battambang (បាត់ដំបង)](./03-battambang/) | Rachana (រចនា), Khmer woman | បាត់ដំបងបណ្ដូលចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 04 | [Kampong Cham (កំពង់ចាម)](./04-kampong-cham/) | Chey (ជ័យ), Khmer man | កំពង់ចាម កំពង់ចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 05 | [Kampong Chhnang (កំពង់ឆ្នាំង)](./05-kampong-chhnang/) | Vichea (វិជ្ជា), Khmer man | កំពង់ឆ្នាំង ទឹកដីសិប្បកម្ម | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |

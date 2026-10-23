@@ -1,0 +1,15 @@
+Song: បន្ទាយមានជ័យ ដួងចិត្តបុរាណ (Banteay Meanchey, Ancient Heart)
+Province: Banteay Meanchey (បន្ទាយមានជ័យ)
+Made with: Suno
+Suno song id: d50c2fa8-e9a3-4f25-9d06-788ab5aeb927
+Suno link: https://suno.com/song/d50c2fa8-e9a3-4f25-9d06-788ab5aeb927
+Created: 2026-10-23T09:58:32Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:39 (278.8 s)
+Audio: banteay-meanchey-ancient-heart.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែកាយ, ម្ដង, and លោកេស្វរ for the Avalokiteshvara carvings, sung as "លោកេសូរ") and the post-chorus hum
+  line from the production notes added; production notes in brackets are omitted. Note for subtitles: the post-chorus
+  is sung as wordless vocalising. Focused checks with two models over the whole song confirmed every written line.
+  Kept as written, for the owner to check: ភ្នំបាក់ភ្នំជញ្ជាំង (place name not confirmed).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
