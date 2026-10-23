@@ -1,0 +1,15 @@
+Song: ប៉ៃលិន ទឹកដីត្បូងពេជ្រ (Pailin, Land of Gems)
+Province: Pailin (ប៉ៃលិន)
+Made with: Suno
+Suno song id: 660663a9-05bb-4dbd-9523-87e443ee1ef7
+Suno link: https://suno.com/song/660663a9-05bb-4dbd-9523-87e443ee1ef7
+Created: 2026-10-23T09:48:49Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:09 (248.8 s)
+Audio: pailin-land-of-gems.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ក្ដី, ផ្ដល់, ម្ដង) and the post-chorus line added (sung); production notes in brackets are omitted.
+  Notes for subtitles: in verse 1 two of three models hear "បង្កប់ផ្ទៃសុខសាន្ត" where the text reads ក្ដីសុខសាន្ត
+  (written text kept); the last chorus repeats "ឋានសួគ៌ជើងភ្នំ" and "ស្រស់ស្រាយក្នុងអារម្មណ៍" as ad-libs. Focused
+  checks with two models over the whole song confirmed every other written line.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

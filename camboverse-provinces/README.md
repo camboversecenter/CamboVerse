@@ -48,7 +48,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 12 | [Kratie (ក្រចេះ)](./12-kratie/) | Sovann (សុវណ្ណ), Khmer man | ក្រចេះ ម្លប់ដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong woman | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |
-| 15 | Pailin (ប៉ៃលិន) | — | — | — | ⏳ not started |
+| 15 | [Pailin (ប៉ៃលិន)](./15-pailin/) | Khmer man, gem workshop look (name TBD) | ប៉ៃលិន ទឹកដីត្បូងពេជ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 16 | Preah Sihanouk (ព្រះសីហនុ) | — | — | — | ⏳ not started |
 | 17 | [Preah Vihear (ព្រះវិហារ)](./17-preah-vihear/) | Santi (សន្តិ), Khmer man | ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 18 | [Prey Veng (ព្រៃវែង)](./18-prey-veng/) | Thida (ធីតា), Khmer woman | ព្រៃវែង វាលស្រែបៃតង | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
