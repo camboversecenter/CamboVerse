@@ -31,11 +31,11 @@
     "body": "body.jpg",
     "approved": "look-C-approved.jpg"
   },
-  "identity": "A fictional Khmer man from Siem Reap, about 32 and clearly an adult; full oval face with a defined jaw, the exact eye shape and spacing, nose, lips and warm smile of the reference; clean-shaven; warm light-brown skin; short black hair neatly styled with a side part. Do not change his face shape, do not make him look younger or older, do not add a beard, do not change his skin tone.",
+  "identity": "A fictional young Khmer man from Siem Reap, about 28 and clearly an adult, handsome; a long face with a strong nose, thick arched eyebrows, the exact eye shape and spacing, lips and confident smile of the reference; a neat short GOATEE; medium-brown skin; black hair in a tall wavy POMPADOUR with short sides. Do not change his face shape, do not remove the goatee, do not flatten his hair into a side part, do not make him look younger or older, do not change his skin tone.",
   "defaultOutfit": "an elegant deep burgundy Khmer silk long-sleeve shirt with a mandarin collar and a subtle gold woven pattern; black trousers; black leather shoes.",
   "voice": "one warm, resonant, proud male singing voice; the bridge and outro are spoken by the same man",
   "rules": [
-    "He is an adult (about 32) and must look clearly over 18.",
+    "He is an adult (about 28) and must look clearly over 18.",
     "Neat, modest clothing; nothing sexualised.",
     "Traditional and village dress is worn with dignity and never as a joke or a stereotype of rural people.",
     "No conical hats.",

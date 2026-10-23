@@ -64,3 +64,7 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   no one.
 - Transcription again invented English ("Don't run away from here") on the hummed post-chorus; two models confirmed the
   written hum line instead.
+- **Chey and Seila remade (2026-10-23).** Side by side, Theara, Chey and Seila had nearly the same default face. The
+  owner kept Theara and picked new faces for Chey (round wire glasses, hair tucked behind the ears) and Seila (tall
+  pompadour, goatee), four options each. Outfits, settings, names and personas stayed; the identity text in each
+  `avatar.json` now names the features that keep the face from drifting back (glasses; goatee and pompadour).
