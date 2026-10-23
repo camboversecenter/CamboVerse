@@ -51,3 +51,16 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   "same man?") confirmed one man and no second voice.
 - The song is about Angkor, but no image may show a real temple: the looks use the forest, the lake, silk weaving and
   rice fields instead.
+
+## Preah Vihear (2026-10-23)
+- **Default face.** The first four candidates had near-identical faces, also close to Theara, Chey and Seila; the owner
+  noticed ("I feel you propose the same face?"). Fix: write a distinct face into every candidate prompt (shape, hair,
+  facial hair, glasses, build, skin) and compare candidates with all existing avatars of the same gender. The owner
+  then set the rule: **young and handsome like the other avatars, just a different face**, whatever age the voice
+  sounds (this voice sounds 35–45). Rule added to [SKILL.md](./SKILL.md). 16 candidates in four rounds before the pick.
+- **A sensitive song.** The song speaks of the temple's war damage and the border conflict with pride and grief. The
+  owner confirmed "not hate" and approved: peaceful images only (no soldiers, uniforms, weapons, damage, flags), neutral
+  guide facts with heritage and safety (landmines: stay on marked paths), and a persona that speaks for peace and blames
+  no one.
+- Transcription again invented English ("Don't run away from here") on the hummed post-chorus; two models confirmed the
+  written hum line instead.

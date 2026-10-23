@@ -64,6 +64,15 @@ light, camera angle, image size.
 7. Save a reused look in `NN-<province>/avatar/looks/<look-name>.jpg` with its prompt in `<look-name>.txt`, and add a
    line to the avatar's `profile.md`.
 
+## Making a new province avatar (owner rules, 2026-10-23)
+- **Young and attractive, each with a clearly distinct face.** Every avatar is roughly 22–30 and good-looking, whatever
+  age the singing voice sounds. No two avatars may share a face.
+- **Describe the face in every candidate prompt**: face shape, hair (length, parting, texture), facial hair, glasses,
+  build, skin tone. Without it, image models draw one default face. The first four Preah Vihear candidates all
+  looked like Theara, Chey and Seila (short side-parted hair, oval face, the same smile).
+- Before showing candidates, put them next to the existing avatars of the same gender and check by eye that every
+  face is new.
+
 ## Rules for every image (from avatar.json, all avatars)
 - **Adults only:** every avatar is in their 20s and must look clearly over 18.
 - **Modest:** chest, shoulders and midriff covered; nothing see-through or sexualised.

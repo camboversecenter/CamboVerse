@@ -1,0 +1,13 @@
+Song: ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ (Preah Vihear, a Place of History)
+Province: Preah Vihear (ព្រះវិហារ)
+Made with: Suno
+Suno song id: 0903c88b-8c94-4c0f-a5f9-5181f65d4e4c
+Suno link: https://suno.com/song/0903c88b-8c94-4c0f-a5f9-5181f65d4e4c
+Created: 2026-10-23T02:02:25Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 5:12 (312.0 s)
+Audio: preah-vihear-place-of-history.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the spelling fixes
+  the owner approved (ទាហាន, ក្ដី, ផ្ដល់) and the sung post-chorus hum line added (two models confirmed it is sung);
+  production notes in brackets are omitted. The owner's wording is kept: the song is pride and grief, not hate.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

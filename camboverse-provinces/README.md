@@ -50,7 +50,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |
 | 15 | Pailin (ប៉ៃលិន) | — | — | — | ⏳ not started |
 | 16 | Preah Sihanouk (ព្រះសីហនុ) | — | — | — | ⏳ not started |
-| 17 | Preah Vihear (ព្រះវិហារ) | — | — | — | ⏳ not started |
+| 17 | [Preah Vihear (ព្រះវិហារ)](./17-preah-vihear/) | Khmer man, misty-ridge look (name TBD) | ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 18 | Prey Veng (ព្រៃវែង) | — | — | — | ⏳ not started |
 | 19 | Pursat (ពោធិ៍សាត់) | — | — | — | ⏳ not started |
 | 20 | Ratanakiri (រតនគិរី) | — | — | — | ⏳ not started |
