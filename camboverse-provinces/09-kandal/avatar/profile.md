@@ -1,7 +1,7 @@
-# The Kandal avatar
+# Kanha (កញ្ញា) — the Kandal avatar
 
 - **Province:** Kandal (កណ្ដាល), 9 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Kanha (កញ្ញា), "young maiden", a classic village name for the silk-weaving islands (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Khmer woman from Kandal, about 24, clearly an adult. AI-generated; she is not a
   real person and is not based on anyone's likeness.
 - **Roles:** she represents Kandal in anything: singer of the province song, tour guide, assistant, host and

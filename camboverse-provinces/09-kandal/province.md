@@ -1,6 +1,6 @@
-# Kandal (កណ្ដាល): guide facts for the Kandal avatar
+# Kandal (កណ្ដាល): guide facts for Kanha
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Kanha uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing, and
 add the source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,6 +34,6 @@ add the source next to it. Never add prices, opening hours or phone numbers that
 - Take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Kanha's song
 "កណ្ដាល ដែនដីកេរមរតក" (Kandal, Land of Heritage): a warm welcome to the river province around the capital. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/kandal-land-of-heritage.mp3](./song/kandal-land-of-heritage.mp3).

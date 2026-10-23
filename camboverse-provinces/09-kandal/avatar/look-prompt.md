@@ -1,4 +1,4 @@
-# Look prompts — the Kandal avatar (look A)
+# Look prompts — Kanha, the Kandal avatar (look A)
 
 ## Look A (as generated)
 ```
