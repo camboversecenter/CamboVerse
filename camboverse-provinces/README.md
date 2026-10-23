@@ -58,7 +58,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 22 | Stung Treng (ស្ទឹងត្រែង) | — | — | — | ⏳ not started |
 | 23 | Svay Rieng (ស្វាយរៀង) | — | — | — | ⏳ not started |
 | 24 | [Takeo (តាកែវ)](./24-takeo/) | Keo (កែវ), Khmer woman | តាកែវ ទឹកដីប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 25 | Tbong Khmum (ត្បូងឃ្មុំ) | — | — | — | ⏳ not started |
+| 25 | [Tbong Khmum (ត្បូងឃ្មុំ)](./25-tbong-khmum/) | Khmer man, rubber plantation look (name TBD) | ត្បូងឃ្មុំ ទឹកដីសម្បូរសប្បាយ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 
 Status key: ⏳ not started · 🎧 waiting for song · 🎨 looks proposed · ✅ avatar picked · 📦 released
 

@@ -1,0 +1,15 @@
+Song: ត្បូងឃ្មុំ ទឹកដីសម្បូរសប្បាយ (Tbong Khmum, Land of Plenty)
+Province: Tbong Khmum (ត្បូងឃ្មុំ)
+Made with: Suno
+Suno song id: 7861809f-463f-45b5-9514-f45ea5f24ab6
+Suno link: https://suno.com/song/7861809f-463f-45b5-9514-f45ea5f24ab6
+Created: 2026-10-23T06:09:50Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:00 (240.0 s)
+Audio: tbong-khmum-land-of-plenty.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ក្ដី, ផ្ដល់, ម្ដង, កក់ក្ដៅ, ព្រះស្ដេចកន) and the post-chorus line added (two models confirmed it is
+  sung); production notes in brackets are omitted. Focused checks with two models over the whole song confirmed every
+  written line. Kept as written, for the owner to check: បន្ទាយព្រៃនគរក្នុង (the site is usually written
+  បន្ទាយព្រៃនគរ) and ហ្លួងព្រះស្ដេចកន (location to verify).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
