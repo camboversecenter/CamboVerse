@@ -1,4 +1,4 @@
-# Look prompts — Kep avatar (look D)
+# Look prompts — Malis, the Kep avatar (look D)
 
 Note: the look D prompt asked for a dimple in her chin; the approved still shows a small beauty mark on her chin.
 The face and body prompts below follow the still.

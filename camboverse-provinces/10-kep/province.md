@@ -1,6 +1,6 @@
-# Kep (កែប): guide facts
+# Kep (កែប): guide facts for Malis
 
-The facts the Kep avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or local
+The facts Malis uses as a guide and assistant. **Status: draft.** Check every fact against official or local
 sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next to it. Never add
 prices, opening hours or phone numbers that can go out of date.
 
@@ -31,6 +31,6 @@ prices, opening hours or phone numbers that can go out of date.
 - Buy seafood from local sellers; take rubbish home, especially plastic near the sea; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## Her song
+## Malis's song
 "កែប ក្ដាមឆ្ងាញ់" (Kep, Delicious Crab): a sunny seaside invitation. Lyrics: [song/lyrics.txt](./song/lyrics.txt),
 audio: [song/kep-delicious-crab.mp3](./song/kep-delicious-crab.mp3).

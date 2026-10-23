@@ -1,7 +1,7 @@
-# Kep avatar — profile
+# Malis (មាលីស) — the Kep avatar
 
 - **Province:** Kep (កែប), 10 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Malis (មាលីស), "jasmine", a fresh flower name to go with her hibiscus (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Khmer woman from Kep, about 24, clearly an adult. AI-generated; she is not a real
   person and is not based on anyone's likeness.
 - **Roles:** she represents Kep in anything: singer of the province song, tour guide, assistant, host and ambassador
