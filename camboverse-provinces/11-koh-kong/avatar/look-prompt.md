@@ -1,4 +1,4 @@
-# Look prompts — Koh Kong avatar (look A)
+# Look prompts — Samuth, the Koh Kong avatar (look A)
 
 ## Look A (as generated)
 ```

@@ -44,7 +44,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 08 | [Kampot (កំពត)](./08-kampot/) | Theara (ធារា), Khmer man | កំពតកំពូលដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 09 | Kandal (កណ្ដាល) | — | — | — | ⏳ not started |
 | 10 | Kep (កែប) | — | — | — | ⏳ not started |
-| 11 | [Koh Kong (កោះកុង)](./11-koh-kong/) | Khmer man, mangrove-explorer look (name TBD) | កោះកុងទឹកដីសមុទ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
+| 11 | [Koh Kong (កោះកុង)](./11-koh-kong/) | Samuth (សមុទ្រ), Khmer man | កោះកុងទឹកដីសមុទ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 12 | Kratie (ក្រចេះ) | — | — | — | ⏳ not started |
 | 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong woman | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 14 | Oddar Meanchey (ឧត្ដរមានជ័យ) | — | — | — | ⏳ not started |

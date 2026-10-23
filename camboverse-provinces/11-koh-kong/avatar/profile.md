@@ -1,7 +1,7 @@
-# Koh Kong avatar — profile
+# Samuth (សមុទ្រ) — the Koh Kong avatar
 
 - **Province:** Koh Kong (កោះកុង), 11 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Samuth (សមុទ្រ), "sea", from his song កោះកុងទឹកដីសមុទ្រ (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Koh Kong, about 27, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Koh Kong in anything: singer of the province song, tour guide, assistant, host and

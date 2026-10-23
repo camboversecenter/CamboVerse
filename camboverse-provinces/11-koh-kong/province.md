@@ -1,6 +1,6 @@
-# Koh Kong (កោះកុង): guide facts
+# Koh Kong (កោះកុង): guide facts for Samuth
 
-The facts the Koh Kong avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Samuth uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Environment, provincial tourism office) before publishing, and add the
 source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -33,6 +33,6 @@ source next to it. Never add prices, opening hours or phone numbers that can go 
 - Choose community-based tourism and local guides; take rubbish home, especially plastic near the sea.
 - Ask before photographing people. Wear a helmet on a motorbike: driver and passenger.
 
-## His song
+## Samuth's song
 "កោះកុងទឹកដីសមុទ្រ" (Koh Kong, Land of the Sea): a breezy invitation to the wild coast. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/koh-kong-land-of-the-sea.mp3](./song/koh-kong-land-of-the-sea.mp3).
