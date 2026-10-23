@@ -1,0 +1,15 @@
+Song: កណ្ដាល ដែនដីកេរមរតក (Kandal, Land of Heritage)
+Province: Kandal (កណ្ដាល)
+Made with: Suno
+Suno song id: 39c12369-d801-4a65-898e-d2103eb9739f
+Suno link: https://suno.com/song/39c12369-d801-4a65-898e-d2103eb9739f
+Created: 2026-10-23T09:40:12Z (from the MP3's embedded Suno tag; the embedded title is spelled កណ្តាល)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:06 (246.4 s)
+Audio: kandal-land-of-heritage.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែកាយ, កណ្ដាល, បណ្ដោយ, ម្ដង) and the post-chorus line added (sung); production notes in brackets are
+  omitted. Focused checks with two models over the whole song confirmed every written line. Kept as written: the
+  chorus line "ទៅកោះដាច់មើលត្បាញសូត្រ"; Koh Dach is now in Phnom Penh (Chroy Changvar), next to Kandal (noted in
+  province.md).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

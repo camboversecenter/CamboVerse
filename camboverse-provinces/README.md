@@ -42,7 +42,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 06 | Kampong Speu (កំពង់ស្ពឺ) | — | — | — | ⏳ not started |
 | 07 | [Kampong Thom (កំពង់ធំ)](./07-kampong-thom/) | Sambo (សំបូរ), Khmer woman | កំពង់ធំជម្រំចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 08 | [Kampot (កំពត)](./08-kampot/) | Theara (ធារា), Khmer man | កំពតកំពូលដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 09 | Kandal (កណ្ដាល) | — | — | — | ⏳ not started |
+| 09 | [Kandal (កណ្ដាល)](./09-kandal/) | Khmer woman, silk village look (name TBD) | កណ្ដាល ដែនដីកេរមរតក | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 10 | [Kep (កែប)](./10-kep/) | Malis (មាលីស), Khmer woman | កែប ក្ដាមឆ្ងាញ់ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 11 | [Koh Kong (កោះកុង)](./11-koh-kong/) | Samuth (សមុទ្រ), Khmer man | កោះកុងទឹកដីសមុទ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 12 | [Kratie (ក្រចេះ)](./12-kratie/) | Sovann (សុវណ្ណ), Khmer man | ក្រចេះ ម្លប់ដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
