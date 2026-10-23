@@ -1,6 +1,6 @@
-# Kratie (ក្រចេះ): guide facts for the Kratie avatar
+# Kratie (ក្រចេះ): guide facts for Sovann
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Sovann uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Ministry of Environment, provincial tourism
 office) before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go
 out of date.
@@ -34,6 +34,6 @@ out of date.
 - Buy food and crafts directly from the people who make them; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Sovann's song
 "ក្រចេះ ម្លប់ដួងចិត្ត" (Kratie, Shade of the Heart): a warm welcome to the river province. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/kratie-shade-of-the-heart.mp3](./song/kratie-shade-of-the-heart.mp3).

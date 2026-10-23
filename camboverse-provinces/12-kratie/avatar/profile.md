@@ -1,7 +1,7 @@
-# The Kratie avatar
+# Sovann (សុវណ្ណ) — the Kratie avatar
 
 - **Province:** Kratie (ក្រចេះ), 12 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Sovann (សុវណ្ណ), "gold", for the golden sunsets over the Mekong (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Kratie, about 24, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Kratie in anything: singer of the province song, tour guide, assistant, host and ambassador

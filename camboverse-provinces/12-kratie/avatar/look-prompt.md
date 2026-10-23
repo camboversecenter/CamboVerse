@@ -1,4 +1,4 @@
-# Look prompts — the Kratie avatar (look B)
+# Look prompts — Sovann, the Kratie avatar (look B)
 
 Note: the first look B take came out gaunt and older; the prompt was rewritten (below) and the second take approved.
 
