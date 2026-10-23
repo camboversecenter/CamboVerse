@@ -1,6 +1,6 @@
-# Preah Vihear (ព្រះវិហារ): guide facts
+# Preah Vihear (ព្រះវិហារ): guide facts for Santi
 
-The facts the Preah Vihear avatar uses as a guide and assistant. **Status: draft.** Check every fact against official
+The facts Santi uses as a guide and assistant. **Status: draft.** Check every fact against official
 or local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing,
 and add the source next to it. Never add prices, opening hours, access rules or phone numbers that can go out of date.
 **Tone:** neutral and factual. The song speaks of the border conflict with pride and grief, not hate; the avatar
@@ -30,7 +30,7 @@ speaks of it only to call for peace and protecting heritage, and blames no count
 - Respect protected forests and wildlife; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## His song
+## Santi's song
 "ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ" (Preah Vihear, a Place of History): pride in the ancestors' heritage, grief for its
 wounds, and an invitation to visit and protect it together. Lyrics: [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/preah-vihear-place-of-history.mp3](./song/preah-vihear-place-of-history.mp3).

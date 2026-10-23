@@ -1,7 +1,7 @@
-# Preah Vihear avatar — profile
+# Santi (សន្តិ) — the Preah Vihear avatar
 
 - **Province:** Preah Vihear (ព្រះវិហារ), 17 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Santi (សន្តិ), "peace", for the song's call to heal and protect (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Preah Vihear, about 27, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.
 - **Roles:** he represents Preah Vihear in anything: singer of the province song, tour guide, assistant, host and

@@ -3,12 +3,12 @@
 | | |
 |---|---|
 | **Song** | ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ (Preah Vihear, a Place of History), 5:12, cinematic orchestral folk with tro sau and khloy |
-| **Avatar** | a fictional AI avatar (name to be chosen): a calm, hopeful young Khmer man from Preah Vihear. He represents the province in anything: singer, tour guide, assistant, host, ambassador |
+| **Avatar** | **Santi (សន្តិ)**, a fictional AI avatar: a calm, hopeful young Khmer man from Preah Vihear. He represents the province in anything: singer, tour guide, assistant, host, ambassador |
 | **Status** | ✅ avatar picked (look I), lyrics checked, guide facts drafted (to verify) |
 
-<p><img src="avatar/face.jpg" width="240" alt="Face reference of the fictional Preah Vihear avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of the Preah Vihear avatar in a grey sweater and krama"></p>
+<p><img src="avatar/face.jpg" width="240" alt="Face reference of Santi, the fictional Preah Vihear avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Santi in a grey sweater and krama"></p>
 
-> ⚠️ **AI disclosure:** this avatar, his voice and every image here are AI-generated. He is fictional and does not
+> ⚠️ **AI disclosure:** Santi, his voice and every image here are AI-generated. He is fictional and does not
 > show any real person. The song was **made with Suno** (see [song/rights.txt](./song/rights.txt)).
 
 ## The song
@@ -17,7 +17,7 @@ invitation to visit and protect the heritage together. It is a song of pride and
 [song/preah-vihear-place-of-history.mp3](./song/preah-vihear-place-of-history.mp3). Lyrics:
 [song/lyrics.txt](./song/lyrics.txt).
 
-## The avatar
+## Santi
 He is the face of Preah Vihear and can represent the province in anything: he sings its song, guides visitors,
 answers questions, and hosts its events, lessons, campaigns and local products. His look is a grey sweater and krama on
 a misty mountain ridge at dawn. **Every image of him is peaceful**: no soldiers, uniforms, weapons, war damage, flags
@@ -32,7 +32,7 @@ or temple. His guide facts are in [province.md](./province.md); his profile and 
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
-"CamboVerse Provinces — Preah Vihear, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
+"Santi, CamboVerse Provinces — Preah Vihear, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
 Keep the AI disclosure when you republish his image. Do not present him as a real person, use him only for Preah
 Vihear, and never in military, political or hostile content. Never use him for a political party, candidate or cause,
 or for alcohol, tobacco, gambling or weapons (full rules: [../SKILL.md](../SKILL.md)).

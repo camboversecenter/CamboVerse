@@ -1,4 +1,4 @@
-# Look prompts — Preah Vihear avatar (look I)
+# Look prompts — Santi, the Preah Vihear avatar (look I)
 
 Chosen from 16 candidates in four rounds: round 1 had near-identical default faces; rounds 2–3 had distinct
 but older faces; the owner asked for "young handsome like other avatar, just different face" → round 4 (I–L).
