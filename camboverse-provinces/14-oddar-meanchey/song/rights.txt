@@ -1,0 +1,15 @@
+Song: ឧត្តរមានជ័យ ដែនដីដងរែក (Oddar Meanchey, Land of the Dangrek)
+Province: Oddar Meanchey (ឧត្តរមានជ័យ)
+Made with: Suno
+Suno song id: 59a0d0fd-8445-4d0e-af4d-a2e6db3f7f5f
+Suno link: https://suno.com/song/59a0d0fd-8445-4d0e-af4d-a2e6db3f7f5f
+Created: 2026-10-23T10:06:16Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:12 (251.6 s)
+Audio: oddar-meanchey-dangrek-land.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ផ្ដល់, ម្ដង) and the post-chorus hum line from the production notes added; production notes in
+  brackets are omitted. Note for subtitles: the post-chorus is sung as wordless vocalising. Focused checks with two
+  models over the whole song confirmed every written line. Kept as written, for the owner to check: ច្រកជាំតែសួង (the
+  Dangrek pass is usually called ច្រកជាំ) and ទឹកធ្លាក់អូរស្មាច់ (not confirmed).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
