@@ -1,7 +1,7 @@
-# Siem Reap avatar — profile
+# Seila (សិលា) — the Siem Reap avatar
 
 - **Province:** Siem Reap (សៀមរាប), 21 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Seila (សិលា), "stone", for the ancestors' carved stone (owner's pick, 2026-10-23)
 - **Who he is:** a fictional Khmer man from Siem Reap, about 32, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Siem Reap in anything: singer of the province song, tour guide, assistant, host and

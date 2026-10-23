@@ -1,6 +1,6 @@
-# Siem Reap (សៀមរាប): guide facts
+# Siem Reap (សៀមរាប): guide facts for Seila
 
-The facts the Siem Reap avatar uses as a guide and assistant. **Status: draft.** Check every fact against official
+The facts Seila uses as a guide and assistant. **Status: draft.** Check every fact against official
 or local sources (Ministry of Tourism, APSARA National Authority, provincial tourism office) before publishing, and add
 the source next to it. Never add prices, opening hours, ticket rules or phone numbers that can go out of date.
 
@@ -35,6 +35,6 @@ Other things to know about: silk farms and weaving workshops, stone and wood car
 - Wear a life jacket on the Tonle Sap; ask before photographing people in the villages.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## His song
+## Seila's song
 "សៀមរាប ទីក្រុងបុរាណ" (Siem Reap, the Ancient City): an epic welcome to the land of Angkor. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/siem-reap-ancient-city.mp3](./song/siem-reap-ancient-city.mp3).

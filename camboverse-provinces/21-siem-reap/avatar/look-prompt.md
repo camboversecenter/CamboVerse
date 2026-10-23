@@ -1,4 +1,4 @@
-# Look prompts — Siem Reap avatar (look C)
+# Look prompts — Seila, the Siem Reap avatar (look C)
 
 ## Look C (as generated)
 ```
