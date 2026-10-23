@@ -1,4 +1,4 @@
-# Look prompts — Takeo avatar (look D)
+# Look prompts — Keo, the Takeo avatar (look D)
 
 Note: the look D prompt says "a small beauty mark above her lip"; the approved still put her two beauty marks just
 above her left eyebrow and on her chin. The face and body prompts below follow the still.

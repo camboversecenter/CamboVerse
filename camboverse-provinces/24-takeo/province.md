@@ -1,6 +1,6 @@
-# Takeo (តាកែវ): guide facts
+# Takeo (តាកែវ): guide facts for Keo
 
-The facts the Takeo avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Keo uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing, and
 add the source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -32,6 +32,6 @@ add the source next to it. Never add prices, opening hours or phone numbers that
 - Buy silk and food directly from the people who make them; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## Her song
+## Keo's song
 "តាកែវ ទឹកដីប្រវត្តិសាស្ត្រ" (Takeo, Land of History): a proud invitation to where Khmer civilisation began. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/takeo-land-of-history.mp3](./song/takeo-land-of-history.mp3).

@@ -1,7 +1,7 @@
-# Takeo avatar — profile
+# Keo (កែវ) — the Takeo avatar
 
 - **Province:** Takeo (តាកែវ), 24 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Keo (កែវ), "crystal, gem", from the province's own name តាកែវ (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Khmer woman from Takeo, about 24, clearly an adult. AI-generated; she is not a real
   person and is not based on anyone's likeness.
 - **Roles:** she represents Takeo in anything: singer of the province song, tour guide, assistant, host and ambassador
