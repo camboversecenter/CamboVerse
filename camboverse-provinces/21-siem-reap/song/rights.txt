@@ -1,0 +1,13 @@
+Song: សៀមរាប ទីក្រុងបុរាណ (Siem Reap, the Ancient City)
+Province: Siem Reap (សៀមរាប)
+Made with: Suno
+Suno song id: 3e13c008-0a4a-4795-8f6c-68501519069e
+Suno link: https://suno.com/song/3e13c008-0a4a-4795-8f6c-68501519069e
+Created: 2026-10-23T01:43:22Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 5:32 (332.4 s); the instrumental intro runs about 75 s before the first sung line
+Audio: siem-reap-ancient-city.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the spelling fixes
+  the owner approved (អង្គរវត្ត, កញ្ចក់, បណ្ដែត, ក្ដៅ, ទឹកដីពិសិដ្ឋ) and the sung post-chorus hum line added (owner
+  approved); production notes in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

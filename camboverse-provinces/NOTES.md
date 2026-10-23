@@ -42,3 +42,12 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   `persona` block in `avatar.json` (personality, languages, style, Khmer and English greetings).
 - Guide and assistant rules: always say she or he is an AI, answer from `province.md`, never invent prices, hours or
   phone numbers, never speak for a community, and give responsible-travel tips (for example, never ride elephants).
+
+## Siem Reap (2026-10-23)
+- Windowed transcription of the full mix invented new words in the last chorus ("ជិះរថយន្តទេសចរណ៍", "ភ្នំគូលែន").
+  Focused 14 s listens with two models, given the written chorus, both heard the written lines. Never add or change
+  lyrics on the strength of one window transcription.
+- A voice listen counted "2 voices" on the spoken bridge. An A/B check (10 s of the sung verse, then the bridge,
+  "same man?") confirmed one man and no second voice.
+- The song is about Angkor, but no image may show a real temple: the looks use the forest, the lake, silk weaving and
+  rice fields instead.
