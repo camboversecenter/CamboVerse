@@ -1,0 +1,13 @@
+Song: កំពង់ចាម កំពង់ចិត្ត (Kampong Cham, Port of the Heart)
+Province: Kampong Cham (កំពង់ចាម)
+Made with: Suno
+Suno song id: 48ba0be9-071a-4c97-be01-a996b313f3fd
+Suno link: https://suno.com/song/48ba0be9-071a-4c97-be01-a996b313f3fd
+Created: 2026-10-23T01:27:18Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:45 (284.8 s)
+Audio: kampong-cham-port-of-the-heart.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the spelling fixes
+  the owner approved (ម្ដង, កេងប្រវញ្ច) and the sung post-chorus hum line added (owner approved); production notes
+  in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
