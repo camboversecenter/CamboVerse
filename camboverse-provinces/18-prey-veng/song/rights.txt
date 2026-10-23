@@ -1,0 +1,18 @@
+Song: ព្រៃវែង វាលស្រែបៃតង (Prey Veng, Green Rice Fields)
+Province: Prey Veng (ព្រៃវែង)
+Made with: Suno
+Suno song id: 078aff0b-8b7e-470c-8f28-e9f79737f06a
+Suno link: https://suno.com/song/078aff0b-8b7e-470c-8f28-e9f79737f06a
+Created: 2026-10-23T05:17:41Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 3:58 (238.4 s)
+Audio: prey-veng-green-rice-fields.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ម្ដង, អណ្ដែត, ផ្ដល់, កសិកម្ម, ជង្រុកស្រូវ "rice granary", ស្មោះស) and the post-chorus hum line from the
+  production notes added; production notes in brackets are omitted. Notes for subtitles: the singer sings "ជម្រុក"
+  where the text now reads ជង្រុក; two of three models heard "អ្នកស្រែ" for the written វាលស្រែ in verse 1 (kept as
+  written); the post-chorus is sung as wordless "na-na" humming. The window transcription invented lines ("ស្រឡាញ់អូន
+  ខ្លាំងអត់", "កោះកុង"); focused checks with two models confirmed every written line.
+  Kept as written, for the owner to check: បឹងស្នេហ៍ (the lake near Ba Phnom is usually spelled បឹងស្នែ) and
+  ទួលពាន់តាឡី (place name not confirmed).
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
