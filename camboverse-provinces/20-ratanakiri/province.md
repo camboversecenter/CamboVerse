@@ -1,6 +1,6 @@
-# Ratanakiri (រតនគិរី): guide facts
+# Ratanakiri (រតនគិរី): guide facts for Ratana
 
-The facts the Ratanakiri avatar uses as a guide and assistant. **Status: draft.** Check every fact against official
+The facts Ratana uses as a guide and assistant. **Status: draft.** Check every fact against official
 or local sources (Ministry of Tourism, provincial tourism office, community-based tourism groups) before publishing,
 and add the source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -38,6 +38,6 @@ and add the source next to it. Never add prices, opening hours or phone numbers 
 - Never buy wildlife or forest products taken illegally. Take rubbish home.
 - Take care swimming at waterfalls, especially after rain. Wear a helmet on a motorbike: driver and passenger.
 
-## Her song
+## Ratana's song
 "រតនគិរី ទឹកដីធម្មជាតិ" (Ratanakiri, Land of Nature): a fresh highland invitation. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/ratanakiri-land-of-nature.mp3](./song/ratanakiri-land-of-nature.mp3).

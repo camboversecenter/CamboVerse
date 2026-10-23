@@ -1,7 +1,7 @@
-# Ratanakiri avatar — profile
+# Ratana (រតនា) — the Ratanakiri avatar
 
 - **Province:** Ratanakiri (រតនគិរី), 20 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Ratana (រតនា), "jewel", the root of the province's name (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Indigenous woman of the Ratanakiri highlands, about 24, clearly an adult.
   AI-generated; she is not a real person and is not based on anyone's likeness.
 - **Roles:** she represents Ratanakiri in anything: singer of the province song, tour guide, assistant, host and

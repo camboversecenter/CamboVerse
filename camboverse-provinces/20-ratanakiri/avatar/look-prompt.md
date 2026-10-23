@@ -1,4 +1,4 @@
-# Look prompts — Ratanakiri avatar (look B)
+# Look prompts — Ratana, the Ratanakiri avatar (look B)
 
 ## Look B (as generated)
 ```
