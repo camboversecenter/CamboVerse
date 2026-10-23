@@ -1,4 +1,4 @@
-# Look prompts — the Pailin avatar (look A)
+# Look prompts — Pich, the Pailin avatar (look A)
 
 ## Look A (as generated)
 ```

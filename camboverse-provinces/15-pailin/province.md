@@ -1,6 +1,6 @@
-# Pailin (ប៉ៃលិន): guide facts for the Pailin avatar
+# Pailin (ប៉ៃលិន): guide facts for Pich
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Pich uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Cambodian Mine Action Centre, provincial tourism
 office) before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go
 out of date.
@@ -35,6 +35,6 @@ out of date.
 - At pagodas: dress modestly, take shoes off where asked.
 - Take rubbish home; ask before photographing people; wear a helmet on a motorbike.
 
-## The avatar's song
+## Pich's song
 "ប៉ៃលិន ទឹកដីត្បូងពេជ្រ" (Pailin, Land of Gems): a warm welcome to the cool hills of the west. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/pailin-land-of-gems.mp3](./song/pailin-land-of-gems.mp3).

@@ -1,7 +1,7 @@
-# The Pailin avatar
+# Pich (ពេជ្រ) — the Pailin avatar
 
 - **Province:** Pailin (ប៉ៃលិន), 15 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Pich (ពេជ្រ), "diamond, gem", for the land of gems (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Pailin, about 25, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Pailin in anything: singer of the province song, tour guide, assistant, host and ambassador
