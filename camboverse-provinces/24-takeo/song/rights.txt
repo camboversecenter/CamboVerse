@@ -1,0 +1,15 @@
+Song: តាកែវ ទឹកដីប្រវត្តិសាស្ត្រ (Takeo, Land of History)
+Province: Takeo (តាកែវ)
+Made with: Suno
+Suno song id: e3eb0ac5-e999-456e-adcb-2bc3fd1c927f
+Suno link: https://suno.com/song/e3eb0ac5-e999-456e-adcb-2bc3fd1c927f
+Created: 2026-10-23T02:51:13Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:50 (289.6 s)
+Audio: takeo-land-of-history.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ម្ដង, សប្ដាហ៍, លំហែ, ស្មោះស) and the sung post-chorus hum line added (two models confirmed it is sung);
+  production notes in brackets are omitted. The wordless intro vocal ("តឹន តឹន… តាតា") has no subtitle. The window
+  transcription invented whole lines ("Paris", golf, tennis); focused checks with two models confirmed the written
+  choruses.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
