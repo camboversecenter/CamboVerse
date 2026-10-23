@@ -1,0 +1,13 @@
+Song: កែប ក្ដាមឆ្ងាញ់ (Kep, Delicious Crab). The Suno title tag spells it កែប ក្តាមឆ្ងាញ់.
+Province: Kep (កែប)
+Made with: Suno
+Suno song id: e93b39cc-f016-407f-991a-1a9719b18d4f
+Suno link: https://suno.com/song/e93b39cc-f016-407f-991a-1a9719b18d4f
+Created: 2026-10-23T04:02:43Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:11 (251.2 s)
+Audio: kep-delicious-crab.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ក្ដាម, ម្ដង, សប្ដាហ៍, ក្ដៅ, លំហែ, បរិយាកាស) and the sung post-chorus hum line added; production notes in
+  brackets are omitted. Two models confirmed the choruses, post-chorus and outro.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
