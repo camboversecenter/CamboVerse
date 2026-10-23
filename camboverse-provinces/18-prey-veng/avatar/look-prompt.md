@@ -1,4 +1,4 @@
-# Look prompts — the Prey Veng avatar (look C)
+# Look prompts — Thida, the Prey Veng avatar (look C)
 
 ## Look C (as generated)
 ```

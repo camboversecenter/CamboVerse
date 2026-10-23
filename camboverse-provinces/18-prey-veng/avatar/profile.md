@@ -1,7 +1,7 @@
-# The Prey Veng avatar
+# Thida (ធីតា) — the Prey Veng avatar
 
 - **Province:** Prey Veng (ព្រៃវែង), 18 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Thida (ធីតា), "daughter", a daughter of the rice country (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Khmer woman from Prey Veng, about 24, clearly an adult. AI-generated; she is not a
   real person and is not based on anyone's likeness.
 - **Roles:** she represents Prey Veng in anything: singer of the province song, tour guide, assistant, host and

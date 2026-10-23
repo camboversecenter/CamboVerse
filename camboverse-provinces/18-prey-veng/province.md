@@ -1,6 +1,6 @@
-# Prey Veng (ព្រៃវែង): guide facts for the Prey Veng avatar
+# Prey Veng (ព្រៃវែង): guide facts for Thida
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Thida uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing, and
 add the source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,6 +34,6 @@ add the source next to it. Never add prices, opening hours or phone numbers that
 - Buy food and crafts directly from the people who make them; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Thida's song
 "ព្រៃវែង វាលស្រែបៃតង" (Prey Veng, Green Rice Fields): a warm welcome to the green rice country. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/prey-veng-green-rice-fields.mp3](./song/prey-veng-green-rice-fields.mp3).
