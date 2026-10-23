@@ -1,0 +1,14 @@
+Song: កោះកុងទឹកដីសមុទ្រ (Koh Kong, Land of the Sea)
+Province: Koh Kong (កោះកុង)
+Made with: Suno
+Suno song id: c02bdd73-a854-4864-a392-a49fcdacb36b
+Suno link: https://suno.com/song/c02bdd73-a854-4864-a392-a49fcdacb36b
+Created: 2026-10-23T03:27:31Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:48 (288.0 s)
+Singer: one male voice (owner confirmed; listening models disagreed on the higher chorus register)
+Audio: koh-kong-land-of-the-sea.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (កោះស្ដេច, ក្ដាម, ម្ដង, សប្ដាហ៍, លំហែ); ប្រកៀកកៀកគ្នា kept as written; the sung post-chorus hum line added
+  (two models confirmed it); production notes in brackets are omitted.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

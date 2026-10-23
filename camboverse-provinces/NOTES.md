@@ -78,3 +78,8 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
   details of each community could not be checked.
 - A face crop cut too high (bun and forehead only) gave thinner, gaunter close-ups. Recrop to eyebrows-to-chin before
   making the face reference.
+
+## Koh Kong (2026-10-23)
+- **Gender split on one voice.** Gemini 3.5/3.8 flash heard the chorus as a woman (even in verse→chorus A/B clips);
+  3.1 pro heard one man throughout; pitch on the full mix was useless (bass). The owner settled it: only male. When
+  models disagree on gender, ask the owner early — they know how the song was made.
