@@ -1,4 +1,4 @@
-# Look prompts — Kampot avatar (look A)
+# Look prompts — Theara, the Kampot avatar (look A)
 
 ## Look A (as generated)
 ```

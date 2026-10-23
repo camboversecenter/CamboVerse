@@ -1,7 +1,7 @@
-# Kampot avatar — profile
+# Theara (ធារា) — the Kampot avatar
 
 - **Province:** Kampot (កំពត), 08 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Theara (ធារា), "flowing water", for the Prek Kampot river and Tuek Chhou (owner's pick, 2026-10-23)
 - **Who he is:** a fictional young Khmer man from Kampot, about 28, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Kampot in anything: singer of the province song, tour guide, assistant, host and

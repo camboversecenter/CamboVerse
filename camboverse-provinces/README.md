@@ -41,7 +41,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 05 | Kampong Chhnang (កំពង់ឆ្នាំង) | — | — | — | ⏳ not started |
 | 06 | Kampong Speu (កំពង់ស្ពឺ) | — | — | — | ⏳ not started |
 | 07 | [Kampong Thom (កំពង់ធំ)](./07-kampong-thom/) | Sambo (សំបូរ), Khmer woman | កំពង់ធំជម្រំចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 08 | [Kampot (កំពត)](./08-kampot/) | Khmer man, pepper-farm look (name TBD) | កំពតកំពូលដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
+| 08 | [Kampot (កំពត)](./08-kampot/) | Theara (ធារា), Khmer man | កំពតកំពូលដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 09 | Kandal (កណ្ដាល) | — | — | — | ⏳ not started |
 | 10 | Kep (កែប) | — | — | — | ⏳ not started |
 | 11 | Koh Kong (កោះកុង) | — | — | — | ⏳ not started |

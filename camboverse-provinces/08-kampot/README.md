@@ -3,12 +3,12 @@
 | | |
 |---|---|
 | **Song** | កំពតកំពូលដួងចិត្ត (Kampot, Heart of Hearts), 4:32, mellow acoustic pop with saxophone |
-| **Avatar** | a fictional AI avatar (name to be chosen): a calm young Khmer man from Kampot. He represents the province in anything: singer, tour guide, assistant, host, ambassador |
+| **Avatar** | **Theara (ធារា)**, a fictional AI avatar: a calm young Khmer man from Kampot. He represents the province in anything: singer, tour guide, assistant, host, ambassador |
 | **Status** | ✅ avatar picked (look A), lyrics checked, guide facts drafted (to verify) |
 
-<p><img src="avatar/face.jpg" width="240" alt="Face reference of the fictional Kampot avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of the Kampot avatar holding fresh Kampot pepper"></p>
+<p><img src="avatar/face.jpg" width="240" alt="Face reference of Theara, the fictional Kampot avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Theara holding fresh Kampot pepper"></p>
 
-> ⚠️ **AI disclosure:** this avatar, his voice and every image here are AI-generated. He is fictional and does not
+> ⚠️ **AI disclosure:** Theara, his voice and every image here are AI-generated. He is fictional and does not
 > show any real person. The song was **made with Suno** (see [song/rights.txt](./song/rights.txt)).
 
 ## The song
@@ -16,7 +16,7 @@ A slow, relaxing visit: the river at sunset, Bokor mountain in the clouds, Tuek 
 the mangroves, seafood with Kampot pepper, durian and fresh fruit. Listen:
 [song/kampot-heart-of-hearts.mp3](./song/kampot-heart-of-hearts.mp3). Lyrics: [song/lyrics.txt](./song/lyrics.txt).
 
-## The avatar
+## Theara
 He is the face of Kampot and can represent the province in anything: he sings its song, guides visitors, answers
 questions, and hosts its events, lessons, campaigns and local products. His look is a pepper farmer's linen shirt with
 a bunch of fresh Kampot pepper. His guide facts are in [province.md](./province.md); his profile and rules are in
@@ -30,7 +30,7 @@ a bunch of fresh Kampot pepper. His guide facts are in [province.md](./province.
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
-"CamboVerse Provinces — Kampot, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
+"Theara, CamboVerse Provinces — Kampot, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
 Keep the AI disclosure when you republish his image. Do not present him as a real person, and use him only for Kampot.
 Never use him for a political party, candidate or cause, or for alcohol, tobacco, gambling or weapons (full rules:
 [../SKILL.md](../SKILL.md)).

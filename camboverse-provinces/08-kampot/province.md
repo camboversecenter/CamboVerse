@@ -1,6 +1,6 @@
-# Kampot (កំពត): guide facts
+# Kampot (កំពត): guide facts for Theara
 
-The facts the Kampot avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Theara uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next to it. Never
 add prices, opening hours or phone numbers that can go out of date.
 
@@ -38,6 +38,6 @@ add prices, opening hours or phone numbers that can go out of date.
 - At pagodas: dress modestly and take shoes off where asked. Take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## His song
+## Theara's song
 "កំពតកំពូលដួងចិត្ត" (Kampot, Heart of Hearts): a slow, relaxing visit to Kampot. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/kampot-heart-of-hearts.mp3](./song/kampot-heart-of-hearts.mp3).
