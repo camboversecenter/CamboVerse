@@ -1,7 +1,7 @@
-# Kampong Cham avatar — profile
+# Chey (ជ័យ) — the Kampong Cham avatar
 
 - **Province:** Kampong Cham (កំពង់ចាម), 04 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Chey (ជ័យ), "victory", from Nokor Bachey and Phnom Hanchey (owner's pick, 2026-10-23)
 - **Who he is:** a fictional Khmer man from Kampong Cham, about 29, clearly an adult. AI-generated; he is not a real
   person and is not based on anyone's likeness.
 - **Roles:** he represents Kampong Cham in anything: singer of the province song, tour guide, assistant, host and

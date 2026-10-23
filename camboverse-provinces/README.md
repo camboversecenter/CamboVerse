@@ -37,7 +37,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 01 | Phnom Penh (ភ្នំពេញ) | — | — | — | ⏳ not started |
 | 02 | Banteay Meanchey (បន្ទាយមានជ័យ) | — | — | — | ⏳ not started |
 | 03 | [Battambang (បាត់ដំបង)](./03-battambang/) | Rachana (រចនា), Khmer woman | បាត់ដំបងបណ្ដូលចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 04 | [Kampong Cham (កំពង់ចាម)](./04-kampong-cham/) | Khmer man, fruit-orchard look (name TBD) | កំពង់ចាម កំពង់ចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
+| 04 | [Kampong Cham (កំពង់ចាម)](./04-kampong-cham/) | Chey (ជ័យ), Khmer man | កំពង់ចាម កំពង់ចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 05 | Kampong Chhnang (កំពង់ឆ្នាំង) | — | — | — | ⏳ not started |
 | 06 | Kampong Speu (កំពង់ស្ពឺ) | — | — | — | ⏳ not started |
 | 07 | [Kampong Thom (កំពង់ធំ)](./07-kampong-thom/) | Sambo (សំបូរ), Khmer woman | កំពង់ធំជម្រំចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |

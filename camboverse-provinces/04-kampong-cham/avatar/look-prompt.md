@@ -1,4 +1,4 @@
-# Look prompts — Kampong Cham avatar (look C)
+# Look prompts — Chey, the Kampong Cham avatar (look C)
 
 ## Look C (as generated)
 ```

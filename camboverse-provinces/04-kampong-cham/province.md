@@ -1,6 +1,6 @@
-# Kampong Cham (កំពង់ចាម): guide facts
+# Kampong Cham (កំពង់ចាម): guide facts for Chey
 
-The facts the Kampong Cham avatar uses as a guide and assistant. **Status: draft.** Check every fact against official
+The facts Chey uses as a guide and assistant. **Status: draft.** Check every fact against official
 or local sources (Ministry of Tourism, provincial tourism office) before publishing, and add the source next to it.
 Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -33,7 +33,7 @@ Never add prices, opening hours or phone numbers that can go out of date.
 - Buy fruit directly from the farmers who grow it; take rubbish home.
 - Wear a life jacket on the river; wear a helmet on a motorbike, driver and passenger.
 
-## His song
+## Chey's song
 "កំពង់ចាម កំពង់ចិត្ត" (Kampong Cham, Port of the Heart): a warm invitation to the Mekong province. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/kampong-cham-port-of-the-heart.mp3](./song/kampong-cham-port-of-the-heart.mp3).
