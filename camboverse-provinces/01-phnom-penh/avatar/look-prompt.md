@@ -1,4 +1,4 @@
-# Look prompts — Phnom Penh avatar (look D)
+# Look prompts — Penh, the Phnom Penh avatar (look D)
 
 ## Look D (as generated)
 ```

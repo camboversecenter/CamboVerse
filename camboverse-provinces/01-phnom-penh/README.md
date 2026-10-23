@@ -3,12 +3,12 @@
 | | |
 |---|---|
 | **Song** | ភ្នំពេញ រាជធានីកម្ពុជា (Phnom Penh, Capital of Cambodia), 4:37, chill Rhodes pop with khloy flute |
-| **Avatar** | a fictional AI avatar (name to be chosen): a sweet, creative young Khmer woman from Phnom Penh. She represents the city in anything: singer, tour guide, assistant, host, ambassador |
+| **Avatar** | **Penh (ពេញ)**, a fictional AI avatar: a sweet, creative young Khmer woman from Phnom Penh. She represents the city in anything: singer, tour guide, assistant, host, ambassador |
 | **Status** | ✅ avatar picked (look D), lyrics checked, guide facts drafted (to verify) |
 
-<p><img src="avatar/face.jpg" width="240" alt="Face reference of the fictional Phnom Penh avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of the Phnom Penh avatar as a young artist"></p>
+<p><img src="avatar/face.jpg" width="240" alt="Face reference of Penh, the fictional Phnom Penh avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Penh as a young artist"></p>
 
-> ⚠️ **AI disclosure:** this avatar, her voice and every image here are AI-generated. She is fictional and does not
+> ⚠️ **AI disclosure:** Penh, her voice and every image here are AI-generated. She is fictional and does not
 > show any real person. The song was **made with Suno** (see [song/rights.txt](./song/rights.txt)).
 
 ## The song
@@ -17,7 +17,7 @@ coffee by the river, the Central Market and night markets, street food, and the 
 future. Listen: [song/phnom-penh-capital-of-cambodia.mp3](./song/phnom-penh-capital-of-cambodia.mp3). Lyrics:
 [song/lyrics.txt](./song/lyrics.txt).
 
-## The avatar
+## Penh
 She is the face of Phnom Penh and can represent the city in anything: she sings its song, guides visitors, answers
 questions, and hosts its events, lessons, campaigns and local products. Her look is a young artist in her studio, for
 the song's "សិល្បៈច្នៃប្រឌិត… យុវជនជំនាន់ថ្មី". Images of her never show the city's landmarks. Her guide facts are
@@ -31,7 +31,7 @@ in [province.md](./province.md); her profile and rules are in [avatar/profile.md
 
 ## How to reuse
 Everything here is licensed **CC BY 4.0** ([../LICENSE-MEDIA](../LICENSE-MEDIA)). Credit:
-"CamboVerse Provinces — Phnom Penh, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
+"Penh, CamboVerse Provinces — Phnom Penh, CamboVerse Center (CC BY 4.0). AI-generated character; song made with Suno."
 Keep the AI disclosure when you republish her image. Do not present her as a real person, and use her only for Phnom
 Penh. Never use her for a political party, candidate or cause, or for alcohol, tobacco, gambling or weapons (full rules:
 [../SKILL.md](../SKILL.md)).

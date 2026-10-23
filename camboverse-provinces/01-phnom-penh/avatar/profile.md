@@ -1,7 +1,7 @@
-# Phnom Penh avatar — profile
+# Penh (ពេញ) — the Phnom Penh avatar
 
 - **Province:** Phnom Penh (ភ្នំពេញ), the capital, 01 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Penh (ពេញ), after Daun Penh, the woman whose legend gave the city its name (owner's pick, 2026-10-23)
 - **Who she is:** a fictional young Khmer woman from Phnom Penh, about 24, clearly an adult. AI-generated; she is not
   a real person and is not based on anyone's likeness.
 - **Roles:** she represents Phnom Penh in anything: singer of the city song, tour guide, assistant, host and

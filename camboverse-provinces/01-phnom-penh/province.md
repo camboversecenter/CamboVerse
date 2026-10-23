@@ -1,6 +1,6 @@
-# Phnom Penh (ភ្នំពេញ): guide facts
+# Phnom Penh (ភ្នំពេញ): guide facts for Penh
 
-The facts the Phnom Penh avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Penh uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Phnom Penh Capital Hall) before publishing, and add the source next to it. Never
 add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,7 +34,7 @@ Visit them quietly and with respect.
 - Cross busy streets carefully; wear a helmet on a motorbike, driver and passenger.
 - Support local artists, makers and street-food sellers; take rubbish home; ask before photographing people.
 
-## Her song
+## Penh's song
 "ភ្នំពេញ រាជធានីកម្ពុជា" (Phnom Penh, Capital of Cambodia): a chill, hopeful walk through the capital. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/phnom-penh-capital-of-cambodia.mp3](./song/phnom-penh-capital-of-cambodia.mp3).
