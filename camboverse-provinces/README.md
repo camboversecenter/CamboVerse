@@ -39,7 +39,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 03 | [Battambang (បាត់ដំបង)](./03-battambang/) | Rachana (រចនា), Khmer woman | បាត់ដំបងបណ្ដូលចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 04 | [Kampong Cham (កំពង់ចាម)](./04-kampong-cham/) | Chey (ជ័យ), Khmer man | កំពង់ចាម កំពង់ចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 05 | [Kampong Chhnang (កំពង់ឆ្នាំង)](./05-kampong-chhnang/) | Vichea (វិជ្ជា), Khmer man | កំពង់ឆ្នាំង ទឹកដីសិប្បកម្ម | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 06 | [Kampong Speu (កំពង់ស្ពឺ)](./06-kampong-speu/) | Khmer man, pine camping look (name TBD) | កំពង់ស្ពឺ ដែនដីព្រៃស្រល់ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
+| 06 | [Kampong Speu (កំពង់ស្ពឺ)](./06-kampong-speu/) | Rithy (ឫទ្ធិ), Khmer man | កំពង់ស្ពឺ ដែនដីព្រៃស្រល់ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 07 | [Kampong Thom (កំពង់ធំ)](./07-kampong-thom/) | Sambo (សំបូរ), Khmer woman | កំពង់ធំជម្រំចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 08 | [Kampot (កំពត)](./08-kampot/) | Theara (ធារា), Khmer man | កំពតកំពូលដួងចិត្ត | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 09 | [Kandal (កណ្ដាល)](./09-kandal/) | Kanha (កញ្ញា), Khmer woman | កណ្ដាល ដែនដីកេរមរតក | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |

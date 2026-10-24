@@ -1,7 +1,7 @@
-# The Kampong Speu avatar
+# Rithy (ឫទ្ធិ) — the Kampong Speu avatar
 
 - **Province:** Kampong Speu (កំពង់ស្ពឺ), 6 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Rithy (ឫទ្ធិ), "strength", for Phnom Aural, the highest mountain in Cambodia (owner's pick, 2026-10-24)
 - **Who he is:** a fictional young Khmer man from Kampong Speu, about 26, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.
 - **Roles:** he represents Kampong Speu in anything: singer of the province song, tour guide, assistant, host and

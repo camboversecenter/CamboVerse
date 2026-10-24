@@ -1,4 +1,4 @@
-# Look prompts — the Kampong Speu avatar (look D)
+# Look prompts — Rithy, the Kampong Speu avatar (look D)
 
 ## Look D (as generated)
 ```

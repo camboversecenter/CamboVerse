@@ -1,6 +1,6 @@
-# Kampong Speu (កំពង់ស្ពឺ): guide facts for the Kampong Speu avatar
+# Kampong Speu (កំពង់ស្ពឺ): guide facts for Rithy
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Rithy uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Environment, provincial tourism office) before publishing, and add the
 source next to it. Never add prices, opening hours or phone numbers that can go out of date.
 
@@ -34,6 +34,6 @@ source next to it. Never add prices, opening hours or phone numbers that can go 
 - Buy palm sugar directly from the families who make it.
 - Take all rubbish home; ask before photographing people; wear a helmet on a motorbike.
 
-## The avatar's song
+## Rithy's song
 "កំពង់ស្ពឺ ដែនដីព្រៃស្រល់" (Kampong Speu, Land of Pines): a warm welcome to the pines and sugar palms. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/kampong-speu-pine-land.mp3](./song/kampong-speu-pine-land.mp3).
