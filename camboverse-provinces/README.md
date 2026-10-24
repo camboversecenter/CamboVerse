@@ -56,7 +56,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 20 | [Ratanakiri (រតនគិរី)](./20-ratanakiri/) | Ratana (រតនា), Indigenous highland woman | រតនគិរី ទឹកដីធម្មជាតិ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 21 | [Siem Reap (សៀមរាប)](./21-siem-reap/) | Seila (សិលា), Khmer man | សៀមរាប ទីក្រុងបុរាណ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 22 | [Stung Treng (ស្ទឹងត្រែង)](./22-stung-treng/) | Phirun (ភិរុណ), Khmer man | ស្ទឹងត្រែង ឋានសួគ៌ទន្លេបួន | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 23 | Svay Rieng (ស្វាយរៀង) | — | — | — | ⏳ not started |
+| 23 | [Svay Rieng (ស្វាយរៀង)](./23-svay-rieng/) | Khmer woman, green fields look (name TBD) | ស្វាយរៀង ដែនដីទន្លេវ៉ៃគោ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 24 | [Takeo (តាកែវ)](./24-takeo/) | Keo (កែវ), Khmer woman | តាកែវ ទឹកដីប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 25 | [Tbong Khmum (ត្បូងឃ្មុំ)](./25-tbong-khmum/) | Sambat (សម្បត្តិ), Khmer man | ត្បូងឃ្មុំ ទឹកដីសម្បូរសប្បាយ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 
