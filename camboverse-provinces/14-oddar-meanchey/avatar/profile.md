@@ -1,7 +1,7 @@
-# The Oddar Meanchey avatar
+# Udom (ឧត្ដម) — the Oddar Meanchey avatar
 
 - **Province:** Oddar Meanchey (ឧត្ដរមានជ័យ), 14 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Udom (ឧត្ដម), "excellent, supreme", echoing ឧត្ដរ in the province's name (owner's pick, 2026-10-24)
 - **Who he is:** a fictional young Khmer man from Oddar Meanchey, about 24, clearly an adult. AI-generated; he is not a
   real person and is not based on anyone's likeness.
 - **Roles:** he represents Oddar Meanchey in anything: singer of the province song, tour guide, assistant, host and

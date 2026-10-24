@@ -1,4 +1,4 @@
-# Look prompts — the Oddar Meanchey avatar (look C)
+# Look prompts — Udom, the Oddar Meanchey avatar (look C)
 
 Note: the owner picked look C; his skin was then made a little warmer with the edit below (ref: the look C still).
 `look-C-approved.jpg` is the edited still.

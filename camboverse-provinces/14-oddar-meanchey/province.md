@@ -1,6 +1,6 @@
-# Oddar Meanchey (ឧត្ដរមានជ័យ): guide facts for the Oddar Meanchey avatar
+# Oddar Meanchey (ឧត្ដរមានជ័យ): guide facts for Udom
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Udom uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, Cambodian Mine Action Centre, provincial tourism
 office) before publishing, and add the source next to it. Never add prices, opening hours or phone numbers that can go
 out of date.
@@ -36,6 +36,6 @@ out of date.
 - Take care at waterfalls and lakes; buy food and crafts from local families; take rubbish home; ask before
   photographing people; wear a helmet on a motorbike.
 
-## The avatar's song
+## Udom's song
 "ឧត្តរមានជ័យ ដែនដីដងរែក" (Oddar Meanchey, Land of the Dangrek): a warm, peaceful welcome to the north. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/oddar-meanchey-dangrek-land.mp3](./song/oddar-meanchey-dangrek-land.mp3).
