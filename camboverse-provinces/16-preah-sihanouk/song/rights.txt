@@ -1,0 +1,14 @@
+Song: ព្រះសីហនុ ឋានសួគ៌ឆ្នេរសមុទ្រ (Preah Sihanouk, Coastal Paradise)
+Province: Preah Sihanouk (ព្រះសីហនុ)
+Made with: Suno
+Suno song id: d625ff19-a292-49dc-9be5-a9ebfa0bdc3a
+Suno link: https://suno.com/song/d625ff19-a292-49dc-9be5-a9ebfa0bdc3a
+Created: 2026-10-24T10:41:29Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 4:16 (255.9 s)
+Audio: preah-sihanouk-coastal-paradise.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (ផ្ដល់, ម្ដង) and the post-chorus line added (sung); production notes in brackets, the "hey" shouts in the
+  intro and the repeated "មកដល់ទីនេះ" ad-libs in the last chorus are omitted. Focused checks with two models over the
+  whole song confirmed every written line.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.

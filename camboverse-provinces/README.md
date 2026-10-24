@@ -49,7 +49,7 @@ Files over 50 MB never go in the repo; they are attached to a GitHub Release (ta
 | 13 | [Mondulkiri (មណ្ឌលគិរី)](./13-mondulkiri/) | Kiriya (គិរីយា), Bunong woman | មណ្ឌលគិរី ឋានសួគ៌ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 14 | [Oddar Meanchey (ឧត្ដរមានជ័យ)](./14-oddar-meanchey/) | Udom (ឧត្ដម), Khmer man | ឧត្តរមានជ័យ ដែនដីដងរែក | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 15 | [Pailin (ប៉ៃលិន)](./15-pailin/) | Pich (ពេជ្រ), Khmer man | ប៉ៃលិន ទឹកដីត្បូងពេជ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
-| 16 | Preah Sihanouk (ព្រះសីហនុ) | — | — | — | ⏳ not started |
+| 16 | [Preah Sihanouk (ព្រះសីហនុ)](./16-preah-sihanouk/) | Khmer woman, island boat look (name TBD) | ព្រះសីហនុ ឋានសួគ៌ឆ្នេរសមុទ្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 17 | [Preah Vihear (ព្រះវិហារ)](./17-preah-vihear/) | Santi (សន្តិ), Khmer man | ព្រះវិហារ កន្លែងប្រវត្តិសាស្ត្រ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 18 | [Prey Veng (ព្រៃវែង)](./18-prey-veng/) | Thida (ធីតា), Khmer woman | ព្រៃវែង វាលស្រែបៃតង | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
 | 19 | [Pursat (ពោធិ៍សាត់)](./19-pursat/) | Vireak (វីរៈ), Khmer man | ពោធិ៍សាត់ ទឹកដីមនោរម្យ | avatar, song MP3, lyrics, guide facts | ✅ avatar picked |
