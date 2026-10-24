@@ -1,0 +1,15 @@
+Song: កំពង់ស្ពឺ ដែនដីព្រៃស្រល់ (Kampong Speu, Land of Pines)
+Province: Kampong Speu (កំពង់ស្ពឺ)
+Made with: Suno
+Suno song id: 79a326ca-c1bf-4fb0-ae2e-2c9bd66cdf63
+Suno link: https://suno.com/song/79a326ca-c1bf-4fb0-ae2e-2c9bd66cdf63
+Created: 2026-10-24T09:04:26Z (from the MP3's embedded Suno tag)
+Owner: sengtha (KOMSAN.IO), released through the CamboVerse Center
+Length: 3:45 (224.8 s)
+Audio: kampong-speu-pine-land.mp3 — the MP3 exactly as exported from Suno (embedded Suno id and creation date kept)
+Lyrics: lyrics.suno.txt is the text as given to Suno, with its [production notes]. lyrics.txt has the fixes the owner
+  approved (លំហែ, ម្ដង, គ្របដណ្ដប់) and the post-chorus line added (sung); production notes in brackets are omitted.
+  Focused checks with two models over the whole song confirmed every written line.
+Voice: a young male lead in the verses and choruses (all three models agreed); the closing hums in the last ~45 s were
+  heard as a higher, female-sounding backing voice.
+Licence: CC BY 4.0 — the owner confirmed on 2026-10-21 that the song rights allow this release.
