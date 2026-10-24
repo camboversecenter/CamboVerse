@@ -1,4 +1,4 @@
-# Look prompts — the Svay Rieng avatar (look C)
+# Look prompts — Sophea, the Svay Rieng avatar (look C)
 
 Note: the look C prompt says "a small mole just below her left eye"; the approved still put her two beauty marks
 beside the right side of her nose and on the left side of her chin. The face and body prompts below follow the still.

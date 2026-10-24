@@ -1,6 +1,6 @@
-# Svay Rieng (ស្វាយរៀង): guide facts for the Svay Rieng avatar
+# Svay Rieng (ស្វាយរៀង): guide facts for Sophea
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Sophea uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Culture and Fine Arts, provincial tourism office) before publishing, and
 add the source next to it. Never add prices, opening hours, border rules or phone numbers that can go out of date.
 
@@ -31,6 +31,6 @@ add the source next to it. Never add prices, opening hours, border rules or phon
 - Eat at clean, busy stalls and buy from local families; take rubbish home; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Sophea's song
 "ស្វាយរៀង ដែនដីទន្លេវ៉ៃគោ" (Svay Rieng, Land of the Waiko River): a warm welcome to the south-east. Lyrics:
 [song/lyrics.txt](./song/lyrics.txt), audio: [song/svay-rieng-waiko-river.mp3](./song/svay-rieng-waiko-river.mp3).

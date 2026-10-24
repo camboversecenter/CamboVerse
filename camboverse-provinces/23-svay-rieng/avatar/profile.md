@@ -1,7 +1,7 @@
-# The Svay Rieng avatar
+# Sophea (សោភា) — the Svay Rieng avatar
 
 - **Province:** Svay Rieng (ស្វាយរៀង), 23 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Sophea (សោភា), "graceful beauty", elegant like her look (owner's pick, 2026-10-24)
 - **Who she is:** a fictional young Khmer woman from Svay Rieng, about 24, clearly an adult. AI-generated; she is not a
   real person and is not based on anyone's likeness.
 - **Roles:** she represents Svay Rieng in anything: singer of the province song, tour guide, assistant, host and
