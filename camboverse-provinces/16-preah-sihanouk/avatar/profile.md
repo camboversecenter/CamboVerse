@@ -10,24 +10,24 @@
 - **Personality:** cheerful, sunny and bubbly; loves the beaches, island boat trips, the Ream mangroves, Kbal Chhay
   waterfall, sea sunsets and fresh seafood. Speaks Khmer first (polite ចាស) and English.
 - **Voice she sings with:** one bright young female voice. All 9 focused listens (three models) heard a woman.
-- **Face:** soft oval face with full rounded cheeks, thin round gold-rimmed glasses (always worn), freckles across her
-  nose, light-golden skin, shoulder-length wavy black hair with curtain bangs. Chosen to look clearly different from
-  the other avatars; she is the first woman avatar with glasses.
-- **Outfit (look B, owner pick 2026-10-24):** elbow-sleeve sky-blue-and-white striped cotton blouse, long white linen
-  trousers, white canvas shoes, a small woven straw bag.
-- **Setting:** the wooden deck of a small island boat on turquoise water, a green island with a white beach behind.
+- **Face (new, owner's pick 2026-10-24):** elegant oval face with high cheekbones, warm tan skin, a glossy black wavy
+  jaw-length bob with a deep side part, small pearl earrings, a bright open smile. Chosen to look clearly different from
+  the other avatars.
+- **Outfit (look A, owner pick 2026-10-24):** elbow-sleeve sea-blue silk blouse, long white Khmer silk sampot with a
+  thin silver border, pearl earrings; barefoot on the sand.
+- **Setting:** a quiet white-sand beach at golden sunset, turquoise waves and palm trees.
 
 ## Reference files
 | File | What it is |
 |---|---|
 | `face.jpg` | face reference, the one every new image is checked against (by eye) |
 | `body.jpg` | full-body sheet on a plain grey background |
-| `look-B-approved.jpg` | the approved look B still |
+| `look-A-approved.jpg` | the approved look A still |
 | `avatar.json` | persona, identity text, default outfit and rules for other agents ([../../SKILL.md](../../SKILL.md)) |
-| `look-prompt.md`, `options/prompt-B.txt` | the exact prompts of the official look |
+| `look-prompt.md`, `options/prompt-A.txt` | the exact prompts of the official look |
 
 ## Rules for new images of her
-- Send `face.jpg` with every prompt (plus `body.jpg` only for the default outfit) and compare the face by eye; she
-  always wears her round gold glasses, and keeps her freckles and full cheeks (image models tend to slim her face).
+- Send `face.jpg` with every prompt (plus `body.jpg` only for the default outfit) and compare the face by eye; keep
+  her wavy jaw-length bob with the side part and her high cheekbones.
 - No conical hats, no swimwear, no text, logos or flags, no real landmarks, casinos or high-rises; use generic
   beaches, islands, mangroves and waterfalls. A life jacket on every boat. A microphone only while she sings.

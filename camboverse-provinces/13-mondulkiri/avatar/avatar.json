@@ -29,13 +29,13 @@
   "refs": {
     "face": "face.jpg",
     "body": "body.jpg",
-    "approved": "look-E-approved.jpg"
+    "approved": "look-D-approved.jpg"
   },
-  "identity": "A fictional young Indigenous Bunong woman from the Mondulkiri highlands of Cambodia, mid-20s and clearly an adult; slim oval face, defined cheekbones, narrow chin, the exact eye shape and spacing, slim nose, lips and eyebrows of the reference; warm medium-deep brown skin; straight black hair (default: centre-parted and pulled neatly back). Do not make her face rounder or younger, do not widen the nose, do not lighten or darken her skin.",
-  "defaultOutfit": "a contemporary Bunong hand-woven ankle-length wrap skirt in deep indigo-black with red, white and yellow geometric bands; a fitted long-sleeve black cotton blouse with narrow red woven trim at the collar and cuffs; red, white and yellow glass-bead necklaces; slim brass bangles; barefoot.",
+  "identity": "A fictional young Indigenous Bunong woman from the Mondulkiri highlands of Cambodia, about 23 and clearly an adult, beautiful; a youthful face with a softly rounded jaw, the exact almond eye shape and spacing, nose, lips and shy sweet smile of the reference; deep brown skin; long straight black hair with a straight full fringe (bangs) to her eyebrows, worn loose past her shoulders. Do not change her face shape, do not make her look younger (she must look clearly over 18) or older, do not lighten her skin, do not change her fringe.",
+  "defaultOutfit": "a fitted long-sleeve black hand-woven Bunong top with bands of red, white and yellow woven geometric patterns at the neckline, cuffs and hem; an ankle-length black hand-woven Bunong wrap skirt with red, white and yellow geometric bands; a short necklace of red and white beads; barefoot.",
   "voice": "one bright, clear, youthful female singing voice (sung, not rap)",
   "rules": [
-    "She is an adult (mid-20s) and must look clearly over 18.",
+    "She is an adult (about 23) and must look clearly over 18.",
     "Modest clothing: chest, shoulders and midriff covered; nothing see-through or sexualised.",
     "Bunong dress is worn with dignity: real hand-woven textile, no costume extras such as feathers, face paint or headdresses, no stereotypes, never as a joke.",
     "No conical hats.",

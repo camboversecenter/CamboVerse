@@ -83,3 +83,10 @@ proposed to the `komsan-music` skill (in `sengtha/ivideo`).
 - **Gender split on one voice.** Gemini 3.5/3.8 flash heard the chorus as a woman (even in verse→chorus A/B clips);
   3.1 pro heard one man throughout; pitch on the full mix was useless (bass). The owner settled it: only male. When
   models disagree on gender, ask the owner early — they know how the song was made.
+
+## New faces for Mondulkiri and Preah Sihanouk (2026-10-24)
+- The owner replaced two avatars' faces and looks, keeping their names: **Kiriya** (Mondulkiri) is now look D (long
+  straight hair with a full fringe, hand-woven Bunong dress, misty pine forest) and **Morakot** (Preah Sihanouk) is now
+  look A (wavy jaw-length bob, sea-blue silk and white sampot, sunset beach). Old look files and Kiriya's café look were
+  removed, because they show the previous faces.
+- Kiriya's first two face takes looked too young; the third, clearly adult, was kept. Watch for this in new images of her.

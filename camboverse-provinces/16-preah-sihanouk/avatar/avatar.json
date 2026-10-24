@@ -29,10 +29,10 @@
   "refs": {
     "face": "face.jpg",
     "body": "body.jpg",
-    "approved": "look-B-approved.jpg"
+    "approved": "look-A-approved.jpg"
   },
-  "identity": "A fictional young Khmer woman from Preah Sihanouk, about 24 and clearly an adult, beautiful; a soft oval face with full rounded cheeks, the exact eye shape and spacing, nose, lips and sweet wide smile of the reference; thin round gold-rimmed glasses (always worn); a light dusting of freckles across her nose; light-golden skin; shoulder-length wavy black hair with soft curtain bangs. Do not change her face shape, do not slim her face, do not remove or change the glasses or freckles, do not make her look younger or older, do not change her skin tone.",
-  "defaultOutfit": "an elbow-sleeve sky-blue-and-white striped cotton blouse; long white linen trousers; white canvas shoes; a small woven straw shoulder bag; thin round gold-rimmed glasses.",
+  "identity": "A fictional young Khmer woman from Preah Sihanouk, about 24 and clearly an adult, beautiful; an elegant oval face with high cheekbones, the exact eye shape and spacing, nose, lips and bright open smile of the reference; warm tan skin; glossy black wavy jaw-length bob with a deep side part, one side tucked behind her ear; small pearl earrings. Do not change her face shape, do not lengthen or straighten her bob, do not make her look younger or older, do not change her skin tone.",
+  "defaultOutfit": "an elbow-sleeve sea-blue silk blouse; a long white Khmer silk sampot skirt with a thin silver border; small pearl earrings; flat sandals (barefoot on the beach).",
   "voice": "one bright young female singing voice",
   "rules": [
     "She is an adult (about 24) and must look clearly over 18.",

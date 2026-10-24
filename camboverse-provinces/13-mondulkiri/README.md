@@ -4,7 +4,7 @@
 |---|---|
 | **Song** | មណ្ឌលគិរី ឋានសួគ៌ (Mondulkiri, Paradise), 3:55, tropical acoustic pop |
 | **Avatar** | **Kiriya (គិរីយា)**, a fictional AI avatar: a young Bunong woman from the Mondulkiri highlands. She represents Mondulkiri in anything: singer, tour guide, assistant, host, ambassador |
-| **Status** | ✅ avatar picked (look E), lyrics checked, guide facts drafted (to verify) |
+| **Status** | ✅ avatar picked (look D), lyrics checked, guide facts drafted (to verify) |
 
 <p><img src="avatar/face.jpg" width="240" alt="Face reference of Kiriya, the fictional Mondulkiri avatar"> <img src="avatar/body.jpg" width="240" alt="Full-body sheet of Kiriya in Bunong dress"></p>
 
@@ -18,12 +18,12 @@ elephants in a conservation project, local coffee and campfire nights. Listen: [
 ## Kiriya
 She is the face of Mondulkiri and can represent the province in anything: she sings its song, guides visitors,
 answers questions, and hosts its events, lessons, campaigns and local products. Her
-guide facts are in [province.md](./province.md). She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: an indigo-black wrap skirt with
-red, white and yellow bands, a black blouse with red trim, bead necklaces and brass bangles. The owner approved this
+guide facts are in [province.md](./province.md). She sings with one bright, clear female voice. Her outfit draws on Bunong hand-weaving: a black hand-woven top and wrap skirt with
+red, white and yellow geometric bands, and a red-and-white bead necklace. The owner approved this
 dress for the province. Profile and rules: [avatar/profile.md](./avatar/profile.md).
 
 ## Files
-- `avatar/`: face reference, full-body sheet, approved look, other looks (`looks/`), prompts,
+- `avatar/`: face reference, full-body sheet, approved look, prompts,
   profile, `avatar.json`. To use her in new images (same face, any outfit), follow [../SKILL.md](../SKILL.md).
 - `province.md`: guide and assistant facts (places, people, travel, responsible tourism)
 - `song/`: the song ([mondulkiri-paradise.mp3](./song/mondulkiri-paradise.mp3), 5.3 MB, as exported from Suno), lyrics (as
