@@ -1,7 +1,7 @@
-# The Preah Sihanouk avatar
+# Morakot (មរកត) — the Preah Sihanouk avatar
 
 - **Province:** Preah Sihanouk (ព្រះសីហនុ), 16 of 25
-- **Name:** to be chosen by the owner
+- **Name:** Morakot (មរកត), "emerald", for the turquoise-green sea around the islands (owner's pick, 2026-10-24)
 - **Who she is:** a fictional young Khmer woman from Preah Sihanouk, about 24, clearly an adult. AI-generated; she is
   not a real person and is not based on anyone's likeness.
 - **Roles:** she represents Preah Sihanouk in anything: singer of the province song, tour guide, assistant, host and

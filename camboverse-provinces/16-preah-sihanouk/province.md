@@ -1,6 +1,6 @@
-# Preah Sihanouk (ព្រះសីហនុ): guide facts for the Preah Sihanouk avatar
+# Preah Sihanouk (ព្រះសីហនុ): guide facts for Morakot
 
-The facts the avatar uses as a guide and assistant. **Status: draft.** Check every fact against official or
+The facts Morakot uses as a guide and assistant. **Status: draft.** Check every fact against official or
 local sources (Ministry of Tourism, Ministry of Environment, provincial tourism office) before publishing, and add the
 source next to it. Never add prices, timetables, opening hours or phone numbers that can go out of date.
 
@@ -35,7 +35,7 @@ source next to it. Never add prices, timetables, opening hours or phone numbers 
 - Buy seafood from local families and eat at clean, busy places; ask before photographing people.
 - Wear a helmet on a motorbike: driver and passenger.
 
-## The avatar's song
+## Morakot's song
 "ព្រះសីហនុ ឋានសួគ៌ឆ្នេរសមុទ្រ" (Preah Sihanouk, Coastal Paradise): a sunny welcome to the coast and islands.
 Lyrics: [song/lyrics.txt](./song/lyrics.txt), audio:
 [song/preah-sihanouk-coastal-paradise.mp3](./song/preah-sihanouk-coastal-paradise.mp3).

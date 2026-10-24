@@ -1,4 +1,4 @@
-# Look prompts — the Preah Sihanouk avatar (look B)
+# Look prompts — Morakot, the Preah Sihanouk avatar (look B)
 
 ## Look B (as generated)
 ```
