@@ -129,6 +129,10 @@ output/room-mesh-v1/
 # replace a demo under these names.
 !public/models/angkor-wat.splat
 !public/models/wat-phnom.splat
+!public/models/captures/wat-phnom-clock-v1/normal.splat
+!public/models/captures/wat-phnom-clock-v1/ultra.splat
+!public/models/captures/wat-phnom-staircase-v1/normal.splat
+!public/models/captures/wat-phnom-staircase-v1/ultra.splat
 *.ksplat
 *.spz
 *.ply

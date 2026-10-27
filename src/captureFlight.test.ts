@@ -2,8 +2,31 @@ import { describe, expect, it } from 'vitest';
 import { SPOTS } from './spots';
 import { advanceCaptureFlight, captureSpacePress, toggleCaptureFlight, type CaptureFlightState } from './captureFlight';
 import { areaEyePosition, areaGroundHeight } from './captureAreaWalk';
+import {captureWalkPosition,projectCaptureWalk} from './captureWalk';
 const area=SPOTS.find(s=>s.id==='wat-phnom')!.pois!.find(p=>p.id==='flower-clock')!.capture!.walkAround!;
 const idle={yaw:0,forward:0,side:0,vertical:0};
+const path=SPOTS.find(s=>s.id==='wat-phnom')!.pois!.find(p=>p.id==='naga-staircase')!.capture!.walk!;
+
+describe('Naga staircase flight',()=>{
+  it('takes off at the stair scale, hovers and rises only on request',()=>{
+    let state=toggleCaptureFlight(path,{mode:'walking',position:captureWalkPosition(path,.5)});
+    const height=state.position[1];
+    expect(height-captureWalkPosition(path,.5)[1]).toBeCloseTo(.65*(path.eyeHeight??.3)/1.2);
+    for(let i=0;i<100;i++)state=advanceCaptureFlight(path,state,idle,1/60);
+    expect(state.position[1]).toBe(height);
+    state=advanceCaptureFlight(path,state,{...idle,vertical:1},.05);
+    expect(state.position[1]).toBeGreaterThan(height);
+  });
+  it('lands outside the route back onto the stairs at the correct eye height',()=>{
+    let state:CaptureFlightState={mode:'flying',position:[2,4,-1]};
+    const target=projectCaptureWalk(path,2,-1);
+    state=toggleCaptureFlight(path,state);
+    for(let i=0;i<240;i++)state=advanceCaptureFlight(path,state,idle,1/60);
+    expect(state.mode).toBe('walking');
+    expect(state.position).toEqual(target.position);
+    expect(Math.abs(target.lateral)).toBeLessThanOrEqual(path.lateralLimit!);
+  });
+});
 
 describe('explicit clock flight and Space gestures',()=>{
   it('jumps on one press and toggles only on a quick distinct second press',()=>{

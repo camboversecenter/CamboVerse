@@ -26,6 +26,15 @@ test('catches signed URLs, passwords in URLs, and embedded credentials',()=>{
 test('replacing an allowed procedural demo with capture bytes is rejected',()=>{
   assert.ok(inspectContent('public/models/angkor-wat.splat',Buffer.from([0,1,2,3])).findings.some(f=>f.kind.includes('replaced')));
 });
+
+test('only the four reviewed finished captures may be published, with pinned content',()=>{
+  for(const name of ['clock','staircase'])for(const tier of ['normal','ultra']){
+    const path=`public/models/captures/wat-phnom-${name}-v1/${tier}.splat`;
+    assert.equal(privatePath(path),false);
+    assert.ok(inspectContent(path,Buffer.from([0,1,2,3])).findings.some(f=>f.kind.includes('reviewed preview')));
+  }
+  assert.equal(privatePath('public/models/captures/wat-phnom-clock-v1/raw.splat'),true);
+});
 test('requires output-free notebooks, including Windows BOM JSON',()=>{
   const clean={cells:[{cell_type:'code',execution_count:null,outputs:[],source:['print(1)']}]};
   assert.equal(inspectContent('train.ipynb',Buffer.from('\uFEFF'+JSON.stringify(clean))).findings.length,0);

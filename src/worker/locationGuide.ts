@@ -3,6 +3,7 @@ import { locationGuideContext, savedLocationAnswer } from '../locationGuide';
 export async function handleLocationGuide(body: {
   experienceId?: unknown; locationId?: unknown; objectId?: unknown; question?: unknown; lang?: unknown;
 }, env: { ANTHROPIC_API_KEY?: string }): Promise<Response> {
+  if(import.meta.env.PROD&&body.experienceId==='room-360')return Response.json({error:'This local preview is not published'},{status:404});
   if (typeof body.experienceId !== 'string' || typeof body.locationId !== 'string'
     || (body.objectId !== undefined && typeof body.objectId !== 'string')
     || (body.question !== undefined && (typeof body.question !== 'string' || body.question.length > 500))) {

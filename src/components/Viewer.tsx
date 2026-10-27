@@ -340,6 +340,7 @@ function Nav({
         input={walkInput}
         path={capture.walk}
         lookLimits={lookLimits}
+        onFlightChange={onFlightChange}
       />
     ) : <FirstPersonControls input={walkInput} terrainWalking={terrainWalking} start={walkStart} />
   ) : (

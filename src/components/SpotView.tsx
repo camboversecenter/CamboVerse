@@ -175,7 +175,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
 
       {capture && walking && <div className={`capture-step-nav${flightMode==='flying'?' flight-active':''}`}>
         {flightMode==='walking'&&<button title="Jump (Space)" onPointerDown={e=>e.preventDefault()} onClick={() => { walkInput.current.jump = true; }}>↑ Jump</button>}
-        {capture.walkAround&&<CaptureFlightButtons input={walkInput} mode={flightMode}/>}
+        {(capture.walkAround||capture.walk)&&<CaptureFlightButtons input={walkInput} mode={flightMode}/>}
       </div>}
 
       {capture?.cleanup && <div className="capture-quality" role="group" aria-label="Capture view">

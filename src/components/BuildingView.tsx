@@ -243,9 +243,10 @@ export function BuildingView({
   // the page. It opens by default you arrive wanting to know what this is  
   // but it has to get out of the way in one tap.
   const [info, setInfo] = useState(true);
-  const [captureOpen,setCaptureOpen]=useState(!!building.capture);
+  const captureAvailable=!!building.capture&&(import.meta.env.DEV||!building.capture.normal.includes('/local/'));
+  const [captureOpen,setCaptureOpen]=useState(captureAvailable);
   const [room, _setRoom] = useState<string | null>(initialRoom);
-  useEffect(()=>setCaptureOpen(!!building.capture),[building.id,building.capture]);
+  useEffect(()=>setCaptureOpen(captureAvailable),[building.id,captureAvailable]);
 
   const setRoom = (r: string | null) => {
     _setRoom(r);
@@ -380,7 +381,7 @@ export function BuildingView({
       <button className="bld-spin" onClick={() => setSpin((v) => !v)}>
         {spin ? "⏸ Stop turning" : "▶ Turn"}
       </button>
-      {building.capture&&<button className="bld-capture-open" onClick={()=>setCaptureOpen(true)}>◍ Real 3D capture</button>}
+      {captureAvailable&&<button className="bld-capture-open" onClick={()=>setCaptureOpen(true)}>◍ Real 3D capture</button>}
 
       {!info && (
         <button className="bld-show" onClick={() => setInfo(true)}>

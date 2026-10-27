@@ -1,18 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, type MutableRefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { MathUtils, PerspectiveCamera } from "three";
-import { advanceCaptureJump, advanceCaptureWalk, captureWalkLook, captureWalkPosition, type CaptureJumpState } from "../captureWalk";
+import { advanceCaptureJump, advanceCaptureWalk, captureWalkLook, captureWalkPosition,projectCaptureWalk, type CaptureJumpState } from "../captureWalk";
+import {advanceCaptureFlight,toggleCaptureFlight,captureSpacePress,type CaptureFlightMode,type CaptureFlightState} from '../captureFlight';
 import type { CaptureWalkPath, PoiCapture } from "../spots";
 import type { WalkInput } from "./FirstPersonControls";
 
 /** Continuous walking on the corrected, estimated staircase surface.
  * Camera pitch affects looking only; eye height follows the ground profile. */
 export function CaptureWalkControls({
-  input, path, lookLimits,
+  input, path, lookLimits,onFlightChange,
 }: {
   input: MutableRefObject<WalkInput>;
   path: CaptureWalkPath;
   lookLimits?: NonNullable<PoiCapture['cleanup']>['lookLimits'];
+  onFlightChange?:(mode:CaptureFlightMode)=>void;
 }) {
   const camera = useThree(state => state.camera);
   const gl = useThree(state => state.gl);
@@ -24,6 +26,9 @@ export function CaptureWalkControls({
   const targetYaw = useRef(path.startYaw ?? 0);
   const pitch = useRef(-0.16);
   const targetPitch = useRef(-0.16);
+  const flight=useRef<CaptureFlightState>({mode:'walking',position:captureWalkPosition(path,0)});
+  const lastSpace=useRef(-Infinity),reportedMode=useRef<CaptureFlightMode>('walking');
+  const report=useRef(onFlightChange);report.current=onFlightChange;
 
   useLayoutEffect(() => {
     route.current = { progress: 0, lateral: 0 };
@@ -31,6 +36,8 @@ export function CaptureWalkControls({
     input.current.move = { x: 0, y: 0 };
     input.current.look = { dx: 0, dy: 0 };
     input.current.jump = false;
+    input.current.flyToggle=false;input.current.flyVertical=0;input.current.flyStep=0;
+    flight.current={mode:'walking',position:captureWalkPosition(path,0)};reportedMode.current='walking';report.current?.('walking');
     yaw.current = targetYaw.current = path.startYaw ?? 0;
     pitch.current = targetPitch.current = -0.16;
     camera.position.set(...captureWalkPosition(path, 0));
@@ -62,6 +69,7 @@ export function CaptureWalkControls({
       input.current.look = { dx: 0, dy: 0 };
       input.current.jump = false;
       jump.current = null;
+      lastSpace.current=-Infinity;input.current.flyToggle=false;input.current.flyVertical=0;input.current.flyStep=0;
     };
     const onDown = (event: KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey || event.altKey) { reset(); return; }
@@ -70,9 +78,13 @@ export function CaptureWalkControls({
         // Let a focused button retain its native Space activation.
         if (event.target instanceof HTMLElement && event.target.closest('button, a, [role="button"]')) return;
         event.preventDefault();
-        if (!event.repeat) input.current.jump = true;
+        const tap=captureSpacePress(lastSpace.current,performance.now(),event.repeat);lastSpace.current=tap.last;
+        if(tap.action==='toggle-flight'){input.current.flyToggle=true;input.current.jump=false;}
+        else if(tap.action==='jump'&&flight.current.mode==='walking')input.current.jump=true;
+        keys.current.add('Space');
         return;
       }
+      if(event.code==='ShiftLeft'||event.code==='ShiftRight'){keys.current.add(event.code);return;}
       if (!movementKeys.has(event.code)) return;
       event.preventDefault();
       keys.current.add(event.code);
@@ -97,7 +109,7 @@ export function CaptureWalkControls({
     const dt = Math.min(delta, 0.05);
     const look = input.current.look;
     const nextLook = captureWalkLook(targetYaw.current-look.dx*0.0027,
-      targetPitch.current-look.dy*0.0027, lookLimits);
+      targetPitch.current-look.dy*0.0027, flight.current.mode==='walking'?lookLimits:{minPitch:-1.15,maxPitch:.8});
     targetYaw.current = nextLook.yaw;
     targetPitch.current = nextLook.pitch;
     look.dx = look.dy = 0;
@@ -111,6 +123,16 @@ export function CaptureWalkControls({
     velocity.current.side = MathUtils.damp(velocity.current.side, side, 18, dt);
     if (forward === 0 && Math.abs(velocity.current.forward) < 0.001) velocity.current.forward = 0;
     if (side === 0 && Math.abs(velocity.current.side) < 0.001) velocity.current.side = 0;
+    if(input.current.flyToggle){flight.current=toggleCaptureFlight(path,flight.current);input.current.flyToggle=false;input.current.jump=false;jump.current=null;}
+    if(flight.current.mode!=='walking'){
+      const vertical=Number(keys.current.has('Space'))-Number(keys.current.has('ShiftLeft')||keys.current.has('ShiftRight'))+(input.current.flyVertical??0);
+      flight.current=advanceCaptureFlight(path,flight.current,{yaw:yaw.current,forward:velocity.current.forward,side:velocity.current.side,vertical,step:input.current.flyStep},dt);
+      camera.position.set(...flight.current.position);
+      if(flight.current.mode==='walking'){
+        const p=projectCaptureWalk(path,flight.current.position[0],flight.current.position[2]);route.current={progress:p.progress,lateral:p.lateral};
+        jump.current={y:p.position[1],velocity:0,grounded:true};velocity.current={forward:0,side:0};
+      }
+    }else{
     route.current = advanceCaptureWalk(path, route.current.progress, route.current.lateral,
       yaw.current, velocity.current.forward, velocity.current.side, dt);
     const [x, restingY, z] = captureWalkPosition(path, route.current.progress, route.current.lateral);
@@ -118,6 +140,10 @@ export function CaptureWalkControls({
       restingY, input.current.jump ?? false, dt);
     input.current.jump = false;
     camera.position.set(x, jump.current.y, z);
+    flight.current.position=[x,jump.current.y,z];
+    }
+    input.current.jump=false;input.current.flyStep=0;
+    if(flight.current.mode!==reportedMode.current){reportedMode.current=flight.current.mode;report.current?.(flight.current.mode);}
     camera.rotation.set(pitch.current, yaw.current, 0, "YXZ");
   });
 

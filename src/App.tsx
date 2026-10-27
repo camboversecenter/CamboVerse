@@ -30,10 +30,10 @@ import { templateById } from "./ceremony";
 import { SPOTS } from "./spots";
 
 const ProvinceSongs = lazy(() => import('./components/ProvinceSongs'));
-const PanoramaTour = lazy(() => import('./components/PanoramaTour'));
+const PanoramaTour = import.meta.env.DEV ? lazy(() => import('./components/PanoramaTour')) : null;
 
 export function App() {
-  const [panoramaOpen,setPanoramaOpen] = useState(() => new URLSearchParams(window.location.search).get('view') === '360-test');
+  const [panoramaOpen,setPanoramaOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(window.location.search).get('view') === '360-test');
   const [spotId, setSpotId] = useState<string | null>(null);
   const [provinceName, setProvinceName] = useState<string | null>(null);
   const [provinceSongsOpen, setProvinceSongsOpen] = useState(() => new URLSearchParams(window.location.search).get('view') === 'province-songs');
@@ -110,7 +110,7 @@ export function App() {
 
   return (
     <>
-      {panoramaOpen ? (
+      {panoramaOpen && PanoramaTour ? (
         <Suspense fallback={<p role="status">Loading 360° test tour…</p>}><PanoramaTour onBack={() => setPanoramaOpen(false)} /></Suspense>
       ) : provinceSongsOpen ? (
         <Suspense fallback={<p role="status" style={{ padding: 24 }}>Loading province collection…</p>}>
@@ -220,7 +220,7 @@ export function App() {
           onOpenCeremonies={() => setCeremoniesOpen(true)}
           onOpenBuildings={() => setBuildingsOpen(true)}
           onOpenProvinceSongs={() => setProvinceSongsOpen(true)}
-          onOpenPanorama={() => setPanoramaOpen(true)}
+          onOpenPanorama={import.meta.env.DEV ? () => setPanoramaOpen(true) : undefined}
         />
       )}
 

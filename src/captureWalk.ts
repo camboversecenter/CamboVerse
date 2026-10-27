@@ -62,6 +62,14 @@ export function captureWalkPosition(
   ];
 }
 
+/** Project any horizontal position back onto the supported stair route. */
+export function projectCaptureWalk(path:CaptureWalkPath,x:number,z:number) {
+  const dx=path.end[0]-path.start[0],dz=path.end[2]-path.start[2],length=Math.hypot(dx,dz)||1;
+  const progress=MathUtils.clamp(((x-path.start[0])*dx+(z-path.start[2])*dz)/(length*length),0,1);
+  const lateral=MathUtils.clamp((-(x-path.start[0])*dz+(z-path.start[2])*dx)/length,-(path.lateralLimit??.18),path.lateralLimit??.18);
+  return {progress,lateral,position:captureWalkPosition(path,progress,lateral)};
+}
+
 /** Camera-relative walking on the calibrated surface strip. Looking up/down
  * never changes travel height; only the floor profile determines camera Y. */
 export function advanceCaptureWalk(

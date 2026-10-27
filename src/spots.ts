@@ -946,7 +946,9 @@ const SITE_DEFINITIONS: Spot[] = [
   },
 ];
 
+import { publishedHeritage } from './publishedHeritage';
+
 export const SPOTS: Spot[] = SITE_DEFINITIONS.map((site) => ({
   ...site,
   pois: site.pois?.map((poi) => ({ ...poi, ...(site.heritageUltraModel ? HERITAGE_HOTSPOTS[site.id]?.[poi.id] : undefined) })),
-}));
+})).map(site=>import.meta.env.PROD?publishedHeritage(site):site);

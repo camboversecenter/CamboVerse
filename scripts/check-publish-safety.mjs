@@ -12,6 +12,12 @@ const demoClouds=new Map([
   ['public/models/angkor-wat.splat','4a825020c28b573b3c885c63337b7310746b52b7b6fe3616ca849dd467d88224'],
   ['public/models/wat-phnom.splat','747608e9e4f48165eaa68e739e8444866516350c5c7b33d1241c11981ccb5d20'],
 ]);
+const releasedCaptures=new Map([
+  ['public/models/captures/wat-phnom-clock-v1/normal.splat','f0b9d9ccb7c7b8b406ca30db3f9213d62567b983c53e47c6dafc79455a8336d9'],
+  ['public/models/captures/wat-phnom-clock-v1/ultra.splat','d3dc2f0dc6fbb5cf052f5058f1911342d65d807d5deac61a7959ea55dc0ef302'],
+  ['public/models/captures/wat-phnom-staircase-v1/normal.splat','2d2c3391ce392cb10a6083307cc8f737a7c4d9748143a87abb7f8f3936f9b8b9'],
+  ['public/models/captures/wat-phnom-staircase-v1/ultra.splat','ddcbc6502d068a7933abbaee6b792a8ca454c95c2173548af853b45abf9aa948'],
+]);
 export function privatePath(path) {
   const p=path.replaceAll('\\','/');
   if(/^(?:output|tmp|temp|captures|training|datasets|downloads|\.codex-tools|\.codex|\.claude|NUM status|num-status-split|node_modules|dist|\.wrangler)\//i.test(p))return true;
@@ -22,7 +28,7 @@ export function privatePath(path) {
   if(/^(?:\.env(?:\..*)?|\.dev\.vars(?:\..*)?)$/i.test(name)&&!name.endsWith('.example'))return true;
   if(/^(?:kaggle|credentials|auth)\.json$|service[-_]account.*\.json$|^(?:id_rsa|id_ed25519|\.npmrc|\.pypirc|\.netrc)$|^(?:cookies|storage-?state).*(?:\.json|\.txt)$/i.test(name))return true;
   if(!p.includes('/')&&/\.(?:docx|pptx|pdf|jpe?g|png|webp|heic|tiff?)$/i.test(p))return true;
-  return privateSuffix.test(p)&&!demoClouds.has(p);
+  return privateSuffix.test(p)&&!demoClouds.has(p)&&!releasedCaptures.has(p);
 }
 
 const patterns=[
@@ -54,6 +60,7 @@ export function scanText(text) {
 
 export function inspectContent(path,buffer) {
   const findings=[];
+  if(releasedCaptures.has(path)&&createHash('sha256').update(buffer).digest('hex')!==releasedCaptures.get(path))findings.push({kind:'Published capture differs from the reviewed preview',line:0});
   if(demoClouds.has(path)&&createHash('sha256').update(buffer).digest('hex')!==demoClouds.get(path))findings.push({kind:'Synthetic demo cloud was replaced; review publication permission',line:0});
   if(buffer.length>100*1024*1024)findings.push({kind:'File exceeds 100 MiB; use reviewed asset storage',line:0});
   if(buffer.subarray(0,8000).includes(0))return {findings,text:false};

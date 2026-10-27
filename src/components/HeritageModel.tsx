@@ -10,7 +10,7 @@ export function HeritageModel({ url = MODEL_URL, float = false }: { url?: string
   // decoder, so no third-party decoder download is needed; other assets keep
   // their existing loading path.
   const meshopt = ['/models/local/banteay-chhmar-refined-v4/', '/models/local/sambor-prei-kuk-refined-v2/', '/models/local/wat-phnom-refined-v4/', '/models/local/royal-palace-refined-v2/', '/models/local/oudong-refined-v2/', '/models/local/bayon-refined-v2/', '/models/local/angkor-wat-refined-v3/', '/models/local/ta-prohm-refined-v2/', '/models/local/banteay-srei-refined-v2/', '/models/local/preah-khan-refined-v2/', '/models/local/beng-mealea-refined-v2/', '/models/local/phnom-kulen-refined-v2/', '/models/local/phnom-kulen-region-v3/', '/models/local/phnom-kulen-waterfall-v3/', '/models/local/pre-rup-refined-v2/'].some(prefix => url.startsWith(prefix));
-  const { scene } = useGLTF(url, false, meshopt);
+  const { scene } = useGLTF(url, false, meshopt || url.startsWith('/models/heritage/'));
   const ref = useRef<Group>(null);
   // Enable shadows on the model's meshes (once per loaded scene).
   useMemo(() => {

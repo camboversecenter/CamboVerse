@@ -1,0 +1,31 @@
+{
+  "scope": "User-authorized production web previews, 2026-10-27; not raw capture datasets",
+  "sources": "Existing cleaned trained captures and authored Wat Phnom model; original archives, training images and checkpoints remain private.",
+  "license_status": "Capture archive licence not inferred by this preview publication; provenance review remains separate.",
+  "files": {
+    "public/models/captures/wat-phnom-clock-v1/normal.splat": {
+      "sha256": "f0b9d9ccb7c7b8b406ca30db3f9213d62567b983c53e47c6dafc79455a8336d9",
+      "bytes": 5760000
+    },
+    "public/models/captures/wat-phnom-clock-v1/ultra.splat": {
+      "sha256": "d3dc2f0dc6fbb5cf052f5058f1911342d65d807d5deac61a7959ea55dc0ef302",
+      "bytes": 7898656
+    },
+    "public/models/captures/wat-phnom-staircase-v1/normal.splat": {
+      "sha256": "2d2c3391ce392cb10a6083307cc8f737a7c4d9748143a87abb7f8f3936f9b8b9",
+      "bytes": 5759200
+    },
+    "public/models/captures/wat-phnom-staircase-v1/ultra.splat": {
+      "sha256": "ddcbc6502d068a7933abbaee6b792a8ca454c95c2173548af853b45abf9aa948",
+      "bytes": 14737216
+    },
+    "public/models/heritage/wat-phnom-v4/normal.glb": {
+      "sha256": "04edbef8331ec90b980561b13eea89e2910a527b2ebfd5dcca7693791b55ad03",
+      "bytes": 1704792
+    },
+    "public/models/heritage/wat-phnom-v4/ultra.glb": {
+      "sha256": "c2e23d63c09bf9bad3df55ad302b71c29c60b8436a03b1bc792139702493aac9",
+      "bytes": 3885240
+    }
+  }
+}

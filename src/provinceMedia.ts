@@ -1,33 +1,28 @@
-import battambang from '../camboverse-provinces/03-battambang/avatar/avatar.json';
-import kampongThom from '../camboverse-provinces/07-kampong-thom/avatar/avatar.json';
-import mondulkiri from '../camboverse-provinces/13-mondulkiri/avatar/avatar.json';
-import battambangFace from '../camboverse-provinces/03-battambang/avatar/face.jpg';
-import battambangBody from '../camboverse-provinces/03-battambang/avatar/body.jpg';
-import battambangLook from '../camboverse-provinces/03-battambang/avatar/look-D-approved.jpg';
-import battambangSong from '../camboverse-provinces/03-battambang/song/battambang-beloved.mp3';
-import battambangLyrics from '../camboverse-provinces/03-battambang/song/lyrics.txt?raw';
-import battambangRights from '../camboverse-provinces/03-battambang/song/rights.txt?raw';
-import kampongThomFace from '../camboverse-provinces/07-kampong-thom/avatar/face.jpg';
-import kampongThomBody from '../camboverse-provinces/07-kampong-thom/avatar/body.jpg';
-import kampongThomLook from '../camboverse-provinces/07-kampong-thom/avatar/look-D-approved.jpg';
-import kampongThomSong from '../camboverse-provinces/07-kampong-thom/song/kampong-thom-shelter-of-the-heart.mp3';
-import kampongThomLyrics from '../camboverse-provinces/07-kampong-thom/song/lyrics.txt?raw';
-import kampongThomRights from '../camboverse-provinces/07-kampong-thom/song/rights.txt?raw';
-import mondulkiriFace from '../camboverse-provinces/13-mondulkiri/avatar/face.jpg';
-import mondulkiriBody from '../camboverse-provinces/13-mondulkiri/avatar/body.jpg';
-import mondulkiriLook from '../camboverse-provinces/13-mondulkiri/avatar/look-E-approved.jpg';
-import mondulkiriSong from '../camboverse-provinces/13-mondulkiri/song/mondulkiri-paradise.mp3';
-import mondulkiriLyrics from '../camboverse-provinces/13-mondulkiri/song/lyrics.txt?raw';
-import mondulkiriRights from '../camboverse-provinces/13-mondulkiri/song/rights.txt?raw';
+import tracker from '../camboverse-provinces/README.md?raw';
 
-export const PROVINCE_MEDIA = [
-  { id: 'battambang', avatar: battambang, face: battambangFace, body: battambangBody, look: battambangLook,
-    song: battambangSong, lyrics: battambangLyrics, rights: battambangRights,
-    title: 'Battambang, Beloved', titleKm: 'បាត់ដំបងបណ្ដូលចិត្ត', mood: 'Funky 80s synth-pop', duration: '3:30' },
-  { id: 'kampong-thom', avatar: kampongThom, face: kampongThomFace, body: kampongThomBody, look: kampongThomLook,
-    song: kampongThomSong, lyrics: kampongThomLyrics, rights: kampongThomRights,
-    title: 'Kampong Thom, Shelter of the Heart', titleKm: 'កំពង់ធំជម្រំចិត្ត', mood: 'Khmer bedroom-pop with roneat', duration: '4:05' },
-  { id: 'mondulkiri', avatar: mondulkiri, face: mondulkiriFace, body: mondulkiriBody, look: mondulkiriLook,
-    song: mondulkiriSong, lyrics: mondulkiriLyrics, rights: mondulkiriRights,
-    title: 'Mondulkiri, Paradise', titleKm: 'មណ្ឌលគិរី ឋានសួគ៌', mood: 'Tropical acoustic pop', duration: '3:55' },
-];
+export interface ProvinceAvatar {
+  id:string;province:string;provinceKm:string;name:string;nameKm:string;
+  refs:{face:string;body:string;approved:string};
+  persona:{summary:string;greetingEn:string;greetingKm:string};
+}
+
+// Include the complete reviewed Git collection, rather than a three-item demo.
+const avatars=import.meta.glob<ProvinceAvatar>('../camboverse-provinces/*/avatar/avatar.json',{eager:true,import:'default'});
+const images=import.meta.glob<string>('../camboverse-provinces/*/avatar/*.{jpg,jpeg,png,webp}',{eager:true,query:'?url',import:'default'});
+const songs=import.meta.glob<string>('../camboverse-provinces/*/song/*.mp3',{eager:true,query:'?url',import:'default'});
+const text=import.meta.glob<string>('../camboverse-provinces/*/song/*.txt',{eager:true,query:'?raw',import:'default'});
+
+export const PROVINCE_MEDIA=Object.entries(avatars).sort(([a],[b])=>a.localeCompare(b)).map(([path,avatar])=>{
+  const base=path.slice(0,path.indexOf('/avatar/')),folder=base.split('/').at(-1)!;
+  const songEntry=Object.entries(songs).find(([key])=>key.startsWith(`${base}/song/`));
+  const trackerRow=tracker.split('\n').find(line=>line.includes(`](./${folder}/)`));
+  const titleKm=trackerRow?.split('|')[4]?.trim()??avatar.provinceKm;
+  const title=songEntry?.[0].split('/').at(-1)?.replace(/\.mp3$/,'').split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')??`${avatar.province} song`;
+  return {
+    id:folder.replace(/^\d+[-]/,''),folder,avatar,title,titleKm,
+    face:images[`${base}/avatar/${avatar.refs.face}`],body:images[`${base}/avatar/${avatar.refs.body}`],
+    look:images[`${base}/avatar/${avatar.refs.approved}`],thumbnail:`/province-thumbnails/${folder}.webp`,
+    song:songEntry?.[1]??'',lyrics:text[`${base}/song/lyrics.txt`]??'',rights:text[`${base}/song/rights.txt`]??'',
+  };
+});
+export const PROVINCE_INTRO_URL='https://github.com/camboversecenter/CamboVerse/blob/main/camboverse-provinces/video/camboverse-provinces-avatars-16x9.mp4';
