@@ -3,7 +3,7 @@ import { ARTIFACTS } from "../artifacts";
 import { ArtifactView } from "./ArtifactView";
 
 /**
- * "Khmer Traditional Life" — a gallery of everyday Khmer objects, tools, and
+ * "Khmer Traditional Life" a gallery of everyday Khmer objects, tools, and
  * buildings you can open and inspect in 3D (and VR). Educational: each teaches
  * what it is, how it works, and how it's used. Grows as more are contributed.
  */
@@ -22,7 +22,7 @@ export function ToolsView({ onBackToMap }: { onBackToMap: () => void }) {
         <span className="tools-title">🏺 Khmer Traditional Life</span>
       </div>
       <p className="tools-intro">
-        Everyday Khmer objects, tools, and buildings — in 3D. Tap one to explore it up close: orbit
+        Everyday Khmer objects, tools, and buildings in 3D. Tap one to explore it up close: orbit
         it, learn its parts, and see how it's used. View in VR with a headset.
       </p>
       <div className="tools-grid">

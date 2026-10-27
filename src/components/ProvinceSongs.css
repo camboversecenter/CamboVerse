@@ -1,0 +1,58 @@
+.province-songs { position: fixed; inset: 0; z-index: 40; overflow-y: auto; overscroll-behavior: contain; color-scheme: dark; color: #f2f3e8; background: radial-gradient(ellipse at 15% 0%, #29483f 0, transparent 55%), #101e1d; }
+.province-songs button, .province-songs a { -webkit-tap-highlight-color: transparent; }
+.province-songs button { min-height: 44px; cursor: pointer; font: inherit; }
+.province-songs button:focus-visible, .province-songs a:focus-visible, .province-songs summary:focus-visible { outline: 3px solid #e8d394; outline-offset: 4px; }
+.province-songs a { color: #b8dfc9; text-underline-offset: 4px; }
+.province-songs-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 14px; padding: max(12px, env(safe-area-inset-top)) 20px 12px; background: #122320f5; border-bottom: 1px solid #38544a; font-size: 13px; }
+.province-songs-header button { flex-shrink: 0; padding: 8px 14px; border: 1px solid #627e70; border-radius: 22px; color: #fff; background: #28483d; }
+.province-preview-badge { margin-left: auto; border: 1px solid #6f7962; padding: 5px 9px; border-radius: 20px; color: #e8d394; font-size: 11px; }
+.province-songs-content { max-width: 1080px; margin: auto; padding: 32px 24px 24px; }
+.province-songs-intro { margin-bottom: 26px; }
+.province-eyebrow { color: #bdd7b9; font-size: 11px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; line-height: 1.8; }
+.province-songs h1 { margin: 5px 0 12px; font-size: clamp(26px, 4vw, 40px); line-height: 1.2; letter-spacing: -.025em; }
+.province-songs-intro > p:last-child { color: #c2cfc7; line-height: 1.6; }
+.province-song-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+.province-song-picker button { display: flex; align-items: center; gap: 12px; padding: 12px; background: #21352e; border: 1px solid #435d50; border-radius: 15px; color: #edf1e8; text-align: left; }
+.province-song-picker button[aria-pressed="true"] { background: #38583e; border-color: #c3cc8e; box-shadow: inset 0 0 0 1px #c3cc8e; }
+.province-song-picker img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.province-song-picker strong, .province-song-picker small { display: block; }
+.province-song-picker strong { font-size: 14px; }
+.province-song-picker small { margin-top: 4px; color: #ced9cd; font-size: 12px; }
+.province-song-detail { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: start; }
+.province-character-stage { position: relative; overflow: hidden; display: grid; place-items: center; border-radius: 20px; border: 1px solid #5b6a54; background: #172b25; }
+.province-character-stage > img { display: block; width: 100%; height: 520px; object-fit: contain; }
+.province-character-stage > span { position: absolute; bottom: 12px; left: 12px; padding: 6px 10px; color: #fff; background: #10241de6; border-radius: 18px; font-size: 11px; }
+.province-image-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.province-image-picker button { flex: 1; padding: 7px 10px; border: 1px solid #546e5e; border-radius: 10px; color: #d9e6d8; background: #223b31; font-size: 12px; }
+.province-image-picker button[aria-pressed="true"] { color: #14271d; background: #c6d5ac; border-color: #c6d5ac; }
+.province-song-copy { min-width: 0; }
+.province-song-copy > .province-eyebrow { margin-top: 0; }
+.province-song-copy h2 { margin: 4px 0 16px; font-size: 30px; line-height: 1.5; }
+.province-song-copy h2 span { margin-left: 8px; color: #d7c99e; font-size: 22px; font-weight: 400; }
+.province-character-summary { color: #cad8cb; font-size: 14px; line-height: 1.8; }
+.province-music-card { padding: 20px; margin: 22px 0; border: 1px solid #64734e; border-radius: 16px; background: linear-gradient(125deg, #344e32, #21382d); }
+.province-music-card > .province-eyebrow { margin-top: 0; }
+.province-music-card h3 { margin: 8px 0; font-size: 20px; line-height: 1.8; }
+.province-music-card p { margin: 5px 0; font-size: 13px; line-height: 1.8; }
+.province-music-card .province-song-meta { color: #c9d7b8; font-size: 12px; }
+.province-music-card audio { display: block; width: 100%; height: 44px; margin: 18px 0 14px; }
+.province-music-card a { font-size: 12px; }
+.province-song-section { margin-top: 12px; border: 1px solid #3e584a; border-radius: 12px; background: #1b3028; }
+.province-song-section summary { padding: 14px; cursor: pointer; font-size: 14px; font-weight: 600; line-height: 1.7; }
+.province-song-section summary span { margin-left: 5px; font-weight: 400; color: #c3cda7; }
+.province-song-section > p, .province-song-section > a { display: block; margin: 0 16px 16px; font-size: 13px; line-height: 1.8; }
+.province-lyrics, .province-song-section pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; padding: 0 16px 18px; line-height: 2; font-family: inherit; font-size: 14px; }
+.province-song-section pre { font-size: 12px; color: #c6d0c7; }
+.province-songs-footer { padding: 28px 0 max(10px, env(safe-area-inset-bottom)); color: #a7b9ad; font-size: 12px; line-height: 1.8; }
+@media (max-width: 650px) {
+  .province-songs-header { padding-left: 14px; padding-right: 14px; gap: 10px; }
+  .province-songs-header > span:nth-child(2) { max-width: 175px; font-size: 11px; }
+  .province-songs-content { padding: 22px 16px; }
+  .province-song-picker { gap: 8px; }
+  .province-song-picker button { flex-direction: column; padding: 10px 4px; gap: 8px; text-align: center; }
+  .province-song-picker strong { font-size: 11px; }
+  .province-song-picker small { font-size: 10px; }
+  .province-song-detail { grid-template-columns: 1fr; gap: 24px; }
+  .province-character-stage > img { height: 360px; }
+  .province-song-copy h2 { font-size: 27px; }
+}

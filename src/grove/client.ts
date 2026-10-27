@@ -1,9 +1,9 @@
 /**
- * GroveClient — reads a Grove node's public, read-only feeds (BRIDGE.md §2) and
+ * GroveClient reads a Grove node's public, read-only feeds (BRIDGE.md §2) and
  * **verifies every record itself** before handing it back (BRIDGE.md §3). The node
  * is never trusted: a forged or tampered record is dropped here, not rendered.
  *
- * The base URL is configurable — point at iany.app's reference node or any other
+ * The base URL is configurable point at iany.app's reference node or any other
  * Grove node you trust (federation). No API key, no auth.
  */
 import {
@@ -11,7 +11,7 @@ import {
   type GardenObservation, type Attestation,
 } from "./grove";
 
-/** iany.app's reference node. Any Grove node works — federation is the point. */
+/** iany.app's reference node. Any Grove node works federation is the point. */
 export const DEFAULT_NODE = "https://iany.app/api/grove";
 
 /** Page size to request from a node's feed. Kept modest: nodes cap this, and a
@@ -26,7 +26,7 @@ export interface GroveStats {
   co2Kg: number;
 }
 
-/** A record after local verification — only these ever reach the renderer. */
+/** A record after local verification only these ever reach the renderer. */
 export interface VerifiedRecord {
   observation: GardenObservation;
   attestations: Attestation[];
@@ -40,7 +40,7 @@ export interface FeedPage {
   /** How many raw items the node returned that we could not verify. */
   dropped: number;
   /**
-   * Per-plot privacy-coarsened coordinates taken from the feed — what a public
+   * Per-plot privacy-coarsened coordinates taken from the feed what a public
    * map should place pins with, rather than the precise gps inside a signed
    * record (BRIDGE.md §5).
    */
@@ -73,7 +73,7 @@ export class GroveClient {
     return (await res.json()) as T;
   }
 
-  /** Headline totals for a node. Not security-critical — a convenience readout. */
+  /** Headline totals for a node. Not security-critical a convenience readout. */
   stats(): Promise<GroveStats> {
     return this.json<GroveStats>("/stats");
   }
@@ -86,7 +86,7 @@ export class GroveClient {
    * which changes the observation's bytes, so a feed item no longer hashes to
    * its signed `id`. Verifying feed items as-is would therefore reject every
    * record. The contract's answer is `/observation/:id`, which returns the
-   * **exact signed bytes** — so we take ids from the feed and verify those.
+   * **exact signed bytes** so we take ids from the feed and verify those.
    *
    * We still keep the feed's coarsened coordinates for public placement
    * (BRIDGE.md §5) rather than the precise gps inside the signed record.
@@ -97,7 +97,7 @@ export class GroveClient {
     const records: VerifiedRecord[] = [];
     let dropped = 0;
 
-    // Resolve a handful at a time — polite to the node, quick enough for a page.
+    // Resolve a handful at a time polite to the node, quick enough for a page.
     const CONCURRENCY = 6;
     for (let i = 0; i < items.length; i += CONCURRENCY) {
       const batch = items.slice(i, i + CONCURRENCY);
@@ -110,7 +110,7 @@ export class GroveClient {
     return { records, cursor: raw.cursor ?? null, dropped, coarseGps: coarseGpsOf(items) };
   }
 
-  /** The feed exactly as the node returns it — unverified, GPS coarsened. */
+  /** The feed exactly as the node returns it unverified, GPS coarsened. */
   async rawFeed(
     opts: { since?: string | null; limit?: number } = {},
   ): Promise<{ items: GardenObservation[]; cursor: string | null }> {
@@ -142,7 +142,7 @@ export class GroveClient {
     try {
       return await this.observation(item.id);
     } catch {
-      return null; // unreachable or unknown id — drop rather than trust it
+      return null; // unreachable or unknown id drop rather than trust it
     }
   }
 
@@ -177,7 +177,7 @@ export class GroveClient {
   }
 
   /** Verify an observation and keep only the attestations that themselves verify
-   *  and actually reference it — then score trust from that trusted subset. */
+   *  and actually reference it then score trust from that trusted subset. */
   private async verifyRecord(
     obs: GardenObservation,
     attestations: Attestation[] = [],
@@ -192,7 +192,7 @@ export class GroveClient {
 
   /**
    * Poll the feed politely, tracking the cursor. Calls `onRecords` with each new
-   * verified batch. Returns a stop function. New nodes/records only — dedup is
+   * verified batch. Returns a stop function. New nodes/records only dedup is
    * the caller's job (records are content-addressed by `observation.id`).
    */
   pollFeed(
@@ -211,7 +211,7 @@ export class GroveClient {
         if (page.records.length) onRecords(page.records);
         if (page.cursor) cursor = page.cursor;
       } catch {
-        /* transient — try again next interval */
+        /* transient try again next interval */
       }
       if (!stopped) timer = setTimeout(tick, interval);
     };

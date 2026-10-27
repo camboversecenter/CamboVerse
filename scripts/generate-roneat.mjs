@@ -1,5 +1,5 @@
 /**
- * public/models/roneat.glb — រនាតឯក (Roneat Ek), the lead xylophone of the
+ * public/models/roneat.glb - រនាតឯក (Roneat Ek), the lead xylophone of the
  * Khmer Pinpeat ensemble: 21 tuned bars suspended by cord over a carved,
  * boat-shaped wooden resonator with gilded, up-sweeping naga-tail ends, on a
  * stand, with two mallets resting on the bars.

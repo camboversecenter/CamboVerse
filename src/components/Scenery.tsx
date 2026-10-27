@@ -27,9 +27,21 @@ const PALMS: { pos: [number, number, number]; s: number; r: number }[] = [
 export function Scenery({
   water = false,
   landscape,
+  detailed = true,
+  authoredSite = false,
+  groundY = 0,
+  shadowNormalBias = 0,
+  regional = false,
 }: {
   water?: boolean;
   landscape?: "angkor" | "wat-phnom";
+  detailed?: boolean;
+  /** Blender scenes already contain their own foreground planting. */
+  authoredSite?: boolean;
+  /** Lower only the outer land when a model supplies its own ground surface. */
+  groundY?: number;
+  shadowNormalBias?: number;
+  regional?: boolean;
 }) {
   const angkor = landscape === "angkor";
   const watphnom = landscape === "wat-phnom";
@@ -38,7 +50,7 @@ export function Scenery({
     <>
       <Sky sunPosition={[16, 5, 10]} turbidity={7} rayleigh={1.4} mieCoefficient={0.007} mieDirectionalG={0.9} />
       {/* Longer fog when the site has a large landscape viewed from the air. */}
-      <fog attach="fog" args={["#d7e2ec", aerialScene ? 55 : 30, aerialScene ? 185 : 80]} />
+      <fog attach="fog" args={["#d7e2ec", regional ? 330 : aerialScene ? 55 : 30, regional ? 650 : aerialScene ? 185 : 80]} />
 
       {/* Lighting: warm sun + cool sky fill. */}
       <ambientLight intensity={0.28} />
@@ -47,9 +59,10 @@ export function Scenery({
         position={[16, 12, 10]}
         intensity={2.1}
         color="#ffe6c0"
-        castShadow
+        castShadow={detailed}
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0004}
+        shadow-normalBias={shadowNormalBias}
         shadow-camera-near={0.5}
         shadow-camera-far={70}
         shadow-camera-left={-22}
@@ -59,18 +72,18 @@ export function Scenery({
       />
 
       {/* Outer land (forest floor tone) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, groundY, 0]} receiveShadow>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color={aerialScene ? "#5d7a35" : "#6f8b3d"} roughness={1} />
+        <meshStandardMaterial color={aerialScene ? "#5d7a35" : authoredSite ? "#7a8063" : "#6f8b3d"} roughness={1} />
       </mesh>
 
       {/* Site landscape (Angkor's moat island, Wat Phnom's wooded hill) or a pool. */}
-      {angkor && <AngkorLandscape />}
-      {watphnom && <WatPhnomLandscape />}
+      {angkor && <AngkorLandscape detailed={detailed} />}
+      {watphnom && <WatPhnomLandscape authoredHill />}
       {water && !aerialScene && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 9]}>
           <planeGeometry args={[34, 16]} />
-          <MeshReflectorMaterial
+          {detailed ? <MeshReflectorMaterial
             resolution={512}
             mirror={1}
             blur={[80, 30]}
@@ -80,12 +93,12 @@ export function Scenery({
             depthScale={0}
             color="#5a7486"
             metalness={0.6}
-          />
+          /> : <meshStandardMaterial color="#5a7486" roughness={.65} />}
         </mesh>
       )}
 
       {/* Wat Phnom brings its own vegetation; other scenes get the palm belt. */}
-      {!watphnom &&
+      {!watphnom && !angkor && !authoredSite &&
         PALMS.map((p, i) => <Palm key={i} position={p.pos} scale={p.s} spin={p.r} />)}
     </>
   );

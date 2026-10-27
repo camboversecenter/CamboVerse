@@ -1,5 +1,5 @@
 /**
- * public/models/angkor-wat.glb — the authored Angkor Wat glTF, from the shared
+ * public/models/angkor-wat.glb - the authored Angkor Wat glTF, from the shared
  * composition (scripts/models/angkor.mjs): the elongated galleried enclosure
  * with a causeway and the five-tower quincunx. Run: node scripts/generate-angkor.mjs
  */

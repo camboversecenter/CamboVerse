@@ -157,7 +157,7 @@ export function TourGuide({
         )}
       </div>
 
-      {sound && !hasVoice && <p className="guide-note">No {LANGS.find((l) => l.code === lang)!.name} voice on this device — showing text.</p>}
+      {sound && !hasVoice && <p className="guide-note">No {LANGS.find((l) => l.code === lang)!.name} voice on this device showing text.</p>}
 
       <form
         className="guide-ask"

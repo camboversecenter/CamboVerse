@@ -1,0 +1,49 @@
+.cer-wedding { background: #17221f; }
+.cer-wedding .cer-panel.bld-panel--hidden { visibility:hidden; }
+.pchum-walking .cls-top, .pchum-walking .wedding-tools, .pchum-walking .bld-show { z-index: 22; }
+.pchum-walking .walk-hint { top: auto; bottom: 16px; color: #fff4dc; opacity: 1; text-shadow: 0 1px 4px #000; padding: 0 16px; }
+.pchum-walk-hud { position:absolute; right:16px; bottom:68px; z-index:22; display:grid; gap:8px; width:min(270px,calc(100% - 170px)); color:#f8eedb; font:13px/1.5 system-ui; background:#18231ff2; padding:14px; border:1px solid #697967; border-radius:16px; }
+.pchum-walk-hud button, .pchum-story button { min-height:44px; color:#fff1d5; background:#354b3f; border:1px solid #8a9678; border-radius:9px; padding:8px 10px; cursor:pointer; }
+.pchum-walk-hud button:disabled { opacity:.5; cursor:default; }
+.pchum-walk-hud { box-sizing:border-box; }
+.pchum-walk-hud details { max-height:32vh; overflow:auto; }
+.pchum-walk-hud details button { display:block; width:100%; margin-top:7px; }
+.pchum-walk-hud summary { cursor:pointer; min-height:28px; }
+.pchum-story { padding:8px 0 16px; border-bottom:1px solid #64705d; margin-bottom:12px; }
+.pchum-story p { font-size:14px; line-height:1.6; }
+.pchum-waypoint { display:block; white-space:nowrap; padding:5px 9px; border:1px solid #d0b978; border-radius:14px; background:#18231fee; color:#ffedc3; font:12px system-ui; }
+.pchum-walking .wedding-tools > div { flex-wrap:wrap; }
+@media(min-width:900px) {
+  .cer-wedding.pchum-walking .cer-panel { left:auto; right:16px; bottom:20px; width:350px; max-width:35vw; height:68%; max-height:68%; transform:none; border-radius:18px; }
+}
+.pchum-load { padding: 18px; width: 250px; border-radius: 14px; background: #18231f; color: #fff0d5; font: 14px/1.5 system-ui; text-align: center; }
+.cer-wedding .cer-panel { max-width: 720px; height: 39%; max-height: 39%; box-sizing: border-box; background: #18231f; color: #f0eee4; border: 1px solid #566054; border-radius: 20px 20px 0 0; padding: 12px 22px 22px; }
+.cer-wedding .cer-steps { gap: 5px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; }
+.cer-wedding .cer-step { min-width: 36px; height: 36px; color: #e9e5d6; border-color: #687163; background: #2d3830; }
+.cer-wedding .cer-step.on { background: #e6bf78; color: #26291f; border-color: #e6bf78; }
+.cer-wedding .cer-step.done { background: #405548; }
+.cer-wedding .bld-sub, .cer-wedding .bld-about { color: #d3d9cd; }
+.cer-wedding .cer-head b { color: #fff3d9; }
+.cer-wedding .lab-needkm { display: none; }
+.cer-wedding .cer-prev, .cer-wedding .cer-next { min-height: 44px; background: #354b3f; color: #f9efdc; border-color: #69806e; }
+.cer-wedding .cer-prev:disabled, .cer-wedding .cer-next:disabled { opacity: .45; }
+.cer-wedding .cer-nav { margin: 12px 0; }
+.wedding-tools { position: absolute; top: 67px; left: 16px; color: #26372c; font-size: 12px; }
+.wedding-tools > span { display: block; background: #f3eddce8; padding: 5px 10px; border-radius: 10px; width: fit-content; }
+.wedding-tools > div { display: flex; gap: 6px; margin-top: 7px; }
+.wedding-tools button { background: #192c25e8; color: #fff4dc; border: 1px solid #657268; border-radius: 10px; min-height: 40px; padding: 7px 12px; cursor: pointer; }
+.wedding-tools button[aria-pressed=true] { border-color: #e6bf78; }
+.wedding-objects > span { color: #c3cdbd; font-size: 12px; }
+.wedding-objects > div { display: flex; flex-wrap: wrap; gap: 6px; margin: 7px 0; }
+.wedding-objects button { color: #e8e9dd; background: #2b3a30; border: 1px solid #5e7160; border-radius: 20px; padding: 9px 13px; min-height: 42px; cursor: pointer; }
+.wedding-objects button[aria-pressed=true] { border-color: #e6bf78; color: #ffe1a2; }
+.wedding-objects p, .wedding-more { font-size: 13px; line-height: 1.6; color: #cfd7c9; }
+.wedding-more summary { cursor: pointer; padding: 9px 0; color: #e8ce9b; }
+.wedding-more a { color: #efd296; text-decoration: underline; }
+.cer-wedding button:focus-visible, .wedding-more summary:focus-visible { outline: 3px solid #ffe1a2; outline-offset: 3px; }
+@media(max-width: 600px) {
+  .cer-wedding .cer-panel { width: 100%; padding: 10px 14px 20px; }
+  .cer-wedding .cls-title { font-size: 13px; }
+  .wedding-tools { left: 12px; top: 64px; }
+  .cer-wedding .cer-step { min-width: 36px; }
+}

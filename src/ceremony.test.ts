@@ -75,7 +75,7 @@ describe("a new ceremony", () => {
     expect(preset.timeOfDay).toBe("dawn");
   });
 
-  it("cannot be published as-is — the family has to choose", () => {
+  it("cannot be published as-is the family has to choose", () => {
     const r = canPublish(c);
     expect(r.ok).toBe(false);
     expect(r.errors.join(" ")).toMatch(/private/);
@@ -238,7 +238,7 @@ describe("canonicalize and ceremonyHash", () => {
       .toBe('{"a":{"c":3,"d":2},"b":1}');
   });
 
-  it("keeps array order — a ceremony is a sequence", () => {
+  it("keeps array order a ceremony is a sequence", () => {
     expect(canonicalize([3, 1, 2])).toBe("[3,1,2]");
   });
 
@@ -303,7 +303,7 @@ describe("the shipped templates", () => {
   });
 
   it("are all still awaiting cultural review, and say so", () => {
-    // When this fails, someone has signed a template off — good. Update the
+    // When this fails, someone has signed a template off good. Update the
     // reviewer list in docs/CEREMONIES.md at the same time.
     for (const tpl of TEMPLATES) expect(tpl.needsReview, tpl.id).toBe(true);
   });

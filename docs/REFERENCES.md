@@ -3,11 +3,11 @@
 **What the numbers in CamboVerse are actually founded on.**
 
 This file exists because of one specific mislabel. The Grove Garden's CO₂ figure
-was captioned *"a conservative estimate (Chave 2014 allometry)"* — which credited
+was captioned *"a conservative estimate (Chave 2014 allometry)"* which credited
 a published pantropical model for a number that is really **four separate things
 stacked together**, only one of which comes from that paper. The rest are an IPCC
-default, bare stoichiometry, a seven-row wood-density table of ours, and — when
-height was not measured — a height guess that appears in no literature at all.
+default, bare stoichiometry, a seven-row wood-density table of ours, and when
+height was not measured a height guess that appears in no literature at all.
 
 The rule here: **an honest gap beats a confident guess.** Anything not confirmed
 against a primary record is marked `UNVERIFIED` and stays that way until somebody
@@ -28,28 +28,28 @@ Where each part comes from:
 
 | # | Component | In the code | Source | Status |
 |---|---|---|---|---|
-| 1 | **Biomass model** — `AGB = 0.0673 × (ρD²H)^0.976` | [`grove.ts:175`](../src/grove/grove.ts) `estimateCarbon()` | Chave et al. (2014), **Eq. 4** — the height-inclusive pantropical model | Published |
-| 2 | **Carbon fraction** — `0.47` | `CARBON_FRACTION` | IPCC, *Guidelines for National Greenhouse Gas Inventories*, Vol. 4 (AFOLU), Ch. 4 | Published, but **`UNVERIFIED` edition** — see below |
-| 3 | **CO₂ per unit carbon** — `44/12 ≈ 3.6667` | `CO2_PER_C` | **Stoichiometry.** The molar mass of CO₂ over that of carbon. No citation exists or is needed — do not go looking for one | Not a citation |
-| 4 | **Wood density ρ** — 7 species, `0.6` fallback | `WOOD_DENSITY`, `DEFAULT_WOOD_DENSITY` | **In-house.** Hand-entered, unsourced | **Weakest link** |
-| 5 | **Height fallback** — `H ≈ 3√D`, capped at 30 m | `estHeightFromDbh()` | **In-house.** In no published paper | Ours |
-| 6 | **Height-only fallback** — `D = 2H`, result halved | `estimateCarbon()`, third branch | **In-house.** In no published paper | Ours |
+| 1 | **Biomass model** `AGB = 0.0673 × (ρD²H)^0.976` | [`grove.ts:175`](../src/grove/grove.ts) `estimateCarbon()` | Chave et al. (2014), **Eq. 4** the height-inclusive pantropical model | Published |
+| 2 | **Carbon fraction** `0.47` | `CARBON_FRACTION` | IPCC, *Guidelines for National Greenhouse Gas Inventories*, Vol. 4 (AFOLU), Ch. 4 | Published, but **`UNVERIFIED` edition** see below |
+| 3 | **CO₂ per unit carbon** `44/12 ≈ 3.6667` | `CO2_PER_C` | **Stoichiometry.** The molar mass of CO₂ over that of carbon. No citation exists or is needed do not go looking for one | Not a citation |
+| 4 | **Wood density ρ** 7 species, `0.6` fallback | `WOOD_DENSITY`, `DEFAULT_WOOD_DENSITY` | **In-house.** Hand-entered, unsourced | **Weakest link** |
+| 5 | **Height fallback** `H ≈ 3√D`, capped at 30 m | `estHeightFromDbh()` | **In-house.** In no published paper | Ours |
+| 6 | **Height-only fallback** `D = 2H`, result halved | `estimateCarbon()`, third branch | **In-house.** In no published paper | Ours |
 
-### 1. The biomass model — cite the equation, not the year
+### 1. The biomass model cite the equation, not the year
 
 Chave et al. (2014) gives several models. The one implemented is **Equation 4**,
 the model that takes measured height. Write *"Chave et al. (2014), Eq. 4"* in any
 methods section: a reader needs to know whether the measured-height model or the
 no-height model was used, and "Chave 2014" alone does not say.
 
-### 2. The carbon fraction — `UNVERIFIED` edition
+### 2. The carbon fraction `UNVERIFIED` edition
 
 `CARBON_FRACTION = 0.47` is an IPCC default and **not** part of Chave et al.
 (2014). It belongs to Vol. 4 (AFOLU), Ch. 4 of the IPCC national inventory
 guidelines.
 
-> ⚠ **`UNVERIFIED`:** which edition — the **2006 Guidelines** or the **2019
-> Refinement** — has not been confirmed against the primary document, and the two
+> ⚠ **`UNVERIFIED`:** which edition the **2006 Guidelines** or the **2019
+> Refinement** has not been confirmed against the primary document, and the two
 > differ in this table. The value was in the code before this file existed, with
 > only the comment "IPCC default" to go on. Someone with access to the guidelines
 > should confirm the edition, the table number and the forest type the 0.47 row
@@ -58,16 +58,16 @@ guidelines.
 Until then, cite it in a paper as an IPCC default **with the edition you verified
 yourself**, not with one taken from here.
 
-### 3. The CO₂ conversion — deliberately uncited
+### 3. The CO₂ conversion deliberately uncited
 
 `44/12` is the ratio of the molar mass of CO₂ to that of carbon. It is arithmetic,
 not a finding. Stated explicitly so nobody hunts for a reference that does not
 exist.
 
-### 4. Wood density — in-house, and the weakest link
+### 4. Wood density in-house, and the weakest link
 
-`WOOD_DENSITY` holds **seven species** — mango, jackfruit, coconut, teak,
-tamarind, longan, guava — hand-entered with no source recorded, and **every
+`WOOD_DENSITY` holds **seven species** mango, jackfruit, coconut, teak,
+tamarind, longan, guava hand-entered with no source recorded, and **every
 unlisted species falls back to a constant `0.6 g/cm³`**. Since ρ enters the model
 linearly, that fallback propagates straight into the result for any species not
 in the table. Coconut is flagged in the code itself as approximate, because palms
@@ -77,7 +77,7 @@ This table should be reconciled against the **Global Wood Density Database**
 (Zanne et al. 2009; Chave et al. 2009), and every row given a source. Until that
 happens, it is an in-house assumption and should be described as one.
 
-### 5–6. The height fallbacks — ours, and not from any paper
+### 5–6. The height fallbacks ours, and not from any paper
 
 When height is missing, `estHeightFromDbh()` substitutes `H ≈ 3√D` capped at
 30 m. When DBH is missing too, the third branch assumes `D = 2H` and halves the
@@ -92,7 +92,7 @@ the no-height path a real citation; that is a separate change and is not done.
 
 Do not describe a garden containing these fallbacks as "estimated using Chave et
 al. (2014)" without qualification. The interface now makes this distinction
-itself — see below.
+itself see below.
 
 ---
 
@@ -105,24 +105,24 @@ only as well-founded as its flimsiest record.
 
 | Basis | What was measured | Footer wording |
 |---|---|---|
-| `measured` | DBH **and** height | "CO₂ is an estimate — Chave et al. (2014) Eq. 4 from measured DBH and height, IPCC carbon fraction. Never a tradable credit." |
-| `modelled-height` | DBH only | "CO₂ is a rough estimate — height was not measured for every plant, so an in-house approximation stands in for it. Never a tradable credit." |
-| `height-only` | height only | "CO₂ is a rough estimate — trunk diameter was not measured, so an in-house approximation deliberately under-counts. Never a tradable credit." |
-| `supplied` | biomass given directly | "CO₂ is an estimate — biomass was supplied by the recorder rather than derived from a measurement. Never a tradable credit." |
+| `measured` | DBH **and** height | "CO₂ is an estimate Chave et al. (2014) Eq. 4 from measured DBH and height, IPCC carbon fraction. Never a tradable credit." |
+| `modelled-height` | DBH only | "CO₂ is a rough estimate height was not measured for every plant, so an in-house approximation stands in for it. Never a tradable credit." |
+| `height-only` | height only | "CO₂ is a rough estimate trunk diameter was not measured, so an in-house approximation deliberately under-counts. Never a tradable credit." |
+| `supplied` | biomass given directly | "CO₂ is an estimate biomass was supplied by the recorder rather than derived from a measurement. Never a tradable credit." |
 
 **"Never a tradable credit" appears in every branch.** That claim does not depend
 on how well anything was measured, and it is not a caveat to be softened when the
 measurements happen to be good.
 
 `estimateBasis()` is a read-only classifier that mirrors `estimateCarbon()`'s
-branches. It computes nothing and changes no result — labelling must not reach
+branches. It computes nothing and changes no result labelling must not reach
 into the carbon path.
 
 ---
 
 ## Full citations
 
-### Chave et al. (2014) — the biomass model
+### Chave et al. (2014) the biomass model
 
 Chave, J., Réjou-Méchain, M., Búrquez, A., Chidumayo, E., Colgan, M. S.,
 Delitti, W. B. C., Duque, A., Eid, T., Fearnside, P. M., Goodman, R. C.,
@@ -153,7 +153,7 @@ estimate the aboveground biomass of tropical trees. *Global Change Biology*,
 }
 ```
 
-### Zanne et al. (2009) — the wood density database
+### Zanne et al. (2009) the wood density database
 
 Zanne, A. E., Lopez-Gonzalez, G., Coomes, D. A., Ilic, J., Jansen, S.,
 Lewis, S. L., Miller, R. B., Swenson, N. G., Wiemann, M. C., & Chave, J. (2009).
@@ -176,7 +176,7 @@ https://doi.org/10.5061/dryad.234
 }
 ```
 
-### Chave et al. (2009) — the paper behind the database — `UNVERIFIED`
+### Chave et al. (2009) the paper behind the database `UNVERIFIED`
 
 > ⚠ **`UNVERIFIED`.** The details below have **not** been confirmed against the
 > publisher's record. Check the volume, issue and page range on the publisher
@@ -186,11 +186,11 @@ Chave, J., Coomes, D., Jansen, S., Lewis, S. L., Swenson, N. G., & Zanne, A. E.
 (2009). Towards a worldwide wood economics spectrum. *Ecology Letters*, 12(4),
 351–366. https://doi.org/10.1111/j.1461-0248.2009.01285.x
 
-### IPCC — the carbon fraction — `UNVERIFIED` edition
+### IPCC the carbon fraction `UNVERIFIED` edition
 
 > ⚠ **`UNVERIFIED`.** Vol. 4 (AFOLU), Ch. 4 is the right chapter; **which
 > edition the 0.47 was taken from is not established.** Do not cite an edition
-> from this file — verify it and then update this entry.
+> from this file verify it and then update this entry.
 
 IPCC. *Guidelines for National Greenhouse Gas Inventories*, Volume 4:
 Agriculture, Forestry and Other Land Use, Chapter 4: Forest Land.
@@ -205,7 +205,7 @@ Candidates to check, in order:
 
 ## Why this file is worth keeping accurate
 
-The Grove Garden's whole claim is that **nothing is trusted from a server** —
+The Grove Garden's whole claim is that **nothing is trusted from a server**  
 every record is verified on the reader's own device. A page that verifies
 signatures rigorously and then mis-attributes its own arithmetic is undermining
 itself in the same breath.

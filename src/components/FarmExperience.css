@@ -1,0 +1,72 @@
+/* Farm-only layout: leave heritage and the photo/community panels unchanged. */
+.farm .cls-top { gap: 8px; }
+.farm .cls-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.farm .cls-top > button { flex-shrink: 0; }
+.farm-quality, .farm-fold, .farm-lesson-nav button, .farm-lesson-footer button,
+.farm-reset button, .farm-complete button {
+  border: 1px solid #738669; border-radius: 10px; background: #263b2a;
+  color: #f5f5e8; min-height: 44px; padding: 8px 12px; cursor: pointer;
+  font: 600 .8rem system-ui, sans-serif;
+}
+.farm button:focus-visible, .farm summary:focus-visible, .farm input:focus-visible {
+  outline: 3px solid #f4d77d; outline-offset: 3px;
+}
+.farm button:disabled { cursor: default; opacity: .6; }
+.farm .farm-seg { min-height: 40px; }
+.farm .farm-step { width: 44px; height: 44px; }
+.farm .farm-steps { top: calc(env(safe-area-inset-top, 0px) + 105px); }
+.farm .farm-learning { max-height: min(58dvh, calc(100dvh - 170px)); padding: 14px; }
+.farm .farm-learning.is-collapsed { max-height: none; }
+.farm .farm-learning .farm-info-head { gap: 8px; }
+.farm .farm-learning .farm-emoji { font-size: 1.5rem; }
+.farm .farm-learning h2 { font-size: 1.15rem; }
+.farm-fold { margin-left: auto; flex-shrink: 0; }
+.farm .farm-learning .farm-en { font-size: .65rem; letter-spacing: .06em; }
+.farm-lesson-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.farm-lesson-nav span { font-size: .8rem; color: #becbb2; }
+.farm-activity p { font-size: .85rem; line-height: 1.5; margin: 10px 0; }
+.farm-task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.farm-task-grid button { display: flex; align-items: center; gap: 8px; text-align: left; padding: 9px;
+  min-height: 48px; border: 1px solid #617653; border-radius: 10px; color: #f4f4e8;
+  background: #2c432f; font: 600 .8rem system-ui, sans-serif; cursor: pointer; }
+.farm-task-grid button:hover:not(:disabled) { background: #456342; border-color: #d9c06d; }
+.farm-task-grid button span { width: 25px; height: 25px; flex-shrink: 0; display: grid; place-items: center;
+  border-radius: 50%; background: #172d1c; color: #f7d77b; }
+.farm-task-grid button.complete { background: #254b32; border-color: #81b789; opacity: 1; }
+.farm-task-progress { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: .75rem; }
+.farm-task-progress progress { min-width: 0; width: 100%; flex: 1; height: 9px; accent-color: #a3ce80; }
+.farm-task-progress span { white-space: nowrap; }
+.farm-feedback { min-height: 1.4em; font-size: .78rem; color: #e6d99a; }
+.farm-water-control { display: grid; gap: 6px; font-size: .8rem; margin-bottom: 10px; }
+.farm-water-control input { width: 100%; min-height: 40px; accent-color: #b5dc91;
+  background: linear-gradient(to right, transparent 40%, #597d36 40%, #597d36 60%, transparent 60%); }
+.farm-water-control small, .farm-story small { color: #b8c6ad; line-height: 1.45; }
+.farm-story { margin: 12px 0; border-top: 1px solid #47593d; padding-top: 10px; font-size: .8rem; line-height: 1.6; }
+.farm-story summary { cursor: pointer; min-height: 32px; }
+.farm-story a { display: block; color: #d2e7a5; }
+.farm-lesson-footer { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.farm-lesson-footer > span { width: 100%; font-size: .7rem; color: #b9c8ab; }
+.farm-lesson-footer button { font-size: .72rem; }
+.farm-reset, .farm-complete { margin: 10px 0; padding: 12px; background: #31472e; border-radius: 10px; font-size: .82rem; line-height: 1.5; }
+.farm-complete h3 { margin: 0 0 6px; }
+.farm-reset button, .farm-complete button { margin: 4px 6px 0 0; }
+.farm-notice { position: absolute; top: 150px; left: 15px; z-index: 30; color: #fff; background: #402b23; padding: 10px; max-width: 90vw; }
+@media (min-width: 900px) {
+  .farm .farm-learning { left: auto; right: 18px; transform: none; width: 355px; max-height: calc(100dvh - 165px); }
+}
+@media (max-width: 480px) {
+  .farm .cls-title { font-size: .9rem; }
+  .farm-quality { font-size: .7rem; padding: 7px; }
+  .farm .cls-top { gap: 5px; }
+  .farm .farm-modes { padding: 0 6px; gap: 4px; }
+  .farm .farm-seg { padding: 6px 10px; }
+  .farm .farm-steps { gap: 3px; padding: 0 3px; }
+  .farm .farm-step { width: 40px; height: 44px; }
+  .farm .farm-learning { width: calc(100vw - 16px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+}
+@media (max-height: 520px) and (min-width: 600px) {
+  .farm .farm-learning { left: auto; right: 8px; transform: none; width: 320px; max-height: calc(100dvh - 160px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .farm * { scroll-behavior: auto; transition: none !important; }
+}

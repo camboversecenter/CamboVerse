@@ -19,7 +19,7 @@ interface OrderResult {
 /**
  * The virtual shop experience for a heritage site: navigate a plaza of kiosks,
  * build a cart, and check out. The order is fulfilled from a merchant in the
- * visitor's own country (geo-aware) — the digital-economy PoC.
+ * visitor's own country (geo-aware) the digital-economy PoC.
  */
 export function ShopView({ market, onBack }: { market: Market; onBack: () => void }) {
   const [mode, setMode] = useState<"orbit" | "walk">("orbit");
@@ -187,7 +187,7 @@ export function ShopView({ market, onBack }: { market: Market; onBack: () => voi
                 <b>{order.payMethod}</b> · delivery by <b>{order.delivery}</b>.
               </p>
               <p className="order-total">Total {formatUSD(order.total)}</p>
-              <p className="order-note">No real charge — this is a proof-of-concept.</p>
+              <p className="order-note">No real charge this is a proof-of-concept.</p>
               <button className="checkout-btn" onClick={() => (setOrder(null), setCheckout(false))}>
                 Back to market
               </button>

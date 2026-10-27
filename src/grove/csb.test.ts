@@ -3,7 +3,7 @@
  *
  * Two properties matter more than the rest, and both are about failure:
  *
- *  1. The plot NAME never leaves the browser — only keccak256 of it. That bounds
+ *  1. The plot NAME never leaves the browser only keccak256 of it. That bounds
  *     what this client transmits; it does not make the name private. A garden's
  *     id is frequently its owner's name, which is exactly why the hash is not
  *     protection: such names are short and guessable, so the hash inverts. The
@@ -202,7 +202,7 @@ describe("anchorCall", () => {
   it("takes the PLOT's living total, not one record's own count", () => {
     // A jackfruit, a guava and a longan are three plants recorded three times.
     // Passing the newest record's count would tell the chain the grove has one
-    // tree — and that number drives a title's supply and a pledge's threshold.
+    // tree and that number drives a title's supply and a pledge's threshold.
     expect(anchorCall(obs, 3)!.liveCount).toBe(3);
     expect(anchorCall(obs, 1)!.liveCount).toBe(1);
   });

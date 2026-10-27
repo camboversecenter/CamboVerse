@@ -1,7 +1,7 @@
 import { CanvasTexture, RepeatWrapping, SRGBColorSpace, type Texture } from "three";
 
 /**
- * Procedural ground textures, drawn on a canvas at runtime — no image files, no
+ * Procedural ground textures, drawn on a canvas at runtime no image files, no
  * CDN, nothing to download. Multi-scale blotches keep the tiling from reading as
  * an obvious grid, and a light noise pass gives the surface some tooth so it
  * catches the sun instead of looking like flat paint.
@@ -46,7 +46,7 @@ function rgba(hex: string, alpha?: number): [number, number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255, alpha ?? a];
 }
 
-/** Soft blobs at several scales — the base of every natural-looking surface. */
+/** Soft blobs at several scales the base of every natural-looking surface. */
 function blotches(
   ctx: CanvasRenderingContext2D, size: number, rand: () => number,
   colors: string[], scales: [number, number][],
@@ -94,7 +94,7 @@ function grain(ctx: CanvasRenderingContext2D, size: number, rand: () => number, 
 
 /**
  * Grass. `kind: "lawn"` is watered and mown; `kind: "rough"` is the field
- * beyond the kerb — drier, patchier, and a good deal less green.
+ * beyond the kerb drier, patchier, and a good deal less green.
  *
  * These are two palettes rather than one texture under two material tints,
  * because multiplying one green by two colours is the same by-eye shortcut
@@ -123,7 +123,7 @@ export function grassTexture(repeat = 28, { kind = "lawn" }: { kind?: "lawn" | "
     lawn ? ["#8fb85e", "#6b9247", "#9cc46a", "#5f8a3e"]
          : ["#9aa663", "#79874b", "#a8b06c", "#6d7a44"],
     [[120, 14], [46, 40], [18, 120]]);
-  // sun-dried patches — the rough field has far more of them
+  // sun-dried patches the rough field has far more of them
   blotches(ctx, size, rand,
     lawn ? ["#a8b366", "#b4bd7033"] : ["#bcb87a", "#c8c08866"],
     lawn ? [[30, 16]] : [[70, 14], [26, 40]]);
@@ -238,7 +238,7 @@ export function barkTexture(tint = "#6b4a2b"): Texture {
  * come out at a given real-world size.
  *
  * Without this every paved area gets the same `repeat` and slabs come out
- * enormous on the forecourt and tiny on the footpath — the classic tell that a
+ * enormous on the forecourt and tiny on the footpath the classic tell that a
  * texture was applied by eye rather than measured. `tileM` is the size of ONE
  * repeat in metres, and the paving tile below draws a 2x2 slab grid, so a 3 m
  * slab means `tileM = 6`.
@@ -251,7 +251,7 @@ export function metresRepeat(widthM: number, depthM: number, tileM: number): [nu
  * Poured concrete paving: a 2x2 slab grid with expansion joints, pour-to-pour
  * tone variation, and a little staining.
  *
- * The joints sit ON the tile edges, so the repeat seam IS a joint — which turns
+ * The joints sit ON the tile edges, so the repeat seam IS a joint which turns
  * the one artifact of tiling into the thing the surface is supposed to have.
  * Concrete really is a grid; a 150 m apron of flat colour reads as a void, and
  * the joints are what give a visitor any sense of how big the yard is.
@@ -333,7 +333,7 @@ export function asphaltTexture(
   // Two things have to be true or it stops reading as a road. It must enter and
   // leave the tile at the SAME offset, or the repeat turns one crack into a
   // squiggle that dead-ends at every tile edge. And it must run ALONG the
-  // carriageway, not across it — repeats are derived from metres, so whichever
+  // carriageway, not across it repeats are derived from metres, so whichever
   // axis repeats more often is the long axis of the surface, and that is the
   // one the joint follows.
   const alongU = repeatX >= repeatY;

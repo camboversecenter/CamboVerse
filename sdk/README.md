@@ -1,7 +1,7 @@
 # CamboVerse Rails SDK
 
 A tiny, **dependency-free** JavaScript client for the open [`/v1` rails](../docs/API.md).
-One ES module — no build step, no dependencies, no external assets. Works in the
+One ES module no build step, no dependencies, no external assets. Works in the
 browser and in modern Node (uses the global `fetch`).
 
 It wraps the same public HTTP contract in `docs/API.md`, so ecosystem apps don't
@@ -43,20 +43,20 @@ const route = await cv.fulfill({ type: "purchase", country: "KH" });
 
 Options:
 
-- **`baseUrl`** — origin of a CamboVerse host. `""` (default) means same origin.
+- **`baseUrl`** origin of a CamboVerse host. `""` (default) means same origin.
   The rails send permissive CORS, so cross-origin calls work from any web origin.
-- **`storage`** — where the identity token is kept. Defaults to `localStorage` in
+- **`storage`** where the identity token is kept. Defaults to `localStorage` in
   the browser, or an in-memory store elsewhere. Pass your own
   `{ getItem, setItem, removeItem }` to control persistence.
-- **`fetch`** — a custom `fetch` (defaults to the global one).
-- **`partnerKey`** — a **certified partner key**, required only for commons
+- **`fetch`** a custom `fetch` (defaults to the global one).
+- **`partnerKey`** a **certified partner key**, required only for commons
   *writes* (`registerAsset`, `grant`). Read-only apps never need one. `registerAsset`
   enforces open licences (CC0 / CC-BY / CC-BY-SA) and mandatory
   provenance/consent; without a valid key these calls throw `RailsError` `403`.
 
 ### Identity is lazy and anonymous
 
-No account is created until the visitor first *does* something that needs one —
+No account is created until the visitor first *does* something that needs one  
 `getIdentity(true)` or the first `claimCredential(...)`. Passive reads
 (`getScene`, `listAssets`, …) never mint an identity. The token persists via
 `storage`, so the same identity survives reloads and can later bind to a real
@@ -78,10 +78,10 @@ try {
 
 ## Verified
 
-Every method is exercised end-to-end against the real Workers runtime — lazy
+Every method is exercised end-to-end against the real Workers runtime lazy
 identity, credential claim + `earned`, public-view vs. granted entitlements, D2P
 routing, and `RailsError` on a 404. See the repository's verification notes.
 
 > This SDK is a convenience wrapper. The stable contract is the HTTP API in
-> [`docs/API.md`](../docs/API.md) — anything the SDK does, you can do with plain
+> [`docs/API.md`](../docs/API.md) anything the SDK does, you can do with plain
 > `fetch`.

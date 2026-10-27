@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
 /**
- * Fallback stand-in shown if the glTF heritage model fails to load — a low-poly
+ * Fallback stand-in shown if the glTF heritage model fails to load a low-poly
  * stepped tower evoking a Khmer prasat, built from primitives so it has no asset
  * dependency and can always render. The primary path is <HeritageModel>.
  */

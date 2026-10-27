@@ -1,12 +1,12 @@
 /**
  * Self-contained fight sound effects for the Kun Khmer Dojo, synthesized live
- * with the Web Audio API — no audio files to download, nothing external to
+ * with the Web Audio API no audio files to download, nothing external to
  * license or host. This keeps the dojo a good Digital Public Good citizen
  * (self-contained, runs on a cheap phone) while still landing punches with a
  * satisfying thud, whoosh, and ringside bell.
  *
  * The AudioContext is created lazily on the first play (which always happens
- * inside a user gesture — a tap or key press — so autoplay policies are happy).
+ * inside a user gesture a tap or key press so autoplay policies are happy).
  */
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -32,7 +32,7 @@ function ac(): AudioContext | null {
   }
 }
 
-/** A short burst of shaped noise — the "smack" of a landed strike. */
+/** A short burst of shaped noise the "smack" of a landed strike. */
 function noiseBurst(c: AudioContext, t: number, dur: number, cutoff: number, gain: number, type: BiquadFilterType = "lowpass") {
   const buf = c.createBuffer(1, Math.max(1, Math.floor(c.sampleRate * dur)), c.sampleRate);
   const data = buf.getChannelData(0);
@@ -50,7 +50,7 @@ function noiseBurst(c: AudioContext, t: number, dur: number, cutoff: number, gai
   src.start(t);
 }
 
-/** A low, fast pitch-down thump — the body-impact under a strike. */
+/** A low, fast pitch-down thump the body-impact under a strike. */
 function thump(c: AudioContext, t: number, f0: number, gain: number) {
   const osc = c.createOscillator();
   osc.type = "sine";
@@ -82,7 +82,7 @@ export function playHit(kind: HitKind = "punch") {
   thump(c, t, f0, 0.6);
 }
 
-/** A swing through the air — the wind-up of a strike or a dodge. */
+/** A swing through the air the wind-up of a strike or a dodge. */
 export function playWhoosh() {
   const c = ac();
   if (!c) return;
@@ -106,7 +106,7 @@ export function playWhoosh() {
   src.start(t);
 }
 
-/** The ringside bell — struck once to start a bout, twice for a win. */
+/** The ringside bell struck once to start a bout, twice for a win. */
 export function playBell(times = 1) {
   const c = ac();
   if (!c) return;

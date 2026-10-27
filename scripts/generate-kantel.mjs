@@ -1,5 +1,5 @@
 /**
- * public/models/kantel.glb — កន្ទេល (Kantel), a traditional Khmer woven sleeping and sitting mat.
+ * public/models/kantel.glb - កន្ទេល (Kantel), a traditional Khmer woven sleeping and sitting mat.
  * Made from sedge grass (កក់) or romchek (រំចេក), it is an essential household item
  * rolled out for sleeping, eating, or receiving guests.
  * 

@@ -2,7 +2,7 @@ import { TEMPLATES, templatesOfKind } from "../ceremony";
 import { THEME_INFO } from "./CeremonyScene";
 
 /**
- * 🎊 **Ceremonies** — the directory.
+ * 🎊 **Ceremonies** the directory.
  *
  * Cambodia's calendar events are famous and few. Its **life events** are the
  * opposite: a wedding, a housewarming, an ordination, a funeral, happening
@@ -35,10 +35,11 @@ export function CeremonyHome({
           <span className="cer-meta">
             {tpl.moments.length} moments
             {" · "}
-            {tpl.days === 1 ? "one day" : `${tpl.days} days`}
+            {tpl.id === 'wedding' || tpl.id === 'housewarming' ? 'selected moments' : tpl.days === 1 ? "one day" : `${tpl.days} days`}
             {" · "}
             {tpl.venues.map((v) => THEME_INFO[v].icon).join(" ")}
           </span>
+          {['wedding','housewarming','pchum-ben','khmer-new-year'].includes(tpl.id)&&<span className="bhome-line">Walk and explore · story stops · object information</span>}
           {tpl.needsReview && <span className="cer-review-chip">Awaiting cultural review</span>}
         </button>
       </li>
@@ -57,10 +58,9 @@ export function CeremonyHome({
           <span className="tag">Walk through it, moment by moment</span>
           <h1>Ceremonies</h1>
           <p>
-            A Khmer ceremony is not one event but a sequence of them, each with
-            its own name, its own meaning and its own place in the order. Step
-            through the sequence, see what is set out at each stage, and stage it
-            in the setting it actually happens in.
+            Explore selected moments, objects and settings from Khmer ceremonies.
+            Walk through each study, stop to read a story, or use the overview to
+            inspect objects. Customs, timing and order vary between communities.
           </p>
         </header>
 
@@ -99,7 +99,7 @@ export function CeremonyHome({
           </p>
           <p>
             <b>Your own ceremony, later.</b> The format underneath this already
-            supports a family recording their own — their photographs against the
+            supports a family recording their own their photographs against the
             sequence, private by default, never located more precisely than a
             commune. <code>docs/CEREMONIES.md</code> has the whole design.
           </p>

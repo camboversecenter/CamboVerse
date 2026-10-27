@@ -1,0 +1,46 @@
+.fashion .fash-stage { width:100%; height:100%; }
+.fash-quality { position:absolute;top:103px;right:18px;display:flex;gap:3px;padding:3px;border-radius:20px;background:#fff9;z-index:2; }
+.fash-quality button { border:0;border-radius:16px;padding:7px 12px;color:#514c43;background:transparent;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit; }
+.fash-quality button[aria-pressed=true] { background:#343a34;color:white; }
+.fashion-day { background:#f6f3ed;color:#343a34; }
+.fashion-day .fash-stage { position:absolute;left:0;top:100px;bottom:0;width:calc(100% - 380px);height:auto; }
+.fashion-day .fash-modes { top:58px; }
+.fashion-day > .fash-day-panel { right:0;left:auto;top:100px;bottom:0;transform:none;width:380px;box-sizing:border-box;max-height:none;border:0;border-left:1px solid #ddd7cc;border-radius:0;box-shadow:none;background:#f6f3ed;padding:94px 28px 28px;color:#343a34; }
+.fashion-day .fash-try { top:117px;right:28px;left:auto;transform:none;border:1px solid #424c41;border-radius:24px;background:#424c41;color:#fff;padding:10px 18px;box-shadow:none;font-size:13px; }
+.fashion-day .fash-quality { top:120px;right:auto;left:18px; }
+.fash-eyebrow { font-size:10px;font-weight:700;letter-spacing:.13em;color:#777265; }
+.fash-day-panel h1 { margin:10px 0;font-family:Georgia,serif;font-weight:400;font-size:29px;line-height:1.12; }
+.fash-intro { margin:12px 0 22px;font-size:13px;line-height:1.65;color:#68685f; }
+.fash-day-panel .fash-swatches { display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:0 0 26px; }
+.fash-day-panel .fash-swatch { width:100%;height:65px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:9px;box-shadow:none;background:transparent;transform:none;cursor:pointer;color:#65665f;font-size:10px;padding:0; }
+.fash-day-panel .fash-swatch.on { background:#fff;border-color:#747c6e;color:#30382e;font-weight:700;box-shadow:0 2px 5px #393a2910; }
+.fash-day-panel .fash-swatch.today:not(.on) { border-bottom:1px solid #9b9d91; }
+.fash-colour-dot { width:25px;height:25px;border-radius:50%;box-shadow:inset 0 0 0 1px #0001; }
+.fashion-day .fash-info-head { align-items:center;flex-wrap:wrap;gap:8px;font-size:16px; }
+.fashion-day .fash-daycolor { display:flex;gap:8px;align-items:center;color:#4e534a;font-size:13px;margin:12px 0 20px; }
+.fash-daycolor>span { width:10px;height:10px;border-radius:50%; }
+.fashion-day .fash-desc { font-size:13px;line-height:1.8;color:#60635a; }
+.fash-garment-details { margin-top:20px;padding:16px 0;border-top:1px solid #ddd8ce;border-bottom:1px solid #ddd8ce;font-size:13px;color:#555b50;line-height:1.7; }
+.fash-garment-details summary { cursor:pointer;font-weight:600; }
+.fashion-day .fash-note { color:#797c73;font-size:11px;line-height:1.6;margin-top:18px; }
+.fash-stage-caption { position:absolute;top:65px;left:24px;pointer-events:none;display:flex;flex-direction:column;gap:7px;color:#555e51; }
+.fash-stage-caption span { font-size:9px;letter-spacing:.15em; }
+.fash-stage-caption b { font:400 21px Georgia,serif; }
+.fash-view-controls { position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;padding:5px;gap:3px;border:1px solid #d9d7cb;border-radius:24px;background:#f8f7f0e8; }
+.fash-view-controls button { border:0;background:transparent;color:#626a5c;border-radius:18px;padding:9px 13px;font-size:12px;cursor:pointer; }
+.fash-view-controls button[aria-pressed=true] { color:white;background:#434e3f; }
+.fash-load { position:absolute;top:46%;left:15%;right:15%;text-align:center;background:#fffefa;border:1px solid #dedbce;padding:20px;border-radius:12px;font-size:14px; }
+.fash-load button { border:1px solid #66715d;border-radius:7px;padding:7px;margin-top:8px;cursor:pointer; }
+.fashion button:focus-visible,.fashion summary:focus-visible { outline:3px solid #397a82;outline-offset:3px; }
+@media(max-width:760px) {
+  .fashion-day { overflow:auto; }
+  .fashion-day .fash-stage { top:100px;width:100%;height:54vh;min-height:340px;bottom:auto; }
+  .fashion-day > .fash-day-panel { position:relative;top:auto;margin-top:calc(100px + max(54vh,340px));width:100%;padding:22px 20px 30px;border-left:0;border-top:1px solid #ddd7cc; }
+  .fashion-day .fash-try { top:111px;right:12px;padding:8px 13px;font-size:12px; }
+  .fashion-day .fash-quality { top:111px;left:12px; }
+  .fash-stage-caption { display:none; }
+  .fash-view-controls { bottom:10px; }
+  .fash-day-panel h1 { font-size:26px; }
+  .fash-intro { margin:8px 0 12px; }
+  .fash-day-panel .fash-swatches { margin-bottom:17px; }
+}

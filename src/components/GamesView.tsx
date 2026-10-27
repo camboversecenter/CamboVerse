@@ -1,329 +1,129 @@
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
-import { useEffect, useMemo, useState } from "react";
-import { KHMER_GAMES, gameCredential, type KhmerGame } from "../games";
-import { getIdentity, earnedAchievements } from "../lib/identity";
-import { GamePlay } from "./GamePlay";
+import { Canvas } from '@react-three/fiber';
+import { ExploreControls } from './ExploreControls';
+import { createXRStore, XR, XROrigin, useXR } from '@react-three/xr';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { KHMER_GAMES, gameCredential } from '../games';
+import { claimCredential, getIdentity, earnedAchievements } from '../lib/identity';
+import { GamePlay, type GameSaveStatus } from './GamePlay';
+import { GameScene, FestivalGround } from './KhmerGamesScene';
+import { GamesXRPanel } from './GamesXRPanel';
+import { useKhmerGame } from './useKhmerGame';
+import { GAME_RECORD_KEY, GAME_RULES, parseRecords, type GameLevel, type GameRecords, type GameState } from '../khmerGameEngine';
+import './KhmerGames.css';
 
-/**
- * Khmer Traditional Games (ល្បែងប្រជាប្រិយ) — the play of Cambodian festivals.
- * A festival ground you can explore in 3D or VR, with a scene for each game;
- * pick one to read how it's played and its meaning, then play a quick version
- * to earn a Heritage Passport credential. A starting set — contributors can add
- * many more (see TODO.md).
- */
-const SARONGS = ["#c0453f", "#2f6ae0", "#4c8a3f", "#c8912e", "#8b3fd0", "#d9662f", "#3fa0a0"];
+function initialQuality() {
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  return (navigator.hardwareConcurrency ?? 4) <= 4 || memory <= 3 || Math.min(screen.width, screen.height) < 500 ? 'normal' : 'ultra';
+}
+function loadRecords(): GameRecords { try { return parseRecords(localStorage.getItem(GAME_RECORD_KEY)); } catch { return {}; } }
 
 export function GamesView({ onBackToMap }: { onBackToMap: () => void }) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
   const [vrSupported, setVrSupported] = useState(false);
-  const [game, setGame] = useState<KhmerGame>(KHMER_GAMES[0]);
+  const [inVR, setInVR] = useState(false);
+  const [vrError, setVrError] = useState('');
+  const [quality, setQuality] = useState(initialQuality);
+  const ultra = inVR || quality === 'ultra';
+  const [gameI, setGameI] = useState(0);
+  const game = KHMER_GAMES[gameI];
   const [playing, setPlaying] = useState(false);
+  const [level, setLevel] = useState<GameLevel>('practice');
   const [earned, setEarned] = useState<Set<string>>(new Set());
-
+  const [records, setRecords] = useState<GameRecords>(loadRecords);
+  const recordRef = useRef(records);
+  const [localSaved, setLocalSaved] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<GameSaveStatus>('idle');
+  const session = useKhmerGame(game.play, level, playing);
+  const processed = useRef<GameState | null>(null);
+  const saveRequest = useRef(0);
+  const saveBusy = useRef(false);
+  const collection = useRef<HTMLDivElement>(null);
+  const [motion, setMotion] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches);
   useEffect(() => {
-    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
-  }, []);
-
-  useEffect(() => {
+    navigator.xr?.isSessionSupported('immersive-vr').then(setVrSupported).catch(() => setVrSupported(false));
     let live = true;
-    (async () => {
-      const set = await earnedAchievements(await getIdentity(false));
-      if (live) setEarned(set);
-    })();
-    return () => {
-      live = false;
-    };
+    getIdentity(false).then(earnedAchievements).then(set => { if (live) setEarned(set); });
+    return () => { live = false; saveRequest.current++; };
   }, []);
-
-  const hasWon = earned.has(gameCredential(game.id));
-
-  return (
-    <div className="games">
-      <Canvas dpr={[1, 2]} camera={{ position: [0, 2.6, 6.6], fov: 45 }} gl={{ antialias: true }} shadows>
-        <XR store={store}>
-          <color attach="background" args={["#f0c33a"]} />
-          <fog attach="fog" args={["#f0c33a", 14, 30]} />
-          <ambientLight intensity={0.85} />
-          <directionalLight position={[4, 9, 5]} intensity={1.1} castShadow shadow-mapSize={[1024, 1024]} />
-
-          {/* Festival ground. */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-            <circleGeometry args={[9, 48]} />
-            <meshStandardMaterial color="#b8862f" roughness={1} />
-          </mesh>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-            <ringGeometry args={[4.3, 4.6, 48]} />
-            <meshBasicMaterial color="#9c6f26" />
-          </mesh>
-
-          <GameScene game={game} />
-
-          <XROrigin position={[0, 1.1, 5.4]} />
-          <Nav />
-        </XR>
-      </Canvas>
-
-      {/* ---- HUD ---- */}
-      <div className="cls-top">
-        <button className="backbtn" onClick={onBackToMap}>
-          ← Map
-        </button>
-        <span className="cls-title">🎪 Khmer Traditional Games</span>
-        {vrSupported && (
-          <button className="vr-btn cls-vr" onClick={() => store.enterVR()}>
-            🥽 VR
-          </button>
-        )}
-      </div>
-
-      <div className="games-tabs">
-        {KHMER_GAMES.map((g) => (
-          <button
-            key={g.id}
-            className={g.id === game.id ? "games-tab on" : "games-tab"}
-            style={g.id === game.id ? { background: g.color, borderColor: g.color } : { borderColor: g.color }}
-            onClick={() => setGame(g)}
-          >
-            <span className="khmer">{g.khmer}</span>
-            <span className="games-tab-en">{g.english}{earned.has(gameCredential(g.id)) ? " ✓" : ""}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="games-info" style={{ borderColor: game.color }}>
-        <div className="games-info-head">
-          <h2>
-            <span className="khmer">{game.khmer}</span> {game.name}
-          </h2>
-          <span className="games-en">{game.english}</span>
+  useEffect(() => { if (collection.current) collection.current.inert = playing && !inVR; }, [playing, inVR]);
+  const pickGame = (index: number) => {
+    saveRequest.current++; saveBusy.current = false; setSaveStatus('idle');
+    setGameI(index);
+  };
+  const close = () => { saveRequest.current++; saveBusy.current = false; setPlaying(false); };
+  const saveVictory = useCallback(async () => {
+    if (saveBusy.current) return;
+    if (earned.has(gameCredential(game.id))) { setSaveStatus('saved'); return; }
+    saveBusy.current = true; setSaveStatus('saving');
+    const request = ++saveRequest.current;
+    let ok = false;
+    try { ok = await claimCredential(gameCredential(game.id), `game:${game.id}:win`); } catch { /* retry remains available */ }
+    if (request !== saveRequest.current) return;
+    saveBusy.current = false; setSaveStatus(ok ? 'saved' : 'failed');
+    if (ok) setEarned(previous => new Set(previous).add(gameCredential(game.id)));
+  }, [game.id, earned]);
+  useEffect(() => {
+    const state = session.state;
+    if (state.phase !== 'result') { processed.current = null; return; }
+    if (!playing || processed.current === state) return;
+    processed.current = state;
+    const old = recordRef.current[game.id] ?? { played: 0, wins: 0, best: 0 };
+    const next = { ...recordRef.current, [game.id]: { played: old.played + 1, wins: old.wins + Number(state.won), best: Math.max(old.best, state.score) } };
+    recordRef.current = next; setRecords(next);
+    try { localStorage.setItem(GAME_RECORD_KEY, JSON.stringify(next)); setLocalSaved(true); } catch { setLocalSaved(false); }
+    if (state.won) void saveVictory();
+  }, [session.state, game.id, playing, saveVictory]);
+  const start = () => { setSaveStatus('idle'); setPlaying(true); };
+  const next = () => { pickGame((gameI + 1) % KHMER_GAMES.length); setPlaying(true); };
+  const record = records[game.id];
+  const wins = KHMER_GAMES.filter(g => (records[g.id]?.wins ?? 0) > 0 || earned.has(gameCredential(g.id))).length;
+  return <div className="kg-hub">
+    <div ref={collection} className="kg-collection" aria-hidden={playing && !inVR ? true : undefined}>
+      <header className="kg-header"><button className="kg-secondary" onClick={onBackToMap}>← Map</button><div><span className="kg-eyebrow">PLAY · LEARN · CELEBRATE</span><h1>Khmer Games</h1></div><span className="kg-progress">{wins} / 4 games won</span></header>
+      <nav className="kg-tabs" aria-label="Khmer games">{KHMER_GAMES.map((g, i) => <button key={g.id} aria-pressed={gameI === i} onClick={() => pickGame(i)}><span className="kg-game-number">0{i + 1}</span><span><b className="khmer">{g.khmer}</b><small>{g.english}</small></span>{(records[g.id]?.wins ?? 0) > 0 && <span className="kg-won" aria-label="Won">✓</span>}</button>)}</nav>
+      <div className="kg-layout">
+        <div className="kg-stage">
+          <Canvas dpr={ultra ? [1, 2] : [1, 1.25]} camera={{ position: [0, 3.3, 8.5], fov: 46 }} gl={{ antialias: true }} shadows={ultra}>
+            <XR store={store}>
+              <XRSession onChange={setInVR} />
+              <color attach="background" args={['#c8d7cf']} /><fog attach="fog" args={['#c8d7cf', 17, 38]} />
+              <ambientLight intensity={.8} /><hemisphereLight args={['#fff4dc', '#647a57', 1.2]} />
+              <directionalLight position={[-4, 9, 5]} intensity={1.7} castShadow={ultra} shadow-mapSize={[1024, 1024]} shadow-camera-left={-7} shadow-camera-right={7} shadow-camera-top={7} shadow-camera-bottom={-7} shadow-normalBias={.035} />
+              <FestivalGround ultra={ultra} />
+              <GameScene key={game.id} game={game} ultra={ultra} motion={motion && ultra && !playing} />
+              <XROrigin position={[0, 0, 5.4]} />
+              <Nav enabled={!playing} resetKey={game.id} />
+              <GamesXRPanel game={game} gameI={gameI} onPick={pickGame} session={session} playing={playing} onPlay={start} onClose={close} onNext={next} level={level} onLevel={setLevel} saveStatus={saveStatus} onRetrySave={saveVictory} onExit={() => store.getState().session?.end()} />
+            </XR>
+          </Canvas>
+          <div className="kg-stage-top"><div className="kg-quality" aria-label="Scene detail">{['normal', 'ultra'].map(q => <button key={q} aria-pressed={(ultra ? 'ultra' : 'normal') === q} onClick={() => setQuality(q)} disabled={inVR}>{q === 'normal' ? 'Normal' : 'Ultra'}</button>)}</div><button className="kg-secondary" aria-pressed={motion && ultra} disabled={!ultra} onClick={() => setMotion(v => !v)}>Scene motion {motion && ultra ? 'on' : 'off'}</button></div>
+          <div className="kg-scene-caption"><span>THE FESTIVAL GROUNDS</span><b>{game.english}</b><small>Drag to look around · scroll or pinch to zoom</small></div>
         </div>
-        <div className="games-facts">
-          <span>👥 {game.players}</span>
-          <span>🎉 {game.occasion}</span>
-        </div>
-        <p className="games-how">{game.how}</p>
-        <p className="games-desc">{game.desc}</p>
-        <button className="games-play" style={{ background: game.color }} onClick={() => setPlaying(true)}>
-          ▶ Play {game.english}{hasWon ? " again" : ""}
-        </button>
+        <section className="kg-info" aria-label={game.english}>
+          <span className="kg-eyebrow">GAME 0{gameI + 1} · {game.occasion.toUpperCase()}</span>
+          <h2>{game.name}</h2><p className="kg-native khmer">{game.khmer}</p>
+          <p className="kg-lead">{GAME_RULES[game.play].goal}</p>
+          <div className="kg-facts"><span>{game.players}</span><span>Solo digital challenge</span></div>
+          <div className="kg-level" aria-label="Game difficulty">{(['practice', 'challenge'] as const).map(l => <button key={l} aria-pressed={level === l} onClick={() => setLevel(l)}>{l === 'practice' ? 'Relaxed' : 'Challenge'}</button>)}</div>
+          <p className="kg-hint">{level === 'practice' ? 'More time and wider timing zones to learn the controls.' : 'Faster movement and tighter timing for another challenge.'}</p>
+          <button className="kg-primary kg-launch" onClick={start}>Play {game.english} <span>→</span></button>
+          <div className="kg-records"><span><b>{record?.best ?? '—'}</b>Best score</span><span><b>{record?.played ?? 0}</b>Rounds played</span><span><b>{record?.wins ?? 0}</b>Wins</span></div>
+          <details className="kg-learn"><summary>Traditional play & cultural context</summary><p>{game.how}</p><p>{game.desc}</p><p>Rules vary between communities. This solo challenge teaches timing and coordination; it does not reproduce the full group game.</p></details>
+          {vrSupported && <button className="kg-secondary kg-vr" onClick={() => { setVrError(''); store.enterVR().catch(() => setVrError('VR could not start. You can keep playing here.')); }}>Enter VR</button>}
+          {vrError && <p role="status">{vrError}</p>}
+        </section>
       </div>
-
-      {playing && (
-        <GamePlay
-          game={game}
-          onClose={() => setPlaying(false)}
-          onWon={() => setEarned((s) => new Set(s).add(gameCredential(game.id)))}
-        />
-      )}
     </div>
-  );
+    {playing && !inVR && <GamePlay key={game.id} game={game} session={session} onClose={close} onNext={next} saveStatus={saveStatus} onRetrySave={saveVictory} localSaved={localSaved} />}
+  </div>;
 }
-
-/** A simple festival-goer: sarong, torso, head. */
-function Person({
-  position,
-  rotation = 0,
-  color,
-  scale = 1,
-}: {
-  position: [number, number, number];
-  rotation?: number;
-  color: string;
-  scale?: number;
-}) {
-  return (
-    <group position={position} rotation={[0, rotation, 0]} scale={scale}>
-      <mesh position={[0, 0.28, 0]} castShadow>
-        <cylinderGeometry args={[0.19, 0.22, 0.56, 10]} />
-        <meshStandardMaterial color={color} roughness={0.9} />
-      </mesh>
-      <mesh position={[0, 0.72, 0]} castShadow>
-        <capsuleGeometry args={[0.13, 0.26, 4, 8]} />
-        <meshStandardMaterial color="#7c5b3a" roughness={0.8} />
-      </mesh>
-      <mesh position={[0, 1.02, 0]} castShadow>
-        <sphereGeometry args={[0.14, 14, 14]} />
-        <meshStandardMaterial color="#c98a5a" roughness={0.7} />
-      </mesh>
-    </group>
-  );
+function XRSession({ onChange }: { onChange: (active: boolean) => void }) {
+  const active = useXR(s => s.session != null);
+  useEffect(() => { onChange(active); }, [active, onChange]);
+  return null;
 }
-
-/** A ring of onlookers around the play area. */
-function Crowd({ count = 9, radius = 3.7 }: { count?: number; radius?: number }) {
-  const people = useMemo(
-    () =>
-      Array.from({ length: count }, (_, i) => {
-        const a = (i / count) * Math.PI * 2 + 0.3;
-        return {
-          pos: [Math.cos(a) * radius, 0, Math.sin(a) * radius] as [number, number, number],
-          rot: -a + Math.PI / 2,
-          color: SARONGS[i % SARONGS.length],
-          scale: 0.92 + ((i * 7) % 5) * 0.03,
-        };
-      }),
-    [count, radius],
-  );
-  return (
-    <group>
-      {people.map((p, i) => (
-        <Person key={i} position={p.pos} rotation={p.rot} color={p.color} scale={p.scale} />
-      ))}
-    </group>
-  );
-}
-
-/** The 3D depiction of the selected game at the centre of the ground. */
-function GameScene({ game }: { game: KhmerGame }) {
-  if (game.play === "aim") {
-    // A clay pot hanging from a pole; a blindfolded player with a stick.
-    return (
-      <group>
-        <Crowd />
-        {/* pole + beam */}
-        <mesh position={[0.6, 1.3, 0]} castShadow>
-          <cylinderGeometry args={[0.06, 0.07, 2.6, 10]} />
-          <meshStandardMaterial color="#6b4a2a" roughness={0.9} />
-        </mesh>
-        <mesh position={[0, 2.5, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.035, 0.035, 1.6, 8]} />
-          <meshStandardMaterial color="#6b4a2a" roughness={0.9} />
-        </mesh>
-        {/* string + pot */}
-        <mesh position={[-0.2, 1.95, 0]}>
-          <cylinderGeometry args={[0.006, 0.006, 0.7, 6]} />
-          <meshStandardMaterial color="#3a2c1c" />
-        </mesh>
-        <group position={[-0.2, 1.5, 0]}>
-          <mesh castShadow>
-            <sphereGeometry args={[0.22, 16, 16]} />
-            <meshStandardMaterial color="#b05a2a" roughness={0.85} />
-          </mesh>
-          <mesh position={[0, 0.22, 0]} castShadow>
-            <cylinderGeometry args={[0.09, 0.13, 0.12, 12]} />
-            <meshStandardMaterial color="#a04e24" roughness={0.85} />
-          </mesh>
-        </group>
-        {/* blindfolded player with stick */}
-        <group position={[-1.1, 0, 0.4]} rotation={[0, 0.5, 0]}>
-          <Person position={[0, 0, 0]} color={game.color} />
-          <mesh position={[0.35, 1.2, 0]} rotation={[0, 0, -0.9]} castShadow>
-            <cylinderGeometry args={[0.02, 0.02, 1.3, 8]} />
-            <meshStandardMaterial color="#7c5b3a" />
-          </mesh>
-          {/* blindfold */}
-          <mesh position={[0, 1.03, 0.12]}>
-            <boxGeometry args={[0.3, 0.06, 0.16]} />
-            <meshStandardMaterial color="#e8e2d2" />
-          </mesh>
-        </group>
-      </group>
-    );
-  }
-
-  if (game.play === "race") {
-    // Three racers in rice sacks at a start line.
-    return (
-      <group>
-        <Crowd radius={4.1} />
-        {[-1.1, 0, 1.1].map((x, i) => (
-          <group key={i} position={[x, 0, 0.4]}>
-            {/* sack */}
-            <mesh position={[0, 0.42, 0]} castShadow>
-              <cylinderGeometry args={[0.28, 0.34, 0.84, 12]} />
-              <meshStandardMaterial color="#cdae6a" roughness={1} />
-            </mesh>
-            {/* torso + head poking out */}
-            <mesh position={[0, 1.0, 0]} castShadow>
-              <capsuleGeometry args={[0.13, 0.24, 4, 8]} />
-              <meshStandardMaterial color={SARONGS[i]} roughness={0.85} />
-            </mesh>
-            <mesh position={[0, 1.32, 0]} castShadow>
-              <sphereGeometry args={[0.14, 14, 14]} />
-              <meshStandardMaterial color="#c98a5a" roughness={0.7} />
-            </mesh>
-          </group>
-        ))}
-        {/* finish line */}
-        <mesh position={[0, 0.02, -2.6]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[3.6, 0.18]} />
-          <meshBasicMaterial color="#f4ece0" />
-        </mesh>
-      </group>
-    );
-  }
-
-  if (game.play === "catch") {
-    // Two lines of people facing each other, throwing a chhoung back and forth
-    return (
-      <group>
-        <Crowd radius={4.5} count={12} />
-        {/* Left Team */}
-        {[-1.2, 0, 1.2].map((z, i) => (
-          <Person key={`l-${i}`} position={[-1.6, 0, z]} rotation={Math.PI / 2} color={SARONGS[i % SARONGS.length]} />
-        ))}
-        {/* Right Team */}
-        {[-1.2, 0, 1.2].map((z, i) => (
-          <Person key={`r-${i}`} position={[1.6, 0, z]} rotation={-Math.PI / 2} color={SARONGS[(i + 3) % SARONGS.length]} />
-        ))}
-        {/* The Chhoung (flying in the middle) */}
-        <mesh position={[0, 1.8, 0]} castShadow>
-          <sphereGeometry args={[0.15, 12, 12]} />
-          <meshStandardMaterial color={game.color} />
-        </mesh>
-        {/* The tail of the Chhoung (since it's a rolled up scarf) */}
-        <mesh position={[0, 1.65, 0.1]} rotation={[0.5, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.04, 0.08, 0.25, 8]} />
-          <meshStandardMaterial color={game.color} />
-        </mesh>
-      </group>
-    );
-  }
-
-  // Tug of war — a rope and two teams leaning back.
-  return (
-    <group>
-      <Crowd radius={4.2} />
-      {/* rope */}
-      <mesh position={[0, 0.7, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.035, 0.035, 4.6, 8]} />
-        <meshStandardMaterial color="#c9a24a" roughness={0.9} />
-      </mesh>
-      {/* centre knot */}
-      <mesh position={[0, 0.7, 0]}>
-        <sphereGeometry args={[0.1, 12, 12]} />
-        <meshStandardMaterial color="#c0453f" />
-      </mesh>
-      {[-1, 1].map((side) =>
-        [0, 1, 2].map((i) => (
-          <Person
-            key={`${side}-${i}`}
-            position={[side * (1.1 + i * 0.62), 0, 0]}
-            rotation={side < 0 ? Math.PI / 2 + 0.35 : -Math.PI / 2 - 0.35}
-            color={side < 0 ? "#2f6ae0" : "#4c8a3f"}
-          />
-        )),
-      )}
-    </group>
-  );
-}
-
-function Nav() {
-  const inXR = useXR((s) => s.session != null);
+function Nav({ enabled, resetKey }: { enabled: boolean; resetKey: string }) {
+  const inXR = useXR(s => s.session != null);
   if (inXR) return null;
-  return (
-    <OrbitControls
-      makeDefault
-      enablePan={false}
-      minDistance={3.5}
-      maxDistance={12}
-      maxPolarAngle={Math.PI / 2.1}
-      enableDamping
-      dampingFactor={0.08}
-      target={[0, 1, 0]}
-    />
-  );
+  return <ExploreControls enabled={enabled} resetKey={resetKey} target={[0, 1, 0]} minDistance={3.5} maxDistance={13} maxPolarAngle={Math.PI / 2.1} enableDamping dampingFactor={.08} />;
 }

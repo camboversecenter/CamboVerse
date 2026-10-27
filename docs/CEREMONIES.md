@@ -1,8 +1,14 @@
 # Ceremonies
 
+Pchum Ben now imports Blender-generated Normal/Ultra glTF scenes and presents five selected learning stages. See [sources and Blender delivery notes](./PCHUM-BEN-REFERENCES.md).
+
+The housewarming viewer now has four selected moments in a raised-house cutaway. See [the housewarming source record](./HOUSEWARMING-REFERENCES.md) for regional attribution and modelling limits.
+
+The wedding viewer now presents nine selected moments in a traditional-home study scene. See [the wedding reading and modelling record](./WEDDING-REFERENCES.md) for book references, evidence limits and review needs. This replaces the original generic wedding staging; it does not certify a canonical ceremony sequence.
+
 **A family records their own wedding, and the app explains what is happening.**
 
-Cambodia's calendar events — Pchum Ben, Bon Om Touk, Khmer New Year — are famous
+Cambodia's calendar events Pchum Ben, Bon Om Touk, Khmer New Year are famous
 and few. Its **life events** are the opposite: a wedding, a housewarming, an
 ordination, a funeral, happening thousands of times a day, all over the country,
 and almost never recorded as anything but a phone album.
@@ -51,13 +57,13 @@ Buildings registry. A Khmer wedding is under a **marquee in the yard in front of
 the house**. An ordination is on pagoda ground. A boat blessing is at the water.
 The hired function hall is one option among many, and a recent one.
 
-So the required field is a **scene theme** — a named outdoor setting the renderer
-builds procedurally — and a building is an optional addition:
+So the required field is a **scene theme** a named outdoor setting the renderer
+builds procedurally and a building is an optional addition:
 
 ```ts
 interface Venue {
   theme: SceneTheme;      // required, always
-  timeOfDay: TimeOfDay;   // required — dawn light is half of Pchum Ben
+  timeOfDay: TimeOfDay;   // required dawn light is half of Pchum Ben
   season?: "dry" | "wet";
   pavilion?: boolean;
   buildingId?: string;    // optional: a real place from src/buildings.ts
@@ -76,7 +82,7 @@ blank grey plane.
 
 A Khmer wedding is not one event. It is a sequence of distinct rituals over one
 to three days, each with its own name and meaning. Modelling the **sequence**
-rather than the day is what turns an album into an explanation — and it is what
+rather than the day is what turns an album into an explanation and it is what
 lets a template supply the meanings while a family supplies the pictures.
 
 The wedding template currently carries seven: procession of gifts, honouring the
@@ -86,7 +92,7 @@ or family variation, so an instance that skips one is not treated as incomplete.
 
 ## Props are shared, not per-ceremony
 
-`PropKind` is a small kit the app supplies procedurally — offering trays, banana
+`PropKind` is a small kit the app supplies procedurally offering trays, banana
 stems, garlands, candles, incense, monk seating, floor mats, low tables,
 parasols, drums, gift boxes, water vessels. The same trays appear at a wedding, a
 housewarming and a robe-offering, so they are modelled once.
@@ -99,9 +105,9 @@ Families already keep their wedding videos on YouTube and their albums on
 Facebook or Google Photos. Telling them to re-upload is unrealistic, so
 `MediaRef` has three kinds:
 
-- **`local`** — inside the bundle, addressed by SHA-256. Works offline. The default.
-- **`url`** — a plain image or video on a URL the family controls.
-- **`embed`** — a third-party service, named by a free-form `provider` string.
+- **`local`** inside the bundle, addressed by SHA-256. Works offline. The default.
+- **`url`** a plain image or video on a URL the family controls.
+- **`embed`** a third-party service, named by a free-form `provider` string.
 
 **An embed means the viewer's device contacts that company**, handing over the
 viewer's IP address and whatever else they collect, and it breaks CamboVerse's
@@ -112,10 +118,10 @@ type EmbedPolicy = "facade" | "never" | "auto";
 const DEFAULT_EMBED_POLICY = "facade";
 ```
 
-- `facade` — show the locally stored poster frame, name the provider, contact it
+- `facade` show the locally stored poster frame, name the provider, contact it
   only when the viewer taps. The default.
-- `never` — do not phone out at all. The right setting for a school deployment.
-- `auto` — only where a deployment has decided that is acceptable.
+- `never` do not phone out at all. The right setting for a school deployment.
+- `auto` only where a deployment has decided that is acceptable.
 
 An embed carries a **local poster** so the ceremony can be read end to end
 without ever reaching the provider. That is a warning in `validateCeremony` and a
@@ -126,7 +132,7 @@ concern and is not built yet.
 
 ## Consent is a required field, not a setting
 
-Every other thing CamboVerse models — organs, buildings, molecules, rice plants —
+Every other thing CamboVerse models organs, buildings, molecules, rice plants  
 contains no people. A wedding is full of identifiable people, including children.
 
 ```ts
@@ -148,7 +154,7 @@ Four rules hold it up:
 2. **`canPublish` is stricter than `validateCeremony`.** Publishing is the
    irreversible step, so an unanswered question is a refusal there and a warning
    in ordinary validation.
-3. **Never finer than a commune.** No coordinates, ever — a precise location for
+3. **Never finer than a commune.** No coordinates, ever a precise location for
    a home ceremony is somebody's home address. The validator rejects a `lat` key
    outright. Same coarsening rule Grove applies to garden coordinates, for the
    same reason.
@@ -187,27 +193,27 @@ mediaHashes(c)                   // every local file it refers to
 
 `validateCeremony` takes an optional template and, when given one, warns about
 required moments with nothing recorded and about a template that has not been
-reviewed. It never fails a ceremony for a missing photograph — an unfinished
+reviewed. It never fails a ceremony for a missing photograph an unfinished
 record is a normal state.
 
 ---
 
 ## The screens
 
-Three files, matching the Buildings and Lab pattern — a plain-DOM directory, a
+Three files, matching the Buildings and Lab pattern a plain-DOM directory, a
 3D stage, and the geometry behind it.
 
 | | |
 |---|---|
-| [`CeremonyHome.tsx`](../src/components/CeremonyHome.tsx) | The directory. Life events first, then the calendar. No WebGL — this is the screen someone on a slow connection reaches first. |
+| [`CeremonyHome.tsx`](../src/components/CeremonyHome.tsx) | The directory. Life events first, then the calendar. No WebGL this is the screen someone on a slow connection reaches first. |
 | [`CeremonyView.tsx`](../src/components/CeremonyView.tsx) | One ceremony, staged: the moment stepper, the venue picker, the media rail. |
-| [`CeremonyProps.tsx`](../src/components/CeremonyProps.tsx) | The prop kit — all thirteen `PropKind`s, built at real size with their base on the ground. |
+| [`CeremonyProps.tsx`](../src/components/CeremonyProps.tsx) | The prop kit all thirteen `PropKind`s, built at real size with their base on the ground. |
 | [`CeremonyScene.tsx`](../src/components/CeremonyScene.tsx) | The eight settings, and the light for each hour of the day. |
 
 **The stepper is the primary control**, because the sequence is the thing being
 taught. Stepping from one moment to the next re-dresses the yard: the trays come
 out, then the monks are seated, then the mat is cleared for the candles. The
-camera re-frames per moment, off the staging's own extent — seven 22 cm candles
+camera re-frames per moment, off the staging's own extent seven 22 cm candles
 and an 8 m marquee cannot share one distance.
 
 Normal / Ultra / VR throughout. Normal drops segment counts, shadows and scatter
@@ -218,16 +224,16 @@ as the couple.
 
 In rough order of usefulness:
 
-1. **Create from photos** — the flow a family actually uses, including the
+1. **Create from photos** the flow a family actually uses, including the
    consent questions asked plainly and one at a time.
 2. **People.** There are none. It is the largest single gap, and the reason a
    few placements need the renderer to invent a table under them (see the traps
    below). Figures are a much harder problem than props and are best attempted
    after a family's own photographs are carrying the human content.
-3. **Season and time as controls** — both are in the format and rendered; only
+3. **Season and time as controls** both are in the format and rendered; only
    the moment's own `timeOfDay` currently drives them.
-4. **Calendar ceremonies on the map** — Pchum Ben at a specific pagoda.
-5. **Game mode** — attending, taking part, doing the rituals. The user's own
+4. **Calendar ceremonies on the map** Pchum Ben at a specific pagoda.
+5. **Game mode** attending, taking part, doing the rituals. The user's own
    framing was "later", and it needs everything above it first.
 
 ## What needs a person, not a commit
@@ -237,7 +243,7 @@ In rough order of usefulness:
 Khmer ceremonies vary by region and by family. The sequences in
 `src/ceremony.ts` are the commonly described ones, the English names are
 descriptive rather than canonical, and a template that is wrong is worse than no
-template — it teaches ten thousand families a version of their own tradition
+template it teaches ten thousand families a version of their own tradition
 that nobody performs. Clients show a plain "under review" note while the flag is
 set. A test asserts the flag is still true, so signing one off is a deliberate
 change with a reviewer's name attached in `source`.
@@ -260,12 +266,12 @@ present as canonical, and whether "blessing by monks" belongs where it sits.
 
 1. Write it in `TEMPLATES` in [`src/ceremony.ts`](../src/ceremony.ts), with
    `needsReview: true` and every `km` set to `null`.
-2. Give each moment a stable `id` — instances reference it, so renaming one
+2. Give each moment a stable `id` instances reference it, so renaming one
    orphans every ceremony already recorded against it.
 3. Mark regional or family variation `optional`.
 4. Choose `venues` honestly. If it is normally in a yard, the first entry is
    `home-yard`, not `hall`.
-5. `npx vitest run src/ceremony.test.ts` — the structural checks run over every
+5. `npx vitest run src/ceremony.test.ts` the structural checks run over every
    shipped template.
 
 ## Traps worth knowing
@@ -276,7 +282,7 @@ present as canonical, and whether "blessing by monks" belongs where it sits.
   mutated a shared fixture and broke four unrelated assertions.
 - **`canonicalize` drops `undefined` keys.** `JSON.stringify(undefined)` returns
   `undefined`, not a string, so without the filter a cleared optional field
-  produced literally invalid JSON — and a different hash from the same ceremony
+  produced literally invalid JSON and a different hash from the same ceremony
   read back out of a file.
 - **`locationPrecision: "none"` with a `place` set is an error**, not a warning.
   Two fields disagreeing about how much to reveal must be resolved by a person.
@@ -291,7 +297,7 @@ present as canonical, and whether "blessing by monks" belongs where it sits.
 - **A staged height implies a surface.** The templates place trays at 0.8 m and
   blessing candles at 0.5 m, because in life a person is holding them or a table
   is under them. With no people modelled, `Staging` supplies the table the data
-  implies — otherwise it is a row of candles hanging in mid-air.
+  implies otherwise it is a row of candles hanging in mid-air.
 - **Dawn and dusk carry more ambient light than physics would give them.** Pchum
   Ben happens before dawn and a reception runs past dusk; a correctly black yard
   is a blank screen on a phone held outdoors, which loses the ceremony entirely.

@@ -7,7 +7,7 @@ import { getIdentity, earnedAchievements, claimCredential } from "../lib/identit
 import type { Spot } from "../spots";
 
 /**
- * "Back in Time" — a journey through the ages of Cambodia, laid over the site so
+ * "Back in Time" a journey through the ages of Cambodia, laid over the site so
  * it feels like the place itself is time-shifting. Scrub the timeline, and each
  * era tints the scene, tells the story of that generation (with a note on this
  * very site), and Kiri the monkey can narrate it aloud in your language.
@@ -203,7 +203,7 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
 
 /**
  * A short, friendly quiz for one era. Answer every question correctly and the
- * visitor earns a free, portable learning credential on the CamboVerse rails —
+ * visitor earns a free, portable learning credential on the CamboVerse rails  
  * the first "learn" loop of the platform. Non-monetary, and open to everyone.
  */
 function EraQuiz({
@@ -287,7 +287,7 @@ function EraQuiz({
           </div>
         </div>
       ))}
-      {result === "fail" && <p className="tt-quiz-msg fail">Not quite — check the story above and try again.</p>}
+      {result === "fail" && <p className="tt-quiz-msg fail">Not quite check the story above and try again.</p>}
       {result === "pass" && <p className="tt-quiz-msg pass">🎉 Correct! Your credential is saved.</p>}
       <div className="tt-quiz-actions">
         <button className="tt-quiz-cancel" onClick={() => setOpen(false)}>

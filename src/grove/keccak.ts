@@ -1,10 +1,10 @@
 /**
- * Keccak-256 — the hash Ethereum (and CSB) uses, in ~90 lines and no dependency.
+ * Keccak-256 the hash Ethereum (and CSB) uses, in ~90 lines and no dependency.
  *
  * WHY THIS FILE EXISTS. CSB stores a grove under `keccak256(plotId)`, never the
  * plot string: a garden's name is frequently its owner's name, and a permissioned
  * national chain is still readable by everyone on it. To ask the chain about a
- * plot CamboVerse already knows, it has to compute that hash — and Web Crypto
+ * plot CamboVerse already knows, it has to compute that hash and Web Crypto
  * does not offer Keccak. (`SHA3-256` is the NIST variant, which differs from
  * Keccak in exactly one padding byte and produces an entirely different digest;
  * substituting it would fail silently, always returning "this plot has never
@@ -74,7 +74,7 @@ function permute(A: bigint[]): void {
 
 /** Keccak-256 of raw bytes. */
 export function keccak256Bytes(input: Uint8Array): Uint8Array {
-  // Keccak padding is 0x01 … 0x80 (SHA-3's is 0x06 … 0x80 — the one-byte
+  // Keccak padding is 0x01 … 0x80 (SHA-3's is 0x06 … 0x80 the one-byte
   // difference that makes a wrong choice here look like an empty result).
   const padLen = RATE - (input.length % RATE);
   const padded = new Uint8Array(input.length + padLen);
@@ -113,7 +113,7 @@ export function keccak256(text: string): string {
 
 /**
  * The 32-byte key CSB files a grove under, from the Grove plot id.
- * `keccak256(utf8(plot))` — identical to solidity's `keccak256(bytes(plot))`
+ * `keccak256(utf8(plot))` identical to solidity's `keccak256(bytes(plot))`
  * and to ethers' `id(plot)`, which is how the anchoring side computes it.
  */
 export const plotKey = keccak256;

@@ -1,0 +1,2087 @@
+/* ── Room container: fully isolated, captures everything ───────── */
+.xroom {
+  position: fixed; inset: 0;
+  background: #0e1e26; color: #edf4f1;
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  z-index: 100;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.xroom-canvas {
+  position: absolute; inset: 0;
+  cursor: crosshair;
+}
+.xroom-canvas canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────── */
+.xroom-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(14,30,38,.88) 0%, rgba(14,30,38,.4) 70%, transparent 100%);
+  pointer-events: none; z-index: 20;
+}
+.xroom-top > * { pointer-events: auto; }
+.xroom-title {
+  font-weight: 700; font-size: 16px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+.xroom-top-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+/* ── Control mode picker ─────────────────────────────────────── */
+.xroom-mode-picker {
+  display: flex; gap: 2px;
+  background: rgba(0,0,0,.35);
+  border-radius: 8px; padding: 2px;
+}
+.xroom-mode-btn {
+  background: transparent; border: none; color: #ccc;
+  font-size: 12px; padding: 4px 10px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.xroom-mode-btn:hover { background: rgba(255,255,255,.1); }
+.xroom-mode-btn.active {
+  background: rgba(56,189,148,.45); color: #fff;
+  font-weight: 600;
+}
+
+/* ── Crosshair ────────────────────────────────────────────────── */
+.xroom-crosshair {
+  position: absolute; top: 50%; left: 50%;
+  width: 20px; height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255,255,255,.45);
+  border-radius: 50%;
+  pointer-events: none; z-index: 15;
+}
+.xroom-crosshair::before,
+.xroom-crosshair::after {
+  content: ""; position: absolute;
+  background: rgba(255,255,255,.45);
+}
+.xroom-crosshair::before {
+  width: 2px; height: 6px; top: 50%; left: 50%;
+  margin: -3px 0 0 -1px;
+}
+.xroom-crosshair::after {
+  width: 6px; height: 2px; top: 50%; left: 50%;
+  margin: -1px 0 0 -3px;
+}
+
+/* ── Station interaction prompt ───────────────────────────────── */
+.xroom-prompt {
+  position: absolute; bottom: 90px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(12,40,50,.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(80,220,170,.35);
+  border-radius: 16px;
+  padding: 14px 22px;
+  z-index: 25;
+  animation: xroom-slidein .3s ease;
+  max-width: 90vw;
+  pointer-events: auto;
+}
+.xroom-prompt-icon { font-size: 32px; flex-shrink: 0; }
+.xroom-prompt-info { display: flex; flex-direction: column; gap: 2px; }
+.xroom-prompt-info b { font-size: 16px; }
+.xroom-prompt-info span { font-size: 13px; color: #a8cfc8; }
+.xroom-interact {
+  font: 600 14px/1 system-ui, sans-serif;
+  background: #50ddaa; color: #0d2a28;
+  border: none; border-radius: 10px;
+  padding: 10px 18px; cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, transform .1s;
+  flex-shrink: 0;
+}
+.xroom-interact:hover { background: #70eec0; }
+.xroom-interact:active { transform: scale(.96); }
+.xroom-prompt-hint {
+  font-size: 13px; color: #80b8a8;
+  font-style: italic;
+}
+.xroom-prompt-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.xroom-interact.ghost {
+  background: transparent; color: #9fd8c6;
+  border: 1px solid rgba(120,220,190,.4);
+}
+.xroom-interact.ghost:hover { background: rgba(120,220,190,.14); color: #eafff6; }
+
+/* ── Running reaction banner ──────────────────────────────────── */
+.xroom-reaction {
+  position: absolute; bottom: 90px; left: 50%;
+  transform: translateX(-50%);
+  min-width: 340px; max-width: 92vw;
+  background: rgba(10,34,44,.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(80,220,170,.45);
+  border-radius: 16px;
+  padding: 14px 20px;
+  z-index: 25;
+  animation: xroom-slidein .3s ease;
+  pointer-events: auto;
+}
+.xroom-reaction-head {
+  display: flex; align-items: baseline; gap: 12px;
+  flex-wrap: wrap;
+}
+.xroom-reaction-head b { font-size: 15px; }
+.xroom-reaction-head code {
+  font-family: ui-monospace, monospace;
+  font-size: 14px; color: #7ff0c4;
+}
+.xroom-reaction p {
+  margin: 6px 0 10px;
+  font-size: 13px; color: #a8cfc8; line-height: 1.5;
+}
+.xroom-reaction-bar {
+  height: 4px; border-radius: 3px;
+  background: rgba(255,255,255,.12);
+  overflow: hidden;
+}
+.xroom-reaction-bar i {
+  display: block; height: 100%; width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #50ddaa, #7ff0c4);
+  animation: xroom-progress linear forwards;
+}
+@keyframes xroom-progress { from { width: 0; } to { width: 100%; } }
+
+/* ══ Mixing bench ═══════════════════════════════════════════════ */
+.xroom-bench {
+  position: absolute; left: 50%; bottom: 16px;
+  transform: translateX(-50%);
+  width: min(720px, 94vw);
+  max-height: calc(100vh - 80px);
+  display: flex; flex-direction: column;
+  background: rgba(9,30,39,.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(80,220,170,.32);
+  border-radius: 18px;
+  z-index: 28;
+  animation: xroom-slidein .25s ease;
+  pointer-events: auto;
+  overflow: hidden;
+}
+.xroom-bench-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(9,30,39,.98);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+  position: sticky; top: 0; z-index: 2;
+}
+.xroom-bench-body {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80,220,170,.3) transparent;
+}
+.xroom-bench-body::-webkit-scrollbar { width: 6px; }
+.xroom-bench-body::-webkit-scrollbar-thumb { background: rgba(80,220,170,.3); border-radius: 3px; }
+.xroom-bench-body::-webkit-scrollbar-track { background: transparent; }
+.xroom-bench-bar b { font-size: 15px; }
+.xroom-bench-count {
+  margin-left: auto; font-size: 12px; color: #7fb8a8;
+}
+.xroom-minimize {
+  background: none; border: 1px solid rgba(255,255,255,.15); cursor: pointer;
+  color: #9fc4bb; font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 6px;
+  font-family: system-ui, sans-serif;
+  transition: background .15s, border-color .15s;
+}
+.xroom-minimize:hover { background: rgba(255,255,255,.1); border-color: rgba(80,220,170,.4); color: #fff; }
+.xroom-x {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); cursor: pointer;
+  color: #9fc4bb; font-size: 18px; line-height: 1;
+  padding: 6px 9px; border-radius: 8px;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.xroom-x:hover { background: rgba(255,80,80,.18); border-color: rgba(255,80,80,.3); color: #ff9090; }
+.xroom-bench.minimized {
+  width: min(380px, 94vw);
+}
+
+/* Slots row */
+.xroom-slots {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  flex-wrap: wrap;
+}
+.xroom-slot {
+  display: flex; align-items: center; gap: 8px;
+  min-width: 150px;
+  background: rgba(255,255,255,.05);
+  border: 1px dashed rgba(255,255,255,.2);
+  border-radius: 12px;
+  padding: 9px 12px;
+  color: #cfe6df; cursor: default;
+  font: inherit; text-align: left;
+}
+.xroom-slot.filled {
+  border-style: solid;
+  border-color: rgba(80,220,170,.5);
+  background: rgba(40,110,95,.28);
+  cursor: pointer;
+}
+.xroom-slot b { font-size: 14px; }
+.xroom-slot span { font-size: 11px; color: #8fb5ac; }
+.xroom-swatch {
+  width: 14px; height: 14px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.3);
+  flex-shrink: 0;
+}
+.xroom-swatch.empty { background: transparent; border-style: dashed; }
+.xroom-plus, .xroom-arrow { color: #6f9d92; font-size: 17px; }
+.xroom-outcome {
+  min-width: 120px; padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.xroom-outcome code { font-size: 13px; color: #7ff0c4; font-family: ui-monospace, monospace; }
+.xroom-outcome-q { color: #5d8a80; font-size: 15px; }
+
+/* Shelf search */
+.xroom-shelf-search {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 16px 8px;
+}
+.xroom-shelf-input {
+  flex: 1;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  padding: 7px 11px;
+  color: #d3e8e1; font: inherit; font-size: 13px;
+  outline: none;
+}
+.xroom-shelf-input::placeholder { color: #6a9a90; }
+.xroom-shelf-input:focus { border-color: rgba(80,220,170,.5); }
+.xroom-shelf-clear {
+  background: rgba(255,255,255,.1);
+  border: none; border-radius: 50%;
+  width: 24px; height: 24px;
+  color: #aaa; cursor: pointer; font: inherit; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Prediction step */
+.xroom-prediction {
+  padding: 10px 16px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.xroom-prediction b { color: #7ff0c4; font-size: 13px; margin-right: 6px; }
+.xroom-prediction > span { color: #86ada5; font-size: 12px; }
+.xroom-prediction-opts {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+}
+.xroom-pred-btn {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px; padding: 6px 12px;
+  color: #b0d0c8; font: inherit; font-size: 12px;
+  cursor: pointer; transition: all .15s;
+}
+.xroom-pred-btn:hover { background: rgba(255,255,255,.12); }
+.xroom-pred-btn.chosen {
+  background: rgba(40,130,110,.4);
+  border-color: rgba(80,220,170,.6);
+  color: #7ff0c4;
+}
+.xroom-prediction-feedback {
+  padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.xroom-prediction-feedback.correct {
+  background: rgba(40,160,80,.2);
+  border: 1px solid rgba(80,220,100,.4);
+}
+.xroom-prediction-feedback.correct b { color: #60e890; }
+.xroom-prediction-feedback.partial {
+  background: rgba(180,140,40,.15);
+  border: 1px solid rgba(220,180,60,.3);
+}
+.xroom-prediction-feedback.partial b { color: #e8c050; }
+.xroom-prediction-feedback span { color: #a0c0b8; font-size: 12px; }
+
+/* Reagent shelf */
+.xroom-shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 7px;
+  padding: 0 16px 12px;
+  max-height: 27vh; overflow-y: auto;
+}
+.xroom-reagent {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 8px 9px; cursor: pointer;
+  color: #d3e8e1; font: inherit; text-align: left;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+.xroom-reagent:hover { background: rgba(255,255,255,.1); }
+.xroom-reagent:active { transform: scale(.97); }
+.xroom-reagent b { font-size: 13px; }
+.xroom-reagent span {
+  font-size: 10px; color: #86ada5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.xroom-reagent.chosen {
+  background: rgba(40,110,95,.45);
+  border-color: rgba(80,220,170,.65);
+  color: #fff;
+}
+/* The guide: reagents that will react with what's already picked */
+.xroom-reagent.hinted {
+  border-color: rgba(255,210,110,.6);
+  box-shadow: 0 0 0 1px rgba(255,210,110,.2), 0 0 12px rgba(255,200,90,.16);
+}
+
+.xroom-bench-foot {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  background: rgba(9,30,39,.98);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.xroom-guide {
+  flex: 1; min-width: 200px; margin: 0;
+  font-size: 12.5px; color: #a3cac1; line-height: 1.55;
+}
+.xroom-bench-actions { display: flex; gap: 8px; margin-left: auto; }
+.xroom-interact:disabled {
+  opacity: .4; cursor: not-allowed; background: #3c6459; color: #9fc4bb;
+}
+.xroom-interact:disabled:hover { background: #3c6459; }
+
+/* ══ Amount controls ═══════════════════════════════════════════ */
+.xroom-amounts {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 0 16px 10px;
+  align-items: center;
+}
+.xroom-amount {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; min-width: 200px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 12px; color: #c2ded6; cursor: default;
+}
+.xroom-amount input[type="range"] {
+  flex: 1; accent-color: #50ddaa; min-width: 60px;
+}
+.xroom-amount b { color: #7ff0c4; min-width: 48px; text-align: right; font-size: 12px; }
+.xroom-amount span { font-size: 13px; }
+.xroom-ratio-hint {
+  width: 100%;
+  font-size: 11px; color: #7fb8a8; text-align: center;
+  padding-top: 2px;
+}
+
+/* ══ Result card ═══════════════════════════════════════════════ */
+.xroom-result-card {
+  margin: 0 16px 10px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(80,220,170,.2);
+  border-radius: 12px;
+  animation: xroom-fadein-card .3s ease;
+}
+@keyframes xroom-fadein-card {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.xroom-result-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.xroom-result-head b { font-size: 14px; color: #d0ede5; }
+.xroom-result-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 6px;
+  letter-spacing: .5px;
+}
+.xroom-result-badge.success {
+  background: rgba(80,220,170,.25); color: #70eec0;
+  border: 1px solid rgba(80,220,170,.4);
+}
+.xroom-result-badge.fail {
+  background: rgba(220,80,60,.2); color: #f09080;
+  border: 1px solid rgba(220,80,60,.35);
+}
+.xroom-result-eq {
+  display: block;
+  font-size: 12px; color: #7ff0c4; font-family: ui-monospace, monospace;
+  margin-bottom: 6px;
+}
+.xroom-result-obs {
+  font-size: 12.5px; color: #bcd9d1; line-height: 1.55;
+  margin: 0 0 8px;
+}
+.xroom-result-yield {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.xroom-yield-bar {
+  flex: 1; height: 6px;
+  background: rgba(255,255,255,.08);
+  border-radius: 3px; overflow: hidden;
+}
+.xroom-yield-fill {
+  height: 100%; border-radius: 3px;
+  transition: width .4s ease;
+}
+.xroom-result-yield span {
+  font-size: 12px; font-weight: 600; color: #b0d4cc; min-width: 72px;
+}
+.xroom-result-note {
+  font-size: 11.5px; color: #90b8b0; line-height: 1.5;
+  margin: 0 0 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.03);
+  border-radius: 8px;
+  border-left: 3px solid rgba(80,220,170,.35);
+}
+.xroom-result-explain {
+  font-size: 12px; color: #a3cac1; line-height: 1.6;
+  margin: 0;
+}
+
+/* ══ Lab notebook (reaction log) ═══════════════════════════════ */
+.xroom-log {
+  position: absolute; left: 16px; top: 64px;
+  width: min(340px, 88vw);
+  max-height: calc(100vh - 160px); overflow-y: auto;
+  background: rgba(9,30,39,.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(80,220,170,.3);
+  border-radius: 16px;
+  z-index: 28;
+  animation: xroom-fadein .25s ease;
+  pointer-events: auto;
+}
+.xroom-log-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: sticky; top: 0;
+  background: rgba(9,30,39,.97);
+  border-radius: 16px 16px 0 0;
+}
+.xroom-log-bar b { font-size: 14px; }
+.xroom-log-list { padding: 8px; }
+.xroom-log-entry {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(80,220,170,.12);
+  margin-bottom: 6px;
+}
+.xroom-log-entry.fail {
+  border-color: rgba(220,80,60,.2);
+  background: rgba(220,80,60,.04);
+}
+.xroom-log-reagents {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: #b0d4cc;
+  margin-bottom: 4px;
+}
+.xroom-log-reagents .xroom-swatch { width: 10px; height: 10px; border-radius: 3px; }
+.xroom-log-result {
+  display: flex; align-items: center; gap: 8px;
+}
+.xroom-log-result b { font-size: 12px; color: #c2ded6; }
+.xroom-log-yield {
+  margin-left: auto;
+  font-size: 11px; color: #7fb8a8; font-weight: 600;
+}
+
+/* ══ In-room reading panel ══════════════════════════════════════ */
+.xroom-read {
+  position: absolute; right: 16px; top: 64px;
+  width: min(360px, 92vw);
+  max-height: calc(100vh - 160px); overflow-y: auto;
+  background: rgba(9,30,39,.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(80,220,170,.3);
+  border-radius: 16px;
+  z-index: 28;
+  animation: xroom-fadein .25s ease;
+  pointer-events: auto;
+}
+.xroom-read-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: sticky; top: 0;
+  background: rgba(9,30,39,.97);
+}
+.xroom-read-bar b { font-size: 14px; flex: 1; }
+.xroom-read p {
+  margin: 0; padding: 14px;
+  font-size: 13.5px; line-height: 1.68; color: #bcd9d1;
+}
+.xroom-read-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 0 14px 14px;
+}
+/* ── Model controls inside the reading panel ──────────────────── */
+.xroom-model-ctl {
+  padding: 0 14px 12px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.xroom-model-hint {
+  font-size: 11.5px; color: #7fb8a8; font-style: italic;
+}
+.xroom-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.xroom-chip {
+  font: 500 11.5px/1 system-ui, sans-serif;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+  padding: 7px 10px; cursor: pointer;
+  color: #c2ded6;
+  transition: background .15s, border-color .15s;
+}
+.xroom-chip:hover { background: rgba(255,255,255,.12); }
+.xroom-chip.on {
+  background: rgba(40,120,100,.6);
+  border-color: rgba(80,220,170,.6);
+  color: #fff;
+}
+.xroom-knob {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 11.5px; color: #9fc4bb;
+}
+.xroom-knob input { flex: 1; accent-color: #50ddaa; }
+.xroom-knob b { color: #7ff0c4; min-width: 52px; text-align: right; }
+
+.xroom-station.primary {
+  background: linear-gradient(135deg, rgba(40,120,100,.8), rgba(30,90,80,.8));
+  border-color: rgba(80,220,170,.55);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(80,220,170,.15);
+}
+
+/* ── Controls help overlay ────────────────────────────────────── */
+.xroom-help {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10,28,38,.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(80,220,170,.25);
+  border-radius: 18px;
+  padding: 30px 38px;
+  z-index: 30;
+  text-align: center;
+  animation: xroom-fadein .4s ease;
+  max-width: 340px;
+  pointer-events: auto;
+}
+.xroom-help p { font-size: 13px; color: #90b8b0; margin: 12px 0 0; line-height: 1.6; }
+.xroom-help button {
+  font: 600 14px system-ui, sans-serif;
+  background: #50ddaa; color: #0d2a28;
+  border: none; border-radius: 10px;
+  padding: 10px 24px; cursor: pointer;
+  margin-top: 18px;
+  transition: background .15s;
+}
+.xroom-help button:hover { background: #70eec0; }
+.xroom-help-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  text-align: left;
+  font-size: 14px;
+}
+.xroom-key {
+  display: inline-block;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px; font-weight: 600;
+  font-family: monospace;
+  text-align: center;
+  min-width: 50px;
+}
+
+/* ── Station dock (categorized) ───────────────────────────────── */
+.xroom-dock {
+  position: absolute; bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  z-index: 20;
+  pointer-events: auto;
+  max-width: 96vw;
+}
+.xroom-dock-tabs {
+  display: flex; gap: 2px;
+  background: rgba(9,24,32,.88);
+  border: 1px solid rgba(80,200,170,.15);
+  border-radius: 10px;
+  padding: 3px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.xroom-dock-tab {
+  font: 600 11px/1 system-ui, sans-serif;
+  background: none; border: none; cursor: pointer;
+  color: #6a9a90; padding: 6px 12px;
+  border-radius: 8px;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.xroom-dock-tab:hover { color: #b0d4cc; }
+.xroom-dock-tab.active {
+  background: rgba(40,120,100,.7);
+  color: #7ff0c4;
+  box-shadow: 0 0 8px rgba(80,220,170,.2);
+}
+.xroom-stations {
+  display: flex; gap: 6px;
+  overflow-x: auto; max-width: 96vw;
+  padding: 4px 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+}
+.xroom-stations::-webkit-scrollbar { display: none; }
+.xroom-station {
+  display: flex; align-items: center; gap: 6px;
+  font: 500 12px/1 system-ui, sans-serif;
+  background: rgba(14,40,52,.82);
+  color: #b0d4cc; border: 1px solid rgba(80,200,170,.2);
+  border-radius: 10px;
+  padding: 8px 14px; cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  flex-shrink: 0;
+}
+.xroom-station:hover,
+.xroom-station.active {
+  background: rgba(30,80,70,.88);
+  border-color: rgba(80,220,170,.5);
+  color: #fff;
+}
+.xroom-station:active { transform: scale(.96); }
+
+@keyframes xroom-fadein {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.93); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes xroom-slidein {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes xroom-panel-in {
+  from { opacity: 0; transform: translate(-50%, -50%) translateY(16px) scale(.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) translateY(0) scale(1); }
+}
+@keyframes xroom-dock-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* shared panel entrance animation */
+.xroom-quiz, .xroom-badges, .xroom-sds, .xroom-energy,
+.xroom-flame, .xroom-electro, .xroom-mystery, .xroom-pt,
+.xroom-gas, .xroom-chrom, .xroom-dist, .xroom-collision,
+.xroom-calo, .xroom-lab-proc, .xroom-race, .xroom-ph, .xroom-tit, .xroom-rate, .xroom-mol, .xroom-econf {
+  animation: xroom-panel-in .25s ease-out;
+}
+.xroom-dock {
+  animation: xroom-dock-in .3s ease-out;
+}
+
+/* dark scrim behind open panels */
+.xroom-scrim {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 55;
+  cursor: pointer;
+  animation: xroom-scrim-in .2s ease-out;
+}
+@keyframes xroom-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Mobile ───────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .xroom-top { padding: 8px 10px; gap: 8px; }
+  .xroom-title { font-size: 13px; }
+  .xroom-prompt { bottom: 160px; padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+  .xroom-prompt-icon { font-size: 24px; }
+  .xroom-reaction { bottom: 160px; min-width: 0; width: 92vw; padding: 12px 16px; }
+  .xroom-bench { bottom: 8px; width: 96vw; }
+  .xroom-shelf { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); max-height: 30vh; }
+  .xroom-slots { gap: 7px; padding: 10px 12px; }
+  .xroom-slot { min-width: 118px; padding: 7px 9px; }
+  .xroom-outcome { min-width: 88px; padding: 7px 9px; }
+  .xroom-read { top: 56px; right: 8px; width: 94vw; max-height: 52vh; }
+  .xroom-bench-foot { padding: 10px 12px; gap: 8px; }
+  .xroom-bench-actions { flex-wrap: wrap; }
+  .xroom-amounts { padding: 0 12px 8px; }
+  .xroom-amount { min-width: 160px; padding: 6px 10px; }
+  .xroom-result-card { margin: 0 12px 8px; }
+  .xroom-log { left: 8px; top: 56px; width: 94vw; max-height: 50vh; }
+  .xroom-dock {
+    bottom: 130px;
+    max-width: 96vw;
+  }
+  .xroom-dock-tab { font-size: 10px; padding: 5px 9px; }
+  .xroom-stations {
+    max-width: 92vw;
+  }
+  .xroom-help { padding: 22px 24px; max-width: 300px; }
+  .xroom-quiz, .xroom-badges, .xroom-sds, .xroom-energy { left: 8px; width: 94vw; max-height: 70vh; }
+  .xroom-flame, .xroom-electro, .xroom-mystery, .xroom-gas, .xroom-chrom, .xroom-dist, .xroom-collision, .xroom-calo,
+  .xroom-lab-proc, .xroom-race, .xroom-ph, .xroom-tit, .xroom-rate, .xroom-mol, .xroom-econf {
+    max-width: 96vw; max-height: 78vh;
+  }
+  .xroom-exp-quiz > b { font-size: .8rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 1 - Safety quiz
+   ══════════════════════════════════════════════════════════════ */
+.xroom-quiz {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 440px; max-width: 94vw; max-height: 80vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-quiz-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-quiz-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-quiz-body { padding: 16px; }
+.xroom-quiz-q { font-size: 1rem; color: #e0f0ea; margin: 0 0 14px; line-height: 1.45; }
+.xroom-quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+.xroom-quiz-opt {
+  padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(80,220,170,.18);
+  background: rgba(30,60,70,.4); color: #c0e0d8; font-size: .9rem;
+  cursor: pointer; text-align: left; transition: background .15s, border-color .15s;
+}
+.xroom-quiz-opt:hover:not(:disabled) { background: rgba(50,100,110,.5); border-color: rgba(80,220,170,.35); }
+.xroom-quiz-opt:disabled { cursor: default; opacity: .7; }
+.xroom-quiz-opt.correct { background: rgba(50,180,100,.25); border-color: #50ddaa; color: #b0ffdd; }
+.xroom-quiz-opt.wrong { background: rgba(200,60,60,.2); border-color: #e06050; color: #ffb0a0; }
+.xroom-quiz-fb {
+  margin-top: 14px; padding: 12px; border-radius: 8px;
+}
+.xroom-quiz-fb.ok { background: rgba(50,180,100,.15); }
+.xroom-quiz-fb.bad { background: rgba(200,60,60,.12); }
+.xroom-quiz-fb b { display: block; margin-bottom: 4px; color: #e0f0ea; }
+.xroom-quiz-fb p { margin: 0 0 10px; color: #b0d0c8; font-size: .85rem; line-height: 1.4; }
+.xroom-quiz-done { text-align: center; padding: 32px 16px; }
+.xroom-quiz-score { font-size: 1.2rem; color: #ddf0e8; margin: 0 0 18px; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 1 - Achievement badges
+   ══════════════════════════════════════════════════════════════ */
+.xroom-badges {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 480px; max-width: 94vw; max-height: 80vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-badges-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-badges-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-badges-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px; padding: 16px;
+}
+.xroom-badge {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 14px 10px; border-radius: 10px;
+  background: rgba(30,50,60,.5); border: 1px solid rgba(80,220,170,.1);
+  text-align: center; opacity: .45;
+}
+.xroom-badge.earned { opacity: 1; background: rgba(50,180,100,.12); border-color: rgba(80,220,170,.3); }
+.xroom-badge-icon { font-size: 1.6rem; }
+.xroom-badge b { color: #ddf0e8; font-size: .8rem; }
+.xroom-badge span { color: #90b0a8; font-size: .7rem; line-height: 1.3; }
+.xroom-badge-progress { color: #60c8a0 !important; font-size: .65rem !important; font-weight: 600; margin-top: 2px; }
+
+/* ── Experiment quiz section ── */
+.xroom-exp-quiz {
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid rgba(80,200,170,.12);
+}
+.xroom-exp-quiz > b {
+  display: block; font-size: .85rem; color: #7ff0c4; margin-bottom: 12px;
+}
+
+.xroom-badge-toast {
+  position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px; border-radius: 12px;
+  background: rgba(50,180,100,.25); border: 1px solid #50ddaa;
+  backdrop-filter: blur(10px); z-index: 100;
+  animation: badgeIn .4s ease-out;
+}
+.xroom-badge-toast .xroom-badge-icon { font-size: 1.5rem; }
+.xroom-badge-toast b { color: #50ddaa; font-size: .85rem; display: block; }
+.xroom-badge-toast span { color: #c0e0d8; font-size: .8rem; }
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 1 - SDS popup & hazard diamond
+   ══════════════════════════════════════════════════════════════ */
+.xroom-sds-icon {
+  position: absolute; top: 4px; right: 4px; font-size: .65rem;
+  cursor: pointer; opacity: .5; transition: opacity .15s;
+}
+.xroom-reagent:hover .xroom-sds-icon { opacity: 1; }
+.xroom-hazard-tag {
+  position: absolute; bottom: 2px; right: 4px;
+  font-size: .55rem; color: #e09030; font-style: normal;
+}
+.xroom-product-tag {
+  position: absolute; top: 2px; right: 4px;
+  font-size: .5rem; font-style: normal; font-weight: 700;
+  color: #0e1e26; background: #50ddaa; border-radius: 4px;
+  padding: 1px 5px; letter-spacing: .03em;
+  animation: xroom-pulse 1.5s ease-in-out 3;
+}
+@keyframes xroom-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+.xroom-reagent.product {
+  border-color: rgba(80,220,170,.35);
+}
+.xroom-reagent { position: relative; }
+
+/* ── Chain reaction flow in result card ─────────────────────── */
+.xroom-chain {
+  margin-top: 10px; border-radius: 8px; overflow: hidden;
+  border: 1px solid rgba(80,220,170,.2);
+}
+.xroom-chain-head {
+  padding: 8px 12px;
+  background: rgba(80,220,170,.12);
+}
+.xroom-chain-head b { font-size: .8rem; color: #50ddaa; }
+.xroom-chain-products {
+  display: flex; flex-direction: column; gap: 1px;
+}
+.xroom-chain-product {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border: none; cursor: pointer;
+  background: rgba(30,60,50,.5); color: #ddf0e8;
+  font-size: .82rem; text-align: left;
+  transition: background .15s;
+}
+.xroom-chain-product:hover { background: rgba(80,220,170,.18); }
+.xroom-chain-product .xroom-swatch { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.xroom-chain-use {
+  margin-left: auto; font-size: .72rem; color: #50ddaa;
+  opacity: 0; transition: opacity .15s;
+}
+.xroom-chain-product:hover .xroom-chain-use { opacity: 1; }
+
+.xroom-chain-next {
+  padding: 8px 12px;
+  background: rgba(80,220,170,.06);
+  display: flex; flex-direction: column; gap: 6px;
+  border-top: 1px solid rgba(80,220,170,.15);
+}
+.xroom-chain-next b { font-size: .75rem; color: rgba(80,220,170,.7); }
+.xroom-chain-recipe {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border: 1px solid rgba(80,220,170,.2);
+  border-radius: 6px; cursor: pointer;
+  background: rgba(30,60,50,.4); color: #ddf0e8;
+  font-size: .78rem; text-align: left;
+  transition: background .15s, border-color .15s;
+}
+.xroom-chain-recipe:hover {
+  background: rgba(80,220,170,.15);
+  border-color: rgba(80,220,170,.4);
+}
+.xroom-chain-inputs {
+  display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+}
+.xroom-chain-inputs .xroom-swatch { width: 12px; height: 12px; border-radius: 50%; }
+.xroom-chain-inputs span { color: rgba(200,230,220,.5); font-size: .7rem; }
+.xroom-chain-arrow { color: rgba(80,220,170,.5); font-size: .8rem; }
+.xroom-chain-name { flex: 1; }
+.xroom-chain-multi {
+  margin-left: 6px; font-size: .65rem; font-style: normal;
+  padding: 1px 5px; border-radius: 4px;
+  background: rgba(80,220,170,.2); color: #50ddaa;
+}
+
+.xroom-mix-preview {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; margin: 6px 0;
+  background: rgba(20,40,50,.5); border-radius: 8px;
+}
+.xroom-mix-preview span { color: rgba(200,230,220,.6); font-size: .85rem; }
+.xroom-swatch-lg { width: 28px; height: 28px; border-radius: 6px; }
+
+.xroom-sds {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 380px; max-width: 94vw; max-height: 80vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 65;
+  display: flex; flex-direction: column;
+}
+.xroom-sds-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-sds-bar b { flex: 1; color: #ddf0e8; font-size: .9rem; }
+.xroom-sds-body { padding: 16px; }
+
+.xroom-diamond {
+  display: grid; grid-template-columns: 1fr 1fr;
+  width: 100px; height: 100px; margin: 0 auto 16px;
+  transform: rotate(45deg);
+}
+.xroom-diamond-cell {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 700;
+  transform: rotate(-45deg);
+}
+.xroom-diamond-cell.health { background: #2060e0; color: #fff; border-radius: 4px 0 0 0; }
+.xroom-diamond-cell.fire   { background: #e03030; color: #fff; border-radius: 0 4px 0 0; }
+.xroom-diamond-cell.react  { background: #e0c020; color: #222; border-radius: 0 0 0 4px; }
+.xroom-diamond-cell.special{ background: #f0f0f0; color: #222; border-radius: 0 0 4px 0; }
+
+.xroom-ph-readout {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; margin-bottom: 12px;
+  background: rgba(30,50,60,.5); border-radius: 8px;
+}
+.xroom-ph-readout b { color: #90b0a8; }
+.xroom-ph-val { font-size: 1.2rem; font-weight: 700; }
+.xroom-ph-readout span:last-child { color: #90b0a8; font-size: .8rem; }
+
+.xroom-sds-section { margin-bottom: 12px; }
+.xroom-sds-section b { color: #80b0a0; font-size: .8rem; display: block; margin-bottom: 2px; }
+.xroom-sds-section p { margin: 0; color: #b0d0c8; font-size: .85rem; line-height: 1.4; }
+.xroom-sds-hazard {
+  padding: 8px 12px; border-radius: 8px;
+  background: rgba(200,100,30,.15); border: 1px solid rgba(200,100,30,.3);
+  color: #e09030; font-size: .85rem; font-style: normal;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 1 - Energy diagram
+   ══════════════════════════════════════════════════════════════ */
+.xroom-energy {
+  position: fixed; bottom: 60px; right: 16px;
+  width: 400px; max-width: 94vw;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; z-index: 55;
+  display: flex; flex-direction: column;
+}
+.xroom-energy-bar {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-energy-bar b { flex: 1; color: #ddf0e8; font-size: .85rem; }
+.xroom-energy-svg { width: 100%; padding: 8px 12px; }
+.xroom-energy-label {
+  padding: 0 16px 14px; margin: 0;
+  color: #90b0a8; font-size: .78rem; line-height: 1.4;
+}
+
+/* Station done */
+.xroom-station.done { border-color: rgba(80,220,170,.4); color: #50ddaa; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2 - Flame test station
+   ══════════════════════════════════════════════════════════════ */
+.xroom-flame {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 440px; max-width: 94vw; max-height: 80vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-flame-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-flame-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-flame-intro { padding: 12px 16px 6px; color: #90b0a8; font-size: .8rem; margin: 0; }
+.xroom-flame-grid {
+  display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 16px;
+}
+.xroom-flame-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 8px;
+  background: rgba(30,50,60,.5); border: 1px solid rgba(80,220,170,.12);
+  color: #c0e0d8; font-size: .85rem; cursor: pointer;
+  transition: border-color .15s;
+}
+.xroom-flame-btn:hover { border-color: rgba(80,220,170,.35); }
+.xroom-flame-btn.on { border-color: #50ddaa; background: rgba(50,180,100,.12); }
+.xroom-flame-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  display: inline-block; box-shadow: 0 0 6px currentColor;
+}
+.xroom-flame-result {
+  padding: 16px; margin: 8px 16px 16px; border-radius: 10px;
+  background: rgba(30,50,60,.5); text-align: center;
+}
+.xroom-flame-glow {
+  width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px;
+  animation: flamePulse 1.5s ease-in-out infinite;
+}
+@keyframes flamePulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.xroom-flame-result b { display: block; color: #ddf0e8; margin-bottom: 4px; }
+.xroom-flame-result span { color: #90b0a8; font-size: .8rem; }
+.xroom-flame-result p { color: #b0d0c8; font-size: .8rem; line-height: 1.4; margin: 8px 0 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2 - Electrolysis cell
+   ══════════════════════════════════════════════════════════════ */
+.xroom-electro {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 460px; max-width: 94vw; max-height: 80vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-electro-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-electro-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-electro-tabs { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; }
+.xroom-electro-body { padding: 0 16px 16px; }
+.xroom-electro-cell {
+  display: flex; gap: 8px; margin-bottom: 12px;
+}
+.xroom-electrode {
+  flex: 1; padding: 10px; border-radius: 8px; text-align: center;
+}
+.xroom-electrode.cathode { background: rgba(80,120,200,.2); border: 1px solid rgba(80,120,200,.4); }
+.xroom-electrode.anode { background: rgba(200,80,80,.2); border: 1px solid rgba(200,80,80,.4); }
+.xroom-electrode b { display: block; font-size: .75rem; color: #b0c0d0; margin-bottom: 4px; }
+.xroom-electrode span { font-size: .8rem; color: #c0e0d8; }
+.xroom-electrolyte {
+  flex: 1; padding: 10px; border-radius: 8px; text-align: center;
+  background: rgba(40,80,100,.3); border: 1px solid rgba(80,220,170,.15);
+  position: relative; overflow: hidden;
+}
+.xroom-electrolyte span { color: #90b0a8; font-size: .8rem; }
+.xroom-bubbles {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle 2px, rgba(200,220,255,.4) 50%, transparent 51%);
+  background-size: 12px 18px;
+  animation: bubbleRise 1.5s linear infinite;
+}
+@keyframes bubbleRise {
+  from { background-position: 0 0; }
+  to { background-position: 0 -18px; }
+}
+.xroom-electrolyte.running { border-color: rgba(80,220,170,.4); }
+.xroom-electro-eq {
+  display: block; padding: 8px 12px; margin-bottom: 10px;
+  background: rgba(30,50,60,.5); border-radius: 6px;
+  color: #c0e0d8; font-size: .8rem;
+}
+.xroom-electro-obs { color: #b0d0c8; font-size: .82rem; line-height: 1.4; margin: 0 0 10px; }
+.xroom-electro-explain { color: #90b0a8; font-size: .78rem; line-height: 1.4; margin: 8px 0 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2 - Calorimeter
+   ══════════════════════════════════════════════════════════════ */
+.xroom-calo {
+  position: fixed; bottom: 60px; left: 16px;
+  width: 380px; max-width: 94vw;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; z-index: 55;
+  display: flex; flex-direction: column;
+}
+.xroom-calo-bar {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-calo-bar b { flex: 1; color: #ddf0e8; font-size: .85rem; }
+.xroom-calo-body { padding: 10px 16px 16px; }
+.xroom-calo-svg { width: 100%; }
+.xroom-calo-label { margin: 4px 0 0; color: #90b0a8; font-size: .78rem; }
+.xroom-calo-empty { color: #708888; font-size: .85rem; text-align: center; padding: 20px 0; }
+.xroom-calo-section {
+  display: block; font-size: .78rem; color: #7cecc4; margin: 10px 0 6px;
+}
+.xroom-calo-exps { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.xroom-calo-sim { margin-top: 4px; }
+.xroom-calo-sim-desc { font-size: .78rem; color: #a0c8b8; margin-bottom: 8px; }
+.xroom-calo-sim-controls {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.xroom-calo-sim-badge {
+  font-size: .75rem; padding: 3px 10px; border-radius: 10px;
+}
+.xroom-calo-sim-badge.exothermic { background: rgba(224,128,64,.15); color: #e08040; }
+.xroom-calo-sim-badge.endothermic { background: rgba(64,160,224,.15); color: #40a0e0; }
+.xroom-calo-sim-result {
+  padding: 10px 12px; background: rgba(80,220,170,.08); border-radius: 10px;
+  font-size: .78rem; color: #b0d8c8;
+}
+.xroom-calo-sim-result b { color: #7cecc4; }
+.xroom-calo-sim-result p { margin: 3px 0; }
+.xroom-calo-sim-explain { color: #90b0a8; margin-top: 6px !important; font-size: .75rem; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2 - Mystery substance
+   ══════════════════════════════════════════════════════════════ */
+.xroom-mystery {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 480px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-mystery-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-mystery-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-mystery-tabs { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; }
+.xroom-chip.solved { border-color: #50ddaa; color: #50ddaa; }
+.xroom-mystery-body { padding: 0 16px 16px; }
+.xroom-mystery-appear { color: #c0e0d8; font-size: .85rem; margin: 0 0 10px; }
+.xroom-mystery-appear b { color: #90b0a8; }
+.xroom-mystery-clues {
+  margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px;
+}
+.xroom-mystery-clues b { color: #90b0a8; font-size: .8rem; margin-bottom: 2px; }
+.xroom-mystery-clues span { color: #b0d0c8; font-size: .82rem; padding-left: 10px; }
+.xroom-mystery-tests { margin-bottom: 12px; }
+.xroom-mystery-tests b { color: #90b0a8; font-size: .8rem; display: block; margin-bottom: 4px; }
+.xroom-mystery-test { display: flex; gap: 6px; padding: 4px 0; font-size: .82rem; }
+.xroom-mystery-testname { color: #80a8a0; font-weight: 600; min-width: 140px; }
+.xroom-mystery-test span:last-child { color: #c0e0d8; }
+.xroom-mystery-guess { margin-top: 12px; }
+.xroom-mystery-guess b { color: #ddf0e8; font-size: .85rem; display: block; margin-bottom: 8px; }
+.xroom-mystery-opts { display: flex; flex-direction: column; gap: 6px; }
+.xroom-mystery-reveal {
+  margin-top: 12px; padding: 12px; border-radius: 8px;
+}
+.xroom-mystery-reveal.ok { background: rgba(50,180,100,.15); }
+.xroom-mystery-reveal.bad { background: rgba(200,60,60,.12); }
+.xroom-mystery-reveal b { color: #e0f0ea; }
+.xroom-mystery-reveal p { color: #b0d0c8; font-size: .82rem; margin: 6px 0 0; line-height: 1.4; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2 - Periodic table
+   ══════════════════════════════════════════════════════════════ */
+.xroom-pt {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 720px; max-width: 96vw; max-height: 90vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-pt-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-pt-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-pt-grid {
+  display: grid; grid-template-columns: repeat(18, 1fr);
+  gap: 2px; padding: 12px;
+}
+.xroom-pt-el {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3px 1px; border-radius: 4px; border: 1px solid transparent;
+  cursor: pointer; font-size: .6rem; transition: transform .1s, border-color .15s;
+  min-height: 32px;
+}
+.xroom-pt-el:hover { transform: scale(1.3); z-index: 2; border-color: rgba(255,255,255,.3); }
+.xroom-pt-el.on { transform: scale(1.4); z-index: 3; border-color: #fff; }
+.xroom-pt-z { font-size: .45rem; opacity: .6; }
+.xroom-pt-el b { font-size: .7rem; }
+.xroom-pt-detail {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  border-top: 1px solid rgba(80,220,170,.12);
+  flex-wrap: wrap;
+}
+.xroom-pt-detail b { font-size: 1.4rem; }
+.xroom-pt-detail span { color: #b0d0c8; font-size: .82rem; }
+.xroom-pt-cat {
+  padding: 2px 8px; border-radius: 4px;
+  background: rgba(80,220,170,.12); font-size: .75rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 3 - Gas laws chamber
+   ══════════════════════════════════════════════════════════════ */
+.xroom-gas {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 460px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-gas-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-gas-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-gas-body { padding: 12px 16px 16px; }
+.xroom-gas-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.xroom-gas-readout {
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 12px;
+  background: rgba(30,50,60,.5); border-radius: 8px; margin-bottom: 12px;
+}
+.xroom-gas-readout code { color: #50ddaa; font-size: 1rem; }
+.xroom-gas-readout span { color: #90b0a8; font-size: .8rem; }
+.xroom-gas-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.xroom-gas-controls label {
+  display: flex; align-items: center; gap: 8px; color: #b0d0c8; font-size: .82rem;
+}
+.xroom-gas-controls label span { min-width: 70px; color: #90b0a8; }
+.xroom-gas-controls label input[type="range"] { flex: 1; }
+.xroom-gas-controls label b { min-width: 40px; text-align: right; color: #ddf0e8; }
+.xroom-gas-controls select {
+  background: rgba(30,50,60,.6); border: 1px solid rgba(80,220,170,.2);
+  color: #c0e0d8; padding: 4px 8px; border-radius: 6px; font-size: .82rem;
+}
+.xroom-gas-viz {
+  display: flex; justify-content: center; margin-bottom: 12px;
+}
+.xroom-gas-container {
+  border: 2px solid rgba(80,220,170,.3); border-radius: 8px;
+  position: relative; overflow: hidden; transition: width .3s, height .3s;
+  background: rgba(30,50,60,.3);
+}
+.xroom-gas-particle {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  background: #50ddaa;
+  animation: gasMove linear infinite alternate;
+}
+@keyframes gasMove {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(8px, -6px); }
+  50% { transform: translate(-4px, 10px); }
+  75% { transform: translate(6px, 4px); }
+  100% { transform: translate(-8px, -8px); }
+}
+.xroom-gas-explain { color: #90b0a8; font-size: .78rem; line-height: 1.4; margin: 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 3 - Chromatography
+   ══════════════════════════════════════════════════════════════ */
+.xroom-chrom {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 400px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-chrom-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-chrom-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-chrom-tabs { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; }
+.xroom-chrom-body { padding: 0 16px 16px; }
+.xroom-chrom-paper {
+  width: 80px; height: 200px; margin: 12px auto;
+  background: #f5f0e0; border-radius: 4px;
+  position: relative; overflow: hidden;
+}
+.xroom-chrom-solvent {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(100,160,220,.15);
+  transition: height 0.3s;
+}
+.xroom-chrom-origin {
+  position: absolute; bottom: 5%; left: 10%; right: 10%;
+  height: 2px; background: #999; border-radius: 1px;
+}
+.xroom-chrom-spot {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 14px; height: 6px; border-radius: 3px;
+}
+.xroom-chrom-results { margin-top: 12px; }
+.xroom-chrom-results b { color: #90b0a8; font-size: .8rem; display: block; margin-bottom: 6px; }
+.xroom-chrom-row {
+  display: flex; align-items: center; gap: 8px; padding: 3px 0;
+  font-size: .82rem; color: #c0e0d8;
+}
+.xroom-chrom-row .xroom-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.xroom-chrom-rf { color: #80a8a0; font-size: .75rem; margin-left: auto; }
+.xroom-chrom-explain { color: #90b0a8; font-size: .75rem; line-height: 1.4; margin: 8px 0 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 3 - Distillation
+   ══════════════════════════════════════════════════════════════ */
+.xroom-dist {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 460px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-dist-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-dist-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-dist-tabs { display: flex; gap: 6px; padding: 10px 16px; flex-wrap: wrap; }
+.xroom-dist-body { padding: 0 16px 16px; }
+.xroom-dist-viz {
+  display: flex; gap: 16px; align-items: flex-end; justify-content: center;
+  margin: 12px 0;
+}
+.xroom-dist-flask {
+  width: 60px; height: 120px; border: 2px solid rgba(80,220,170,.3);
+  border-radius: 0 0 30px 30px; overflow: hidden;
+  display: flex; flex-direction: column-reverse;
+}
+.xroom-dist-layer { transition: opacity .3s; }
+.xroom-dist-therm {
+  width: 20px; height: 120px; background: rgba(30,50,60,.5);
+  border-radius: 10px; position: relative; overflow: hidden;
+  display: flex; align-items: flex-end;
+}
+.xroom-dist-mercury {
+  width: 100%; background: #e04040; border-radius: 0 0 10px 10px;
+  transition: height .3s;
+}
+.xroom-dist-therm span {
+  position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+  color: #ddd; font-size: .6rem; white-space: nowrap;
+}
+.xroom-dist-collector {
+  width: 50px; height: 80px; border: 2px solid rgba(80,220,170,.2);
+  border-radius: 6px; display: flex; flex-wrap: wrap; gap: 2px;
+  padding: 4px; align-content: flex-end;
+}
+.xroom-dist-drop {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.xroom-dist-heat {
+  display: flex; align-items: center; gap: 8px; margin: 10px 0;
+  color: #b0d0c8; font-size: .82rem;
+}
+.xroom-dist-heat input { flex: 1; }
+.xroom-dist-heat b { min-width: 50px; text-align: right; color: #ddf0e8; }
+.xroom-dist-fractions {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;
+}
+.xroom-dist-frac {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px;
+  border-radius: 6px; font-size: .82rem; color: #b0d0c8;
+}
+.xroom-dist-frac .xroom-swatch { width: 12px; height: 12px; border-radius: 3px; }
+.xroom-dist-frac.boiling { background: rgba(200,80,50,.15); }
+.xroom-dist-boil { color: #e08040; font-size: .7rem; margin-left: auto; }
+.xroom-dist-explain { color: #90b0a8; font-size: .78rem; line-height: 1.4; margin: 0; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 3 - Collision theory
+   ══════════════════════════════════════════════════════════════ */
+.xroom-collision {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 420px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-collision-bar {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-collision-bar b { flex: 1; color: #ddf0e8; font-size: .95rem; }
+.xroom-collision-body { padding: 12px 16px 16px; }
+.xroom-collision-box {
+  width: 100%; height: 180px; border: 2px solid rgba(80,220,170,.2);
+  border-radius: 8px; position: relative; overflow: hidden;
+  background: rgba(20,40,50,.5); margin-bottom: 12px;
+}
+.xroom-collision-p {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  animation: collide linear infinite alternate;
+}
+.xroom-collision-p.a { background: #50ddaa; }
+.xroom-collision-p.b { background: #e08040; }
+@keyframes collide {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(12px, -8px); }
+  40% { transform: translate(-6px, 14px); }
+  60% { transform: translate(10px, 6px); }
+  80% { transform: translate(-12px, -12px); }
+  100% { transform: translate(4px, 8px); }
+}
+.xroom-collision-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.xroom-collision-controls label {
+  display: flex; align-items: center; gap: 8px; color: #b0d0c8; font-size: .82rem;
+}
+.xroom-collision-controls label span { min-width: 120px; color: #90b0a8; }
+.xroom-collision-controls label input { flex: 1; }
+.xroom-collision-controls label b { min-width: 50px; text-align: right; color: #ddf0e8; }
+.xroom-collision-rate {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  background: rgba(30,50,60,.5); border-radius: 8px; margin-bottom: 10px;
+}
+.xroom-collision-rate b { color: #90b0a8; font-size: .82rem; }
+.xroom-collision-val { color: #50ddaa; font-size: 1rem; font-weight: 700; }
+.xroom-collision-explain { color: #90b0a8; font-size: .78rem; line-height: 1.4; margin: 0; }
+
+@media (max-width: 600px) {
+  .xroom-flame, .xroom-electro, .xroom-mystery { left: 4px; width: 96vw; max-height: 75vh; transform: translate(0, -50%); }
+  .xroom-pt { left: 2px; width: 98vw; transform: translate(0, -50%); }
+  .xroom-pt-grid { gap: 1px; padding: 6px; }
+  .xroom-pt-el { min-height: 24px; font-size: .5rem; }
+  .xroom-pt-el b { font-size: .55rem; }
+  .xroom-calo { left: 4px; width: 96vw; }
+  .xroom-gas, .xroom-chrom, .xroom-dist, .xroom-collision { left: 4px; width: 96vw; max-height: 80vh; transform: translate(0, -50%); }
+  .xroom-top-right { gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .xroom-top-right button { font-size: 10px; padding: 5px 8px; }
+  .xroom-mode-btn { font-size: 10px; padding: 3px 6px; }
+  .xroom-exp-quiz { padding: 0 4px; }
+  .xroom-exp-quiz .bio-detail-opts button { font-size: 11px; padding: 7px 8px; min-height: 32px; }
+  .xroom-station span:last-child { font-size: .65rem; }
+  .xroom-flame-grid { gap: 6px; padding: 6px 12px; }
+  .xroom-flame-btn { min-width: 70px; padding: 6px 8px; }
+  .xroom-electro-cell { gap: 6px; }
+  .xroom-electrode { min-width: 60px; padding: 6px 4px; font-size: .7rem; }
+  .xroom-mystery-body { padding: 10px 12px; }
+  .xroom-mystery-tests { font-size: .75rem; }
+  .xroom-dist-viz { gap: 8px; }
+  .xroom-chrom-paper { min-height: 140px; }
+  .xroom-gas-controls label { flex-direction: column; gap: 4px; }
+  .xroom-collision-box { min-height: 120px; }
+}
+
+/* ══ Rate-of-Reaction Graphs ══════════════════════════════════ */
+.xroom-rate {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 520px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-rate-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.35); border-radius: 14px 14px 0 0;
+}
+.xroom-rate-bar b { flex: 1; font-size: .95rem; }
+.xroom-rate-tabs {
+  display: flex; gap: 6px; padding: 8px 14px;
+  overflow-x: auto; flex-shrink: 0;
+}
+.xroom-rate-body { padding: 8px 16px 16px; }
+.xroom-rate-desc {
+  font-size: .8rem; color: #b0d4c8; margin-bottom: 10px;
+}
+.xroom-rate-graph { margin-bottom: 8px; }
+.xroom-rate-svg {
+  width: 100%; height: auto;
+  background: rgba(0,0,0,.2); border-radius: 8px;
+}
+.xroom-rate-legend {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  margin-bottom: 10px;
+}
+.xroom-rate-legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: .72rem; color: #b0d4c8;
+}
+.xroom-rate-legend-swatch {
+  width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+}
+.xroom-rate-legend-val {
+  font-variant-numeric: tabular-nums;
+  color: #80a898; font-size: .68rem;
+}
+.xroom-rate-controls {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.xroom-rate-play {
+  padding: 6px 14px; border: none; border-radius: 8px;
+  background: rgba(100,220,180,.18); color: #7cecc4;
+  cursor: pointer; font-size: .78rem; font-weight: 600;
+  flex-shrink: 0; transition: background .15s;
+}
+.xroom-rate-play:hover { background: rgba(100,220,180,.32); }
+.xroom-rate-slider {
+  flex: 1; accent-color: #7cecc4; height: 4px;
+}
+.xroom-rate-time {
+  font-size: .72rem; color: #90c8b8;
+  font-variant-numeric: tabular-nums; width: 28px; text-align: right;
+}
+.xroom-rate-explain {
+  padding: 10px 12px;
+  background: rgba(100,220,180,.08); border-radius: 10px;
+  margin-bottom: 8px;
+}
+.xroom-rate-explain b { color: #7cecc4; font-size: .82rem; }
+.xroom-rate-explain p { font-size: .75rem; color: #b8d8cc; margin-top: 4px; }
+
+/* ══ Molarity / Dilution Calculator ════════════════════════════ */
+.xroom-mol {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 520px; max-width: 94vw; max-height: 82vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-mol-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-mol-bar b { flex: 1; font-size: .95rem; }
+.xroom-mol-tabs { display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap; }
+.xroom-mol-body { padding: 8px 16px 16px; }
+.xroom-mol-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.xroom-mol-desc { font-size: .78rem; color: #a0c8b8; margin-bottom: 12px; }
+.xroom-mol-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.xroom-mol-fields label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: .78rem; color: #8cb0a0;
+}
+.xroom-mol-fields input[type=range] {
+  width: 100%; accent-color: #50dcaa;
+}
+.xroom-mol-val { color: #b0e8d0; font-weight: 600; font-size: .82rem; }
+.xroom-mol-result {
+  padding: 12px; background: rgba(80,220,170,.08); border-radius: 10px;
+  margin-bottom: 10px;
+}
+.xroom-mol-formula {
+  font-size: .75rem; color: #8cb0a0; font-family: monospace; margin-bottom: 6px;
+}
+.xroom-mol-answer {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.xroom-mol-answer b { font-size: 1.3rem; color: #50dcaa; }
+.xroom-mol-answer span { font-size: .78rem; color: #8cb0a0; }
+.xroom-mol-reverse {
+  padding: 10px 12px; background: rgba(100,180,220,.08); border-radius: 10px;
+  font-size: .78rem; color: #a0c0d0; margin-bottom: 8px;
+}
+.xroom-mol-reverse b { color: #7cc4ec; }
+
+/* ══ Electron Configuration Viewer ═════════════════════════════ */
+.xroom-econf {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 520px; max-width: 94vw; max-height: 82vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-econf-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid rgba(80,220,170,.12);
+}
+.xroom-econf-bar b { flex: 1; font-size: .95rem; }
+.xroom-econf-body { padding: 8px 16px 16px; }
+.xroom-econf-picker {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+}
+.xroom-econf-picker label {
+  flex: 1; display: flex; flex-direction: column; gap: 4px;
+  font-size: .78rem; color: #8cb0a0;
+}
+.xroom-econf-picker input[type=range] { width: 100%; accent-color: #50dcaa; }
+.xroom-econf-element {
+  width: 72px; height: 80px; border: 2px solid; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(80,220,170,.06);
+}
+.xroom-econf-z { font-size: .65rem; color: #8cb0a0; }
+.xroom-econf-sym { font-size: 1.4rem; font-weight: 700; color: #e0f0e8; }
+.xroom-econf-name { font-size: .6rem; color: #a0c8b8; }
+.xroom-econf-notation {
+  padding: 8px 12px; background: rgba(80,220,170,.08); border-radius: 8px;
+  margin-bottom: 10px; font-size: .85rem;
+}
+.xroom-econf-notation b { color: #7cecc4; margin-right: 6px; }
+.xroom-econf-svg { width: 100%; max-width: 280px; margin: 0 auto 10px; display: block; }
+.xroom-econf-subs { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.xroom-econf-sub {
+  display: flex; align-items: center; gap: 8px;
+}
+.xroom-econf-sub-label {
+  width: 24px; font-size: .78rem; font-weight: 600; color: #b0e8d0; text-align: right;
+}
+.xroom-econf-sub-boxes { display: flex; gap: 3px; }
+.xroom-econf-orbital {
+  display: flex; gap: 1px; border: 1px solid rgba(80,220,170,.25);
+  border-radius: 4px; padding: 2px 3px; min-width: 24px; justify-content: center;
+}
+.xroom-econf-arrow { font-size: .72rem; width: 10px; text-align: center; }
+.xroom-econf-arrow.up { color: #51cf66; }
+.xroom-econf-arrow.down { color: #339af0; }
+.xroom-econf-arrow.empty { color: transparent; }
+.xroom-econf-sub-count { font-size: .65rem; color: #8cb0a0; }
+.xroom-econf-info {
+  display: flex; flex-wrap: wrap; gap: 10px; font-size: .75rem; color: #a0c0b0;
+  padding: 8px 12px; background: rgba(100,180,220,.06); border-radius: 8px;
+  margin-bottom: 8px;
+}
+.xroom-econf-info b { color: #7cc4ec; margin-right: 3px; }
+
+/* ══ pH Meter / Indicator Station ══════════════════════════════ */
+.xroom-ph {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 520px; max-width: 94vw; max-height: 82vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-ph-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.35); border-radius: 14px 14px 0 0;
+}
+.xroom-ph-bar b { flex: 1; font-size: .95rem; }
+.xroom-ph-scale {
+  display: flex; flex-wrap: wrap; gap: 0;
+  padding: 10px 16px 4px;
+}
+.xroom-ph-scale-cell {
+  flex: 1; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .6rem; font-weight: 700; color: rgba(255,255,255,.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+.xroom-ph-scale-cell:first-child { border-radius: 4px 0 0 4px; }
+.xroom-ph-scale-cell:last-child { border-radius: 0 4px 4px 0; }
+.xroom-ph-scale-labels {
+  width: 100%;
+  display: flex; justify-content: space-between;
+  font-size: .65rem; color: #80a898; padding-top: 2px;
+}
+.xroom-ph-indicators {
+  padding: 8px 16px; border-top: 1px solid rgba(80,220,170,.08);
+}
+.xroom-ph-indicators > b { font-size: .8rem; color: #b0d4c8; }
+.xroom-ph-ind-row {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
+}
+.xroom-ph-ind-desc {
+  font-size: .72rem; color: #80a898; margin-top: 6px;
+  font-style: italic;
+}
+.xroom-ph-test {
+  padding: 8px 16px; border-top: 1px solid rgba(80,220,170,.08);
+}
+.xroom-ph-test > b { font-size: .8rem; color: #b0d4c8; }
+.xroom-ph-reagents {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
+}
+.xroom-ph-reagent {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border: 1px solid rgba(255,255,255,.1);
+  border-radius: 7px; background: rgba(255,255,255,.04);
+  color: #c0dcd0; font-size: .72rem; cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.xroom-ph-reagent:hover { background: rgba(255,255,255,.08); }
+.xroom-ph-reagent.active {
+  border-color: rgba(100,220,180,.4);
+  background: rgba(100,220,180,.1);
+}
+.xroom-ph-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.15); flex-shrink: 0;
+}
+.xroom-ph-result {
+  margin: 10px 16px; padding: 12px;
+  background: rgba(255,255,255,.04); border-radius: 10px;
+  border: 1px solid rgba(80,220,170,.12);
+}
+.xroom-ph-result-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.xroom-ph-result-name { font-size: .85rem; font-weight: 600; }
+.xroom-ph-result-val {
+  padding: 2px 10px; border-radius: 6px;
+  font-size: .78rem; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.xroom-ph-result-row {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.xroom-ph-vial {
+  width: 48px; height: 64px; border-radius: 8px 8px 18px 18px;
+  border: 2px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .4s;
+}
+.xroom-ph-no-color {
+  font-size: .55rem; color: #80a898; text-align: center;
+  line-height: 1.2;
+}
+.xroom-ph-result-info { font-size: .75rem; color: #b0d4c8; }
+.xroom-ph-result-info p { margin: 2px 0; }
+.xroom-ph-needle-track {
+  position: relative; height: 16px; margin-top: 8px;
+}
+.xroom-ph-needle {
+  position: absolute; top: 0;
+  transform: translateX(-50%);
+  font-size: .7rem; color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.6);
+  transition: left .4s ease;
+}
+
+/* ══ Interactive Titration ═════════════════════════════════════ */
+.xroom-tit {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 520px; max-width: 94vw; max-height: 85vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-tit-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.35); border-radius: 14px 14px 0 0;
+}
+.xroom-tit-bar b { flex: 1; font-size: .95rem; }
+.xroom-tit-tabs {
+  display: flex; gap: 6px; padding: 8px 14px;
+  overflow-x: auto; flex-shrink: 0;
+}
+.xroom-tit-body {
+  padding: 8px 16px 16px;
+}
+.xroom-tit-desc {
+  font-size: .8rem; color: #b0d4c8; margin-bottom: 10px;
+}
+.xroom-tit-viz {
+  display: flex; gap: 24px; justify-content: center;
+  align-items: flex-end; margin-bottom: 12px;
+}
+.xroom-tit-burette, .xroom-tit-flask {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.xroom-tit-burette-label, .xroom-tit-flask-label {
+  font-size: .68rem; color: #80a898; font-weight: 600;
+}
+.xroom-tit-burette-tube {
+  width: 20px; height: 100px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 3px 3px 1px 1px;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-start;
+}
+.xroom-tit-burette-fill {
+  width: 100%;
+  transition: height .3s ease;
+  border-radius: 0 0 1px 1px;
+}
+.xroom-tit-burette-vol {
+  font-size: .65rem; color: #90c8b8;
+  font-variant-numeric: tabular-nums;
+}
+.xroom-tit-flask-body {
+  width: 60px; height: 50px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 6px 6px 24px 24px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .4s;
+}
+.xroom-tit-flask-ph {
+  font-size: .72rem; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.xroom-tit-reagent-label {
+  font-size: .6rem; color: #80a898; text-align: center;
+}
+.xroom-tit-indicator-label {
+  font-size: .58rem; color: #6a9888; font-style: italic;
+}
+.xroom-tit-controls {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+}
+.xroom-tit-drop {
+  padding: 6px 12px; border: none; border-radius: 8px;
+  background: rgba(100,220,180,.15); color: #7cecc4;
+  cursor: pointer; font-size: .75rem; font-weight: 600;
+  transition: background .15s;
+}
+.xroom-tit-drop:hover:not(:disabled) { background: rgba(100,220,180,.3); }
+.xroom-tit-drop:disabled { opacity: .4; cursor: default; }
+.xroom-tit-reset {
+  padding: 6px 12px; border: 1px solid rgba(100,220,180,.2);
+  border-radius: 8px; background: transparent;
+  color: #7cecc4; cursor: pointer; font-size: .72rem;
+  margin-left: auto;
+}
+.xroom-tit-graph {
+  margin-bottom: 10px;
+}
+.xroom-tit-graph b { font-size: .78rem; color: #b0d4c8; }
+.xroom-tit-svg {
+  width: 100%; height: auto;
+  background: rgba(0,0,0,.2); border-radius: 8px;
+  margin-top: 4px;
+}
+.xroom-tit-endpoint {
+  padding: 10px 12px;
+  background: rgba(100,220,180,.08); border-radius: 10px;
+  margin-bottom: 10px;
+}
+.xroom-tit-endpoint b { color: #7cecc4; font-size: .82rem; }
+.xroom-tit-endpoint p { font-size: .75rem; color: #b8d8cc; margin-top: 4px; }
+
+/* ══ Guided Lab Procedure ══════════════════════════════════════ */
+.xroom-lab-proc {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 500px; max-width: 94vw; max-height: 82vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-lab-proc-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.35);
+  border-radius: 14px 14px 0 0;
+}
+.xroom-lab-proc-bar b { flex: 1; font-size: .95rem; }
+.xroom-lab-proc-tabs {
+  display: flex; gap: 6px; padding: 8px 14px;
+  overflow-x: auto; flex-shrink: 0;
+}
+.xroom-lab-proc-body {
+  padding: 10px 16px 18px;
+  overflow-y: auto; flex: 1;
+}
+.xroom-lab-proc-goal {
+  font-size: .85rem; margin-bottom: 6px;
+  color: #b0d4c8;
+}
+.xroom-lab-proc-safety {
+  font-size: .78rem; padding: 6px 10px;
+  background: rgba(255,200,50,.12); border-radius: 8px;
+  color: #f0d060; margin-bottom: 12px;
+}
+.xroom-lab-proc-steps {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.xroom-lab-step {
+  border-radius: 10px; overflow: hidden;
+  background: rgba(255,255,255,.04);
+  transition: background .2s;
+}
+.xroom-lab-step.active {
+  background: rgba(100,220,180,.08);
+  box-shadow: 0 0 0 1px rgba(100,220,180,.25);
+}
+.xroom-lab-step.done {
+  opacity: .6;
+}
+.xroom-lab-step-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; font-size: .82rem;
+}
+.xroom-lab-step-num {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: .72rem; font-weight: 700;
+  background: rgba(100,220,180,.15); color: #7cecc4;
+  flex-shrink: 0;
+}
+.xroom-lab-step.done .xroom-lab-step-num {
+  background: rgba(100,220,180,.25); color: #5efa9e;
+}
+.xroom-lab-step-tag {
+  font-size: .65rem; padding: 2px 7px;
+  border-radius: 6px; margin-left: auto;
+  text-transform: uppercase; letter-spacing: .04em; font-weight: 600;
+}
+.xroom-lab-step-tag.select { background: rgba(100,180,255,.15); color: #8cc8ff; }
+.xroom-lab-step-tag.adjust { background: rgba(255,200,80,.15); color: #ffd070; }
+.xroom-lab-step-tag.pour   { background: rgba(100,220,180,.15); color: #7cecc4; }
+.xroom-lab-step-tag.observe{ background: rgba(200,140,255,.15); color: #d0a0ff; }
+.xroom-lab-step-tag.record { background: rgba(255,140,100,.15); color: #ffb088; }
+.xroom-lab-step-body {
+  padding: 4px 12px 10px 42px;
+  font-size: .78rem; color: #b8d8cc;
+}
+.xroom-lab-step-tip {
+  margin-top: 4px; font-size: .74rem; color: #90c8b8;
+  font-style: italic;
+}
+.xroom-lab-step-next {
+  margin-top: 8px; padding: 7px 14px;
+  border: none; border-radius: 8px;
+  background: rgba(100,220,180,.2); color: #7cecc4;
+  cursor: pointer; font-size: .78rem; font-weight: 600;
+  transition: background .15s;
+}
+.xroom-lab-step-next:hover { background: rgba(100,220,180,.35); }
+.xroom-lab-proc-conclusion {
+  margin-top: 14px; padding: 12px 14px;
+  background: rgba(100,220,180,.08); border-radius: 10px;
+}
+.xroom-lab-proc-conclusion b { color: #7cecc4; font-size: .85rem; }
+.xroom-lab-proc-conclusion p { font-size: .78rem; color: #b8d8cc; margin-top: 4px; }
+.xroom-lab-proc-conclusion button {
+  margin-top: 8px; padding: 6px 12px;
+  border: 1px solid rgba(100,220,180,.25); border-radius: 8px;
+  background: transparent; color: #7cecc4; cursor: pointer;
+  font-size: .75rem;
+}
+
+/* ══ Reaction Speed Race ═══════════════════════════════════════ */
+.xroom-race {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 500px; max-width: 94vw; max-height: 75vh;
+  background: rgba(9,30,39,.96); border: 1px solid rgba(80,220,170,.2);
+  border-radius: 14px; overflow-y: auto; z-index: 60;
+  display: flex; flex-direction: column;
+}
+.xroom-race-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.35);
+  border-radius: 14px 14px 0 0;
+}
+.xroom-race-bar b { flex: 1; font-size: .95rem; }
+.xroom-race-tabs {
+  display: flex; gap: 6px; padding: 8px 14px;
+  overflow-x: auto; flex-shrink: 0;
+}
+.xroom-race-body {
+  padding: 10px 16px 18px;
+  overflow-y: auto; flex: 1;
+}
+.xroom-race-desc {
+  font-size: .82rem; color: #b0d4c8; margin-bottom: 4px;
+}
+.xroom-race-var {
+  font-size: .78rem; color: #90c8b8; margin-bottom: 14px;
+}
+.xroom-race-lanes {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 14px;
+}
+.xroom-race-lane {
+  display: flex; align-items: center; gap: 8px;
+}
+.xroom-race-label {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: .72rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.xroom-race-lane:nth-child(1) .xroom-race-label,
+.xroom-race-lane:first-child .xroom-race-label {
+  background: rgba(100,180,255,.18); color: #8cc8ff;
+}
+.xroom-race-lane:nth-child(3) .xroom-race-label {
+  background: rgba(255,160,80,.18); color: #ffb070;
+}
+.xroom-race-track {
+  flex: 1; height: 18px;
+  background: rgba(255,255,255,.06); border-radius: 9px;
+  overflow: hidden;
+}
+.xroom-race-fill {
+  height: 100%; border-radius: 9px;
+  transition: width .1s linear;
+}
+.xroom-race-fill.a { background: linear-gradient(90deg, #4488dd, #66ccff); }
+.xroom-race-fill.b { background: linear-gradient(90deg, #dd8844, #ffaa66); }
+.xroom-race-pct {
+  font-size: .72rem; width: 36px; text-align: right;
+  color: #90c8b8; font-variant-numeric: tabular-nums;
+}
+.xroom-race-lane-name {
+  font-size: .7rem; color: #80b0a0;
+  padding-left: 30px; margin-bottom: 4px;
+}
+.xroom-race-controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+}
+.xroom-race-go {
+  padding: 8px 20px; border: none; border-radius: 8px;
+  background: rgba(100,220,180,.2); color: #7cecc4;
+  cursor: pointer; font-size: .82rem; font-weight: 600;
+  transition: background .15s;
+}
+.xroom-race-go:hover { background: rgba(100,220,180,.35); }
+.xroom-race-status {
+  font-size: .82rem; color: #f0d060;
+  animation: xroom-pulse 1s ease-in-out infinite;
+}
+@keyframes xroom-pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+.xroom-race-reveal {
+  padding: 7px 14px; border: none; border-radius: 8px;
+  background: rgba(200,140,255,.15); color: #d0a0ff;
+  cursor: pointer; font-size: .78rem;
+}
+.xroom-race-reveal:hover { background: rgba(200,140,255,.25); }
+.xroom-race-restart {
+  padding: 6px 12px; border: 1px solid rgba(100,220,180,.25);
+  border-radius: 8px; background: transparent;
+  color: #7cecc4; cursor: pointer; font-size: .75rem;
+}
+.xroom-race-answer {
+  margin-top: 12px; padding: 12px 14px;
+  background: rgba(100,220,180,.08); border-radius: 10px;
+}
+.xroom-race-answer b { color: #7cecc4; font-size: .85rem; }
+.xroom-race-answer p { font-size: .78rem; color: #b8d8cc; margin-top: 4px; }
+.xroom-race-explain {
+  font-size: .74rem !important; color: #90b8a8 !important;
+  font-style: italic; margin-top: 6px !important;
+}

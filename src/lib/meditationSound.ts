@@ -1,12 +1,12 @@
 /**
- * Generated ambient soundscapes for the Virtual Meditation sanctuaries —
+ * Generated ambient soundscapes for the Virtual Meditation sanctuaries  
  * synthesized live with the Web Audio API, so there are no audio files to
  * download, host, or license. This keeps the meditation self-contained and
  * light on a $150 phone over 4G, and avoids putting a recording of real monks
  * where a synthesized tone belongs.
  *
  * Layers: wind, water, cicada shimmer, scheduled birdsong, a singing-bowl bell,
- * and an optional warm chant *drone* (an ambient tone — not a recording of
+ * and an optional warm chant *drone* (an ambient tone not a recording of
  * chanting). Everything routes through one master gain for muting.
  */
 import type { Sanctuary } from "../meditation";
@@ -212,7 +212,7 @@ export function setChant(on: boolean) {
   if (drone && ctx) drone.gain.gain.setTargetAtTime(on ? 0.18 : 0, ctx.currentTime, 1.4);
 }
 
-/** A single bell — used to open and close a sitting. */
+/** A single bell used to open and close a sitting. */
 export function chime() {
   const c = ac();
   if (c && master) ring(c, 0.3);

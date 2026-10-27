@@ -1,8 +1,8 @@
-# Field guide — capturing Banteay Srei for 3D Gaussian Splatting
+# Field guide capturing Banteay Srei for 3D Gaussian Splatting
 
 A practical, on-the-ground checklist for the team going to **Banteay Srei**
-(~25 km north-east of the main Angkor group, **Siem Reap province**) — the "citadel
-of women", famous for exquisitely fine carving in rose-pink sandstone — to
+(~25 km north-east of the main Angkor group, **Siem Reap province**) the "citadel
+of women", famous for exquisitely fine carving in rose-pink sandstone to
 photograph it for a **3D Gaussian Splatting (3DGS)** capture.
 
 This is the site-specific companion to [`CAPTURE.md`](./CAPTURE.md). Where they
@@ -11,17 +11,17 @@ shoot at Banteay Srei.**
 
 ---
 
-## 0. Before you go — permission, licensing, etiquette
+## 0. Before you go permission, licensing, etiquette
 
 - **Permission first.** Banteay Srei is within the **APSARA National Authority**'s
   remit (a separate ticketed area farther out). Carry a valid pass and coordinate
   with APSARA for a systematic capture. Non-commercial **Digital Public Good**.
-- **Licensing.** *Our* photos, openly licensed — agree **CC-BY** (or CC0). No
+- **Licensing.** *Our* photos, openly licensed agree **CC-BY** (or CC0). No
   third-party images. Record who shot what.
-- **Drones: forbidden** without special permits — do not fly.
+- **Drones: forbidden** without special permits do not fly.
 - **You (mostly) can't go in.** The three central sanctuaries are **roped off** to
   protect the carving; you shoot from the surrounding **paths and perimeter**.
-  Plan for that (see gear — a **short telephoto** matters here). Never cross the
+  Plan for that (see gear a **short telephoto** matters here). Never cross the
   barriers.
 - **Respect** the monument and **don't photograph identifiable strangers.**
 
@@ -29,13 +29,13 @@ shoot at Banteay Srei.**
 
 ## 1. When to go
 
-- **Early morning**, right at opening — the site is small and gets **packed with
+- **Early morning**, right at opening the site is small and gets **packed with
   tour groups** mid-morning, and **people ruin a splat**. Early light also warms
   the pink sandstone beautifully.
 - **Soft/overcast light** shows the deep carving best; **hard midday sun** blows
   out the pale stone and casts busy shadows in the reliefs. If sunny, a **light
   overcast or the golden first hour** is the sweet spot.
-- Dry season (**Nov–Feb**). It's a ~45-min drive from Siem Reap — go early.
+- Dry season (**Nov–Feb**). It's a ~45-min drive from Siem Reap go early.
 
 ---
 
@@ -45,7 +45,7 @@ shoot at Banteay Srei.**
   **kept back behind ropes**, a **camera with a short telephoto (50–100mm-equiv.)**
   is very useful for the fine pediments and lintels. Bring both a normal and a
   longer lens if you can.
-- **Lock exposure, focus, white balance** — and **fix white balance** carefully:
+- **Lock exposure, focus, white balance** and **fix white balance** carefully:
   the **rose-pink colour** is the signature of this temple, so keep it consistent
   across a set (shoot a grey card once). **RAW + JPEG.**
 - Fast shutter (≥1/250s) for crisp carving detail; the relief is the whole point.
@@ -55,7 +55,7 @@ shoot at Banteay Srei.**
 
 ## 3. What to shoot (these become the in-app teleport spots / POIs)
 
-Banteay Srei has no POIs in the app yet — your subjects will **seed them**. Here
+Banteay Srei has no POIs in the app yet your subjects will **seed them**. Here
 the **fine carving is the hero**, not sheer size.
 
 | Subject | Suggested POI | Notes | Target photos |
@@ -73,19 +73,19 @@ the **fine carving is the hero**, not sheer size.
 
 ## 4. How to shoot each subject (the 3DGS method)
 
-- **Orbit, don't pan** — walk the permitted path around each structure, one photo
+- **Orbit, don't pan** walk the permitted path around each structure, one photo
   every ~1–2 steps, for parallax. Where ropes limit you, orbit a **wider arc** at
   a constant distance and lean on the telephoto for detail.
-- **~70% overlap**, and **denser than usual** — fine carving needs many views to
+- **~70% overlap**, and **denser than usual** fine carving needs many views to
   resolve.
 - **Three heights** where the path allows (low / eye / high).
-- **Consistent light and white balance within a set** — the pink stone must look
+- **Consistent light and white balance within a set** the pink stone must look
   the same colour across all frames of a subject.
 - **Avoid** moving people, motion blur, and mixing sun/shade in one set.
 
 ---
 
-## 5. After the shoot — data handling
+## 5. After the shoot data handling
 
 - **Back up immediately** (two copies).
 - One **folder per subject** (`central-towers/`, `pediments/`, `guardians/`,

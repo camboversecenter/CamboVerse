@@ -13,7 +13,7 @@ import { Forest } from "./Forest";
  *   it → libraries → the central temple (rendered separately at the origin).
  *
  * Everything here sits WEST (+z) of the temple model, which occupies roughly
- * |x| < 3.6, z ∈ [-3.6, 4]. Fully procedural — no textures; the forest is two
+ * |x| < 3.6, z ∈ [-3.6, 4]. Fully procedural no textures; the forest is two
  * instanced draws and only the ponds use a reflection pass, to stay mobile-cheap.
  */
 
@@ -31,7 +31,7 @@ const LATERITE = "#6d5a41";
 // A shape drawn in XY becomes world XZ after a -90° X rotation: (x, y) -> (x, -y).
 const w2s = (x: number, z: number): [number, number] => [x, -z];
 
-export function AngkorLandscape() {
+export function AngkorLandscape({ detailed = true }: { detailed?: boolean }) {
   // Moat = outer rectangle with the island punched out as a hole.
   const moatShape = useMemo(() => {
     const s = new Shape();
@@ -76,10 +76,10 @@ export function AngkorLandscape() {
       {/* Island lawn (brighter than the outer forest floor) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 2]} receiveShadow>
         <planeGeometry args={[ISLE.x1 - ISLE.x0 + 0.6, ISLE.z1 - ISLE.z0 + 0.6]} />
-        <meshStandardMaterial color="#79953f" roughness={1} />
+        <meshStandardMaterial color="#70805a" roughness={1} />
       </mesh>
 
-      {/* Moat canal ring (flat water — large area, so no reflection pass) */}
+      {/* Moat canal ring (flat water large area, so no reflection pass) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.045, 0]}>
         <shapeGeometry args={[moatShape]} />
         <meshStandardMaterial color="#3d5a66" roughness={0.35} metalness={0.4} />
@@ -97,7 +97,7 @@ export function AngkorLandscape() {
         </mesh>
       ))}
 
-      {/* Western entrance gopura — a LOW galleried gate (deliberately much
+      {/* Western entrance gopura a LOW galleried gate (deliberately much
           smaller than the temple), with a modest towered portal and flanking
           towers, split to leave the gate opening. */}
       <group position={[0, 0, GOPURA_Z]}>
@@ -165,7 +165,7 @@ export function AngkorLandscape() {
           </mesh>
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[x, 0.07, POND_Z]}>
             <planeGeometry args={[7.0, 6.0]} />
-            <MeshReflectorMaterial
+            {detailed ? <MeshReflectorMaterial
               resolution={128}
               mirror={0.85}
               blur={[60, 24]}
@@ -175,7 +175,7 @@ export function AngkorLandscape() {
               depthScale={0}
               color="#516d78"
               metalness={0.4}
-            />
+            /> : <meshStandardMaterial color="#516d68" roughness={.6} />}
           </mesh>
         </group>
       ))}
@@ -197,13 +197,13 @@ export function AngkorLandscape() {
       {/* Sugar palms lining the causeway, as in the photos */}
       {[5.5, 8.0, 10.5].map((z, i) => (
         <group key={z}>
-          <Palm position={[2.1, 0, z]} scale={0.95} spin={i * 1.7} />
-          <Palm position={[-2.1, 0, z]} scale={0.95} spin={i * 2.3 + 1} />
+          <Palm position={[10, 0, z]} scale={0.75} spin={i * 1.7} />
+          <Palm position={[-10, 0, z]} scale={0.75} spin={i * 2.3 + 1} />
         </group>
       ))}
 
       {/* Island forest */}
-      <Forest trees={trees} />
+      <Forest trees={detailed ? trees : trees.filter((_, i) => i % 3 === 0)} />
     </group>
   );
 }

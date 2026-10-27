@@ -1,8 +1,8 @@
 /**
- * public/models/angkor-wat.splat — a synthetic Gaussian-splat cloud of Angkor
+ * public/models/angkor-wat.splat - a synthetic Gaussian-splat cloud of Angkor
  * Wat, sampled from the SAME shared composition as the glTF so they match. A
  * license-clean, self-contained stand-in to prototype the photoreal splat path
- * in the mobile web viewer (the real thing will be an actual 3DGS capture —
+ * in the mobile web viewer (the real thing will be an actual 3DGS capture -
  * see docs/CAPTURE.md). Run: node scripts/generate-splat.mjs
  */
 import { resolve, dirname } from "node:path";

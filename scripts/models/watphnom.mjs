@@ -49,7 +49,7 @@ export function composeWatPhnom(b) {
     b.cone(0.12, 0.7, 6, 0, 4.75, vz + dz * 1.9, GOLD, [dz * 0.5, 0, 0]);
   }
 
-  // --- Great white stupa (chedi) behind the vihara — the tallest element ---
+  // --- Great white stupa (chedi) behind the vihara - the tallest element ---
   const sz = -4.4;
   b.box(3.4, 1.0, 3.4, 0, 1.1, sz, WHITE); // square base
   b.box(2.7, 0.5, 2.7, 0, 1.85, sz, WHITE);

@@ -1,6 +1,6 @@
 # Capturing heritage sites for CamboVerse
 
-How to turn a real Khmer heritage site into an asset the viewer can load — either
+How to turn a real Khmer heritage site into an asset the viewer can load either
 a **Gaussian splat** (`.splat`, photoreal) or a **glTF** (`.glb`, authored/clean
 geometry). The viewer already renders both; this is the Phase‑1 *content* work.
 
@@ -18,7 +18,7 @@ geometry). The viewer already renders both; this is the Phase‑1 *content* work
 
 ---
 
-## Option A — Gaussian splat (photoreal)
+## Option A Gaussian splat (photoreal)
 
 This is the path validated in the prototype: splats render in the mobile web
 browser on a low‑end Android.
@@ -34,9 +34,9 @@ browser on a low‑end Android.
 
 ### 2. Train a 3D Gaussian Splatting model
 Use any 3DGS pipeline, e.g.:
-- **Nerfstudio** (`ns-train splatfacto`) — open source, exports `.ply`.
-- **INRIA `gaussian-splatting`** (the original) — research reference.
-- **Postshot / KIRI Engine / Luma AI / Polycam** — turnkey apps that export splats.
+- **Nerfstudio** (`ns-train splatfacto`) open source, exports `.ply`.
+- **INRIA `gaussian-splatting`** (the original) research reference.
+- **Postshot / KIRI Engine / Luma AI / Polycam** turnkey apps that export splats.
 
 Structure‑from‑motion (COLMAP) estimates camera poses first; most tools wrap this.
 
@@ -49,10 +49,13 @@ f32×3, scale f32×3, colour rgba u8×4, rotation quat u8×4).
 ### 4. ⚠️ Coordinate convention (important)
 The renderer (drei `Splat`) expects the **3DGS convention (Y‑down, Z‑flipped)** and
 un‑flips on load. **Real 3DGS captures are already in that convention**, so they
-load upright as‑is — do **not** apply the Y/Z pre‑flip that our *synthetic*
+load upright as‑is do **not** apply the Y/Z pre‑flip that our *synthetic*
 generator uses (`scripts/lib/temple.mjs` → `buildSplat`, which flips because it
 authors in Three.js Y‑up). If a real capture loads upside‑down or underground,
 rotate the `<Splat>` 180° about X instead of editing the file.
+**Exception: Nerfstudio (`splatfacto`) exports are Z-up** and need +90° about X
+to stand upright. Check any capture with `/splat-preview.html?src=…&rx=90`
+(see `TRAIN_3DGS_KAGGLE.md`).
 
 ### 5. Optimise for mobile
 - **Budget splat count** for a `~$150 Android over 4G` (the hard requirement):
@@ -62,13 +65,13 @@ rotate the `<Splat>` 180° about X instead of editing the file.
 
 ---
 
-## Option B — glTF (authored / clean geometry)
+## Option B glTF (authored / clean geometry)
 
 Best for stylised or interactive geometry, and as a lightweight fallback.
 1. **Photogrammetry** (RealityCapture / Metashape / Meshroom) → high‑poly mesh.
 2. **Retopo / decimate**, bake normal + albedo maps.
 3. Export **glTF (`.glb`)** with **Draco or meshopt** compression, texture
-   atlasing, and LODs (all mandatory for mobile — `STRATEGY.md` §3.2).
+   atlasing, and LODs (all mandatory for mobile `STRATEGY.md` §3.2).
 
 ---
 

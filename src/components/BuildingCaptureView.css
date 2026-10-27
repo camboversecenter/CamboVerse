@@ -1,0 +1,22 @@
+.building-capture-header { position:fixed; top:calc(env(safe-area-inset-top,0px) + 12px); left:12px; z-index:30; display:flex; align-items:center; gap:12px; max-width:calc(100vw - 152px); color:#fff7df; }
+.building-capture-header strong { font:700 16px system-ui,sans-serif; text-shadow:0 1px 5px #000; }
+.building-capture-header small { display:block; margin-top:3px; font-size:11px; font-weight:500; color:#d6dfc8; }
+.building-capture-header strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.building-capture-header button { flex-shrink:0; }
+.building-capture .heritage-detail { top:calc(env(safe-area-inset-top,0px) + 12px); }
+.building-capture .capture-quality { top:calc(env(safe-area-inset-top,0px) + 64px); }
+.building-capture .explore-camera { margin-top:20px; }
+.building-capture .explore-camera-panel { max-height:calc(100dvh - 210px) !important; }
+.building-capture-header button,.building-capture-actions button,.bld-capture-open,.building-capture-walk { min-height:44px; padding:9px 14px; border-radius:999px; border:1px solid #9eb78b; background:#17372eef; color:#fff7df; font:600 13px system-ui,sans-serif; cursor:pointer; }
+.building-capture-walk { position:fixed; top:calc(env(safe-area-inset-top,0px) + 68px); left:12px; z-index:30; }
+.building-capture-actions { position:fixed; left:12px; bottom:calc(env(safe-area-inset-bottom,0px) + 18px); display:flex; gap:8px; flex-wrap:wrap; max-width:calc(100vw - 130px); z-index:40; }
+.building-capture-notes { position:fixed; bottom:82px; left:12px; z-index:40; width:min(365px,calc(100vw - 24px)); max-height:55dvh; overflow:auto; border:1px solid #9eb78b; border-radius:16px; background:#17372ef5; color:#fff7df; padding:16px; font:14px/1.6 system-ui,sans-serif; }
+.building-capture-notes h2 { margin:0 0 8px; font-size:19px; }
+.building-capture-notes p { margin:8px 0; }
+.building-capture-notes a { color:#dcdfa5; font-size:12px; }
+.building-capture button:focus-visible,.bld-capture-open:focus-visible { outline:3px solid #ead392; outline-offset:3px; }
+.bld-capture-open { position:fixed; top:100px; left:50%; transform:translateX(-50%); z-index:25; }
+@media (max-width:480px) {
+  .building-capture-actions { gap:4px; flex-wrap:nowrap; }
+  .building-capture-actions button { padding:8px 6px; font-size:11px; }
+}

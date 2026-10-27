@@ -1,7 +1,7 @@
 /**
- * Geo-aware fulfillment — the core of the CamboVerse digital economy (see
+ * Geo-aware fulfillment the core of the CamboVerse digital economy (see
  * DIGITAL_ECONOMY.md). A visitor's country decides which merchant fulfils the
- * order, how they pay, and who delivers — so virtual tourism becomes real,
+ * order, how they pay, and who delivers so virtual tourism becomes real,
  * region-local commerce. Pure data, shared by the client UI and the Worker.
  */
 export interface Fulfillment {

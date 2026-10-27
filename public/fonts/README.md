@@ -1,6 +1,6 @@
 # Embedded Khmer fonts
 
-CamboVerse embeds these Khmer fonts locally (self-contained — no external
+CamboVerse embeds these Khmer fonts locally (self-contained no external
 requests) to render the Khmer script, including the **Khmer Alphabet Classroom**.
 Both are from Google Fonts and licensed under the **SIL Open Font License 1.1**
 (an open licence, compatible with our Digital-Public-Good discipline).
@@ -15,5 +15,5 @@ vendored, to keep the download small for low-end phones. The `@font-face`
 declarations live in `src/index.css`.
 
 Attribution (required by the OFL):
-- Siemreap — © 2010 Danh Hong (khmertype.blogspot.com).
-- Moul — © The Moul Project Authors (https://github.com/danhhong/Moul).
+- Siemreap © 2010 Danh Hong (khmertype.blogspot.com).
+- Moul © The Moul Project Authors (https://github.com/danhhong/Moul).

@@ -1,5 +1,5 @@
 /**
- * public/models/bayon.glb — an authored, recognizable Bayon: a dense cluster of
+ * public/models/bayon.glb - an authored, recognizable Bayon: a dense cluster of
  * towers each bearing four serene faces (the hallmark of Angkor Thom), on a
  * tiered base. Uses the shared temple builder (detailed towers + weathered
  * vertex colours). Stylized stand-in; photoreal comes later via Gaussian splats.

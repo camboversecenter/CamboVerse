@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Mesh, Group } from "three";
@@ -11,12 +11,12 @@ import { claimCredential, getIdentity, earnedAchievements } from "../lib/identit
 import * as sound from "../lib/meditationSound";
 
 /**
- * Virtual Meditation — sit inside a serene Khmer sanctuary (forest, temple at
+ * Virtual Meditation sit inside a serene Khmer sanctuary (forest, temple at
  * dawn, mountain mist, riverside), in 3D or VR, with a generated ambient
  * soundscape and a gentle breathing guide. Optionally add a warm chant tone and
  * traditional Theravada verses. The practice is universal; the setting honours
  * Cambodia's sacred landscapes. Completing a sitting leaves a quiet "moment of
- * calm" in the Heritage Passport — a note, not a score.
+ * calm" in the Heritage Passport a note, not a score.
  */
 type Phase = "setup" | "active" | "done";
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -227,7 +227,7 @@ export function MeditationView({ onBackToMap }: { onBackToMap: () => void }) {
           <button className="med-begin" style={{ background: sanctuary.accent }} onClick={begin}>
             Begin sitting
           </button>
-          {earned && <p className="med-note">You've earned a moment of calm before — welcome back.</p>}
+          {earned && <p className="med-note">You've earned a moment of calm before welcome back.</p>}
         </div>
       )}
 
@@ -496,7 +496,7 @@ function Nav() {
   if (inXR) return null;
   return (
     <OrbitControls
-      enablePan={false}
+      enablePan
       minDistance={2}
       maxDistance={10}
       maxPolarAngle={Math.PI / 1.9}

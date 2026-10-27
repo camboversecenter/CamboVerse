@@ -1,5 +1,5 @@
 /**
- * public/models/ansom.glb — អន្សម (ansom), the iconic Khmer sticky-rice cake:
+ * public/models/ansom.glb - អន្សម (ansom), the iconic Khmer sticky-rice cake:
  * glutinous rice wrapped around a filling in a banana-leaf roll, tied with
  * strips, and steamed for hours. Modelled as a woven tray holding two whole
  * banana-leaf rolls plus one cut piece that reveals the rice and banana filling.

@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CamboVerse — Reference Partner App (Treasure Hunt)</title>
+    <title>CamboVerse - Reference Partner App (Treasure Hunt)</title>
     <!--
-      A REFERENCE ecosystem app. It is NOT part of the CamboVerse product — it is
+      A REFERENCE ecosystem app. It is NOT part of the CamboVerse product - it is
       a worked example for startups/schools/museums, showing how an independent
       app composes the open /v1 rails end-to-end using ONLY public HTTP calls:
 
@@ -50,8 +50,8 @@
   </head>
   <body>
     <header>
-      <h1>🗺️ Angkor Treasure Hunt <span class="sub">— a CamboVerse reference partner app</span></h1>
-      <div class="sub">Built entirely on the public <code>/v1</code> rails. Not a CamboVerse product — an example for ecosystem builders.</div>
+      <h1>🗺️ Angkor Treasure Hunt <span class="sub">- a CamboVerse reference partner app</span></h1>
+      <div class="sub">Built entirely on the public <code>/v1</code> rails. Not a CamboVerse product - an example for ecosystem builders.</div>
     </header>
     <main>
       <div class="bar">
@@ -88,7 +88,7 @@
         return body;
       }
 
-      // Identity is created LAZILY and anonymously — only when the player first
+      // Identity is created LAZILY and anonymously - only when the player first
       // earns something. Passive browsing makes no account.
       async function getIdentity(create) {
         const raw = localStorage.getItem(IDKEY);
@@ -118,7 +118,7 @@
         try {
           // Experience rail: read the scene (and, for flavour, resolve its assets).
           scene = await api("/v1/scenes/" + SCENE_ID);
-          log(`Scene: ${scene.name} — ${scene.pois.length} POIs, capabilities [${scene.capabilities.join(", ")}]`);
+          log(`Scene: ${scene.name} - ${scene.pois.length} POIs, capabilities [${scene.capabilities.join(", ")}]`);
           const earned = await earnedSet();
           renderScene();
           await renderPois(earned);
@@ -185,9 +185,9 @@
         const el = $("reward");
         el.className = "reward" + (complete ? "" : " locked");
         el.innerHTML =
-          `<div><b>${complete ? "🎉 Hunt complete!" : "🔒 Reward locked"}</b> — ${got}/${total} places learned.</div>` +
+          `<div><b>${complete ? "🎉 Hunt complete!" : "🔒 Reward locked"}</b> - ${got}/${total} places learned.</div>` +
           (complete
-            ? `<div class="sub">You've earned every credential. Claim a real, locally-fulfilled reward (a Khmer craft) — payment happens with the local provider, never here.</div>`
+            ? `<div class="sub">You've earned every credential. Claim a real, locally-fulfilled reward (a Khmer craft) - payment happens with the local provider, never here.</div>`
             : `<div class="sub">Learn all ${total} places to unlock a real reward.</div>`);
         if (complete) {
           const b = document.createElement("button");
@@ -199,7 +199,7 @@
       }
 
       // D2P rail: route the reward to a REAL in-region provider. The core only
-      // routes — settlement happens in the ecosystem, never in CamboVerse.
+      // routes - settlement happens in the ecosystem, never in CamboVerse.
       async function claimReward(btn) {
         btn.disabled = true; btn.textContent = "Routing…";
         try {
@@ -225,7 +225,7 @@
       // ---- Wire up ------------------------------------------------------------
       $("host").value = location.origin.startsWith("http") ? location.origin : "http://127.0.0.1:5173";
       $("load").onclick = load;
-      $("reset").onclick = () => { localStorage.removeItem(IDKEY); log("New player — anonymous ID forgotten."); if (scene) load(); };
+      $("reset").onclick = () => { localStorage.removeItem(IDKEY); log("New player - anonymous ID forgotten."); if (scene) load(); };
     </script>
   </body>
 </html>

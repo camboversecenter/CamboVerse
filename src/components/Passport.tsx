@@ -6,13 +6,13 @@ import { KHMER_GROUPS } from "../khmer";
 import { gameById } from "../games";
 
 /**
- * The Heritage Passport — a visitor's collection of the learning credentials
+ * The Heritage Passport a visitor's collection of the learning credentials
  * they've earned across Cambodia's sites and ages. It reads the Credential rail
  * (no account needed to look; a passive visitor simply has an empty passport)
  * and turns each `history:<site>:<era>` credential into a "stamp".
  *
  * This closes the learn-to-earn loop: earn a credential in "Back in Time",
- * then see it collected here — non-monetary, and portable across the ecosystem.
+ * then see it collected here non-monetary, and portable across the ecosystem.
  */
 interface Stamp {
   key: string;
@@ -65,7 +65,7 @@ function toStamp(c: Credential): Stamp {
     const g = gameById(parts[1]);
     return {
       key: c.id,
-      title: g ? `${g.english} — won` : "Traditional game",
+      title: g ? `${g.english} won` : "Traditional game",
       khmer: g?.khmer,
       where: "Khmer Traditional Games",
       when,
@@ -75,7 +75,7 @@ function toStamp(c: Credential): Stamp {
   if (parts[0] === "farm") {
     return {
       key: c.id,
-      title: "Rice cycle — completed",
+      title: "Rice cycle completed",
       khmer: "វដ្ដដាំស្រូវ",
       where: "the Virtual Farm",
       when,
@@ -159,7 +159,7 @@ export function Passport({ onClose }: { onClose: () => void }) {
             <p className="pp-empty-big">Your passport is waiting for its first stamp.</p>
             <p>
               Enter a site, open <b>⏳ Back in Time</b>, and pass an era's short quiz to earn a
-              learning credential. Each one is stamped here — free, and yours to keep.
+              learning credential. Each one is stamped here free, and yours to keep.
             </p>
           </div>
         ) : (
@@ -200,7 +200,7 @@ export function Passport({ onClose }: { onClose: () => void }) {
           </>
         )}
         <p className="pp-foot">
-          Learning credentials are non‑monetary and portable — they travel with your CamboVerse
+          Learning credentials are non‑monetary and portable they travel with your CamboVerse
           identity across the ecosystem.
         </p>
       </div>

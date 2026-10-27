@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
-import { ACESFilmicToneMapping } from "three";
+import { ACESFilmicToneMapping, type Group } from "three";
 import {
   DEFAULT_EMBED_POLICY,
   type CeremonyTemplate, type EmbedPolicy, type MediaRef,
@@ -11,6 +11,19 @@ import {
 import { Pavilion, Staging, PROP_NAME, stagingRadius } from "./CeremonyProps";
 import { Scene, SceneLight, GroundDisc, THEME_INFO, TIME_LABEL } from "./CeremonyScene";
 import type { Detail } from "./LabOrgans";
+import { TraditionalWedding, WeddingCamera, WeddingLight } from './TraditionalWedding';
+import { WEDDING_BOOKS, WEDDING_ITEMS, WEDDING_OBJECTS, type WeddingObject } from '../weddingStudy';
+import './TraditionalWedding.css';
+import { HousewarmingCamera, TraditionalHousewarming } from './TraditionalHousewarming';
+import { HOUSEWARMING_BOOKS, HOUSEWARMING_ITEMS, HOUSEWARMING_OBJECTS, type HousewarmingObject } from '../housewarmingStudy';
+import { BlenderPchumBen, PchumBenCamera } from './BlenderPchumBen';
+import { PCHUM_BEN_BOOKS, PCHUM_BEN_ITEMS, PCHUM_BEN_OBJECTS, type PchumBenObject } from '../pchumBenStudy';
+import { CeremonyWalk } from './PchumBenWalk';
+import { ceremonyStops,type CeremonyStop } from '../ceremonyWalk';
+import { NEW_YEAR_BOOKS,NEW_YEAR_ITEMS,NEW_YEAR_OBJECTS,type NewYearObject } from '../khmerNewYearStudy';
+import { BlenderKhmerNewYear } from './BlenderKhmerNewYear';
+import { WalkControls } from './WalkControls';
+import type { WalkInput } from './FirstPersonControls';
 
 /**
  * One ceremony, staged.
@@ -18,14 +31,14 @@ import type { Detail } from "./LabOrgans";
  * The screen is built around the thing that makes a Khmer ceremony a ceremony
  * and not a party: it is a **sequence**. Each moment has a name, a meaning, and
  * a set of things laid out on the ground, and stepping from one to the next
- * re-dresses the yard. That progression is the lesson — which is why the moment
+ * re-dresses the yard. That progression is the lesson which is why the moment
  * stepper is the primary control and everything else is secondary.
  *
  * Three view modes, as everywhere in CamboVerse:
- *   - **Normal** — the ~$150-Android baseline: fewer segments, no shadows,
+ *   - **Normal** the ~$150-Android baseline: fewer segments, no shadows,
  *     thinner scatter.
- *   - **Ultra** — full detail for a capable device.
- *   - **VR** — WebXR, standing in the yard, and always the Ultra scene.
+ *   - **Ultra** full detail for a capable device.
+ *   - **VR** WebXR, standing in the yard, and always the Ultra scene.
  *
  * The content survives all three: someone who never rotates the scene, never
  * enters VR and never changes the venue still gets the sequence, the names and
@@ -45,7 +58,7 @@ function detectViewMode(): Detail {
  *
  * r3f reads the `camera` prop once, at canvas creation. Switching from a yard to
  * the inside of a vihear changes what needs to be in shot, and without this the
- * camera would keep whatever the first venue asked for — the same trap the Lab
+ * camera would keep whatever the first venue asked for the same trap the Lab
  * hit teleporting from a whole body to a 15 cm organ.
  */
 function FrameCamera({ dist, eye }: { dist: number; eye: number }) {
@@ -84,6 +97,60 @@ export function CeremonyView({
   const [info, setInfo] = useState(true);
   const [focus, setFocus] = useState<PropKind | null>(null);
   const [embedPolicy] = useState<EmbedPolicy>(DEFAULT_EMBED_POLICY);
+  const isWedding = template.id === 'wedding';
+  const isHousewarming = template.id === 'housewarming';
+  const isPchumBen = template.id === 'pchum-ben';
+  const isNewYear = template.id === 'khmer-new-year';
+  const isStudy = isWedding || isHousewarming || isPchumBen || isNewYear;
+  const stops=useMemo(()=>ceremonyStops(template.id),[template.id]);
+  const [newYearFocus,setNewYearFocus]=useState<NewYearObject|null>(null);
+  const [pchumFocus, setPchumFocus] = useState<PchumBenObject | null>(null);
+  const [houseFocus, setHouseFocus] = useState<HousewarmingObject | null>(null);
+  const studyBooks = isNewYear ? NEW_YEAR_BOOKS : isPchumBen ? PCHUM_BEN_BOOKS : isWedding ? WEDDING_BOOKS : HOUSEWARMING_BOOKS;
+  const studyItems = isNewYear ? NEW_YEAR_ITEMS : isPchumBen ? PCHUM_BEN_ITEMS : isWedding ? WEDDING_ITEMS : HOUSEWARMING_ITEMS;
+  const studyObjects: Record<string, {name: string; note: string}> = isNewYear ? NEW_YEAR_OBJECTS : isPchumBen ? PCHUM_BEN_OBJECTS : isWedding ? WEDDING_OBJECTS : HOUSEWARMING_OBJECTS;
+  const [weddingFocus, setWeddingFocus] = useState<WeddingObject | null>(null);
+  const [closeView, setCloseView] = useState(false);
+  const [showRoof, setShowRoof] = useState(false);
+  const [walking,setWalking]=useState(false);
+  const walkInput=useRef<WalkInput>({move:{x:0,y:0},look:{dx:0,dy:0}});
+  const collision=useRef<Group|null>(null);
+  const [loadedDetail,setLoadedDetail]=useState<Detail|null>(null);
+  const [walkStart,setWalkStart]=useState<CeremonyStop>(stops[0]);
+  const [walkReset,setWalkReset]=useState(0);
+  const [near,setNear]=useState<CeremonyStop|null>(null);
+  const [story,setStory]=useState<CeremonyStop|null>(null);
+  const notesPanel=useRef<HTMLDivElement>(null);
+  useEffect(()=>{if(info&&story)notesPanel.current?.scrollTo({top:0});},[info,story]);
+  const [visited,setVisited]=useState<string[]>([]);
+  const walkActive=isStudy&&walking;
+  const walkReady=!(isPchumBen||isNewYear)||loadedDetail===detail;
+  const readStop=(stop:CeremonyStop)=>{
+    setStory(stop);setInfo(true);
+    setStep(Math.max(0,template.moments.findIndex(m=>m.id===stop.moment)));
+    setVisited(v=>v.includes(stop.id)?v:[...v,stop.id]);
+  };
+  const visitStop=(stop:CeremonyStop)=>{
+    setWalkStart(stop);setWalkReset(v=>v+1);setNear(stop);setStory(null);setInfo(false);
+  };
+  useEffect(()=>{
+    if(!walkActive)return;
+    const key=(e:KeyboardEvent)=>{
+      if(e.repeat || (e.target instanceof HTMLElement && (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))))return;
+      if(e.code==='KeyE'&&!info&&near){e.preventDefault();readStop(near);}
+      if(e.code==='Escape'&&info){e.preventDefault();setInfo(false);}
+    };
+    window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
+  },[walkActive,near,info,template.moments]);
+  const studyFocus = isNewYear ? newYearFocus : isPchumBen ? pchumFocus : isWedding ? weddingFocus : houseFocus;
+  const inspect = (id: string) => {
+    if (isNewYear) setNewYearFocus(id as NewYearObject);
+    else if (isPchumBen) setPchumFocus(id as PchumBenObject);
+    else if (isWedding) setWeddingFocus(id as WeddingObject);
+    else setHouseFocus(id as HousewarmingObject);
+  };
+  useEffect(() => { setWeddingFocus(null); setHouseFocus(null); setPchumFocus(null); setNewYearFocus(null); }, [step, template.id]);
+  useEffect(()=>{setWalking(false);setStory(null);setNear(null);setVisited([]);setWalkStart(stops[0]);setLoadedDetail(null);setInfo(true);},[stops]);
 
   // Reset to the first moment when the ceremony changes, otherwise opening a
   // three-moment ceremony after a seven-moment one lands on nothing.
@@ -111,7 +178,7 @@ export function CeremonyView({
    * A marquee is put up **at a house**, and nowhere else.
    *
    * The first version raised one over anything that was not indoors, which stood
-   * a pink wedding marquee over Pchum Ben on pagoda ground — a setting that has
+   * a pink wedding marquee over Pchum Ben on pagoda ground a setting that has
    * a sala and trees and needs no marquee at all. Getting this wrong is worse
    * than leaving the yard bare: it says the wrong thing about the ceremony.
    */
@@ -123,13 +190,13 @@ export function CeremonyView({
    *
    * **Eye height is under the marquee's eave, and that is not a style choice.**
    * The canopy is opaque, so a camera looking down from above it frames a nice
-   * pink roof and none of the ceremony — which is everything the screen exists
+   * pink roof and none of the ceremony which is everything the screen exists
    * to show. Standing height puts you under the eave, looking in.
    */
   const { dist, eye, visibleH } = useMemo(() => {
     // Frame off the *horizontal* field of view. On a portrait phone it is barely
     // 29° against the 50° vertical, so sizing off height alone hangs the staging
-    // off the sides of the screen — the same trap the Lab hit.
+    // off the sides of the screen the same trap the Lab hit.
     const aspect = Math.min(2.2, Math.max(0.45, window.innerWidth / window.innerHeight));
     const halfV = Math.tan((50 * Math.PI) / 360);
     const halfH = Math.atan(halfV * aspect);
@@ -145,7 +212,7 @@ export function CeremonyView({
     const d = Math.min(indoors ? 15 : 18, Math.max(5, (reach * 1.15) / Math.tan(halfH)));
     return {
       dist: d,
-      // Crouched by the mat for a close moment, standing for a wide one — and
+      // Crouched by the mat for a close moment, standing for a wide one and
       // never above the marquee's 2.75 m eave, or the canopy hides everything.
       eye: Math.min(2.45, Math.max(1.15, d * 0.2)),
       visibleH: 2 * d * halfV,
@@ -154,7 +221,7 @@ export function CeremonyView({
 
   // The orbit target lands at the centre of the viewport, so aiming *low* lifts
   // the staging into the clear band above an open sheet. Aiming high pushes it
-  // down behind it — the same mistake the building pages made, in the same
+  // down behind it the same mistake the building pages made, in the same
   // direction, which is why it is spelled out here too. The lift is a fraction
   // of the *frame* rather than of the objects, so a moment staged with candles
   // is not shifted by the same amount as one staged with a marquee.
@@ -163,8 +230,9 @@ export function CeremonyView({
   const media: MediaRef[] = [];
 
   return (
-    <div className="lab cer">
+    <div className={`lab cer${isStudy ? ' cer-wedding' : ''}${walkActive ? ' pchum-walking' : ''}`}>
       <Canvas
+        style={isStudy ? { height: info&&!walkActive ? '61%' : '100%' } : undefined}
         dpr={detail === "normal" ? [1, 1.5] : [1, 2]}
         camera={{ position: [dist * 0.42, eye, dist * 0.9], fov: 50, near: 0.25, far: 320 }}
         gl={{ antialias: detail === "ultra", powerPreference: "high-performance" }}
@@ -175,28 +243,58 @@ export function CeremonyView({
         }}
       >
         <XR store={store}>
-          <SceneLight time={time} detail={detail} />
+          {isPchumBen ? <><SceneLight time={time} detail={detail} /><hemisphereLight args={['#dce4ed','#747569',.85]} /><pointLight position={[0,3.2,-7.4]} intensity={8} distance={7} color="#fff3db" /></> : isStudy ? <WeddingLight detail={detail} /> : <SceneLight time={time} detail={detail} />}
+          {isWedding ? <>
+            {!walkActive&&<WeddingCamera close={closeView} />}
+            <group ref={collision}><TraditionalWedding detail={detail} moment={moment.id} selected={weddingFocus} onSelect={setWeddingFocus} roof={showRoof} />
+              <mesh position={[0,.105,0]} userData={{walkCollision:true}}><boxGeometry args={[7.5,.21,5.1]}/><meshBasicMaterial transparent opacity={0} colorWrite={false} depthWrite={false}/></mesh>
+            </group>
+          </> : isHousewarming ? <>
+            {!walkActive&&<HousewarmingCamera close={closeView} roof={showRoof} />}
+            <group ref={collision}><TraditionalHousewarming detail={detail} moment={moment.id} roof={showRoof} selected={houseFocus} onSelect={setHouseFocus} />
+              <mesh position={[0,1.155,0]} userData={{walkCollision:true}}><boxGeometry args={[7.2,.17,5.8]}/><meshBasicMaterial transparent opacity={0} colorWrite={false} depthWrite={false}/></mesh>
+            </group>
+          </> : isNewYear ? <>
+            {!walkActive&&<PchumBenCamera close={closeView} />}
+            <BlenderKhmerNewYear detail={detail} roof={showRoof} selected={newYearFocus} onSelect={setNewYearFocus} collision={collision} onReady={setLoadedDetail}/>
+          </> : isPchumBen ? <>
+            {!walkActive&&<PchumBenCamera close={closeView} />}
+            <BlenderPchumBen detail={detail} moment={moment.id} roof={showRoof} selected={pchumFocus} onSelect={setPchumFocus} collision={collision} onReady={setLoadedDetail} />
+          </> : <>
           <FrameCamera dist={dist} eye={eye} />
           <Scene theme={theme} detail={detail} season={season} />
           <GroundDisc time={time} />
           {pavilion && <Pavilion detail={detail} />}
           <Staging staging={staging} detail={detail} highlight={focus} />
+          </>}
+          {walkActive&&<CeremonyWalk key={walkReset} input={walkInput} collision={collision} enabled={!info&&walkReady} start={walkStart} stops={stops} onNear={setNear}/>}
 
           {/* Standing height, at the edge of the mat rather than in the middle
               of it: in VR you are a guest at this, not the couple. */}
-          <XROrigin position={[0, 0, 5.5]} />
+          <XROrigin position={isHousewarming ? [0, 1.25, 2.1] : [0, 0, 5.5]} />
           <VrImpliesUltra onEnter={() => setDetail("ultra")} />
-          <OrbitControls
-            enablePan={false}
-            minDistance={4}
+          {!walkActive&&<OrbitControls
+            resetKey={isStudy ? `${template.id}-${closeView}-${info}` : undefined}
+            enablePan
+            minDistance={isStudy ? 2.5 : 4}
             maxDistance={indoors ? 26 : 46}
             maxPolarAngle={Math.PI * 0.495}
             enableDamping
             dampingFactor={0.08}
-            target={[0, aim, 0]}
-          />
+            target={[0, isHousewarming ? 1.7 : isPchumBen ? (closeView ? .65 : 1) : isWedding ? .65 : aim, isPchumBen && !closeView ? -2 : 0]}
+          />}
         </XR>
       </Canvas>
+
+      {walkActive&&!info&&walkReady&&<WalkControls input={walkInput} hint="WASD / arrows or joystick · drag to look · E to read" onActivate={()=>{if(near)readStop(near);}}/>}
+      {walkActive&&!info&&<div className="pchum-walk-hud">
+        <span role="status">{!walkReady?'Loading the walking scene…':near?`Nearby: ${near.name}`:'Walk towards a numbered information stop'}</span>
+        <button disabled={!near||!walkReady} onClick={()=>{if(near)readStop(near);}}>Read this stop · E</button>
+        <details><summary>Places · {visited.length}/{stops.length} read</summary>
+          <p>Walk freely, or use a shortcut:</p>
+          {stops.map(s=><button key={s.id} onClick={()=>visitStop(s)}>{visited.includes(s.id)?'✓ ':''}Go to {s.name}</button>)}
+        </details>
+      </div>}
 
       <div className="cls-top">
         <button className="backbtn" onClick={onBack}>← Ceremonies</button>
@@ -204,7 +302,7 @@ export function CeremonyView({
         <button
           className="grove-quality"
           onClick={() => setDetail((m) => (m === "ultra" ? "normal" : "ultra"))}
-          title="View mode — Normal is the low-end baseline, Ultra is the full 3D scene"
+          title="View mode Normal is the low-end baseline, Ultra is the full 3D scene"
         >
           {detail === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
@@ -218,7 +316,17 @@ export function CeremonyView({
       {/* The venue picker. Deliberately prominent, and deliberately not a list of
           buildings: the whole point is that this ceremony has a setting rather
           than an address. */}
-      <div className="cer-venue">
+      {isStudy ? <div className="wedding-tools">
+        <span>{isNewYear ? 'Khmer New Year · learning courtyard' : isPchumBen ? `Pagoda study · ${TIME_LABEL[time]}` : 'Traditional home · interpretive study'}</span>
+        <div>
+          {isStudy&&<button aria-pressed={walkActive} onClick={()=>{
+            setWalking(!walkActive);setInfo(walkActive);setStory(null);
+            if(!walkActive){setWalkStart(stops[0]);setWalkReset(v=>v+1);setNear(stops[0]);setShowRoof(true);}
+          }}>{walkActive?'Return to overview':'Walk and explore'}</button>}
+          {!walkActive&&!isNewYear&&<button aria-pressed={closeView} onClick={() => setCloseView(v => !v)}>{closeView ? 'Whole setting' : 'Closer view'}</button>}
+          <button aria-pressed={showRoof} onClick={() => { if (isHousewarming && !showRoof) setCloseView(false); setShowRoof(v => !v); }}>{isHousewarming ? (showRoof ? 'Open roof cutaway' : 'Show house roof') : (showRoof ? 'Hide shelter roof' : 'Show shelter roof')}</button>
+        </div>
+      </div> : <div className="cer-venue">
         <button className="cer-venue-btn" onClick={() => setVenueOpen((v) => !v)}>
           {THEME_INFO[theme].icon} {THEME_INFO[theme].label}
           <span className="cer-venue-time">{TIME_LABEL[time]}</span>
@@ -241,7 +349,7 @@ export function CeremonyView({
             ))}
           </div>
         )}
-      </div>
+      </div>}
 
       {!info && (
         <button className="bld-show" onClick={() => setInfo(true)}>
@@ -249,13 +357,19 @@ export function CeremonyView({
         </button>
       )}
 
-      <div className={`cer-panel${info ? "" : " bld-panel--hidden"}`} aria-hidden={!info}>
+      <div ref={notesPanel} className={`cer-panel${info ? "" : " bld-panel--hidden"}`} aria-hidden={!info}>
+        {walkActive&&<div className="pchum-story">
+          <button onClick={()=>setInfo(false)}>Resume walking · Esc</button>
+          {story&&<><h3>{story.name}</h3><p>{story.text}</p></>}
+          <small>Movement pauses while you read.</small>
+        </div>}
         <div className="cer-steps" role="tablist" aria-label="Moments">
           {template.moments.map((m, i) => (
             <button
               key={m.id}
               role="tab"
               aria-selected={i === step}
+              aria-label={`${i + 1}. ${m.name.en}`}
               className={i === step ? "cer-step on" : i < step ? "cer-step done" : "cer-step"}
               onClick={() => { setStep(i); setFocus(null); }}
               title={m.name.en}
@@ -277,18 +391,24 @@ export function CeremonyView({
                 : <span className="lab-needkm" title="No Khmer name has been verified yet">
                     Khmer name needed
                   </span>}
-              {moment.optional && <span className="cer-optional">varies by family</span>}
+              {moment.optional && <span className="cer-optional">{isPchumBen ? 'varies by pagoda' : 'varies by family'}</span>}
             </div>
 
             <div className="bld-sub">
               Moment {step + 1} of {template.moments.length}
-              {template.days > 1 && moment.day ? ` · day ${moment.day}` : ""}
-              {moment.timeOfDay ? ` · ${TIME_LABEL[moment.timeOfDay].toLowerCase()}` : ""}
+              {!isStudy && template.days > 1 && moment.day ? ` · day ${moment.day}` : ""}
+              {!isStudy && moment.timeOfDay ? ` · ${TIME_LABEL[moment.timeOfDay].toLowerCase()}` : ""}
+              {isStudy ? ' · selected moments, customs vary' : ''}
             </div>
 
             <p className="bld-about">{moment.meaning.en}</p>
 
-            {staging.length > 0 && (
+            {isStudy && <div className="wedding-objects">
+              <span>Inspect an object</span>
+              <div>{[...(studyItems[moment.id] ?? []),...(isPchumBen?['buddha']:[])].map(id => <button key={id} aria-pressed={studyFocus === id} onClick={() => inspect(id)}>{studyObjects[id].name}</button>)}</div>
+              {studyFocus && <p role="status"><b>{studyObjects[studyFocus]?.name}.</b> {studyObjects[studyFocus]?.note}</p>}
+            </div>}
+            {!isStudy && staging.length > 0 && (
               <div className="cer-props">
                 <span className="cer-props-label">Set out for this:</span>
                 {staging.map((p) => (
@@ -304,7 +424,7 @@ export function CeremonyView({
               </div>
             )}
 
-            <MediaStrip media={media} policy={embedPolicy} />
+            {!isStudy && <MediaStrip media={media} policy={embedPolicy} />}
 
             <div className="cer-nav">
               <button
@@ -325,7 +445,12 @@ export function CeremonyView({
           </>
         )}
 
-        {step === 0 && template.about.map((p) => (
+        {isStudy && <details className="wedding-more"><summary>Learn more · books and interpretation</summary>
+          {template.about.map(p => <p key={p.en}>{p.en}</p>)}
+          <p>This is a study of ritual objects and setting. Participants, choreography, music and a complete historical timetable are not reconstructed. The arrangement, house and object shapes are illustrative and await Khmer cultural review.</p>
+          {studyBooks.map(book => <p key={book.url}><a href={book.url} target="_blank" rel="noreferrer">{book.title}</a><br />{book.detail}</p>)}
+        </details>}
+        {!isStudy && step === 0 && template.about.map((p) => (
           <p key={p.en.slice(0, 24)} className="cer-about">{p.en}</p>
         ))}
 
@@ -333,7 +458,7 @@ export function CeremonyView({
           <p className="cer-when">🗓 {template.whenDescribed.en}</p>
         )}
 
-        {template.needsReview && (
+        {!isStudy && template.needsReview && (
           <p className="cer-review">
             <b>Awaiting cultural review.</b> This sequence is the commonly
             described one, not an authored account. Names, order and meanings are
@@ -351,13 +476,13 @@ export function CeremonyView({
 /**
  * A family's own photographs and video, when there are any.
  *
- * Templates carry none — they are the sequence, not anybody's event — so this
+ * Templates carry none they are the sequence, not anybody's event so this
  * renders an explanation instead of an empty rail. The interesting case is the
  * third kind of media, and it is the reason this component exists at all:
  *
  * **An embed means the viewer's device contacts that company.** Families already
  * keep their wedding videos on YouTube and their albums on Facebook, and telling
- * them to re-upload is unrealistic, so embeds are supported — but they load a
+ * them to re-upload is unrealistic, so embeds are supported but they load a
  * locally stored poster frame and go no further until someone taps. Nothing
  * reaches a third party because a page was opened.
  */
@@ -391,7 +516,7 @@ function MediaStrip({ media, policy }: { media: MediaRef[]; policy: EmbedPolicy 
           <figure key={i} className="cer-shot cer-embed">
             <div className="cer-shot-img" />
             {policy === "never" ? (
-              <figcaption>Video on {m.provider} — not loaded here</figcaption>
+              <figcaption>Video on {m.provider} not loaded here</figcaption>
             ) : open ? (
               <figcaption>Playing from {m.provider}</figcaption>
             ) : (

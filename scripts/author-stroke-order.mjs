@@ -3,7 +3,7 @@
  * stroke medians from src/strokeOrder.ts and the letter outlines from
  * src/glyphPaths.ts, and writes an HTML preview that overlays the numbered
  * strokes on each letter (with a coordinate grid) so you can check the shape,
- * order, and direction — then adjust the numbers in src/strokeOrder.ts and
+ * order, and direction - then adjust the numbers in src/strokeOrder.ts and
  * re-run.
  *
  * Coordinates are in a 0..100 box (same as glyphPaths). Each stroke is a median
@@ -55,9 +55,9 @@ const html = `<!doctype html><meta charset="utf8"><title>Khmer stroke-order prev
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:900px}
 figure{margin:0;border:1px solid #0002;background:#fff8}svg{width:100%;display:block}
 figcaption{text-align:center;padding:3px}</style>
-<h1>Khmer stroke-order preview — ${chars.length} letters</h1>
+<h1>Khmer stroke-order preview - ${chars.length} letters</h1>
 <p>Coloured numbered lines are the stroke medians over each letter's outline. Edit src/strokeOrder.ts and re-run.</p>
 <div class="grid">${chars.map(cell).join("")}</div>`;
 
 writeFileSync(OUT, html);
-console.log(`wrote ${OUT} — ${chars.length} letters. Open it in a browser to review.`);
+console.log(`wrote ${OUT} - ${chars.length} letters. Open it in a browser to review.`);

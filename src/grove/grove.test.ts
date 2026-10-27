@@ -13,7 +13,7 @@ import observationRes from "./fixtures/observation.json";
  * The verify-before-render contract, exercised against genuinely device-signed
  * fixtures (BRIDGE.md §3, fixtures/README.md). If these pass, CamboVerse is
  * verifying Grove records purely from the embedded public keys + the SPEC §§4–5
- * math — no node, no iany.app, no trust in any server.
+ * math no node, no iany.app, no trust in any server.
  */
 describe("Grove verify (against real signed fixtures)", () => {
   const observations = (bundle as { observations: GardenObservation[] }).observations;
@@ -21,7 +21,7 @@ describe("Grove verify (against real signed fixtures)", () => {
   // Deliberately not a fixed count. The bundle is a sample world that grows as
   // contributors add signed records, and a hard-coded 3 turned a perfectly good
   // fourth observation into a red build. What matters is that there are some
-  // and that every one of them verifies — which the next test asserts.
+  // and that every one of them verifies which the next test asserts.
   it("has a sample world to verify", () => {
     expect(observations.length).toBeGreaterThan(0);
   });
@@ -44,7 +44,7 @@ describe("Grove verify (against real signed fixtures)", () => {
     }
   });
 
-  it("rejects a tampered observation (flip a measurement) — never trust the node", async () => {
+  it("rejects a tampered observation (flip a measurement) never trust the node", async () => {
     const forged = JSON.parse(JSON.stringify(observations[0])) as GardenObservation;
     forged.co2Kg = 999999; // inflate the carbon after signing
     const v = await verifyObservation(forged);
@@ -67,7 +67,7 @@ describe("Grove verify (against real signed fixtures)", () => {
     // base(20) + gps(10) + photo(10) + prev(5) + one distinct confirm(18) = 63
     expect(score).toBe(63);
     expect(score).toBe(observationRes.trust);
-    // a lone self-claim (no attestations) scores lower — a legible signal
+    // a lone self-claim (no attestations) scores lower a legible signal
     expect(trustScore(obs, [])).toBeLessThan(score);
   });
 
@@ -104,7 +104,7 @@ describe("GroveClient reading a node", () => {
   it("verifies feed records via their exact signed bytes, not the coarsened copy", async () => {
     const log: string[] = [];
     const page = await new GroveClient("https://node.test/api/grove", node(log)).feed();
-    // The coarsened feed item alone can never verify — the client must go on to
+    // The coarsened feed item alone can never verify the client must go on to
     // /observation/:id. Before this, every node record was silently dropped.
     expect(page.records).toHaveLength(1);
     expect(page.dropped).toBe(0);
@@ -181,7 +181,7 @@ describe("Grove garden mapping (buildPlots)", () => {
  * out of step with `estimateCarbon`'s branches, so that the label stops
  * describing the arithmetic. These tests pin the two together.
  */
-describe("estimateBasis — what actually backs a CO₂ figure", () => {
+describe("estimateBasis what actually backs a CO₂ figure", () => {
   it("calls it measured only when both DBH and height were measured", () => {
     expect(measureBasis({ method: "dbh_height", dbh_cm: 20, height_m: 9 })).toBe("measured");
   });
@@ -194,7 +194,7 @@ describe("estimateBasis — what actually backs a CO₂ figure", () => {
     expect(measureBasis({ method: "height", height_m: 4 })).toBe("height-only");
   });
 
-  it("separates a supplied biomass — no allometry ran at all", () => {
+  it("separates a supplied biomass no allometry ran at all", () => {
     expect(measureBasis({ method: "manual", biomassKg: 120 })).toBe("supplied");
   });
 

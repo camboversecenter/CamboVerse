@@ -1,5 +1,5 @@
 /**
- * public/models/banteay-srei.glb — an authored, recognizable Banteay Srei: a
+ * public/models/banteay-srei.glb - an authored, recognizable Banteay Srei: a
  * small, intimate temple of three central sanctuary towers plus flanking
  * libraries on a low platform, in its distinctive rose-pink sandstone. Uses the
  * shared temple builder with pink tones. Stylized stand-in.

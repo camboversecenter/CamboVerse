@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Sky } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
+import { Sky } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
 import {
   ACESFilmicToneMapping, Path, Shape, ShapeGeometry,
@@ -26,7 +27,7 @@ import campusTreesData from "../data/campusTrees.json";
 import { Palm } from "./Palm";
 
 /**
- * A **walkable site** — a group of buildings you can move between. Opened from
+ * A **walkable site** a group of buildings you can move between. Opened from
  * the 🏛 Buildings directory (`BuildingsHome`), never straight off the map.
  *
  * The first site is the National University of Management's international
@@ -34,8 +35,8 @@ import { Palm } from "./Palm";
  * teaching block, the Khmer shrine, the parking canopies and the sports field.
  *
  * Overview it from above or walk it in first person; **tap a building** to open
- * its own page. Built procedurally from primitives and canvas-drawn textures —
- * nothing is downloaded — and it follows CamboVerse's three view modes
+ * its own page. Built procedurally from primitives and canvas-drawn textures  
+ * nothing is downloaded and it follows CamboVerse's three view modes
  * (AGENTS.md): Normal, Ultra, and VR (which always presents Ultra).
  */
 type ViewMode = "normal" | "ultra";
@@ -55,15 +56,15 @@ function detectViewMode(): ViewMode {
  * The buildings standing on this site, in the order they're listed (which is
  * the order you meet them walking it).
  *
- * The ground plan below is the NUM campus specifically — the roads, lawns and
- * tree rows are its layout, not a generic one — so this reads NUM_SITE rather
+ * The ground plan below is the NUM campus specifically the roads, lawns and
+ * tree rows are its layout, not a generic one so this reads NUM_SITE rather
  * than the `site` prop. A second walkable site needs its own scene component;
  * what it shares with this one is the directory, not the geometry.
  */
 const SITE_BUILDINGS = buildingsOfSite(NUM_SITE);
 
 /**
- * The ground is a stack of flat surfaces that overlap in plan — lawn, roads, car
+ * The ground is a stack of flat surfaces that overlap in plan lawn, roads, car
  * park apron, plazas. To a depth buffer they are effectively coplanar, and the
  * winner flips from triangle to triangle as the camera moves: the jagged grey
  * tears that made the concrete flicker.
@@ -96,7 +97,7 @@ const PAVER_M = 8;
 // const TREE_SCALE = TREE_HEIGHT_M / TREE_CROWN_PER_SCALE;
 
 /**
- * The ground plan lives in `campusLayout.ts` — see the note there. These are
+ * The ground plan lives in `campusLayout.ts` see the note there. These are
  * just local aliases so the rendering code below reads the same as before.
  */
 const ROADS = CAMPUS_ROADS;
@@ -106,7 +107,7 @@ type RoadDef = LayoutSegment;
 type WallDef = LayoutSegment;
 
 /**
- * Every solid thing's plan footprint, so planting can be kept off it — read
+ * Every solid thing's plan footprint, so planting can be kept off it read
  * straight off the shared layout, so moving a building in the editor moves
  * the keep-out with it and the trees re-flow instead of standing in a wall.
  */
@@ -189,7 +190,7 @@ function WallSegment({ from, to, widthM, heightM = 4 }: WallDef) {
 /**
  * A pool: a water surface inside a shallow paved coping. Flat like a road, so
  * it uses the same lift/polygon-offset discipline to stay out of the ground
- * plane's z-fight. Kept to plain materials — no reflection pass — so it stays
+ * plane's z-fight. Kept to plain materials no reflection pass so it stays
  * inside the low-end-phone budget.
  */
 /**
@@ -294,14 +295,14 @@ export function BuildingsView({
         <button
           className="grove-quality"
           onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
-          title="View mode — Normal is the low-end baseline, Ultra is the full 3D scene"
+          title="View mode Normal is the low-end baseline, Ultra is the full 3D scene"
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
         <button
           className="vr-btn cls-vr"
           style={!vrSupported ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
-          title={vrSupported ? "Enter VR — works on Meta Quest 3 and any WebXR headset" : "VR not detected — open this page on a Meta Quest browser or connect a headset via Air Link"}
+          title={vrSupported ? "Enter VR works on Meta Quest 3 and any WebXR headset" : "VR not detected open this page on a Meta Quest browser or connect a headset via Air Link"}
           onClick={() => { if (vrSupported) { setMode("ultra"); store.enterVR(); } }}
         >
           🥽 VR
@@ -404,7 +405,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
    * The lawn, with a hole cut for each pool.
    *
    * `ShapeGeometry` lays the shape out in XY and the mesh is rotated -90° about
-   * X, which maps shape-Y to world -Z — hence the sign flip when placing the
+   * X, which maps shape-Y to world -Z hence the sign flip when placing the
    * holes. Its generated UVs are raw shape coordinates, so they are rewritten
    * to 0..1 across the sheet to match what `planeGeometry` gave the grass
    * texture before; otherwise the tiling would blow up by a factor of 1400.
@@ -569,7 +570,7 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
         const scale = 0.85 + rnd() * 0.5;
 
         // Skip if the jittered position (plus the house's own footprint) lands
-        // on a road or wall — the house body is ~9x11m, so clear by its half-diagonal.
+        // on a road or wall the house body is ~9x11m, so clear by its half-diagonal.
         if (isObstructed(px, pz, 6.5 * scale)) continue;
 
         out.push({ pos: [px, 0, pz], rot, scale });
@@ -600,13 +601,13 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       />
 
       {/* ground: lawn everywhere, then paving laid over it. The lawn carries a
-          hole per pool — without one the grass plane, being solid, would draw
+          hole per pool without one the grass plane, being solid, would draw
           straight across the top of the basin and you would never see into it. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND.lawn, 0]} geometry={lawnGeo} receiveShadow>
         <meshStandardMaterial map={grass} roughness={1} />
       </mesh>
 
-      {/* --- Ground works (see the arrays above — edit visually in public/campus-editor.html) --- */}
+      {/* --- Ground works (see the arrays above edit visually in public/campus-editor.html) --- */}
       {ROADS.map((r) => (
         <RoadSegment key={r.id} {...r} roadTex={road} walkTex={pave} />
       ))}
@@ -649,8 +650,8 @@ function CampusWorld({ mode, onOpenBuilding }: { mode: ViewMode; onOpenBuilding:
       </Tappable>
       {/* Added in the editor and since registered in src/buildings.ts, so these
           have their own pages and landmark buttons like everything else. The
-          bathroom borrows the TeachingBlock component — the closest thing that
-          exists — at single-storey scale. */}
+          bathroom borrows the TeachingBlock component the closest thing that
+          exists at single-storey scale. */}
       <Tappable id="sport-bathroom" onOpen={onOpenBuilding}>
         <TeachingBlock position={[-56.2, 0, 158]} w={38.6} d={8} floors={1} tower={false} />
       </Tappable>

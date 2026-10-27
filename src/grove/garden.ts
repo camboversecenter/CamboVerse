@@ -10,7 +10,7 @@
  *   trust    → a visual confidence cue
  *
  * Only records that already verified (`verifyObservation(...).ok`) should be
- * passed in — this layer does the physical→virtual shaping, not the trust check.
+ * passed in this layer does the physical→virtual shaping, not the trust check.
  */
 import type { GardenObservation } from "./grove";
 import type { VerifiedRecord } from "./client";
@@ -22,20 +22,20 @@ export interface GrovePlot {
   id: string;
   /** Dominant species in the plot (the most-recent record's species). */
   species: string;
-  /** Per-species plant counts in the plot now — so a mixed plot (e.g. a guava
+  /** Per-species plant counts in the plot now so a mixed plot (e.g. a guava
    *  and a jackfruit) is labelled honestly, not just by the latest species. */
   speciesCounts: { species: string; count: number }[];
   /** Distinct growth chains (a plot may hold several plantings). */
   chains: Chain[];
-  /** Every record, sorted by observedAt ascending — the plot's timeline. */
+  /** Every record, sorted by observedAt ascending the plot's timeline. */
   timeline: VerifiedRecord[];
   /** The most-recent record overall. */
   latest: VerifiedRecord;
-  /** Sum, across chains, of the latest estimate per chain — the plot's current total. */
+  /** Sum, across chains, of the latest estimate per chain the plot's current total. */
   totalCo2Kg: number;
   /** Total living plants now (sum of latest `count` per chain). */
   count: number;
-  /** Confidence for the plot — the latest record's locally-computed trust (0–100). */
+  /** Confidence for the plot the latest record's locally-computed trust (0–100). */
   trust: number;
   /** Coarsened location for the public map (feed value if present), else null. */
   gps: { lat: number; lng: number } | null;
@@ -53,7 +53,7 @@ function toChains(records: VerifiedRecord[]): Chain[] {
   const byId = new Map(records.map((r) => [r.observation.id, r]));
   const referenced = new Set<string>();
   for (const r of records) if (r.observation.prev) referenced.add(r.observation.prev);
-  // A "tail" is a record no other record points back to — the newest in its chain.
+  // A "tail" is a record no other record points back to the newest in its chain.
   const tails = records.filter((r) => !referenced.has(r.observation.id));
   const seen = new Set<string>();
   const chains: Chain[] = [];
@@ -63,7 +63,7 @@ function toChains(records: VerifiedRecord[]): Chain[] {
     while (curId && !seen.has(curId)) {
       const rec = byId.get(curId);
       if (!rec) break;
-      // A growth chain is one *plant* observed over time — so its species can't
+      // A growth chain is one *plant* observed over time so its species can't
       // change. If a `prev` link points to a different species (e.g. a phone that
       // auto-chained a jackfruit onto the plot's earlier guava), it's a different
       // plant: stop here and let that record start its own chain. Leaving it
@@ -143,7 +143,7 @@ export function buildPlots(
 /**
  * The growth stage (0–1) of a chain at time `t`: uses the most-recent record at
  * or before `t`. Height drives it (falling back to DBH), normalized to a mature
- * reference — so the rendered model grows as the real tree grew.
+ * reference so the rendered model grows as the real tree grew.
  */
 export function growthAt(chain: Chain, t: number): { record: VerifiedRecord | null; stage: number } {
   let record: VerifiedRecord | null = null;
@@ -158,7 +158,7 @@ export function growthAt(chain: Chain, t: number): { record: VerifiedRecord | nu
  * The plant's real height in metres, as measured. Prefer the recorded height;
  * otherwise fall back to the same height–diameter guess the Grove estimator
  * uses (H ≈ 3·√D, capped). This is what the renderer draws, so a 12 m coconut
- * stands 12 m in the virtual garden — the twin is to scale, not stylised.
+ * stands 12 m in the virtual garden the twin is to scale, not stylised.
  */
 export function measuredHeightM(obs: GardenObservation): number {
   const h = obs.measure.height_m;

@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import type { Texture } from "three";
@@ -8,7 +8,7 @@ import { usageFor, KHMER_FONTS, type KhmerLetter, type Syllable } from "../khmer
 import { playLetterAudio } from "../lib/letterAudio";
 
 /**
- * A 3D space for one letter — how to *use* it. For a consonant it shows the
+ * A 3D space for one letter how to *use* it. For a consonant it shows the
  * letter combined with every vowel to make syllables (the core of reading
  * Khmer); for a vowel, the same vowel across consonants of both series; for a
  * numeral, how digits combine. Explorable in 3D and VR.
@@ -182,7 +182,7 @@ function Nav() {
   return (
     <OrbitControls
       makeDefault
-      enablePan={false}
+      enablePan
       minDistance={4}
       maxDistance={30}
       maxPolarAngle={Math.PI / 1.8}

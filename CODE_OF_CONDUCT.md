@@ -10,7 +10,7 @@ status, nationality, personal appearance, race, religion, or sexual identity and
 orientation.
 
 We pledge to act and interact in ways that contribute to an open, welcoming,
-diverse, inclusive, and healthy community — and to treat Cambodia's cultural
+diverse, inclusive, and healthy community and to treat Cambodia's cultural
 heritage, and the communities that steward it, with respect.
 
 ## Our Standards
@@ -34,7 +34,7 @@ Examples of unacceptable behavior:
 
 ## Enforcement Responsibilities
 
-Community leaders — the CamboVerse Center at NUM and designated maintainers — are
+Community leaders the CamboVerse Center at NUM and designated maintainers are
 responsible for clarifying and enforcing these standards and will take
 appropriate and fair corrective action in response to any behavior they deem
 inappropriate, threatening, offensive, or harmful.

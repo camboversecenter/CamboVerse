@@ -1,14 +1,14 @@
 /**
- * Khmer traditional fashion (សម្លៀកបំពាក់ប្រពៃណីខ្មែរ) — three lenses:
- *  • Colour by day — the seven-day colour custom (ពណ៌ប្រចាំថ្ងៃ), an outfit
+ * Khmer traditional fashion (សម្លៀកបំពាក់ប្រពៃណីខ្មែរ) three lenses:
+ *  • Colour by day the seven-day colour custom (ពណ៌ប្រចាំថ្ងៃ), an outfit
  *    colour for each day of the week.
- *  • Varieties — the garments themselves (sampot, chang kben, phamuong, av pak,
+ *  • Varieties the garments themselves (sampot, chang kben, phamuong, av pak,
  *    krama…). A starting set; more to add (see TODO.md).
- *  • Through the ages — how Khmer dress changed across the historical eras,
+ *  • Through the ages how Khmer dress changed across the historical eras,
  *    tied to the "Back in Time" history.
  *
  * The seven-day colours and era styles are traditional but regionally and
- * historically varied — treat them as a respectful, community-verifiable guide,
+ * historically varied treat them as a respectful, community-verifiable guide,
  * not a single authority.
  */
 
@@ -23,7 +23,7 @@ export interface Outfit {
   topColor: string;
   /** Krama scarf colour, or null for none. */
   krama?: string | null;
-  /** Ceremonial gold — crown (mkot), belt, jewellery. */
+  /** Ceremonial gold crown (mkot), belt, jewellery. */
   gold?: boolean;
   /** Trousers colour (e.g. the enforced black of the Khmer Rouge years). */
   legs?: string | null;
@@ -39,7 +39,7 @@ export interface DayColor {
 
 /**
  * The seven-day colours (Sunday→Saturday), matching the traditional sbai-and-
- * sampot palette. Sources vary on a few days — verify with Khmer elders.
+ * sampot palette. Sources vary on a few days verify with Khmer elders.
  */
 export const DAY_COLORS: DayColor[] = [
   { day: "Sunday", khmer: "ថ្ងៃអាទិត្យ", color: "#d23b30", colorName: "Red · ក្រហម" },
@@ -60,7 +60,7 @@ export interface Variety {
   outfit: Outfit;
 }
 
-/** A starting set of garment styles — the community can add many more. */
+/** A starting set of garment styles the community can add many more. */
 export const VARIETIES: Variety[] = [
   {
     id: "sbai",
@@ -75,7 +75,7 @@ export const VARIETIES: Variety[] = [
     name: "Sampot Chang Kben",
     khmer: "សំពត់ចងក្បិន",
     english: "The pantaloon wrap",
-    desc: "A long cloth wrapped around the waist, passed between the legs and tucked at the back to make loose 'pantaloons'. Worn by women and men alike for formal occasions — the classic Khmer silhouette on the Angkor reliefs.",
+    desc: "A long cloth wrapped around the waist, passed between the legs and tucked at the back to make loose 'pantaloons'. Worn by women and men alike for formal occasions the classic Khmer silhouette on the Angkor reliefs.",
     outfit: { skirt: "#6a4b8a", top: "bare", topColor: "#6a4b8a", gold: true, skirtStyle: "kben" },
   },
   {
@@ -83,7 +83,7 @@ export const VARIETIES: Variety[] = [
     name: "Sampot Phamuong",
     khmer: "សំពត់ផាមួង",
     english: "Twill silk sampot",
-    desc: "A traditional single-colour twill-weave silk, often in a rich jewel tone — a formal cloth woven on Cambodian looms, worn with an embroidered blouse.",
+    desc: "A traditional single-colour twill-weave silk, often in a rich jewel tone a formal cloth woven on Cambodian looms, worn with an embroidered blouse.",
     outfit: { skirt: "#2f6f5e", top: "blouse", topColor: "#e7dcc4", gold: true, skirtStyle: "skirt" },
   },
   {
@@ -91,7 +91,7 @@ export const VARIETIES: Variety[] = [
     name: "Av Pak",
     khmer: "អាវប៉ាក់",
     english: "Embroidered blouse",
-    desc: "A fitted blouse embroidered with fine thread and beadwork, worn over a sampot for weddings and ceremonies — pairing the upper garment with the lower silk.",
+    desc: "A fitted blouse embroidered with fine thread and beadwork, worn over a sampot for weddings and ceremonies pairing the upper garment with the lower silk.",
     outfit: { skirt: "#8f2f45", top: "blouse", topColor: "#f0e2c0", gold: true, skirtStyle: "skirt" },
   },
   {
@@ -99,7 +99,7 @@ export const VARIETIES: Variety[] = [
     name: "Krama",
     khmer: "ក្រមា",
     english: "The checkered scarf",
-    desc: "Cambodia's most iconic everyday cloth — a checkered cotton scarf worn a hundred ways: sun-shade, towel, sarong, baby-sling, belt. From farmer to city, everyone has a krama.",
+    desc: "Cambodia's most iconic everyday cloth a checkered cotton scarf worn a hundred ways: sun-shade, towel, sarong, baby-sling, belt. From farmer to city, everyone has a krama.",
     outfit: { skirt: "#4a6a8a", top: "shirt", topColor: "#dcdcd2", krama: "#c0392b", skirtStyle: "skirt" },
   },
 ];
@@ -113,14 +113,14 @@ export interface FashionEra {
   outfit: Outfit;
 }
 
-/** How dress changed through the ages — aligned to the "Back in Time" eras. */
+/** How dress changed through the ages aligned to the "Back in Time" eras. */
 export const FASHION_ERAS: FashionEra[] = [
   {
     id: "angkor",
     name: "The Angkor Empire",
     khmer: "ចក្រភពអង្គរ",
     years: "802–1431",
-    desc: "On the Angkor bas-reliefs, both men and women wear the sampot chang kben, often bare-chested, adorned with elaborate gold — crowns, collars, and armlets. The apsara dancers' costume descends from this age.",
+    desc: "On the Angkor bas-reliefs, both men and women wear the sampot chang kben, often bare-chested, adorned with elaborate gold crowns, collars, and armlets. The apsara dancers' costume descends from this age.",
     outfit: { skirt: "#c8912e", top: "bare", topColor: "#c8912e", gold: true, skirtStyle: "kben" },
   },
   {
@@ -136,7 +136,7 @@ export const FASHION_ERAS: FashionEra[] = [
     name: "French Protectorate",
     khmer: "អាណាព្យាបាលបារាំង",
     years: "1863–1953",
-    desc: "Under the protectorate, Western tailoring mixed with Khmer dress — fitted blouses and jackets over the sampot, a blend of a covered top with the traditional lower cloth.",
+    desc: "Under the protectorate, Western tailoring mixed with Khmer dress fitted blouses and jackets over the sampot, a blend of a covered top with the traditional lower cloth.",
     outfit: { skirt: "#4a5a6a", top: "blouse", topColor: "#e7e0d2", skirtStyle: "skirt" },
   },
   {
@@ -144,7 +144,7 @@ export const FASHION_ERAS: FashionEra[] = [
     name: "Independence & Sangkum",
     khmer: "ឯករាជ្យ",
     years: "1953–1970",
-    desc: "A golden age of Cambodian style — women in elegant fitted blouses and phamuong silk sampots, a confident blend of the traditional and the modern in the era of your grandparents.",
+    desc: "A golden age of Cambodian style women in elegant fitted blouses and phamuong silk sampots, a confident blend of the traditional and the modern in the era of your grandparents.",
     outfit: { skirt: "#2f6f8e", top: "blouse", topColor: "#f0e6d2", gold: true, skirtStyle: "skirt" },
   },
   {
@@ -152,7 +152,7 @@ export const FASHION_ERAS: FashionEra[] = [
     name: "The Khmer Rouge years",
     khmer: "សម័យខ្មែរក្រហម",
     years: "1975–1979",
-    desc: "Under the Khmer Rouge, everyone was forced to wear the same plain black clothing and a krama — colour, silk, and personal dress were banned. It is remembered with sorrow, a stark break in a long, colourful tradition.",
+    desc: "Under the Khmer Rouge, everyone was forced to wear the same plain black clothing and a krama colour, silk, and personal dress were banned. It is remembered with sorrow, a stark break in a long, colourful tradition.",
     outfit: { skirt: "#1c1c1c", top: "shirt", topColor: "#1c1c1c", krama: "#7a2e2e", legs: "#1c1c1c", skirtStyle: "skirt" },
   },
   {
@@ -160,7 +160,7 @@ export const FASHION_ERAS: FashionEra[] = [
     name: "Modern Cambodia",
     khmer: "កម្ពុជាសម័យទំនើប",
     years: "1979–today",
-    desc: "Today Cambodians wear everyday modern clothes, but the traditional silk sampot, sbai, and the seven-day colours return for weddings, festivals, and Buddhist holy days — a living heritage, proudly revived.",
+    desc: "Today Cambodians wear everyday modern clothes, but the traditional silk sampot, sbai, and the seven-day colours return for weddings, festivals, and Buddhist holy days a living heritage, proudly revived.",
     outfit: { skirt: "#b0325a", top: "sbai", topColor: "#d23b30", gold: true, skirtStyle: "skirt" },
   },
 ];

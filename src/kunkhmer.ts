@@ -1,5 +1,5 @@
 /**
- * Kun Khmer (កុនខ្មែរ) — Cambodia's ancient martial art — as "play and learn"
+ * Kun Khmer (កុនខ្មែរ) Cambodia's ancient martial art as "play and learn"
  * data for the CamboVerse dojo: the core techniques (with a procedural fighter
  * to demonstrate them) and a short cultural briefing.
  *
@@ -24,11 +24,11 @@ export interface KunMove {
 }
 
 export const KUN_MOVES: KunMove[] = [
-  { id: "mat", name: "Mat", khmer: "ដាល់", english: "Punch", desc: "A straight punch with the wrapped fist — the jab and cross of Kun Khmer.", key: "u", color: "#e0562f" },
+  { id: "mat", name: "Mat", khmer: "ដាល់", english: "Punch", desc: "A straight punch. Watch the glove travel forward, then return to the guard.", key: "u", color: "#e0562f" },
   { id: "mokkeng", name: "Mok Keng", khmer: "ម៉ុកឃីង", english: "Uppercut", desc: "A rising punch driven up from below, under the opponent's guard.", key: "j", color: "#e08a2f" },
-  { id: "ti", name: "Ti", khmer: "ទាត់", english: "Kick", desc: "A powerful roundhouse or front kick with the shin or foot.", key: "i", color: "#2f8ae0" },
-  { id: "sok", name: "Sok", khmer: "កែងដៃ", english: "Elbow", desc: "The elbow strike — Kun Khmer's signature, feared for its cutting power.", key: "o", color: "#c8912e" },
-  { id: "kumpleang", name: "Kumpleang", khmer: "ភ្លៅ", english: "Knee", desc: "A driving knee to the body in the clinch — close-range and devastating.", key: "p", color: "#8b3fd0" },
+  { id: "ti", name: "Ti", khmer: "ទាត់", english: "Kick", desc: "A simplified roundhouse demonstration. Watch the hip turn and the leg sweep before returning to stance.", key: "i", color: "#2f8ae0" },
+  { id: "sok", name: "Sok", khmer: "កែងដៃ", english: "Elbow", desc: "A close-range strike with a folded arm. Watch the elbow move with the turning torso.", key: "o", color: "#c8912e" },
+  { id: "kumpleang", name: "Kumpleang", khmer: "ភ្លៅ", english: "Knee", desc: "A raised-knee demonstration. Notice the bent leg and the supporting leg; a full clinch is not modelled here.", key: "p", color: "#8b3fd0" },
   { id: "rung", name: "Rung", khmer: "រាំង", english: "Block", desc: "Guard up: forearms and shins raised to absorb and deflect strikes.", key: " ", color: "#4c8a3f" },
   { id: "romiel", name: "Romiel", khmer: "រមៀល", english: "Dodge", desc: "A quick lean and roll of the body to slip a strike and reset.", key: "h", color: "#6f8aa8" },
 ];
@@ -45,23 +45,23 @@ export interface KunFact {
 
 export const KUN_ABOUT: KunFact[] = [
   {
-    title: "An ancient art",
+    title: "Cambodian ring sport",
     khmer: "ក្បាច់គុនបុរាណខ្មែរ",
-    body: "Kun Khmer (also Kbach Kun Boran Khmer) is one of the world's oldest striking martial arts. Its stances and strikes are carved into the bas-reliefs of Angkor — the Bayon and Banteay Chhmar show warriors fighting bare-fisted centuries ago.",
+    body: "Kun Khmer, also known as Pradal Serey, is Cambodia’s striking ring sport. It belongs to a living martial-arts culture. Kun Lbokator is a related but distinct tradition; its UNESCO inscription should not be presented as an inscription of this ring sport.",
   },
   {
-    title: "The art of eight limbs",
-    body: "Fighters strike with fists, feet, knees, and — most famously — elbows, making it a close, powerful art. Traditionally the hands were bound in hemp rope (katt chieng) before modern gloves.",
+    title: "Four striking families",
+    body: "Punches, kicks, elbows and knees are central to Kun Khmer, alongside defence and clinch work. This collection shows seven simplified examples, not the complete technique system or competition rules.",
   },
   {
     title: "The pre-fight ritual",
     khmer: "គុនគ្រូ",
-    body: "Before fighting, each boxer performs the Kun Kru — a graceful ritual dance honouring their teacher, ancestors, and the ring — wearing the sacred mongkol headband and prajed armbands for protection and respect.",
+    body: "Pre-bout observances express respect for teachers and tradition. Their forms and terminology deserve guidance from Cambodian practitioners. The training animations here do not reproduce a ritual performance.",
   },
   {
     title: "The music of the ring",
     khmer: "វង់ភ្លេងព្រៃ",
-    body: "A live ensemble — the sralai (oboe), skor (drums), and cymbals — plays the sarama, its tempo rising and falling with the fight, driving the fighters and the crowd.",
+    body: "Traditional music is part of the atmosphere of Cambodian boxing. This demo uses generated bells and movement sounds only; these effects are not recordings of a traditional ensemble.",
   },
 ];
 

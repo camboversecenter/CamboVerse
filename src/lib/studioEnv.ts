@@ -4,17 +4,17 @@ import {
 } from "three";
 
 /**
- * A **procedural studio environment** — the single biggest realism lever
+ * A **procedural studio environment** the single biggest realism lever
  * available to us, and it costs nothing to ship.
  *
  * Wet organic surfaces read as real almost entirely through their specular
  * highlights: the smeared reflection of a soft box is what says "this is moist"
- * rather than "this is plastic". A directional light alone cannot do that — it
+ * rather than "this is plastic". A directional light alone cannot do that it
  * gives one hard dot. An environment map gives the whole surface something to
  * reflect.
  *
  * The usual way to get one is to download an HDRI, which CamboVerse will not do:
- * no CDN, no external runtime assets. So this builds one in the browser — a
+ * no CDN, no external runtime assets. So this builds one in the browser a
  * gradient dome plus a few emissive panels, rendered once through
  * `PMREMGenerator` into a pre-filtered cube map. About 15 ms on a mid phone, one
  * texture, and nothing crosses the network.
@@ -24,7 +24,7 @@ export function studioEnvironment(renderer: WebGLRenderer, opts?: {
   intensity?: number;
   /** Colour high in the dome. */
   sky?: string;
-  /** Colour low down — the bounce off an imaginary table. */
+  /** Colour low down the bounce off an imaginary table. */
   ground?: string;
 }): Texture {
   const intensity = opts?.intensity ?? 1;

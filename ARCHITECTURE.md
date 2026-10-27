@@ -1,4 +1,4 @@
-# CamboVerse — Architecture (the Rails)
+# CamboVerse Architecture (the Rails)
 
 *Companion to [`PLATFORM_CHARTER.md`](./PLATFORM_CHARTER.md). This is the Stage‑1
 specification of the open interfaces ("rails") that ecosystem apps build on.*
@@ -8,7 +8,7 @@ specification of the open interfaces ("rails") that ecosystem apps build on.*
 1. **Interface, not implementation.** Every rail is an interface with a **Web2
    adapter today** (Cloudflare Workers + D1 + R2) and a **Web3 adapter later**
    (chain indexer + wallet + content-addressed storage). Ecosystem apps call the
-   interface — **never** a database or a blockchain directly. Web3 becomes an
+   interface **never** a database or a blockchain directly. Web3 becomes an
    adapter swap, not a rewrite.
 2. **Money‑neutral & Digital‑to‑Physical.** The core moves no money and mints no
    tokens. It routes digital actions to **real** providers (D2P); payments and
@@ -33,7 +33,7 @@ portable to IPFS unchanged. All timestamps are RFC‑3339 UTC.
 
 ## 1. Identity & Avatar rail
 
-A portable "you," recognised across every ecosystem app — **"Login with
+A portable "you," recognised across every ecosystem app **"Login with
 CamboVerse."**
 
 **Identity object**
@@ -50,8 +50,8 @@ CamboVerse."**
 ```
 
 **Endpoints**
-- `GET  /id/authorize` · `POST /id/token` — OAuth2/OIDC-style login for apps.
-- `GET  /id/me` — the identity for the bearer token (scoped).
+- `GET  /id/authorize` · `POST /id/token` OAuth2/OIDC-style login for apps.
+- `GET  /id/me` the identity for the bearer token (scoped).
 - Scopes: `profile`, `avatar`, `credentials:read`, `entitlements:read`.
 
 **Web3 seam:** `wallet` binds a self-custodial address/DID later; `/id/me` is
@@ -89,16 +89,16 @@ day one** so a startup can mint it later with no re-modelling.
 `architecture`, `tool`, `avatar`, `museum-key`, `villa-key`, `dhamma-lesson`,
 `textbook-asset`, `experience`.
 
-**Rules:** `license`, `provenance`, and `consent` are **mandatory** — an asset
+**Rules:** `license`, `provenance`, and `consent` are **mandatory** an asset
 without them is rejected (charter §3.5). Sacred content (`dhamma-lesson`, sacred
 sites) requires a monastic/steward `consentRef`.
 
 **Endpoints**
-- `GET /assets`, `GET /assets/:id` — **open read** (the commons).
-- `POST /assets`, `PATCH /assets/:id` — **certified partners only** (write scope).
+- `GET /assets`, `GET /assets/:id` **open read** (the commons).
+- `POST /assets`, `PATCH /assets/:id` **certified partners only** (write scope).
 
 **Web3 seam:** when a startup mints, it fills `tokenBinding`; ownership for that
-asset is then read on-chain via the Entitlement resolver (below) — the asset
+asset is then read on-chain via the Entitlement resolver (below) the asset
 record itself does not change.
 
 ---
@@ -123,7 +123,7 @@ is how NFT-gating, rentals, and cross-app rights all work with one interface.
 }
 ```
 
-**Resolver interface** — `can(subject, action, asset) → { granted, until? }`.
+**Resolver interface** `can(subject, action, asset) → { granted, until? }`.
 The reference resolver reads D1. Crucially, **certified apps can register their
 own resolver** (delegated ownership): an app that sells or rents an asset reports
 entitlements that the whole ecosystem then honours. Rental (charter: "Module #7")
@@ -131,16 +131,16 @@ is simply `right: "rent"` with `expiresAt`.
 
 **Endpoints**
 - `GET /entitlements?subject=&asset=&action=` → `{ granted, until }` (open read).
-- `POST /entitlements` / `DELETE` — grant/revoke (certified apps, their assets).
+- `POST /entitlements` / `DELETE` grant/revoke (certified apps, their assets).
 
 **Web3 seam:** an on-chain resolver adapter (read token balance/owner for an
-asset's `tokenBinding`) plugs in behind the same `GET` — apps see no difference.
+asset's `tokenBinding`) plugs in behind the same `GET` apps see no difference.
 
 ---
 
 ## 4. Learning‑credential rail (non‑monetary)
 
-Verifiable proof of learning/achievement — the public-good "currency" that is
+Verifiable proof of learning/achievement the public-good "currency" that is
 **not** money and **not** tradable. Fuels Treasure Hunt, KhmerFi, and the
 Personal Museum.
 
@@ -158,12 +158,12 @@ Shaped after **Open Badges / W3C Verifiable Credentials**:
 ```
 
 **Endpoints**
-- `POST /credentials/claim` — submit evidence (e.g. a completed site-history
+- `POST /credentials/claim` submit evidence (e.g. a completed site-history
   quiz) → issued credential.
-- `GET /credentials?subject=` — a person's credentials (their Museum can display
+- `GET /credentials?subject=` a person's credentials (their Museum can display
   them; startups may *reference* them to gate a reward, but cannot buy/sell them).
 
-Credentials are bound to identity and **non-transferable** — they represent
+Credentials are bound to identity and **non-transferable** they represent
 learning, not value.
 
 ---
@@ -201,24 +201,24 @@ device and overridable by the visitor; a scene must look right in all three.
 |---|---|---|
 | **Normal** | ~$150 Android on 4G (the hard baseline) | Reduced geometry/LOD, no shadows or post-processing, lower pixel ratio, no ambient motion. |
 | **Ultra (real 3D)** | High-end phone, tablet, desktop | Full detail, shadows, tone mapping, runtime-generated textures, ambient motion. |
-| **VR** (WebXR) | Headset | The **Ultra** scene, presented immersively — VR never runs the Normal tier. |
+| **VR** (WebXR) | Headset | The **Ultra** scene, presented immersively VR never runs the Normal tier. |
 
 Rules: entering VR raises the view to Ultra for the session; Ultra is an
 enhancement only (all content, learning, and credentials must be reachable in
-Normal); and tiers degrade **detail, not content** — the same species, at the
+Normal); and tiers degrade **detail, not content** the same species, at the
 same scale, drawn more cheaply. Budget tiers by draw calls and geometry.
 
 **Endpoints** *(shipped)*
-- `GET /v1/scenes` — list scene descriptors (one per heritage site).
-- `GET /v1/scenes/:id` — a scene descriptor (`scene_<site>` or bare `<site>`),
+- `GET /v1/scenes` list scene descriptors (one per heritage site).
+- `GET /v1/scenes/:id` a scene descriptor (`scene_<site>` or bare `<site>`),
   derived from the heritage data; asset refs resolve via the Asset rail. Open
-  read, pure-derived — works with or without a database bound.
+  read, pure-derived works with or without a database bound.
 
 ---
 
 ## 6. D2P Fulfillment rail
 
-The bridge from a digital action to a **real** provider — the mechanism that
+The bridge from a digital action to a **real** provider the mechanism that
 makes CamboVerse push the physical economy.
 
 **FulfillmentRequest → FulfillmentRouting**
@@ -240,16 +240,16 @@ makes CamboVerse push the physical economy.
 
 CamboVerse defines the **request/response standard** and a **reference router**
 (the geo-aware fulfillment already prototyped). Real **payment and settlement
-happen in the ecosystem** (Stripe, Bakong/KHQR) — never in the core. Provider
+happen in the ecosystem** (Stripe, Bakong/KHQR) never in the core. Provider
 types cover delivery, **tour/hotel booking**, **event/performance ticketing**,
-and artisan **purchase** — one interface, many D2P pathways.
+and artisan **purchase** one interface, many D2P pathways.
 
 **Endpoints**
 - `POST /fulfill` → routing. `GET /providers?type=&region=` (registry).
 
 ---
 
-## 7. Data model (D1) — reference
+## 7. Data model (D1) reference
 
 ```
 identities(id, handle, display_name, khmer_name, avatar_asset_id, wallet, created_at)
@@ -278,7 +278,7 @@ live in **R2**, keyed by content hash.
 | D2P | `GET /providers` | `POST /fulfill` |
 
 Public **read** is open to all (the commons). **Write** requires a certified
-partner key (charter §8 trust mark) — *shipped* for `POST /v1/assets` (register a
+partner key (charter §8 trust mark) *shipped* for `POST /v1/assets` (register a
 commons asset; open licence enforced) and `POST /v1/entitlements` (grant a
 right); keys are configured on the host and writes are closed unless a key is
 set. Everything is versioned under `/v1/…`.
@@ -300,7 +300,7 @@ adapters. No module changes. The core stays money- and chain-neutral.
 
 ## 10. Build order (maps to charter stages)
 
-- **Stage 1 (this doc):** specify the rails — done here.
+- **Stage 1 (this doc):** specify the rails done here.
 - **Stage 2:** implement Identity + Asset registry + Credentials on D1/R2; migrate
   the existing heritage content into the Asset registry with provenance.
 - **Stage 3:** expose the public **APIs + SDK + sandbox**; generalise the D2P
@@ -311,6 +311,6 @@ adapters. No module changes. The core stays money- and chain-neutral.
 
 ---
 
-*Nothing here is built yet — this is the design contract. Implementation begins
+*Nothing here is built yet this is the design contract. Implementation begins
 at Stage 2, one rail at a time, each shipped behind its interface with tests and
 a reference consumer.*

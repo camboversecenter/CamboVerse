@@ -7,7 +7,7 @@ export const SKIN = "#c98a5a";
 export const SKIN_TONES = ["#f2c9a0", "#e0aa7c", "#c98a5a", "#a56a3e", "#7c4a28"];
 
 /**
- * A procedural standing figure that "wears" an {@link Outfit} — sampot (wrap
+ * A procedural standing figure that "wears" an {@link Outfit} sampot (wrap
  * skirt or shorter chang-kben), sbai sash, krama scarf, and ceremonial gold
  * (mkot crown, belt, bangles). Built entirely from primitives: self-contained,
  * low-poly, and light enough for a $150 phone or VR.
@@ -35,7 +35,7 @@ export function FashionFigure({ outfit }: { outfit: Outfit }) {
         </group>
       ))}
 
-      {/* sampot — a wrap skirt, or a shorter chang-kben */}
+      {/* sampot a wrap skirt, or a shorter chang-kben */}
       <mesh position={[0, kben ? 0.72 : 0.5, 0]} castShadow>
         <coneGeometry args={[kben ? 0.28 : 0.42, kben ? 0.46 : 0.92, 20, 1, true]} />
         <meshStandardMaterial color={outfit.skirt} roughness={0.85} side={2} />
@@ -61,7 +61,7 @@ export function FashionFigure({ outfit }: { outfit: Outfit }) {
         </mesh>
       ))}
 
-      {/* sbai — a diagonal sash across the torso */}
+      {/* sbai a diagonal sash across the torso */}
       {outfit.top === "sbai" && (
         <mesh position={[0, 1.24, 0.12]} rotation={[0, 0, 0.9]} castShadow>
           <boxGeometry args={[0.7, 0.22, 0.14]} />
@@ -69,7 +69,7 @@ export function FashionFigure({ outfit }: { outfit: Outfit }) {
         </mesh>
       )}
 
-      {/* krama — a checkered scarf around the neck */}
+      {/* krama a checkered scarf around the neck */}
       {outfit.krama && (
         <group position={[0, 1.5, 0.02]}>
           <mesh castShadow>
@@ -95,7 +95,7 @@ export function FashionFigure({ outfit }: { outfit: Outfit }) {
         <meshStandardMaterial color="#221a12" roughness={0.9} />
       </mesh>
 
-      {/* ceremonial gold — belt, crown (mkot), bracelets */}
+      {/* ceremonial gold belt, crown (mkot), bracelets */}
       {outfit.gold && (
         <group>
           <mesh position={[0, 0.98, 0]}>

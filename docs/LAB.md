@@ -518,15 +518,17 @@ always presents Ultra. Auto-detected, overridable from the button top-right.
 
 ## Where this fits
 
-- [`src/lab.ts`](../src/lab.ts) — subjects, exhibits, parts, quizzes, the tutor seam
-- [`src/components/LabView.tsx`](../src/components/LabView.tsx) — the hub
-- [`src/components/SpecimenView.tsx`](../src/components/SpecimenView.tsx) — an exhibit's page
-- [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) — the procedural vocabulary
-- [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) — the whole figure, the skeleton, and the extraction wrapper
-- [`src/components/LabMachines.tsx`](../src/components/LabMachines.tsx) — the lever, the gear train and the engine, and how a machine animates itself
-- [`src/components/LabChemistry.tsx`](../src/components/LabChemistry.tsx) — atoms, bonds, lattices, and the three molecular representations
-- [`src/components/LabReactions.tsx`](../src/components/LabReactions.tsx) — the experiments, and the reaction clock
-- [`src/components/LabFarm.tsx`](../src/components/LabFarm.tsx) — the treadle pump and the biogas digester
-- [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) — the in-browser studio environment
-- [`docs/BUILDINGS.md`](./BUILDINGS.md) — the same discipline, applied to architecture
-- [`TODO.md`](../TODO.md) — the contributor task board
+- [`src/lab.ts`](../src/lab.ts) subjects, exhibits, parts, quizzes, the tutor seam
+- [`src/components/LabView.tsx`](../src/components/LabView.tsx) the hub
+- [`src/components/SpecimenView.tsx`](../src/components/SpecimenView.tsx) an exhibit's page
+- [`src/components/LabExhibit.tsx`](../src/components/LabExhibit.tsx) shared model selection and measured grounding
+- [`src/components/LabOrgans.tsx`](../src/components/LabOrgans.tsx) the procedural vocabulary
+- [`src/components/LabBody.tsx`](../src/components/LabBody.tsx) the whole figure, the skeleton, and the extraction wrapper
+- [`src/components/LabMachines.tsx`](../src/components/LabMachines.tsx) the lever, the gear train and the engine, and how a machine animates itself
+- [`src/components/LabChemistry.tsx`](../src/components/LabChemistry.tsx) atoms, bonds, lattices, and the three molecular representations
+- [`src/components/LabReactions.tsx`](../src/components/LabReactions.tsx) the experiments, and the reaction clock
+- [`src/components/LabFarm.tsx`](../src/components/LabFarm.tsx) the treadle pump and the biogas digester
+- [`docs/LAB_BLENDER.md`](./LAB_BLENDER.md) the optional Blender-to-GLB pilot path for richer teaching models
+- [`src/lib/studioEnv.ts`](../src/lib/studioEnv.ts) the in-browser studio environment
+- [`docs/BUILDINGS.md`](./BUILDINGS.md) the same discipline, applied to architecture
+- [`TODO.md`](../TODO.md) the contributor task board

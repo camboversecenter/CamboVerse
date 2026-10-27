@@ -1,0 +1,25 @@
+.pano-tour { position:fixed; inset:0; background:#101b20; color:#f4f5eb; font-family:system-ui,sans-serif; }
+.pano-tour button { position:static; border:1px solid #708879; border-radius:12px; background:#17332a; color:#f4f5eb; padding:9px 13px; min-height:44px; cursor:pointer; font:inherit; touch-action:manipulation; }
+.pano-tour button:disabled { opacity:.55; cursor:wait; }
+.pano-tour button:hover { background:#315b42; }
+.pano-tour button:focus-visible { outline:3px solid #f3d79b; outline-offset:2px; }
+.pano-tour button[aria-pressed="true"],.pano-tour button[aria-current] { background:#54713c; border-color:#c9e4b2; }
+.pano-toolbar { position:absolute; top:12px; left:12px; right:12px; z-index:20; display:flex; align-items:center; flex-wrap:wrap; gap:8px; pointer-events:none; }
+.pano-toolbar>* { pointer-events:auto; }
+.pano-toolbar strong { padding:10px; background:#10281fdd; border-radius:10px; }
+.pano-toolbar div { display:flex; gap:4px; }
+.pano-panel { position:absolute; bottom:18px; left:18px; z-index:15; width:min(430px,calc(100% - 36px)); box-sizing:border-box; padding:16px; border:1px solid #79927a; border-radius:18px; background:#10281fe8; box-shadow:0 8px 32px #0005; }
+.pano-panel-heading { display:flex; gap:10px; justify-content:space-between; align-items:center; }
+.pano-panel h1 { font-size:20px; margin:0; }
+.pano-panel p { margin:10px 0; font-size:14px; }
+.pano-panel small { display:block; color:#cbd7c7; margin-top:10px; font-size:12px; }
+.pano-panel nav { display:flex; flex-wrap:wrap; gap:6px; max-height:30vh; overflow:auto; overscroll-behavior:contain; }
+.pano-panel nav button { font-size:13px; }
+.pano-look { position:absolute; right:12px; top:50%; transform:translateY(-50%); z-index:15; display:flex; flex-direction:column; gap:4px; }
+.pano-look button { padding:6px 10px; min-width:44px; }
+.pano-link { white-space:nowrap; border:1px solid #cce5ba; border-radius:16px; background:#143f2de8; color:white; padding:9px 12px; font:600 13px system-ui,sans-serif; min-height:44px; cursor:pointer; }
+.pano-fade { position:absolute; inset:0; z-index:9; background:#101b20; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+.pano-fade.active { opacity:1; pointer-events:auto; }
+.pano-message { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); z-index:25; padding:18px; border-radius:12px; background:#10281ff2; text-align:center; }
+@media(max-width:600px) { .pano-toolbar { top:8px; left:8px; right:8px; gap:4px; font-size:12px; } .pano-toolbar strong { padding:6px; } .pano-panel { bottom:10px; left:10px; width:calc(100% - 76px); padding:12px; max-height:42vh; overflow:auto; } .pano-panel h1 { font-size:16px; } .pano-panel-heading button { font-size:12px; padding:6px; } .pano-look { right:8px; } }
+@media(prefers-reduced-motion:reduce) { .pano-fade { transition:none; } }

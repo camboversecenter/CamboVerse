@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
+import { LabPreviewContext } from "./LabPreviewContext";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import {
@@ -7,12 +8,13 @@ import {
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { Detail } from "./LabOrgans";
 import type { LabLayer } from "../lab";
+import { LabTissueMaterial } from "./LabTissueMaterial";
 
 /**
  * Machines for the 🔬 Learning Lab.
  *
- * Organs are soft and continuous; machines are hard, repetitive and — the part
- * that matters — **they move**. A four-stroke engine standing still is a
+ * Organs are soft and continuous; machines are hard, repetitive and the part
+ * that matters **they move**. A four-stroke engine standing still is a
  * cross-section in a textbook. Almost everything it has to teach is *sequence*:
  * which valve is open, which way the crank is turning, what the piston is doing
  * while that happens. So every machine here takes a `running` flag and animates
@@ -52,6 +54,8 @@ function hl(isSel: boolean, anySel: boolean) {
 
 /** A number floating beside the thing it describes. */
 function Readout({ at, children }: { at: [number, number, number]; children: React.ReactNode }) {
+  const preview = useContext(LabPreviewContext);
+  if (preview) return null;
   return (
     <Html position={at} center occlude={false} zIndexRange={[20, 0]}
       style={{ pointerEvents: "none" }}>
@@ -65,13 +69,13 @@ function Readout({ at, children }: { at: [number, number, number]; children: Rea
 /**
  * A lever, with the fulcrum where the student puts it.
  *
- * The whole of mechanical advantage is in one relationship — how far the effort
- * is from the pivot versus how far the load is — and it is far more convincing
+ * The whole of mechanical advantage is in one relationship how far the effort
+ * is from the pivot versus how far the load is and it is far more convincing
  * to slide the fulcrum and watch the number fall than to be told the formula.
  * The beam tilts to whichever side is winning, so an unbalanced lever *looks*
  * unbalanced.
  */
-export function Lever({ layer, onPick, selected, running, knob }: MachineProps) {
+export function Lever({ layer, detail, onPick, selected, running, knob }: MachineProps) {
   const beam = useRef<Group>(null);
   const t = useRef(0);
 
@@ -106,14 +110,14 @@ export function Lever({ layer, onPick, selected, running, knob }: MachineProps) 
       {/* ground */}
       <mesh position={[0, -13, 0]} receiveShadow>
         <boxGeometry args={[150, 3, 44]} />
-        <meshStandardMaterial color={GROUND} roughness={0.95} />
+        <LabTissueMaterial detail={detail} kind="earth" color={GROUND} roughness={0.95} />
       </mesh>
 
-      {/* fulcrum — moves with the slider */}
+      {/* fulcrum moves with the slider */}
       <group position={[fulcrum - BEAM / 2, 0, 0]}>
         <mesh position={[0, -6, 0]} onClick={pick("fulcrum")} castShadow>
           <cylinderGeometry args={[0.6, 9, 11.5, 4]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.45} metalness={0.7}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.45} metalness={0.7}
             {...hl(selected === "fulcrum", any)} />
         </mesh>
         <Readout at={[0, -17, 0]}>{fulcrum} cm</Readout>
@@ -123,14 +127,14 @@ export function Lever({ layer, onPick, selected, running, knob }: MachineProps) 
       <group ref={beam} position={[fulcrum - BEAM / 2, 0.6, 0]}>
         <mesh position={[BEAM / 2 - fulcrum, 0, 0]} onClick={pick("beam")} castShadow>
           <boxGeometry args={[BEAM, 2.6, 9]} />
-          <meshPhysicalMaterial color={WOOD} roughness={0.75}
+          <LabTissueMaterial detail={detail} kind="wood" color={WOOD} roughness={0.75}
             {...hl(selected === "beam", any)} />
         </mesh>
 
         <group position={[-fulcrum, 5.5, 0]} onClick={pick("load")}>
           <mesh castShadow>
             <boxGeometry args={[13, 9, 13]} />
-            <meshPhysicalMaterial color={PAINT} roughness={0.6}
+            <LabTissueMaterial detail={detail} kind="metal" color={PAINT} roughness={0.6}
               {...hl(selected === "load", any)} />
           </mesh>
           {showForces && <Readout at={[0, 11, 0]}>load {LOAD_N} N</Readout>}
@@ -139,7 +143,7 @@ export function Lever({ layer, onPick, selected, running, knob }: MachineProps) 
         <group position={[BEAM - fulcrum, 4.5, 0]} onClick={pick("effort")}>
           <mesh castShadow>
             <cylinderGeometry args={[3.4, 3.4, 7, 16]} />
-            <meshPhysicalMaterial color={BRASS} roughness={0.35} metalness={0.75}
+            <LabTissueMaterial detail={detail} kind="metal" color={BRASS} roughness={0.35} metalness={0.75}
               {...hl(selected === "effort", any)} />
           </mesh>
           {showForces && <Readout at={[0, 10, 0]}>effort {effortN.toFixed(0)} N</Readout>}
@@ -191,7 +195,7 @@ function gearGeometry(teeth: number, radius: number, thick: number, seg: number)
  * Two things a still picture cannot show, and this can: neighbouring gears turn
  * in **opposite** directions, and a small gear driving a large one turns many
  * times for each turn of the large one. The idler in the middle is there to make
- * the first point unmissable — the output turns the same way as the input, which
+ * the first point unmissable the output turns the same way as the input, which
  * surprises people until they count the reversals.
  */
 export function GearTrain({ layer, detail, onPick, selected, running }: MachineProps) {
@@ -229,7 +233,7 @@ export function GearTrain({ layer, detail, onPick, selected, running }: MachineP
       {layer !== "frame" && (
         <mesh position={[xC / 2, 0, -6]} receiveShadow>
           <boxGeometry args={[xC + 70, 84, 3]} />
-          <meshStandardMaterial color={GROUND} roughness={0.9} />
+          <LabTissueMaterial detail={detail} kind="earth" color={GROUND} roughness={0.9} />
         </mesh>
       )}
 
@@ -240,7 +244,7 @@ export function GearTrain({ layer, detail, onPick, selected, running }: MachineP
       ].map((g) => (
         <group key={g.id} position={[g.x, 0, 0]} onClick={pick(g.id)}>
           <mesh ref={g.ref as never} geometry={g.geo} castShadow receiveShadow>
-            <meshPhysicalMaterial
+            <LabTissueMaterial detail={detail} kind="metal"
               color={g.color} roughness={0.34} metalness={0.72}
               {...hl(selected === g.id, any)}
             />
@@ -248,7 +252,7 @@ export function GearTrain({ layer, detail, onPick, selected, running }: MachineP
           {layer !== "whole" && (
             <mesh>
               <cylinderGeometry args={[1.4, 1.4, 16, 12]} />
-              <meshPhysicalMaterial color={STEEL_DARK} roughness={0.4} metalness={0.8} />
+              <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.4} metalness={0.8} />
             </mesh>
           )}
           <Readout at={[0, -g.spec.r - 7, 0]}>{g.spec.teeth} teeth</Readout>
@@ -256,7 +260,7 @@ export function GearTrain({ layer, detail, onPick, selected, running }: MachineP
       ))}
 
       <Readout at={[xC / 2, -56, 0]}>
-        <b>{A.teeth}:{C.teeth} — output turns {(C.teeth / A.teeth).toFixed(0)}× slower</b>
+        <b>{A.teeth}:{C.teeth} output turns {(C.teeth / A.teeth).toFixed(0)}× slower</b>
         <span>and the same way round, because the idler reverses it twice</span>
       </Readout>
     </group>
@@ -271,7 +275,7 @@ const STROKES = ["Intake", "Compression", "Power", "Exhaust"] as const;
  * A single-cylinder four-stroke engine.
  *
  * The best argument in the Lab for animating a machine. Four strokes over **two**
- * turns of the crankshaft, with the valves opening on one stroke each — a
+ * turns of the crankshaft, with the valves opening on one stroke each a
  * sequence that is genuinely hard to hold in your head from a diagram and
  * obvious after ten seconds of watching.
  *
@@ -287,7 +291,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
   const valveEx = useRef<Group>(null);
   const angle = useRef(0);
   // The stroke name is the lesson, so it lives in React state and re-renders
-  // when it changes — four times per cycle, which is nothing.
+  // when it changes four times per cycle, which is nothing.
   const [stroke, setStroke] = useState(0);
   const strokeRef = useRef(0);
 
@@ -299,7 +303,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
     if (running) angle.current += dt * (0.6 + knob / 900) * Math.PI;
     const a = angle.current;
 
-    // piston position from crank angle — the real relationship, not a sine wave
+    // piston position from crank angle the real relationship, not a sine wave
     const y = CRANK_R * Math.cos(a) + Math.sqrt(ROD * ROD - (CRANK_R * Math.sin(a)) ** 2);
     if (piston.current) piston.current.position.y = y - ROD + 6;
     if (crank.current) crank.current.rotation.z = -a;
@@ -335,11 +339,11 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
 
   return (
     <group position={[0, 4, 0]}>
-      {/* the block — solid when whole, a shell you see into when cut away */}
+      {/* the block solid when whole, a shell you see into when cut away */}
       {layer !== "frame" && (
         <mesh position={[0, 6, 0]} onClick={pick("block")} castShadow>
           <boxGeometry args={[22, 40, 20]} />
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="metal"
             color={STEEL} roughness={0.45} metalness={0.6}
             side={cut ? DoubleSide : undefined}
             {...(cut
@@ -352,7 +356,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
       {/* cylinder bore */}
       <mesh position={[0, 8, 0]} onClick={pick("cylinder")}>
         <cylinderGeometry args={[7.2, 7.2, 30, seg, 1, true]} />
-        <meshPhysicalMaterial
+        <LabTissueMaterial detail={detail} kind="metal"
           color={STEEL_DARK} roughness={0.3} metalness={0.8} side={DoubleSide}
           {...(cut
             ? { transparent: true, opacity: selected === "cylinder" ? 0.55 : 0.22, depthWrite: false }
@@ -364,7 +368,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
       <group ref={piston} onClick={pick("piston")}>
         <mesh castShadow>
           <cylinderGeometry args={[6.9, 6.9, 9, seg]} />
-          <meshPhysicalMaterial color={BRASS} roughness={0.3} metalness={0.85}
+          <LabTissueMaterial detail={detail} kind="metal" color={BRASS} roughness={0.3} metalness={0.85}
             {...hl(selected === "piston", any)} />
         </mesh>
       </group>
@@ -373,7 +377,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
       <group ref={rod} onClick={pick("rod")}>
         <mesh castShadow>
           <boxGeometry args={[3, ROD, 2.4]} />
-          <meshPhysicalMaterial color={STEEL} roughness={0.35} metalness={0.8}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL} roughness={0.35} metalness={0.8}
             {...hl(selected === "rod", any)} />
         </mesh>
       </group>
@@ -382,17 +386,17 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
       <group ref={crank} position={[0, -18, 0]} onClick={pick("crank")}>
         <mesh>
           <cylinderGeometry args={[3.4, 3.4, 9, seg]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.35} metalness={0.85}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.35} metalness={0.85}
             {...hl(selected === "crank", any)} />
         </mesh>
         <mesh position={[0, CRANK_R, 0]}>
           <boxGeometry args={[3, CRANK_R * 2, 8]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.35} metalness={0.85}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.35} metalness={0.85}
             {...hl(selected === "crank", any)} />
         </mesh>
       </group>
 
-      {/* valves — the one that matters is the one that is open */}
+      {/* valves the one that matters is the one that is open */}
       {[
         { id: "intake", ref: valveIn, x: -4.2, color: "#4a86b4" },
         { id: "exhaust", ref: valveEx, x: 4.2, color: "#b4574a" },
@@ -400,12 +404,12 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
         <group key={v.id} ref={v.ref as never} position={[v.x, 26, 0]} onClick={pick(v.id)}>
           <mesh>
             <cylinderGeometry args={[0.9, 0.9, 14, 10]} />
-            <meshPhysicalMaterial color={STEEL} roughness={0.3} metalness={0.85}
+            <LabTissueMaterial detail={detail} kind="metal" color={STEEL} roughness={0.3} metalness={0.85}
               {...hl(selected === v.id, any)} />
           </mesh>
           <mesh position={[0, -7.4, 0]}>
             <cylinderGeometry args={[3.1, 2.4, 1.6, 12]} />
-            <meshPhysicalMaterial color={v.color} roughness={0.3} metalness={0.8}
+            <LabTissueMaterial detail={detail} kind="metal" color={v.color} roughness={0.3} metalness={0.8}
               {...hl(selected === v.id, any)} />
           </mesh>
         </group>
@@ -415,7 +419,7 @@ export function Engine({ layer, detail, onPick, selected, running, knob }: Machi
       <group position={[0, 30, 0]} onClick={pick("plug")}>
         <mesh castShadow>
           <cylinderGeometry args={[1.5, 1.5, 6, 12]} />
-          <meshPhysicalMaterial color="#d8d2c4" roughness={0.5}
+          <LabTissueMaterial detail={detail} kind="ceramic" color="#d8d2c4" roughness={0.5}
             {...hl(selected === "plug", any)} />
         </mesh>
       </group>

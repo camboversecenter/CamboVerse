@@ -2,7 +2,7 @@
  * Generates the sample heritage model (public/models/heritage-sample.glb).
  *
  * Builds a low-poly Khmer prasat from Three.js primitives and serializes it to
- * a self-contained binary glTF by hand (POSITION + NORMAL, one PBR material) —
+ * a self-contained binary glTF by hand (POSITION + NORMAL, one PBR material) -
  * no exporter, no external assets. This gives the viewer a real glTF to load
  * until an actual capture is available. Run: `node scripts/generate-model.mjs`.
  */
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../public/models/heritage-sample.glb");
 
-// Prasat tiers (w, h, d, centerY) + a finial cone — matches the viewer scale.
+// Prasat tiers (w, h, d, centerY) + a finial cone - matches the viewer scale.
 const parts = [];
 function box(w, h, d, y) {
   const g = new THREE.BoxGeometry(w, h, d).toNonIndexed();
@@ -101,4 +101,4 @@ binHead.writeUInt32LE(0x004e4942, 4); // "BIN\0"
 
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, Buffer.concat([header, jsonHead, jsonChunk, binHead, binChunk]));
-console.log(`wrote ${OUT} — ${vertCount} verts, ${(total / 1024).toFixed(1)} KB`);
+console.log(`wrote ${OUT} - ${vertCount} verts, ${(total / 1024).toFixed(1)} KB`);

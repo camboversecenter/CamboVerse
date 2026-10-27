@@ -1,5 +1,5 @@
 /**
- * GroveBundle importer — Path A (BRIDGE.md §1A): ingest an offline `grove-bundle`
+ * GroveBundle importer Path A (BRIDGE.md §1A): ingest an offline `grove-bundle`
  * a phone exported (`/garden` → Export JSON), verifying each signed observation
  * locally with no network. The phone is the source of truth; the virtual garden
  * is a direct function of what the user signed on their own device.
@@ -15,7 +15,7 @@ export interface GroveBundle {
 
 export interface BundleImport {
   records: VerifiedRecord[];
-  /** Signed observations that failed verification (tampered/forged) — dropped. */
+  /** Signed observations that failed verification (tampered/forged) dropped. */
   dropped: number;
   total: number;
 }

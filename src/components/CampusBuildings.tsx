@@ -9,7 +9,7 @@ import {
 } from "../lib/campusTexture";
 
 /**
- * The building kit for the NUM International Campus — hipped metal roofs, a
+ * The building kit for the NUM International Campus hipped metal roofs, a
  * glazed great hall under a deep overhang, long white teaching blocks, the
  * entrance monument, a Khmer shrine, and the parking canopies.
  *
@@ -23,7 +23,7 @@ import {
 /**
  * A hipped roof over a `w × d` footprint: two long slopes meeting at a ridge,
  * closed by a triangular hip at each end. When the plan is square the ridge
- * collapses to a point and it becomes a pyramid — which is what the great hall
+ * collapses to a point and it becomes a pyramid which is what the great hall
  * has. `overhang` extends the eaves out past the walls.
  */
 export function hippedRoofGeometry(w: number, d: number, h: number, overhang = 0): BufferGeometry {
@@ -90,7 +90,7 @@ function Finial({ height = 4, color = "#f2efe6" }: { height?: number; color?: st
 }
 
 /**
- * The **Great Hall** — the campus's landmark.
+ * The **Great Hall** the campus's landmark.
  *
  * Re-measured from the Center's drone photographs (July 2026). Two corrections
  * to the earlier version, both of which change how the building reads:
@@ -99,7 +99,7 @@ function Finial({ height = 4, color = "#f2efe6" }: { height?: number; color?: st
  *   above it is an open, shaded storey (`clear`) you see straight through
  *   between the colonnade posts. Previously the glass went all the way up to
  *   the soffit, which flattened the facade.
- * - The eave cantilevers about **6 m** past the glass, not 4.5 — the deep white
+ * - The eave cantilevers about **6 m** past the glass, not 4.5 the deep white
  *   fascia floating well clear of the wall is the building's signature.
  *
  * The 34 colonnade posts and the 6 rooftop plant units are instanced, so the
@@ -158,7 +158,7 @@ export function GreatHall({
         <meshStandardMaterial color="#5f8e44" roughness={1} />
       </mesh>
 
-      {/* glazed volume — stops well short of the soffit */}
+      {/* glazed volume stops well short of the soffit */}
       <mesh position={[0, 0.7 + wall / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[w, wall, d]} />
         <meshStandardMaterial map={glass} roughness={0.18} metalness={0.35} />
@@ -170,7 +170,7 @@ export function GreatHall({
         <meshStandardMaterial color="#1c2022" roughness={0.95} />
       </mesh>
 
-      {/* white colonnade carrying the overhang — one draw call */}
+      {/* white colonnade carrying the overhang one draw call */}
       <Props items={colonnade}>
         <boxGeometry args={[0.36, post, 0.36]} />
         <meshStandardMaterial color="#f4f2ec" roughness={0.7} />
@@ -185,7 +185,7 @@ export function GreatHall({
         <meshStandardMaterial map={roofTex} roughness={0.55} metalness={0.16} side={DoubleSide} />
       </mesh>
 
-      {/* roof-top plant enclosures — one draw call */}
+      {/* roof-top plant enclosures one draw call */}
       <Props items={plant}>
         <boxGeometry args={[2.8, 0.95, 1.8]} />
         <meshStandardMaterial color="#e8e6df" roughness={0.8} />
@@ -205,7 +205,7 @@ export function GreatHall({
             <meshStandardMaterial color="#f4f2ec" roughness={0.7} side={DoubleSide} />
           </mesh>
         ))}
-        {/* the pierced tympanum face — the real Khmer motif is below the
+        {/* the pierced tympanum face the real Khmer motif is below the
             resolution of every reference view, so this stands in for it */}
         <mesh position={[0, 2.2, 2.72]}>
           <ringGeometry args={[0.5, 1.15, 6]} />
@@ -342,7 +342,7 @@ function OfficeInterior({ roomW, d, fh }: { roomW: number, d: number, fh: number
 
 
 /**
- * A **teaching block** — the long white buildings with red hipped roofs, a
+ * A **teaching block** the long white buildings with red hipped roofs, a
  * central pediment and stair tower.
  */
 export function TeachingBlock({
@@ -376,7 +376,7 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles) — raised 0.01 m above plinth top so they never Z-fight */}
+        {/* Floor (Tan tiles) raised 0.01 m above plinth top so they never Z-fight */}
         <mesh position={[0, 0.26, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#d4c9b8" roughness={0.7} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
         {/* Ceiling (White) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#f0f0f0" roughness={0.9} /></mesh>
@@ -406,7 +406,7 @@ export function TeachingBlock({
         <group position={[0, 0, -3.5]}>
           {/* Main Desk body */}
           <mesh position={[0, 1.01, 0]} castShadow receiveShadow><boxGeometry args={[5, 1.0, 1.2]} /><meshStandardMaterial color="#ffffff" roughness={0.4} /></mesh>
-          {/* Front fascia — starts 0.05 m higher than the body bottom to avoid co-planar Z-fight */}
+          {/* Front fascia starts 0.05 m higher than the body bottom to avoid co-planar Z-fight */}
           <mesh position={[0, 1.08, 0.5]} castShadow receiveShadow><boxGeometry args={[5.2, 1.06, 0.2]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
           {/* Computer Monitors */}
           {[-1.2, 1.2].map(x => (
@@ -449,7 +449,7 @@ export function TeachingBlock({
           </group>
         </group>
 
-        {/* Coffee Table — tabletop sits 0.03 m clear of the base top to avoid co-planar Z-fight */}
+        {/* Coffee Table tabletop sits 0.03 m clear of the base top to avoid co-planar Z-fight */}
         <group position={[0, 0, 3]}>
           <mesh position={[0, 0.73, 0]} castShadow receiveShadow><boxGeometry args={[2.5, 0.05, 1.5]} /><meshStandardMaterial color="#111" roughness={0.2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
           <mesh position={[0, 0.35, 0]} castShadow receiveShadow><boxGeometry args={[2.0, 0.66, 1.0]} /><meshStandardMaterial color="#a17b4c" roughness={0.6} /></mesh>
@@ -555,7 +555,7 @@ export function TeachingBlock({
         onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
-        {/* Floor (Tan tiles) — raised 0.01 m above plinth top so they never Z-fight */}
+        {/* Floor (Tan tiles) raised 0.01 m above plinth top so they never Z-fight */}
         <mesh position={[0, 0.26, 0]} receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.5, d - 0.2]} /><meshStandardMaterial color="#c2b092" roughness={0.5} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} /></mesh>
         {/* Ceiling (Dark Industrial) */}
         <mesh position={[0, fh, 0]} castShadow receiveShadow><boxGeometry args={[w / 3 - 0.2, 0.2, d - 0.2]} /><meshStandardMaterial color="#3a3a3a" roughness={0.9} /></mesh>
@@ -838,7 +838,7 @@ export function MainGate({ position = [0, 0, 0] as [number, number, number], rot
  */
 /**
  * One straight letter-stroke, as a box whose long axis runs from `from` to
- * `to` (both in the letter's own local X/Y plane — X across, Y up). Rotating
+ * `to` (both in the letter's own local X/Y plane X across, Y up). Rotating
  * a box around Z to align its default X-axis with an arbitrary 2D direction
  * is the same trick `hippedRoofGeometry`'s neighbours use for anything at an
  * angle: build it flat along an axis, then rotate into place.
@@ -893,7 +893,7 @@ function LetterM({ cx, h, stroke, depth, baseY, color }: LetterProps) {
 
 /**
  * A block "U": two uprights joined by a curved foot, approximated as short
- * straight segments around an arc — the same stroke width as the uprights, so
+ * straight segments around an arc the same stroke width as the uprights, so
  * it reads as one continuous letterform rather than switching techniques
  * partway down.
  */
@@ -920,20 +920,20 @@ function LetterU({ cx, h, stroke, depth, baseY, color }: LetterProps) {
 /**
  * The campus entrance monument: freestanding mirror-gold "NUM" letters
  * standing on a low polished-granite wall reading "INTERNATIONAL CAMPUS", on
- * a circular plaza — radial paving, a near-full ring of curved steps (with a
+ * a circular plaza radial paving, a near-full ring of curved steps (with a
  * gap for the approach path), and a ring hedge outside that.
  *
  * Rebuilt from drone footage of the real thing (see the campus layout notes):
  * the original version was a flat signboard on a rectangular plinth, which is
  * not what actually stands there. Letters are built from primitives (boxes
  * for the strokes, a curved approximation for the U) rather than a loaded
- * font — no assets, matching everything else on this campus — with a bright
+ * font no assets, matching everything else on this campus with a bright
  * low-roughness gold material rather than a true mirror: this scene has no
  * environment map, and adding one reflective surface per letter face would
  * cost far more than the low-end-phone budget allows for a single landmark.
  *
  * Letter height (~5.4 m) and wall height (~1.3 m) come from measuring a
- * person against the letters in one drone frame — a visual estimate, not a
+ * person against the letters in one drone frame a visual estimate, not a
  * survey, in keeping with how every other building here is sourced.
  */
 /**
@@ -977,7 +977,7 @@ export function HedgeMass({
  * A short brown planter-edge transition at one end of the stair arc: a brief
  * curved segment continuing the stair's own outer radius (so it reads as
  * part of the same sweep, not bolted on), then ONE short chamfered segment
- * angled away from pure-tangent — a corner cut, not a freestanding arm.
+ * angled away from pure-tangent a corner cut, not a freestanding arm.
  * Deliberately kept small: most of this is meant to end up hidden under the
  * hedge mass that now sits on top of it (see `FrontHedge` below), not to
  * read as a wall in its own right. Solid wedges from the centre out to
@@ -985,7 +985,7 @@ export function HedgeMass({
  * inner portion is hidden under the stairs and platform).
  *
  * `thetaAtSide` is the stair arc's own end angle on this side (`arcStart` or
- * `arcStart + arcLen`, already in CylinderGeometry's theta convention — see
+ * `arcStart + arcLen`, already in CylinderGeometry's theta convention see
  * the note above `arcStart`); `side` is +1/-1 and picks which way the curve
  * continues and which way the chamfer angles, so the two calls mirror
  * exactly rather than being hand-tuned separately.
@@ -1000,7 +1000,7 @@ export function StairBorder({
   const thetaStart = Math.min(thetaAtSide, curveEnd);
   // tangent direction of travel at the curve's far end, rotated outward by
   // `chamferAngle` so the short tail cuts at an angle instead of continuing
-  // straight out radially — the "chamfered corner" look, not a long arm.
+  // straight out radially the "chamfered corner" look, not a long arm.
   const tanX = side * Math.cos(curveEnd);
   const tanZ = -side * Math.sin(curveEnd);
   const phi = side * chamferAngle;
@@ -1146,7 +1146,7 @@ export function EntranceMonument({ position = [0, 0, 0] as [number, number, numb
   const pedestalPos: [number, number, number] = [-0.02, 0.82, -0.03];
 
   // Letters are sized off the pedestal's own length (not a fixed constant) so
-  // they always read as sitting on the bar instead of overhanging it — 0.72
+  // they always read as sitting on the bar instead of overhanging it 0.72
   // is the same width:pedestal ratio the original hand-tuned proportions had.
   const LETTER_FIT = 0.72;
   const H = (WALL_LEN * LETTER_FIT) / 2.2, GAP = H * 0.1;
@@ -1260,7 +1260,7 @@ export function Shrine({ position = [0, 0, 0] as [number, number, number] }) {
   );
 }
 
-/** A long parking canopy — a single white shed roof on slim posts. */
+/** A long parking canopy a single white shed roof on slim posts. */
 export function ParkingCanopy({
   length = 60, width = 11, height = 4.2, position = [0, 0, 0] as [number, number, number], rotation = 0,
 }) {
@@ -1375,7 +1375,7 @@ export function SportsField({
 }
 
 /**
- * A **building under construction** — the bare concrete/steel frame standing
+ * A **building under construction** the bare concrete/steel frame standing
  * next to the finished teaching block in the campus photographs. Columns, floor
  * slabs and a part-clad top storey: the campus as it actually is today, still
  * being built.
@@ -1493,7 +1493,7 @@ export const POOL = {
   rim: 1.5,
   /** How far the basin floor sits below the coping. */
   depth: 5,
-  /** How far the water surface sits below the coping — the freeboard you see
+  /** How far the water surface sits below the coping the freeboard you see
    *  as a band of tiled wall along the near edge. */
   drop: 0.3,
   /** Thickness of the coping slab. */
@@ -1501,8 +1501,8 @@ export const POOL = {
 };
 
 /**
- * A swimming pool built as an actual excavated basin — coping, four tiled
- * walls and a floor — rather than a flat rectangle of colour.
+ * A swimming pool built as an actual excavated basin coping, four tiled
+ * walls and a floor rather than a flat rectangle of colour.
  *
  * A single plane has no thickness, so it carries no depth cue and simply
  * vanishes at grazing angles; and where it sat a few centimetres above another
@@ -1535,7 +1535,7 @@ export function Pool({ w, d, topY = 0 }: { w: number; d: number; topY?: number }
         </mesh>
       ))}
 
-      {/* Basin floor — pale tile, so the water reads as lit and shallow. */}
+      {/* Basin floor pale tile, so the water reads as lit and shallow. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, 0]} receiveShadow>
         <planeGeometry args={[w, d]} />
         <meshStandardMaterial color="#8fc9db" roughness={0.55} />
@@ -1556,7 +1556,7 @@ export function Pool({ w, d, topY = 0 }: { w: number; d: number; topY?: number }
       ))}
 
       {/* Water, set below the coping and translucent so the tiled floor shows
-          through — that is the cue that makes it a pool and not a blue mat.
+          through that is the cue that makes it a pool and not a blue mat.
           `depthWrite` off stops it occluding the basin behind it. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, waterY, 0]}>
         <planeGeometry args={[w, d]} />

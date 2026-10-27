@@ -32,30 +32,30 @@
   from the selection, <b>left-click-drag on empty ground</b> to box-select several at once. Drag any
   selected item to move it (or the whole group together); a plain click on one member of an ad-hoc
   (non-grouped) selection drops back to selecting just that one. <b>Ctrl/Cmd+G</b> locks the current
-  selection into a real group — from then on, <i>any</i> member always acts as the whole group: clicking
-  it selects everyone, and dragging it (even straight off, with nothing pre-selected) moves everyone —
+  selection into a real group - from then on, <i>any</i> member always acts as the whole group: clicking
+  it selects everyone, and dragging it (even straight off, with nothing pre-selected) moves everyone -
   a grouped object can no longer be picked individually. Press <b>Ctrl/Cmd+G again</b> on a locked group
-  to ungroup it (or <b>Ctrl/Cmd+Shift+G</b> — same thing).
+  to ungroup it (or <b>Ctrl/Cmd+Shift+G</b> - same thing).
   <b>Arrow keys</b> nudge the selection 1 m (<b>Shift+arrow</b> = 10 m). <b>Delete</b>/<b>Backspace</b>
-  removes selected road(s) — buildings can't be deleted, only moved/resized. <b>Escape</b> deselects,
+  removes selected road(s) - buildings can't be deleted, only moved/resized. <b>Escape</b> deselects,
   <b>Ctrl/Cmd+A</b> selects everything, <b>Ctrl/Cmd+Z</b> undoes any number of changes. Select a
   resizable building and <b>drag the gold corner box</b> to resize it (or type exact Width/Depth in the
   panel). Select a rotatable building and <b>drag the cyan circle on its stalk</b> to spin it around its
-  centre — a live degree readout follows the cursor, and holding <b>Shift while rotating</b> snaps to 15°
+  centre - a live degree readout follows the cursor, and holding <b>Shift while rotating</b> snaps to 15°
   steps (or just type exact degrees in the panel). With <b>2+ items selected</b>, the same cyan handle
   appears above the whole group to rotate everyone around its shared centre (orbit <i>and</i> spin in
-  place, Canva-style; roads just orbit), plus three gold scale handles at the group's bounding box —
+  place, Canva-style; roads just orbit), plus three gold scale handles at the group's bounding box -
   the <b>corner</b> handle scales width and height together (and road widths), while the <b>side</b>
   handles each scale just one axis (width-only or height-only), all away from the fixed opposite corner,
   including each building's own size where resizable.
   <b>+ Road</b> / <b>+ Wall</b> take two clicks (start point, end point); <b>+ Pool</b> and
   <b>+ Building</b> take one click to drop the footprint, which you then drag/resize/rotate like
   anything else. A wall is a road that stands up, so it also gets a <i>Height</i>; a pool is a water
-  surface, so it has no facing. <b>+ Building</b> places an instance of an existing 3D component —
+  surface, so it has no facing. <b>+ Building</b> places an instance of an existing 3D component -
   pick which one from the dropdown, since the editor can't invent new geometry.
-  World units are metres — same coordinate system as
+  World units are metres - same coordinate system as
   <code>BuildingsView.tsx</code>. This editor only ever changes
-  <i>position / rotation / size / road layout</i> — it never touches how a building is modelled.
+  <i>position / rotation / size / road layout</i> - it never touches how a building is modelled.
 </p>
 <div class="legend">
   <span><span class="swatch" style="background:#6f8fd6"></span>Buildings (drag to move)</span>
@@ -112,11 +112,11 @@
 // position is [x, 0, z] and rotation is radians around Y, matching the
 // `position`/`rotation` props passed to each component there.
 // `resizable: false` marks buildings whose source component has no size prop
-// at all (MainGate/EntranceMonument/Shrine take only position+rotation) — so
+// at all (MainGate/EntranceMonument/Shrine take only position+rotation) - so
 // there is nothing in the real code a resized value could be applied to.
 // What "+ Building" can place. The editor cannot invent 3D geometry, so a new
 // building must be an instance of a component that already exists in
-// src/components/CampusBuildings.tsx — `kind` is the name the export carries
+// src/components/CampusBuildings.tsx - `kind` is the name the export carries
 // so the scene knows which component to render. `pool` is the exception: it
 // is not a component but a flat water surface, which is why it draws blue and
 // gets no front-facing arrow.
@@ -137,7 +137,7 @@ const WALL_HEIGHT_M = 4;
 
 // Positions/sizes read off the NUM master-plan board, calibrated on the
 // football pitch (~105 x 68 m). The board is an oblique render, so depth is
-// foreshortened ~0.77x versus width — corrected for here. The site is a
+// foreshortened ~0.77x versus width - corrected for here. The site is a
 // quadrilateral: the east boundary slants outward and the north edge tilts.
 const INITIAL_BUILDINGS = [
   { id: "gate",         kind: "main-gate",          label: "Main Entrance",        x: -3,    z: 249,   rotation: 3.07,    w: 15,    d: 6,    resizable: false },
@@ -183,7 +183,7 @@ const INITIAL_ROADS = [
 let buildings = structuredClone(INITIAL_BUILDINGS);
 let roads = structuredClone(INITIAL_ROADS);
 let selected = null; // { type: "building"|"road", id, handle?: "1"|"2"|"mid" }
-let groupSelection = null; // { buildingIds: string[], roadIds: string[] } — mutually exclusive with `selected`
+let groupSelection = null; // { buildingIds: string[], roadIds: string[] } - mutually exclusive with `selected`
 let groups = []; // persistent groups made with Ctrl+G: [{ id, buildingIds, roadIds }]
 // What clicking empty ground will place, if anything:
 //   null                              → normal select/marquee behaviour
@@ -315,7 +315,7 @@ function drawGrid() {
   for (let z = Math.ceil(MINZ / 20) * 20; z <= MAXZ; z += 20) {
     g.appendChild(el("line", { x1: 0, y1: sy(z), x2: 840, y2: sy(z), stroke: "#3a4a2a", "stroke-width": z === 0 ? 1.6 : 0.6 }));
   }
-  // Compass — north is -z (up on screen).
+  // Compass - north is -z (up on screen).
   const cx = 800, cy = 30;
   g.appendChild(el("line", { x1: cx, y1: cy + 16, x2: cx, y2: cy - 16, stroke: "#efe4cb", "stroke-width": 1.4, "marker-end": "" }));
   const arrow = el("path", { d: `M ${cx - 5} ${cy - 10} L ${cx} ${cy - 18} L ${cx + 5} ${cy - 10} Z`, fill: "#efe4cb" });
@@ -350,8 +350,8 @@ function drawRoads() {
     });
     line.style.cursor = "move";
     line.addEventListener("pointerdown", (e) => {
-      e.stopPropagation(); // always — even the shift branch must not leak to the marquee starter below
-      if (e.shiftKey) return; // shift-click is a pure toggle — see the click listener
+      e.stopPropagation(); // always - even the shift branch must not leak to the marquee starter below
+      if (e.shiftKey) return; // shift-click is a pure toggle - see the click listener
       beginObjectDrag(e, "road", r.id, () => startDragRoad(e, r, "mid"));
     });
     line.addEventListener("click", (e) => {
@@ -413,8 +413,8 @@ function drawBuildings() {
     }
     grp.style.cursor = "move";
     grp.addEventListener("pointerdown", (e) => {
-      e.stopPropagation(); // always — even the shift branch must not leak to the marquee starter below
-      if (e.shiftKey) return; // shift-click is a pure toggle — see the click listener
+      e.stopPropagation(); // always - even the shift branch must not leak to the marquee starter below
+      if (e.shiftKey) return; // shift-click is a pure toggle - see the click listener
       beginObjectDrag(e, "building", b.id, () => startDragBuilding(e, b));
     });
     grp.addEventListener("click", (e) => {
@@ -490,7 +490,7 @@ function groupBounds(lists) {
 
 // Group rotate handle: shown above the group's bounding box whenever 2+
 // items are selected. Dragging it spins every member around the group's
-// shared centre — buildings orbit AND spin in place (unless fixedRot),
+// shared centre - buildings orbit AND spin in place (unless fixedRot),
 // roads just orbit (both endpoints), same as Canva's group-rotate.
 function drawGroupOverlay() {
   const g = document.getElementById("groupOverlay");
@@ -518,12 +518,12 @@ function drawGroupOverlay() {
     g.appendChild(readout);
   }
 
-  // Group scale handles — same visual language as a single building's resize
+  // Group scale handles - same visual language as a single building's resize
   // handle. The CORNER handle scales width and height together (uniform);
   // the two EDGE handles scale just one axis, like a side handle in any
   // design tool. All three scale away from the same fixed opposite corner
   // (the anchor), plus each building's own w/d (only the axis being scaled,
-  // only where resizable) and — uniform scale only — each road's widthM.
+  // only where resizable) and - uniform scale only - each road's widthM.
   const cornerX = sx(b.maxX) + 10, cornerY = sy(b.maxZ) + 10;
   const cornerHandle = el("rect", {
     x: cornerX - 6, y: cornerY - 6, width: 12, height: 12,
@@ -534,7 +534,7 @@ function drawGroupOverlay() {
   g.appendChild(cornerHandle);
 
   // A side handle only makes sense if the group actually has some extent
-  // along that axis — if every selected item shares the same X (or Z), that
+  // along that axis - if every selected item shares the same X (or Z), that
   // axis's "original size" is zero and a ratio against it would explode.
   const MIN_AXIS_EXTENT = 0.5; // metres
   if (b.maxX - b.minX > MIN_AXIS_EXTENT) {
@@ -624,7 +624,7 @@ function startGroupDrag(e) {
 }
 // Routes a pointerdown on a building/road to the right kind of drag: if it's
 // already part of the active selection, or belongs to a locked (Ctrl+G)
-// group even when nothing is selected yet, drag the whole group — a grouped
+// group even when nothing is selected yet, drag the whole group - a grouped
 // object can never be picked up and moved on its own. Otherwise `startSolo`.
 function beginObjectDrag(e, type, id, startSolo) {
   if (groupSelection && (type === "building" ? groupSelection.buildingIds : groupSelection.roadIds).includes(id)) {
@@ -700,7 +700,7 @@ function onDragMove(e) {
   } else if (drag.type === "resize-building") {
     const b = buildings.find((x) => x.id === drag.id);
     // The handle sits at the local (+w/2, +d/2) corner, which rotates with
-    // the building — so the drag delta has to be rotated back into the
+    // the building - so the drag delta has to be rotated back into the
     // building's own frame before it can grow w/d. Resize is symmetric
     // around the centre (the position you already placed doesn't move).
     const rad = b.rotation;
@@ -712,7 +712,7 @@ function onDragMove(e) {
     const b = buildings.find((x) => x.id === drag.id);
     // Absolute angle from the (fixed) building centre to the current mouse
     // position, in the same basis the SVG `rotate()` transform actually uses
-    // — not a relative delta, so the handle always points straight at the
+    // - not a relative delta, so the handle always points straight at the
     // cursor. atan2(vx, -vy) matches: unrotated, the handle sits due "north"
     // (screen-up) of the centre, and increasing rotation sweeps it clockwise.
     const rect = svg.getBoundingClientRect();
@@ -728,7 +728,7 @@ function onDragMove(e) {
     drag.liveDeg = Math.round((ang * 180) / Math.PI);
   } else if (drag.type === "rotate-group") {
     // A RELATIVE delta from where the drag started (not an absolute angle
-    // like single-building rotate — the group has no one "current" facing).
+    // like single-building rotate - the group has no one "current" facing).
     // Every member's offset from the shared pivot gets rotated by that delta
     // (orbit), and buildings that support their own rotation prop spin by
     // the same delta too (fixedRot ones, e.g. Shrine/Field, only orbit).
@@ -764,8 +764,8 @@ function onDragMove(e) {
     // far the cursor now sits from the anchor along each axis, versus how
     // far the original corner sat. The CORNER handle (axis=null) scales X
     // and Z together (uniform, and road widthM scales too); either EDGE
-    // handle (axis="x"/"z") scales only that one axis, leaving the other —
-    // and road widths — untouched, like a side handle in any design tool.
+    // handle (axis="x"/"z") scales only that one axis, leaving the other -
+    // and road widths - untouched, like a side handle in any design tool.
     const rect = svg.getBoundingClientRect();
     const mx = wx((e.clientX - rect.left) / f);
     const mz = wz((e.clientY - rect.top) / f);
@@ -829,7 +829,7 @@ function onDragEnd() {
   if (drag && drag.type === "group" && drag.moved) {
     lastInteractionWasGroupMove = true;
     // Safety net: the browser fires `click` synchronously right after this, which
-    // consumes the flag itself — but if mouseup lands outside the dragged element
+    // consumes the flag itself - but if mouseup lands outside the dragged element
     // (or a drag gets cancelled) no click follows, so this would otherwise stick
     // forever and swallow the next unrelated click. A 0ms timeout runs after any
     // same-tick click has already been handled, so it only clears leftovers.
@@ -868,12 +868,12 @@ document.getElementById("addWallBtn").addEventListener("click", () => {
   setPlaceMode("wall", { shape: "segment", kind: "wall" }, "Click a start point, then an end point, to draw a wall.");
 });
 document.getElementById("addPoolBtn").addEventListener("click", () => {
-  setPlaceMode("pool", { shape: "rect", kind: "pool" }, "Click where the pool should go — then drag/resize it like a building.");
+  setPlaceMode("pool", { shape: "rect", kind: "pool" }, "Click where the pool should go - then drag/resize it like a building.");
 });
 // A gate is just the main-gate component, but common enough to deserve its
 // own button rather than making you pick it out of the dropdown each time.
 document.getElementById("addGateBtn").addEventListener("click", () => {
-  setPlaceMode("gate", { shape: "rect", kind: "main-gate" }, "Click where the gate should go — then rotate it to face the road.");
+  setPlaceMode("gate", { shape: "rect", kind: "main-gate" }, "Click where the gate should go - then rotate it to face the road.");
 });
 document.getElementById("addBuildingBtn").addEventListener("click", () => {
   const kind = document.getElementById("kindSelect").value;
@@ -1029,8 +1029,8 @@ function clickSelect(type, id) {
   if (g.buildingIds.length + g.roadIds.length > 1) setSelectionFromLists(g);
   else select(type, id);
 }
-// Shift+click, Canva-style: add/remove one item — or, if it belongs to a
-// locked group, the whole group at once — from the current selection.
+// Shift+click, Canva-style: add/remove one item - or, if it belongs to a
+// locked group, the whole group at once - from the current selection.
 function toggleGroupMember(type, id) {
   const target = idsOfObject(type, id);
   const cur = selectionAsLists();
@@ -1049,7 +1049,7 @@ function isSelectionLocked(lists) {
     && gr.buildingIds.every((id) => lists.buildingIds.includes(id))
     && gr.roadIds.every((id) => lists.roadIds.includes(id)));
 }
-// Ctrl+G: lock the current selection (2+ items) into a persistent group —
+// Ctrl+G: lock the current selection (2+ items) into a persistent group -
 // clicking any one member from now on selects the whole thing, like Canva.
 function groupSelected() {
   const cur = selectionAsLists();
@@ -1062,7 +1062,7 @@ function groupSelected() {
   groups.push({ id: "group-" + Math.random().toString(36).slice(2, 8), buildingIds: cur.buildingIds, roadIds: cur.roadIds });
   setSelectionFromLists(cur);
 }
-// Ctrl+G again (already a locked group) — or Ctrl+Shift+G — ungroups: dissolves
+// Ctrl+G again (already a locked group) - or Ctrl+Shift+G - ungroups: dissolves
 // any locked group the current selection touches.
 function ungroupSelected() {
   const cur = selectionAsLists();
@@ -1085,7 +1085,7 @@ function drawSelPanel() {
     const n = groupSelection.buildingIds.length, m = groupSelection.roadIds.length;
     const isLocked = isSelectionLocked(groupSelection);
     panel.appendChild(fieldRow("Group selected", `${n} building${n === 1 ? "" : "s"}, ${m} road${m === 1 ? "" : "s"}`));
-    panel.appendChild(fieldRow("", isLocked ? "Grouped — Ctrl/Cmd+G again to ungroup" : "Ctrl/Cmd+G to group"));
+    panel.appendChild(fieldRow("", isLocked ? "Grouped - Ctrl/Cmd+G again to ungroup" : "Ctrl/Cmd+G to group"));
     panel.appendChild(fieldRow("", "Drag any highlighted piece to move the whole group. Click empty ground to clear."));
     panel.appendChild(fieldRow("", "Drag the cyan handle above the group to rotate everyone around its centre."));
     panel.appendChild(fieldRow("", "Gold corner handle scales width+height together; the side handles scale just one."));
@@ -1180,7 +1180,7 @@ document.getElementById("deleteBtn").addEventListener("click", () => {
   );
   if (!killRoads.size && !killBuildings.size) {
     document.getElementById("modeHint").textContent =
-      "Nothing deletable selected — the original campus buildings can't be removed here.";
+      "Nothing deletable selected - the original campus buildings can't be removed here.";
     return;
   }
   snapshot();

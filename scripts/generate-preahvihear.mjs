@@ -1,5 +1,5 @@
 /**
- * public/models/preah-vihear.glb — an authored, recognizable Preah Vihear: a
+ * public/models/preah-vihear.glb - an authored, recognizable Preah Vihear: a
  * linear axial temple (causeway + gopura pavilions rising to a sanctuary tower)
  * perched on a rocky cliff-top plateau, evoking the Dângrêk escarpment. Uses the
  * shared temple builder. Stylized stand-in; photoreal via Gaussian splats later.

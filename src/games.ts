@@ -1,10 +1,10 @@
 /**
- * Khmer traditional games (ល្បែងប្រជាប្រិយខ្មែរ) — the play of Cambodian
+ * Khmer traditional games (ល្បែងប្រជាប្រិយខ្មែរ) the play of Cambodian
  * festivals, above all Choul Chnam Thmey (Khmer New Year), when villages gather
  * to play together. Each game here comes with a small playable version so a
  * visitor can learn it by doing, and earn a Heritage Passport credential.
  *
- * This is a starting set — see TODO.md ("Grow the Khmer Traditional Games") for
+ * This is a starting set see TODO.md ("Grow the Khmer Traditional Games") for
  * the many more the community can add.
  */
 export type GamePlay = "aim" | "race" | "tug" | "catch";
@@ -23,7 +23,7 @@ export interface KhmerGame {
   occasion: string;
   /** How to play (short). */
   how: string;
-  /** A little more — meaning / cultural note. */
+  /** A little more meaning / cultural note. */
   desc: string;
   /** Which minigame drives it. */
   play: GamePlay;
@@ -39,8 +39,8 @@ export const KHMER_GAMES: KhmerGame[] = [
     english: "Hit the Pot",
     players: "Turns, with a cheering crowd",
     occasion: "Khmer New Year",
-    how: "A blindfolded player is turned around, then swings a long stick to smash a clay pot hung from a pole — steered only by the shouts of the crowd. Time your swing to land the hit.",
-    desc: "Vay Kaom turns everyone into a caller — half the fun is the crowd yelling directions, true and false, as the blindfolded player flails at the swinging pot.",
+    how: "Players take turns trying to strike a suspended clay pot while blindfolded. The surrounding crowd calls out directions and cheers them on.",
+    desc: "The shared anticipation and the crowd's guidance are central to this festival game. Our visible timing challenge is a solo interpretation of aiming and coordination.",
     play: "aim",
     color: "#e0a92f",
   },
@@ -51,8 +51,8 @@ export const KHMER_GAMES: KhmerGame[] = [
     english: "Sack Race",
     players: "Two or more racers",
     occasion: "Festivals & school fairs",
-    how: "Climb into a rice sack and hop to the finish line without falling. Tap left–right–left–right in rhythm to hop; first across the line wins.",
-    desc: "A simple, joyful race run at fairs across Cambodia — the rice sack (បាវ) that carries the harvest becomes the finish-line challenge.",
+    how: "Racers hold a sack around their legs and hop towards a finish line. In the physical game, both feet stay inside the sack. Alternating the digital buttons is our simplified coordination challenge.",
+    desc: "A simple, joyful race run at fairs across Cambodia the rice sack (បាវ) that carries the harvest becomes the finish-line challenge.",
     play: "race",
     color: "#2f8ae0",
   },
@@ -63,8 +63,8 @@ export const KHMER_GAMES: KhmerGame[] = [
     english: "Tug of War",
     players: "Two teams",
     occasion: "Khmer New Year",
-    how: "Two teams pull a rope; drag the centre marker past your line to win. Tap to pull — keep the pressure on, because the other side never stops.",
-    desc: "More than a game — Teanh Prot is an age-old ritual played to mark the turning of the seasons, its outcome once believed to help call the coming rains.",
+    how: "Two teams hold opposite ends of a rope and coordinate their pulling. The opposing team or a rope marker must cross the agreed line to decide the winner.",
+    desc: "In Cambodia, Teanh Prot has recreational and ritual forms associated with New Year and community ceremonies. Meanings and local practices vary; the digital rhythm challenge focuses on pulling together.",
     play: "tug",
     color: "#4c8a3f",
   },
@@ -75,8 +75,8 @@ export const KHMER_GAMES: KhmerGame[] = [
     english: "Scarf Tossing",
     players: "Two facing teams (often boys vs girls)",
     occasion: "Khmer New Year",
-    how: "A rolled-up krama (the chhoung) is tossed back and forth between two lines of players. If you drop it, your team pays a penalty—usually having to sing a song or dance! Tap exactly when the chhoung is in the catch zone to grab it.",
-    desc: "A joyous courtship game played during Khmer New Year. It brings young people together with singing, dancing, and teasing as the chhoung flies between the teams.",
+    how: "Two facing groups toss a knotted scarf, the chhoung. Catching, returning the scarf, songs and playful exchanges are part of the group game, with rules varying between communities.",
+    desc: "Chol Chhoung brings people together during Khmer New Year through movement, singing and social exchange. Here, five incoming throws provide a short solo catching challenge.",
     play: "catch",
     color: "#d9662f",
   },

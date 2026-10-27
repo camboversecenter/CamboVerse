@@ -1,5 +1,5 @@
 /**
- * Commune (ADM3) boundaries — the fourth map tier. There are ~1,600 communes,
+ * Commune (ADM3) boundaries the fourth map tier. There are ~1,600 communes,
  * far too many to bundle, so they're generated **per province** under
  * src/communes/<ADM1_PCODE>.ts (see scripts/generate-communes.mjs) and loaded on
  * demand: opening a province fetches at most that one province's communes

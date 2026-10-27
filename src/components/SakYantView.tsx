@@ -4,11 +4,13 @@ import {
 } from "../sakyant";
 import { claimCredential, getIdentity, earnedAchievements } from "../lib/identity";
 import { SakYantTryOn } from "./SakYantTryOn";
+import { prepareYantra, YANTRA_BITMAP, yantraSvg } from "../sakyantArtwork";
+import { useYantraArtwork } from "./useYantraArtwork";
 
 /**
- * Sak Yant (សាក់យ័ន្ត) — the Khmer sacred tattoo. Learn what it is and who
+ * Sak Yant (សាក់យ័ន្ត) the Khmer sacred tattoo. Learn what it is and who
  * applies it, browse the best-known yant (each drawn procedurally), preview one
- * on your own skin with the on-device camera, and — the point of it all — find
+ * on your own skin with the on-device camera, and the point of it all find
  * your way to a genuine Khmer master to receive a real, blessed one.
  */
 type Mode = "about" | "designs" | "shops";
@@ -19,8 +21,22 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
   const [yi, setYi] = useState(0);
   const [tryOn, setTryOn] = useState(false);
   const [earned, setEarned] = useState(false);
+  const [ink, setInk] = useState(INK);
+  const [enlarged, setEnlarged] = useState(false);
+  const [saving,setSaving]=useState(false);
+  const [saveError,setSaveError]=useState(false);
 
   const yant = YANTRAS[yi];
+  const saveDrawing=async()=>{
+    setSaving(true);setSaveError(false);
+    try {
+      await prepareYantra(yant.id);
+      const url=URL.createObjectURL(new Blob([yantraSvg(yant.id,yant.name,ink)],{type:'image/svg+xml'}));
+      const link=document.createElement('a');
+      link.href=url;link.download=`camboverse-${yant.id}-study.svg`;
+      link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    } catch {setSaveError(true);} finally {setSaving(false);}
+  };
 
   useEffect(() => {
     let live = true;
@@ -54,8 +70,20 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
         </div>
 
         {mode === "designs" && (
-          <div className="sy-designs">
-            <YantraCanvas id={yant.id} size={300} />
+          <div className={`sy-designs${enlarged ? ' enlarged' : ''}`}>
+            <div className="sy-gallery-intro"><span>THE MOTIF COLLECTION</span><h1>Lines with a living tradition</h1><p>Explore six original studies inspired by regional Sak Yant forms.</p></div>
+            <div className={`sy-artboard${enlarged ? ' enlarged' : ''}`}>
+              <div className="sy-art-label"><span>{String(yi+1).padStart(2,'0')} / 06</span><span>{YANTRA_BITMAP[yant.id] ? 'Tattoo illustration' : 'Original line study'}</span></div>
+              <YantraCanvas id={yant.id} size={enlarged ? 760 : 420} ink={ink} />
+              <p className="sy-art-caption">Sacred inscriptions omitted · illustrative artwork</p>
+            </div>
+            <div className="sy-art-tools" aria-label="Artwork controls">
+              <button aria-pressed={ink === INK} onClick={()=>setInk(INK)}>Black ink</button>
+              <button aria-pressed={ink !== INK} onClick={()=>setInk('#7c1f16')}>Red ink</button>
+              <button aria-pressed={enlarged} onClick={()=>setEnlarged(v=>!v)}>{enlarged ? 'Fit artwork' : 'Enlarge artwork'}</button>
+              <button disabled={saving} onClick={saveDrawing}>{saving ? 'Preparing…' : 'Save drawing ↓'}</button>
+              {saveError && <span role="alert">Could not load the drawing. Please try again.</span>}
+            </div>
             <div className="sy-picker">
               {YANTRAS.map((y, i) => (
                 <button
@@ -63,9 +91,11 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
                   className={`sy-thumb${i === yi ? " on" : ""}`}
                   onClick={() => setYi(i)}
                   aria-label={y.name}
+                  aria-pressed={i === yi}
                   title={y.name}
                 >
                   <YantraCanvas id={y.id} size={58} thumb />
+                  <span>{y.english.replace('The ', '')}</span>
                 </button>
               ))}
             </div>
@@ -75,9 +105,17 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
               </div>
               <div className="sy-en">{yant.english}</div>
               <p className="sy-desc">{yant.meaning}</p>
-              <p className="sy-place">📍 Traditionally placed: {yant.placement}</p>
+              <details className="sy-details" key={yant.id}>
+                <summary>Learn more about this drawing</summary>
+                <p><b>Look closely.</b> {yant.form}</p>
+                <p><b>Context.</b> {yant.context}</p>
+                <p><b>Placement.</b> {yant.placement}</p>
+                <p>These studies are not tattoo stencils. Khmer labels remain drafts for native review; no master has approved these drawings.</p>
+                <a href={yant.reference} target="_blank" rel="noopener noreferrer">View the reference ↗</a>
+              </details>
             </div>
-            <button className="sy-try" onClick={() => setTryOn(true)}>🤳 Preview it on my skin</button>
+            <button className="sy-try" onClick={() => setTryOn(true)}>Preview on a skin swatch</button>
+            <p className="sy-note">Camera preview is optional. Nothing is uploaded.</p>
           </div>
         )}
 
@@ -91,7 +129,7 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
             ))}
             <div className="sy-card sy-precepts">
               <div className="sy-info-head"><span className="khmer">សីលប្រាំ</span> <b>The Five Precepts</b></div>
-              <p className="sy-desc">A yant's power is kept by living these — break them and the blessing is said to fade:</p>
+              <p className="sy-desc">These Buddhist ethical commitments are important to some Sak Yant teachers. A teacher's additional rules may differ:</p>
               <ol className="sy-plist">
                 {PRECEPTS.map((p) => (
                   <li key={p.text}><span className="khmer">{p.khmer}</span> {p.text}</li>
@@ -99,7 +137,7 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
               </ol>
             </div>
             <p className="sy-note">
-              A respectful, community-verifiable guide — Sak Yant is sacred and its meanings vary by
+              A respectful, community-verifiable guide Sak Yant is sacred and its meanings vary by
               lineage. Confirm with a Khmer master.
             </p>
           </div>
@@ -125,26 +163,26 @@ export function SakYantView({ onBackToMap }: { onBackToMap: () => void }) {
               </ul>
             ) : (
               <p className="sy-note">
-                A directory of vetted masters is being gathered with the Federation and the Khmer
-                community. Are you a master or studio? Help build it — see the contributor board.
+                No verified practitioner directory is available yet. This external link does not imply a partnership with the Federation.
               </p>
             )}
             <p className="sy-note">
-              CamboVerse does not sell tattoos or take a fee — this is a bridge to Cambodia's living
+              CamboVerse does not sell tattoos or take a fee this is a bridge to Cambodia's living
               practitioners, so the tradition (and the artists) are supported at the source.
             </p>
           </div>
         )}
       </div>
 
-      {tryOn && <SakYantTryOn yantraId={yant.id} onClose={() => setTryOn(false)} />}
+      {tryOn && <SakYantTryOn yantraId={yant.id} initialInk={ink === INK ? 0 : 1} onClose={() => setTryOn(false)} />}
     </div>
   );
 }
 
 /** Draws a yant to a canvas at logical `size` px. `thumb` uses lighter framing. */
-function YantraCanvas({ id, size, thumb = false }: { id: string; size: number; thumb?: boolean }) {
+function YantraCanvas({ id, size, thumb = false, ink = INK }: { id: string; size: number; thumb?: boolean; ink?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const {ready,error,retry}=useYantraArtwork(id);
   useEffect(() => {
     const c = ref.current;
     if (!c) return;
@@ -154,12 +192,12 @@ function YantraCanvas({ id, size, thumb = false }: { id: string; size: number; t
     c.width = size * dpr;
     c.height = size * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = thumb ? "#efe3c8" : "#f2e7cf";
+    ctx.fillStyle = thumb ? "#efe3c8" : "#f8f1df";
     ctx.fillRect(0, 0, size, size);
     ctx.save();
-    ctx.translate(size / 2, size / 2 + size * 0.04);
-    drawYantra(ctx, id, size * (thumb ? 0.96 : 0.92), INK);
+    ctx.translate(size / 2, size / 2);
+    if(ready) drawYantra(ctx, id, size * (thumb ? 1 : YANTRA_BITMAP[id] ? 0.9 : 0.96), ink);
     ctx.restore();
-  }, [id, size, thumb]);
-  return <canvas ref={ref} className={thumb ? "yant-canvas thumb" : "yant-canvas"} style={{ width: size, height: size }} />;
+  }, [id, size, thumb, ink, ready]);
+  return <><canvas ref={ref} role={thumb ? undefined : 'img'} aria-hidden={thumb || undefined} aria-label={thumb ? undefined : `${YANTRAS.find(y=>y.id===id)?.name} — illustrative line study, sacred inscriptions omitted`} className={thumb ? "yant-canvas thumb" : "yant-canvas"} style={{ width: size, height: 'auto', aspectRatio: '1' }} />{!thumb && !ready && <p role="status">{error ? <button onClick={retry}>Retry loading drawing</button> : 'Loading drawing…'}</p>}</>;
 }

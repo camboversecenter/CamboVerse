@@ -21,7 +21,7 @@ const GREENS = ["#3f6f2f", "#49772f", "#356329", "#547f37", "#2f5b26"];
 const CITY = ["#9098a0", "#aab0b6", "#c3bdb0", "#8b929a", "#b8b2a6"];
 const ROOFS = ["#b5623a", "#a8552f"];
 
-export function WatPhnomLandscape() {
+export function WatPhnomLandscape({ authoredHill = false }: { authoredHill?: boolean }) {
   const rand = useMemo(() => {
     let i = 0;
     return () => {
@@ -31,17 +31,17 @@ export function WatPhnomLandscape() {
     };
   }, []);
 
-  // Trees clothe the hill slopes and the ground around it — kept off the temple
+  // Trees clothe the hill slopes and the ground around it kept off the temple
   // terrace, the staircase axis (+z) and the flower-clock plaza.
   const trees = useMemo(() => {
     const out: { x: number; z: number; y: number; s: number; c: string }[] = [];
     let guard = 0;
     while (out.length < 150 && guard++ < 3000) {
       const ang = rand() * Math.PI * 2;
-      const r = 3.4 + rand() * 14;
+      const r = 5.4 + rand() * 12;
       const x = Math.cos(ang) * r;
       const z = Math.sin(ang) * r;
-      if (Math.abs(x) < 1.6 && z > 3 && z < 15) continue; // staircase / clock axis
+      if (Math.abs(x) < 5 && z > 3 && z < 18) continue; // keep the stair approach and its camera sightline open
       out.push({ x, z, y: hillY(r), s: 0.7 + rand() * 0.8, c: GREENS[out.length % GREENS.length] });
     }
     return out;
@@ -53,7 +53,7 @@ export function WatPhnomLandscape() {
     const out: { x: number; z: number; w: number; h: number; d: number; c: string }[] = [];
     for (let i = 0; i < 30; i++) {
       const ang = (i / 30) * Math.PI * 2 + rand() * 0.15;
-      const r = 15.5 + rand() * 8;
+      const r = 26 + rand() * 7;
       const h = 1.4 + rand() * (rand() > 0.82 ? 8 : 3); // a few towers
       out.push({
         x: Math.cos(ang) * r,
@@ -80,6 +80,7 @@ export function WatPhnomLandscape() {
   return (
     <group>
       {/* The hill (truncated cone) + a darker earth skirt */}
+      {!authoredHill && <>
       <mesh position={[0, TOP_Y / 2, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[TOP_R, BOT_R, TOP_Y, 44]} />
         <meshStandardMaterial color="#5f7d3a" roughness={1} />
@@ -88,6 +89,7 @@ export function WatPhnomLandscape() {
         <circleGeometry args={[BOT_R + 1.5, 44]} />
         <meshStandardMaterial color="#6f7c4a" roughness={1} />
       </mesh>
+      </>}
 
       {/* Flower clock garden at the foot of the hill (front, +z) */}
       <group position={[0, 0.05, 13.2]}>
@@ -129,20 +131,20 @@ export function WatPhnomLandscape() {
       </Instances>
 
       {/* Sugar palms among the hill trees */}
-      {[
-        [2.6, 0, 5.5],
-        [-2.8, 0, 5.0],
+      {!authoredHill && [
+        [6.3, 0, 5.5],
+        [-6.4, 0, 5.0],
         [4.5, 0, 2.0],
         [-4.6, 0, 1.5],
-        [3.2, 0, -4.5],
-        [-3.4, 0, -4.0],
+        [6.2, 0, -5.8],
+        [-6.0, 0, -5.5],
       ].map(([x, , z], i) => {
         const r = Math.hypot(x, z);
         return <Palm key={i} position={[x, hillY(r), z]} scale={0.9} spin={i * 1.7} />;
       })}
 
       {/* Hill forest */}
-      <Forest trees={trees} />
+      {!authoredHill && <Forest trees={trees} />}
     </group>
   );
 }

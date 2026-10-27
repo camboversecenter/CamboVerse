@@ -1,0 +1,12 @@
+{
+  "normal": {
+    "bytes": 525560,
+    "triangles": 22954,
+    "meshes": 3
+  },
+  "ultra": {
+    "bytes": 1558748,
+    "triangles": 74518,
+    "meshes": 3
+  }
+}

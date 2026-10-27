@@ -1,11 +1,11 @@
 /**
- * The Virtual Farm (កសិដ្ឋាននិម្មិត) — a guided journey through the Khmer rice
+ * The Virtual Farm (កសិដ្ឋាននិម្មិត) a guided journey through the Khmer rice
  * year (វដ្ដដាំស្រូវ). Rice (ស្រូវ) is the heart of Cambodian life, and its
  * growing cycle sets the rhythm of the village and the festival calendar. Each
  * stage here pairs a traditional step with its tool and a cultural fact; walking
  * the whole cycle earns a Heritage Passport credential.
  *
- * A rice-first starting point — see TODO.md ("Grow the Virtual Farm") for the
+ * A rice-first starting point see TODO.md ("Grow the Virtual Farm") for the
  * companion crops, livestock, seasons, and ceremonies the community can add.
  */
 
@@ -43,7 +43,7 @@ export const FARM_STAGES: FarmStage[] = [
     english: "Ploughing",
     emoji: "🐃",
     tool: { khmer: "នង្គ័ល · ក្របី", roman: "Nongkoal · Krobei", english: "Plough & water buffalo" },
-    fact: "As the first monsoon rains soften the earth, farmers flood and plough the paddy behind a water buffalo — the buffalo is the family's most valued partner. The King opens the season nationwide with the Royal Ploughing Ceremony (ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល).",
+    fact: "As the first monsoon rains soften the earth, farmers flood and plough the paddy behind a water buffalo the buffalo is the family's most valued partner. The King opens the season nationwide with the Royal Ploughing Ceremony (ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល).",
     action: "Guide the buffalo",
     field: "ploughed",
     growth: 0.02,
@@ -56,7 +56,7 @@ export const FARM_STAGES: FarmStage[] = [
     english: "The Seedbed",
     emoji: "🌱",
     tool: { khmer: "គ្រាប់ស្រូវ", roman: "Kroab Srov", english: "Rice seed" },
-    fact: "Rice isn't sown straight into the field. Seed is first raised thickly in a small nursery bed, where the young seedlings grow strong for a month before they are moved. Phka Rumduol — Cambodia's world-famous jasmine rice — begins its life here.",
+    fact: "In the transplanted-rice method shown here, seedlings first grow in a nursery before being moved into the field. Nursery time varies with the variety and growing conditions. Farmers also use direct seeding, where rice seed is sown into the field without this transplanting step.",
     action: "Scatter the seed",
     field: "seedbed",
     growth: 0.15,
@@ -69,7 +69,7 @@ export const FARM_STAGES: FarmStage[] = [
     english: "Transplanting",
     emoji: "🌾",
     tool: { khmer: "ដៃ", roman: "Dai", english: "By hand" },
-    fact: "Bent double under the sun, workers push seedlings into the mud one bunch at a time, in neat rows. It is hard, sociable work — whole villages trade labour (ប្រវាស់ដៃ) to plant each other's fields.",
+    fact: "Bent double under the sun, workers push seedlings into the mud one bunch at a time, in neat rows. It is hard, sociable work whole villages trade labour (ប្រវាស់ដៃ) to plant each other's fields.",
     action: "Plant the seedlings",
     field: "transplanted",
     growth: 0.32,
@@ -108,7 +108,7 @@ export const FARM_STAGES: FarmStage[] = [
     english: "Threshing & Winnowing",
     emoji: "🧺",
     tool: { khmer: "ចង្អេរ", roman: "Chang-e", english: "Winnowing basket" },
-    fact: "The grain is beaten from the stalks (បោក), then tossed from a wide woven basket so the breeze carries off the light chaff (រៃ) and the heavy rice falls back — a skill of wind and wrist.",
+    fact: "The grain is beaten from the stalks (បោក), then tossed from a wide woven basket so the breeze carries off the light chaff (រៃ) and the heavy rice falls back a skill of wind and wrist.",
     action: "Winnow the grain",
     field: "harvested",
     growth: 0.95,
@@ -121,7 +121,7 @@ export const FARM_STAGES: FarmStage[] = [
     english: "Store & Share",
     emoji: "🏚️",
     tool: { khmer: "ជង្រុកស្រូវ", roman: "Chang-rok Srov", english: "Rice granary" },
-    fact: "The clean rice is stored in a raised wooden granary to feed the family through the year — and to become sticky-rice cakes like អន្សម at festivals. Nothing is wasted: straw feeds the buffalo, and the cycle begins again.",
+    fact: "The clean rice is stored in a raised wooden granary to feed the family through the year and to become sticky-rice cakes like អន្សម at festivals. Nothing is wasted: straw feeds the buffalo, and the cycle begins again.",
     action: "Fill the granary",
     field: "harvested",
     growth: 1.0,

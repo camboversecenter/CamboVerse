@@ -3,7 +3,7 @@ import { Viewer } from "./Viewer";
 import { METHOD_LABEL, DEFAULT_PROVENANCE, type Artifact } from "../artifacts";
 
 /**
- * Inspect a single Khmer artifact in 3D — orbit it, tap its parts to learn how
+ * Inspect a single Khmer artifact in 3D orbit it, tap its parts to learn how
  * it works, and read what it's for. Viewable in plain view or in VR (the Viewer
  * provides the Enter-VR button and headset locomotion). Educational first.
  */
@@ -17,6 +17,7 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
     <>
       <Viewer
         modelUrl={artifact.model}
+        ultraModelUrl={artifact.ultraModel}
         blurb={artifact.blurb}
         pois={pois}
         activePoi={activePoi}
@@ -25,7 +26,7 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
           playInstrumentSound(artifact.id);
         }}
         mode="orbit"
-        float={true}
+        float={!artifact.ultraModel}
       />
 
       <button className="backbtn" onClick={onBack}>
@@ -91,13 +92,13 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
                     </p>
                     {ai && (
                       <p className="artifact-ainote">
-                        A plausible 3D reconstruction generated from a single photo — engaging to explore,
+                        A plausible 3D reconstruction generated from a single photo engaging to explore,
                         but <b>not a measured record</b> of the real object.
                       </p>
                     )}
                     {prov.method === "procedural" && (
                       <p className="artifact-ainote">
-                        A stylised stand-in — pending a real capture from an artisan or museum.
+                        A stylised stand-in pending a real capture from an artisan or museum.
                       </p>
                     )}
                   </>
@@ -108,7 +109,7 @@ export function ArtifactView({ artifact, onBack }: { artifact: Artifact; onBack:
             <p className="artifact-blurb">{artifact.blurb}</p>
           )}
 
-          <p className="artifact-hint">◍ Tap a part to learn about it · 🥽 or view it in VR</p>
+          <p className="artifact-hint">{artifact.ultraModel ? "◍ Show parts, then tap one to learn" : "◍ Tap a part to learn about it"} · 🥽 or view it in VR</p>
         </div>
       )}
     </>

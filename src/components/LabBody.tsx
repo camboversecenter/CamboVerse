@@ -1,14 +1,15 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   BufferGeometry, DoubleSide, Float32BufferAttribute, Group, LatheGeometry, Vector2,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { organBlob, vessel, branchTree, type Detail } from "./LabOrgans";
+import { LabTissueMaterial } from "./LabTissueMaterial";
 import type { LabLayer } from "../lab";
 
 /**
- * The **whole human body** — a figure you can peel from skin to organs to
+ * The **whole human body** a figure you can peel from skin to organs to
  * skeleton, and pull any organ out of to look at on its own.
  *
  * ## Frame of reference
@@ -23,7 +24,7 @@ import type { LabLayer } from "../lab";
  * ## What it is not
  *
  * A schematic teaching model. Recognisable, correctly arranged, right
- * proportions — and nowhere near an anatomical atlas. There is no muscle layer,
+ * proportions and nowhere near an anatomical atlas. There is no muscle layer,
  * no fascia, no vasculature beyond the great vessels, and the surfaces are
  * smooth where real tissue is not. Building it from code rather than from a scan
  * is what lets it ship under an open licence at all; the cost is this ceiling,
@@ -60,7 +61,7 @@ export const BODY = {
 type Ring = {
   /** Height of this cross-section. */
   y: number;
-  /** Half-width and half-depth — a body is an ellipse in section, never a circle. */
+  /** Half-width and half-depth a body is an ellipse in section, never a circle. */
   rx: number;
   rz: number;
   /** Centre offset, for a limb that is not on the midline. */
@@ -158,7 +159,7 @@ function longBone(length: number, shaft: number, head: number, seg = 14): Buffer
   const n = 16;
   for (let i = 0; i <= n; i++) {
     const t = i / n;
-    // fat at both ends, narrow through the middle — the classic dumbbell profile
+    // fat at both ends, narrow through the middle the classic dumbbell profile
     const bulge = Math.abs(t - 0.5) * 2;           // 1 at the ends, 0 mid-shaft
     const r = shaft + (head - shaft) * bulge ** 3;
     pts.push(new Vector2(r, (t - 0.5) * length));
@@ -190,7 +191,7 @@ function useSkeleton(detail: Detail) {
     const parts: BufferGeometry[] = [];
 
     // spine: stacked vertebrae from the base of the skull to the pelvis, with
-    // the real double curve — forward at the neck, back at the chest
+    // the real double curve forward at the neck, back at the chest
     for (let i = 0; i < 24; i++) {
       const t = i / 23;
       const y = 54 - t * 68;
@@ -288,6 +289,11 @@ export function useOrgans(detail: Detail): OrganDef[] {
     const blob = (o: Parameters<typeof organBlob>[0]) => organBlob({ ...o, seg });
 
     const brain = blob({ r: [7.4, 6.2, 8.4], lumps: 0.16, seed: 61 });
+    const eyeball = blob({ r: [1.8, 1.8, 1.8], lumps: 0.02, seed: 90 });
+    const earL = blob({ r: [2.2, 2.8, 1.4], lumps: 0.12, seed: 91 });
+    const earR = blob({ r: [2.2, 2.8, 1.4], lumps: 0.12, seed: 92 });
+    const nose = blob({ r: [1.6, 2.4, 1.8], taper: 0.3, lumps: 0.06, seed: 93 });
+    const tongue = blob({ r: [2.2, 1.2, 3.0], taper: 0.25, lumps: 0.08, seed: 94 });
     const cord = vessel([[0, 56, -5], [0, 30, -6.5], [0, 6, -6], [0, -12, -5]], 0.9, 20, 8);
     const thyroid = blob({ r: [3.4, 2.0, 1.8], lumps: 0.08, seed: 63 });
     const heart = blob({ r: [5.0, 6.0, 4.4], taper: 0.18, lean: 0.5, lumps: 0.05, seed: 2 });
@@ -358,6 +364,12 @@ export function useOrgans(detail: Detail): OrganDef[] {
 
     return [
       { id: "brain", geo: brain, at: [0, 72, -1], color: BODY.brain, stageScale: 2.4, ownSize: [14, 18] },
+      { id: "eyes", geo: eyeball, at: [-3, 76, 8], color: "#e8e8e8", stageScale: 6, ownSize: [5, 5] },
+      { id: "eyes", geo: eyeball, at: [3, 76, 8], color: "#e8e8e8", stageScale: 6, ownSize: [5, 5] },
+      { id: "ears", geo: earL, at: [-9, 74, 0], color: BODY.skin, stageScale: 4, ownSize: [6, 7] },
+      { id: "ears", geo: earR, at: [9, 74, 0], color: BODY.skin, stageScale: 4, ownSize: [6, 7] },
+      { id: "nose", geo: nose, at: [0, 72, 10], color: BODY.skin, stageScale: 5, ownSize: [5, 6] },
+      { id: "mouth", geo: tongue, at: [0, 66, 8], color: "#c46060", stageScale: 4, ownSize: [6, 8] },
       { id: "spinal-cord", geo: cord, at: [0, 0, 0], color: BODY.nerve, stageScale: 1.2, ownSize: [70, 8] },
       { id: "thyroid", geo: thyroid, at: [0, 51, 4], color: BODY.gland, stageScale: 5, ownSize: [5, 8] },
       { id: "heart", geo: heart, at: [2.5, 32, 2], color: BODY.heart, stageScale: 2.6, ownSize: [14, 12] },
@@ -466,7 +478,7 @@ export const BODY_STAGE: [number, number, number] = [44, 22, 26];
  *
  * On the organs layer the ribcage is drawn *in front of* the liver, stomach and
  * heart, so it caught almost every tap aimed at them and the panel jumped to
- * "Skeleton". The bones stay visible — they are what places the organs — but
+ * "Skeleton". The bones stay visible they are what places the organs but
  * they stop being a target until you switch to the skeleton layer, where they
  * are the subject.
  */
@@ -479,10 +491,10 @@ const NO_PICK = () => null;
  * a bright environment. Lifting the whole surface and dropping everything else
  * to a third is what actually reads on a phone in daylight.
  */
-function highlight(isSelected: boolean, anySelected: boolean) {
+function highlight(isSelected: boolean, anySelected: boolean, isHovered: boolean = false) {
   return {
-    emissive: isSelected ? "#ffd9a0" : "#000000",
-    emissiveIntensity: isSelected ? 0.42 : 0,
+    emissive: isSelected ? "#ffd9a0" : (isHovered ? "#3a251a" : "#000000"),
+    emissiveIntensity: isSelected ? 0.42 : (isHovered ? 0.15 : 0),
     transparent: anySelected && !isSelected,
     opacity: anySelected && !isSelected ? 0.32 : 1,
     depthWrite: !(anySelected && !isSelected),
@@ -494,7 +506,7 @@ function highlight(isSelected: boolean, anySelected: boolean) {
  *
  * The movement is the explanation: a student watches the liver leave the space
  * under the ribs and knows where it lives. Snapping it to the stage would show
- * the same two states and teach neither, so this lerps every frame — cheap, and
+ * the same two states and teach neither, so this lerps every frame cheap, and
  * it survives being interrupted halfway by a different organ being picked.
  */
 function Extractable({
@@ -527,7 +539,7 @@ function Extractable({
 }
 
 export function Body({
-  layer = "whole", detail = "ultra", onPick, selected, extracted,
+  layer = "whole", detail = "ultra", onPick, selected, extracted, showOutline = true,
 }: {
   layer?: LabLayer;
   detail?: Detail;
@@ -535,6 +547,7 @@ export function Body({
   selected?: string | null;
   /** The organ currently pulled out of the body, if any. */
   extracted?: string | null;
+  showOutline?: boolean;
 }) {
   const skeleton = useSkeleton(detail);
   const organs = useOrgans(detail);
@@ -555,18 +568,25 @@ export function Body({
   const showBones = layer !== "whole";
   const boneOpacity = layer === "frame" ? 1 : 0.85;
 
+  const [hovered, setHovered] = useState<string | null>(null);
+
   const pick = (id: string) => (e: { stopPropagation: () => void }) => {
     if (!onPick) return;
     e.stopPropagation();
     onPick(id);
   };
+  const hover = (id: string) => (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    setHovered(id);
+  };
+  const unhover = () => setHovered(null);
 
   return (
     <group>
-      {/* SKIN — a single merged figure, translucent the moment you look inside */}
+      {/* SKIN a single merged figure, translucent the moment you look inside */}
       {showSkin && (
-        <mesh geometry={figure} onClick={pick("skin")} castShadow receiveShadow>
-          <meshPhysicalMaterial
+        <mesh geometry={figure} onClick={pick("skin")} onPointerOver={hover("skin")} onPointerOut={unhover} castShadow receiveShadow>
+          <LabTissueMaterial detail={detail} kind="skin"
             color={BODY.skin}
             roughness={0.62}
             clearcoat={0.25}
@@ -574,17 +594,19 @@ export function Body({
             sheen={0.5}
             sheenColor="#e8b49a"
             sheenRoughness={0.7}
-            emissive={selected === "skin" ? "#ffd9a0" : "#000000"}
-            emissiveIntensity={selected === "skin" ? 0.3 : 0}
+            transmission={detail === "ultra" ? 0.15 : 0}
+            thickness={detail === "ultra" ? 1.5 : 0}
+            emissive={selected === "skin" ? "#ffd9a0" : (hovered === "skin" ? "#3a251a" : "#000000")}
+            emissiveIntensity={selected === "skin" ? 0.3 : (hovered === "skin" ? 0.15 : 0)}
           />
         </mesh>
       )}
 
       {/* the outline of the figure stays as a ghost once you go inside, so the
           organs never float in a void with nothing to place them against */}
-      {!showSkin && (
+      {!showSkin && showOutline && (
         <mesh geometry={figure} raycast={NO_PICK}>
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="skin"
             color={BODY.skin}
             roughness={0.8}
             transparent
@@ -596,9 +618,9 @@ export function Body({
       )}
 
       {showBones && (
-        <group onClick={layer === "frame" ? pick("skeleton") : undefined}>
+        <group onClick={layer === "frame" ? pick("skeleton") : undefined} onPointerOver={layer === "frame" ? hover("skeleton") : undefined} onPointerOut={layer === "frame" ? unhover : undefined}>
           {[skeleton.merged, skeleton.skull, skeleton.jaw].map((g, i) => {
-            const hl = highlight(selected === "skeleton", !!selected && layer === "frame");
+            const hl = highlight(selected === "skeleton", !!selected && layer === "frame", hovered === "skeleton");
             return (
               <mesh
                 key={i}
@@ -607,7 +629,7 @@ export function Body({
                 castShadow={layer === "frame"}
                 raycast={layer === "frame" ? undefined : NO_PICK}
               >
-                <meshPhysicalMaterial
+                <LabTissueMaterial detail={detail} kind="bone"
                   color={i === 0 ? BODY.bone : BODY.boneDeep}
                   roughness={0.55}
                   clearcoat={0.2}
@@ -640,15 +662,17 @@ export function Body({
                 scale={o.stageScale ?? 2}
                 out={out}
               >
-                <mesh geometry={o.geo} castShadow onClick={pick(o.id)}>
-                  <meshPhysicalMaterial
+                <mesh geometry={o.geo} castShadow onClick={pick(o.id)} onPointerOver={hover(o.id)} onPointerOut={unhover}>
+                  <LabTissueMaterial detail={detail} kind="organ"
                     color={o.color}
                     roughness={0.34}
                     clearcoat={0.55}
                     clearcoatRoughness={0.28}
                     sheen={0.3}
                     sheenColor="#ffd9cf"
-                    {...highlight(selected === o.id, !!selected || extracted !== null)}
+                    transmission={detail === "ultra" ? 0.15 : 0}
+                    thickness={detail === "ultra" ? 1.2 : 0}
+                    {...highlight(selected === o.id, !!selected || extracted !== null, hovered === o.id)}
                     transparent={(!!selected && selected !== o.id) || (extracted !== null && !out)}
                     opacity={(!!selected && selected !== o.id) || (extracted !== null && !out) ? 0.28 : 1}
                     depthWrite={!((!!selected && selected !== o.id) || (extracted !== null && !out))}
@@ -658,14 +682,14 @@ export function Body({
             );
           })}
 
-          <group onClick={pick("airways")}>
+          <group onClick={pick("airways")} onPointerOver={hover("airways")} onPointerOut={unhover}>
             {[trachea, bronchi].map((g, i) => (
               <mesh key={i} geometry={g}>
-                <meshPhysicalMaterial
+                <LabTissueMaterial detail={detail} kind="nerve"
                   color={BODY.airway}
                   roughness={0.6}
                   clearcoat={0.2}
-                  {...highlight(selected === "airways", !!selected || extracted !== null)}
+                  {...highlight(selected === "airways", !!selected || extracted !== null, hovered === "airways")}
                   transparent={(!!selected && selected !== "airways") || extracted !== null}
                   opacity={(!!selected && selected !== "airways") || extracted !== null ? 0.28 : 1}
                   depthWrite={!((!!selected && selected !== "airways") || extracted !== null)}
@@ -685,7 +709,7 @@ export function Body({
  * One organ on its own screen, centred and standing still.
  *
  * It is the *same geometry* the body uses, not a second model of the same
- * thing — an organ that looked different depending on which screen you reached
+ * thing an organ that looked different depending on which screen you reached
  * it from would quietly teach that there are two of them.
  *
  * Paired organs (lungs, kidneys) keep both halves and their real separation,
@@ -724,17 +748,25 @@ export function SingleOrgan({
       levels: detail === "ultra" ? 5 : 4, spread: 0.6, twist: 1.3, seed: 9 }),
   ], false) : null), [airways, detail]);
 
+  const [hovered, setHovered] = useState<boolean>(false);
+
   const pick = (e: { stopPropagation: () => void }) => {
     if (!onPick) return;
     e.stopPropagation();
     onPick(organId);
   };
-  const glow = selected === organId ? "#ffd9a0" : "#000000";
-  const glowI = selected === organId ? 0.35 : 0;
+  const hover = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    setHovered(true);
+  };
+  const unhover = () => setHovered(false);
+
+  const glow = selected === organId ? "#ffd9a0" : (hovered ? "#3a251a" : "#000000");
+  const glowI = selected === organId ? 0.35 : (hovered ? 0.15 : 0);
 
   if (organId === "skeleton") {
     return (
-      <group position={[0, 0, 0]} onClick={pick}>
+      <group position={[0, 0, 0]} onClick={pick} onPointerOver={hover} onPointerOut={unhover}>
         {[skeleton.merged, skeleton.skull, skeleton.jaw].map((g, i) => (
           <mesh
             key={i}
@@ -742,7 +774,7 @@ export function SingleOrgan({
             position={i === 1 ? [0, 73, 0] : i === 2 ? [0, 66, 3.5] : [0, 0, 0]}
             castShadow
           >
-            <meshPhysicalMaterial
+            <LabTissueMaterial detail={detail} kind="bone"
               color={i === 0 ? BODY.bone : BODY.boneDeep}
               roughness={0.5} clearcoat={0.25} emissive={glow} emissiveIntensity={glowI}
             />
@@ -754,10 +786,10 @@ export function SingleOrgan({
 
   if (airways) {
     return (
-      <group position={[0, -44, 0]} onClick={pick}>
+      <group position={[0, -44, 0]} onClick={pick} onPointerOver={hover} onPointerOut={unhover}>
         {[trachea, tree].filter(Boolean).map((g, i) => (
           <mesh key={i} geometry={g as BufferGeometry} castShadow>
-            <meshPhysicalMaterial
+            <LabTissueMaterial detail={detail} kind="nerve"
               color={BODY.airway} roughness={0.55} clearcoat={0.3}
               emissive={glow} emissiveIntensity={glowI}
             />
@@ -768,16 +800,18 @@ export function SingleOrgan({
   }
 
   return (
-    <group position={[-centre[0], -centre[1], -centre[2]]} onClick={pick}>
+    <group position={[-centre[0], -centre[1], -centre[2]]} onClick={pick} onPointerOver={hover} onPointerOut={unhover}>
       {mine.map((o, i) => (
         <mesh key={i} geometry={o.geo} position={o.at} castShadow receiveShadow>
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="organ"
             color={o.color}
             roughness={0.32}
             clearcoat={0.6}
             clearcoatRoughness={0.26}
             sheen={0.3}
             sheenColor="#ffd9cf"
+            transmission={detail === "ultra" ? 0.15 : 0}
+            thickness={detail === "ultra" ? 1.2 : 0}
             emissive={glow}
             emissiveIntensity={glowI}
           />
