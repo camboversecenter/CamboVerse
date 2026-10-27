@@ -18,6 +18,11 @@ const releasedCaptures=new Map([
   ['public/models/captures/wat-phnom-staircase-v1/normal.splat','2d2c3391ce392cb10a6083307cc8f737a7c4d9748143a87abb7f8f3936f9b8b9'],
   ['public/models/captures/wat-phnom-staircase-v1/ultra.splat','ddcbc6502d068a7933abbaee6b792a8ca454c95c2173548af853b45abf9aa948'],
 ]);
+// This introduction video was already published with the province collection.
+// Keep its exact existing bytes; other videos remain private by default.
+const existingPublicMedia=new Map([
+  ['camboverse-provinces/video/camboverse-provinces-avatars-16x9.mp4','7a5561338fc8bee64b284d079bd8ce825cd7b1bfa132163f12c8fd71112117b5'],
+]);
 export function privatePath(path) {
   const p=path.replaceAll('\\','/');
   if(/^(?:output|tmp|temp|captures|training|datasets|downloads|\.codex-tools|\.codex|\.claude|NUM status|num-status-split|node_modules|dist|\.wrangler)\//i.test(p))return true;
@@ -28,7 +33,7 @@ export function privatePath(path) {
   if(/^(?:\.env(?:\..*)?|\.dev\.vars(?:\..*)?)$/i.test(name)&&!name.endsWith('.example'))return true;
   if(/^(?:kaggle|credentials|auth)\.json$|service[-_]account.*\.json$|^(?:id_rsa|id_ed25519|\.npmrc|\.pypirc|\.netrc)$|^(?:cookies|storage-?state).*(?:\.json|\.txt)$/i.test(name))return true;
   if(!p.includes('/')&&/\.(?:docx|pptx|pdf|jpe?g|png|webp|heic|tiff?)$/i.test(p))return true;
-  return privateSuffix.test(p)&&!demoClouds.has(p)&&!releasedCaptures.has(p);
+  return privateSuffix.test(p)&&!demoClouds.has(p)&&!releasedCaptures.has(p)&&!existingPublicMedia.has(p);
 }
 
 const patterns=[
@@ -60,6 +65,7 @@ export function scanText(text) {
 
 export function inspectContent(path,buffer) {
   const findings=[];
+  if(existingPublicMedia.has(path)&&createHash('sha256').update(buffer).digest('hex')!==existingPublicMedia.get(path))findings.push({kind:'Previously published collection media changed; review replacement',line:0});
   if(releasedCaptures.has(path)&&createHash('sha256').update(buffer).digest('hex')!==releasedCaptures.get(path))findings.push({kind:'Published capture differs from the reviewed preview',line:0});
   if(demoClouds.has(path)&&createHash('sha256').update(buffer).digest('hex')!==demoClouds.get(path))findings.push({kind:'Synthetic demo cloud was replaced; review publication permission',line:0});
   if(buffer.length>100*1024*1024)findings.push({kind:'File exceeds 100 MiB; use reviewed asset storage',line:0});

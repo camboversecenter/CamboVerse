@@ -112,6 +112,7 @@ output/room-mesh-v1/
 *.insp
 *.insv
 *.mp4
+!camboverse-provinces/video/camboverse-provinces-avatars-16x9.mp4
 *.m4v
 *.mkv
 *.webm

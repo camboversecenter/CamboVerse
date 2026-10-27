@@ -35,6 +35,13 @@ test('only the four reviewed finished captures may be published, with pinned con
   }
   assert.equal(privatePath('public/models/captures/wat-phnom-clock-v1/raw.splat'),true);
 });
+
+test('preserves the already-public province introduction while blocking replacement videos',()=>{
+  const path='camboverse-provinces/video/camboverse-provinces-avatars-16x9.mp4';
+  assert.equal(privatePath(path),false);
+  assert.ok(inspectContent(path,Buffer.from([0,1])).findings.some(f=>f.kind.includes('collection media changed')));
+  assert.equal(privatePath('camboverse-provinces/video/training.mp4'),true);
+});
 test('requires output-free notebooks, including Windows BOM JSON',()=>{
   const clean={cells:[{cell_type:'code',execution_count:null,outputs:[],source:['print(1)']}]};
   assert.equal(inspectContent('train.ipynb',Buffer.from('\uFEFF'+JSON.stringify(clean))).findings.length,0);
