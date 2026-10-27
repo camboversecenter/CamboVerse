@@ -4,7 +4,7 @@
  * Builds meshes from Three.js primitives and serializes POSITION + NORMAL +
  * COLOR_0 by hand (one white PBR material; per-vertex colours carry the stone
  * tone). Vertex colours add cheap realism: height-based weathering (grime low,
- * lighter up), gentle ambient darkening, and slight per-part tone variation —
+ * lighter up), gentle ambient darkening, and slight per-part tone variation -
  * so the models read as aged sandstone rather than flat blocks.
  */
 import * as THREE from "three";
@@ -42,7 +42,7 @@ export function createBuilder() {
    * @param seg Longitudinal segments (latitudinal is half). Default 10 is right
    *        for a lotus finial you stand next to; a tree canopy thirty metres
    *        away needs 5 and costs a quarter as much. toNonIndexed() triples
-   *        every vertex, so this multiplier is not academic — a forecourt of
+   *        every vertex, so this multiplier is not academic - a forecourt of
    *        thirty saplings at the default put a 327 KB model up to 2.9 MB.
    */
   function sphere(r, x, y, z, color = SAND, scaleY = 1, seg = 10) {
@@ -100,7 +100,7 @@ export function createBuilder() {
    * @param weathering How much the height-based grime gradient applies, 0–1.
    *        1 is the temple default (dark at the base, bleached at the top),
    *        which is right for aged sandstone and wrong for a building finished
-   *        last year — a new painted block reads as dirty rather than new.
+   *        last year - a new painted block reads as dirty rather than new.
    *        Lower it for modern buildings; 0 keeps only the per-part tone jitter
    *        that stops flat colour looking like a screenshot of a colour picker.
    */
@@ -187,7 +187,7 @@ export function createBuilder() {
 
     mkdirSync(dirname(OUT), { recursive: true });
     writeFileSync(OUT, Buffer.concat([header, jh, jsonChunk, bh, binChunk]));
-    console.log(`wrote ${OUT} — ${vertCount} verts, ${(total / 1024).toFixed(1)} KB`);
+    console.log(`wrote ${OUT} - ${vertCount} verts, ${(total / 1024).toFixed(1)} KB`);
   }
 
   /**
@@ -270,7 +270,7 @@ export function createBuilder() {
     });
     mkdirSync(dirname(OUT), { recursive: true });
     writeFileSync(OUT, buf);
-    console.log(`wrote ${OUT} — ${rec.length} splats, ${(buf.length / 1024).toFixed(1)} KB`);
+    console.log(`wrote ${OUT} - ${rec.length} splats, ${(buf.length / 1024).toFixed(1)} KB`);
   }
 
   return { box, cyl, cone, sphere, tower, build, buildSplat };

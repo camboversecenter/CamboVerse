@@ -1,13 +1,13 @@
 /**
- * Virtual Meditation (សមាធិនិម្មិត) — serene Khmer sanctuaries you sit inside,
+ * Virtual Meditation (សមាធិនិម្មិត) serene Khmer sanctuaries you sit inside,
  * flat-screen or in VR. Cambodia's forests, mountains, temples and rivers are
  * places of natural stillness; here each becomes a calm space with a generated
  * ambient soundscape and a gentle breathing guide.
  *
- * The practice is universal — breath and presence, for anyone of any faith or
+ * The practice is universal breath and presence, for anyone of any faith or
  * none. The *setting* honours Khmer sacred landscapes. An optional chant layer
  * offers traditional Theravada verses (see SUTRAS); it is off by default and
- * never instructs — it simply shares the words as heritage.
+ * never instructs it simply shares the words as heritage.
  */
 export type Ambience = "forest" | "temple" | "mountain" | "river";
 
@@ -109,7 +109,7 @@ export const DURATIONS = [2, 5, 10] as const;
 
 /**
  * A small set of foundational, universally-recited Theravada verses, shared as
- * heritage — not as instruction. Pali is the canonical language of recitation
+ * heritage not as instruction. Pali is the canonical language of recitation
  * in Cambodia; the English is a plain rendering of the meaning; the Khmer gives
  * the sense. These are traditional and widely known, but Khmer-script Pali
  * orthography and translations should be reviewed with Cambodian monastic

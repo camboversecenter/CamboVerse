@@ -2,17 +2,18 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { DoubleSide, InstancedMesh, Matrix4, Object3D, type Group, type Mesh } from "three";
 import { Readout } from "./LabChemistry";
+import { LabTissueMaterial } from "./LabTissueMaterial";
 import type { MachineProps } from "./LabMachines";
 
 /**
- * Agriculture and engineering — the shelf closest to how people here actually
+ * Agriculture and engineering the shelf closest to how people here actually
  * live and work.
  *
  * Every other subject in the Lab explains something a student will meet in an
  * exam. This one explains machines they may already have in the village: a pump
  * somebody pedals to get water onto a dry field, and a pit that turns animal
  * waste into the gas a family cooks on. Both are cheap, both are widespread in
- * Cambodia, and both are almost never explained — they are just there.
+ * Cambodia, and both are almost never explained they are just there.
  *
  * Units are the Lab's usual **1 unit ≈ 1 cm**.
  */
@@ -41,7 +42,7 @@ function hl(isSel: boolean, anySel: boolean) {
  * A treadle pump: two cylinders, two pedals, and a person's weight.
  *
  * The mechanism is a pair of lift pumps worked alternately, which is why it can
- * deliver a steady flow instead of a pulse — one cylinder is always pushing
+ * deliver a steady flow instead of a pulse one cylinder is always pushing
  * while the other is filling. Everything about it is deliberately simple enough
  * to repair in a village: no seals that cannot be re-cut, no parts that are not
  * pipe.
@@ -50,7 +51,7 @@ function hl(isSel: boolean, anySel: boolean) {
  * that only opens upward, so water that has been lifted cannot fall back. Take
  * those away and the whole thing moves water up and down and delivers nothing.
  */
-export function TreadlePump({ layer, onPick, selected, running, knob }: MachineProps) {
+export function TreadlePump({ layer, detail, onPick, selected, running, knob }: MachineProps) {
   const left = useRef<Group>(null);
   const right = useRef<Group>(null);
   const beam = useRef<Group>(null);
@@ -84,11 +85,11 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
 
   return (
     <group position={[0, -20, 0]}>
-      {/* the water being pumped from — a pond, a canal, a shallow well */}
+      {/* the water being pumped from a pond, a canal, a shallow well */}
       {!pipesOnly && (
         <mesh position={[0, -44, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[200, 120]} />
-          <meshPhysicalMaterial color={WATER} roughness={0.18} transparent opacity={0.7}
+          <LabTissueMaterial detail={detail} kind="water" color={WATER} roughness={0.18} transparent opacity={0.7}
             side={DoubleSide} />
         </mesh>
       )}
@@ -97,7 +98,7 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
       {!pipesOnly && [-1, 1].map((s) => (
         <mesh key={s} position={[s * 26, 12, 0]} onClick={pick("frame")} castShadow>
           <boxGeometry args={[4, 76, 4]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.5} metalness={0.6}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.5} metalness={0.6}
             {...hl(selected === "frame", any)} />
         </mesh>
       ))}
@@ -106,7 +107,7 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
       {[-1, 1].map((s) => (
         <mesh key={s} position={[s * 13, 6, 0]} onClick={pick("cylinder")}>
           <cylinderGeometry args={[6.5, 6.5, 56, 20, 1, true]} />
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="metal"
             color={STEEL} roughness={0.35} metalness={0.7} side={DoubleSide}
             {...(cut
               ? { transparent: true, opacity: selected === "cylinder" ? 0.5 : 0.2, depthWrite: false }
@@ -120,22 +121,22 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
         <group key={k} ref={ref} position={[s * 13, 14, 0]}>
           <mesh onClick={pick("piston")} castShadow>
             <cylinderGeometry args={[6.2, 6.2, 7, 18]} />
-            <meshPhysicalMaterial color={BAMBOO} roughness={0.55}
+            <LabTissueMaterial detail={detail} kind="wood" color={BAMBOO} roughness={0.55}
               {...hl(selected === "piston", any)} />
           </mesh>
           <mesh position={[0, 22, 0]}>
             <cylinderGeometry args={[1.3, 1.3, 40, 10]} />
-            <meshPhysicalMaterial color={STEEL_DARK} roughness={0.4} metalness={0.8}
+            <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.4} metalness={0.8}
               {...hl(selected === "piston", any)} />
           </mesh>
         </group>
       ))}
 
-      {/* foot valves — the reason the water stays up */}
+      {/* foot valves the reason the water stays up */}
       {[-1, 1].map((s) => (
         <mesh key={s} position={[s * 13, -21, 0]} onClick={pick("valve")}>
           <cylinderGeometry args={[5.6, 4.2, 4, 16]} />
-          <meshPhysicalMaterial color="#b5563f" roughness={0.4} metalness={0.4}
+          <LabTissueMaterial detail={detail} kind="metal" color="#b5563f" roughness={0.4} metalness={0.4}
             {...hl(selected === "valve", any)} />
         </mesh>
       ))}
@@ -145,18 +146,18 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
         {[-1, 1].map((s) => (
           <mesh key={s} position={[s * 13, -34, 0]}>
             <cylinderGeometry args={[3.4, 3.4, 26, 14]} />
-            <meshPhysicalMaterial color={STEEL_DARK} roughness={0.45} metalness={0.6}
+            <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.45} metalness={0.6}
               {...hl(selected === "pipes", any)} />
           </mesh>
         ))}
         <mesh position={[0, 34, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[3.4, 3.4, 26, 14]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.45} metalness={0.6}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.45} metalness={0.6}
             {...hl(selected === "pipes", any)} />
         </mesh>
         <mesh position={[16, 30, 0]}>
           <cylinderGeometry args={[3.4, 3.4, 12, 14]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.45} metalness={0.6}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.45} metalness={0.6}
             {...hl(selected === "pipes", any)} />
         </mesh>
       </group>
@@ -164,7 +165,7 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
       {/* water leaving the spout, only while a piston is delivering */}
       <mesh ref={jet} position={[16, 12, 0]}>
         <cylinderGeometry args={[2.6, 3.4, 24, 12]} />
-        <meshPhysicalMaterial color={WATER} roughness={0.12} transmission={0.6}
+          <LabTissueMaterial detail={detail} kind="water" color={WATER} roughness={0.12} transmission={0.6}
           thickness={2} transparent opacity={0.8} />
       </mesh>
 
@@ -174,13 +175,13 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
           {[-1, 1].map((s) => (
             <mesh key={s} position={[s * 22, s * 3.4, 0]} rotation={[0, 0, 0]} castShadow>
               <boxGeometry args={[52, 3, 11]} />
-              <meshPhysicalMaterial color={BAMBOO} roughness={0.7}
+              <LabTissueMaterial detail={detail} kind="wood" color={BAMBOO} roughness={0.7}
                 {...hl(selected === "treadle", any)} />
             </mesh>
           ))}
           <mesh>
             <cylinderGeometry args={[2.4, 2.4, 16, 12]} />
-            <meshPhysicalMaterial color={STEEL_DARK} roughness={0.4} metalness={0.8} />
+            <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.4} metalness={0.8} />
           </mesh>
         </group>
       )}
@@ -189,7 +190,7 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
         <b>{Math.round(litres)} litres a minute</b>
         <span>one person, no fuel, water lifted about 7 metres</span>
       </Readout>
-      {cut && <Readout at={[-46, -22, 0]}>foot valve — opens upward only</Readout>}
+      {cut && <Readout at={[-46, -22, 0]}>foot valve opens upward only</Readout>}
     </group>
   );
 }
@@ -201,7 +202,7 @@ export function TreadlePump({ layer, onPick, selected, running, knob }: MachineP
  * other.
  *
  * This is the exhibit that ties the Lab together. What comes out of the pit is
- * methane — the same molecule that has its own exhibit — and burning it on the
+ * methane the same molecule that has its own exhibit and burning it on the
  * stove is the same reaction as the "Making fire" experiment. A student can
  * follow one substance from a heap of manure to a blue flame under a pot
  * without leaving the Lab.
@@ -262,7 +263,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
       {!cut && (
         <mesh position={[0, 6, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[210, 150]} />
-          <meshStandardMaterial color={EARTH} roughness={1} />
+          <LabTissueMaterial detail={detail} kind="earth" color={EARTH} roughness={1} />
         </mesh>
       )}
 
@@ -270,7 +271,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
       <group onClick={pick("tank")}>
         <mesh position={[0, -18, 0]}>
           <cylinderGeometry args={[34, 30, 34, 28, 1, true]} />
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="ceramic"
             color="#8b8377" roughness={0.85} side={DoubleSide}
             {...(cut
               ? { transparent: true, opacity: 0.18, depthWrite: false }
@@ -279,7 +280,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
         </mesh>
         <mesh position={[0, -1, 0]}>
           <sphereGeometry args={[34, 26, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
-          <meshPhysicalMaterial
+          <LabTissueMaterial detail={detail} kind="ceramic"
             color="#9a9184" roughness={0.85} side={DoubleSide}
             {...(cut
               ? { transparent: true, opacity: 0.18, depthWrite: false }
@@ -293,8 +294,8 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
         <>
           <mesh position={[0, -22, 0]} onClick={pick("slurry")}>
             <cylinderGeometry args={[32, 29, 26, 24]} />
-            <meshPhysicalMaterial
-              color={SLURRY} roughness={0.8}
+            <LabTissueMaterial detail={detail} kind="organ"
+            color={SLURRY} roughness={0.8}
               {...hl(selected === "slurry", any)}
               transparent
               opacity={selected && selected !== "slurry" ? 0.3 : 0.85}
@@ -302,8 +303,8 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
           </mesh>
           <mesh position={[0, 4, 0]} onClick={pick("gas")}>
             <sphereGeometry args={[30, 22, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshPhysicalMaterial
-              color={GAS} roughness={0.1}
+            <LabTissueMaterial detail={detail} kind="water"
+            color={GAS} roughness={0.1}
               {...hl(selected === "gas", any)}
               transparent
               opacity={selected === "gas" ? 0.5 : 0.28}
@@ -311,7 +312,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
           </mesh>
           <instancedMesh ref={bubbles} args={[undefined, undefined, COUNT]}>
             <sphereGeometry args={[2.2, 8, 6]} />
-            <meshPhysicalMaterial color={GAS} roughness={0.05} transparent opacity={0.75} />
+            <LabTissueMaterial detail={detail} kind="water" color={GAS} roughness={0.05} transparent opacity={0.75} />
           </instancedMesh>
         </>
       )}
@@ -320,7 +321,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
       <group onClick={pick("inlet")}>
         <mesh position={[-46, 2, 0]} rotation={[0, 0, 0.5]}>
           <cylinderGeometry args={[7, 7, 34, 14]} />
-          <meshPhysicalMaterial color="#8b8377" roughness={0.85}
+          <LabTissueMaterial detail={detail} kind="ceramic" color="#8b8377" roughness={0.85}
             {...hl(selected === "inlet", any)} />
         </mesh>
       </group>
@@ -329,7 +330,7 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
       <group onClick={pick("outlet")}>
         <mesh position={[46, 2, 0]} rotation={[0, 0, -0.5]}>
           <cylinderGeometry args={[7, 7, 34, 14]} />
-          <meshPhysicalMaterial color="#8b8377" roughness={0.85}
+          <LabTissueMaterial detail={detail} kind="ceramic" color="#8b8377" roughness={0.85}
             {...hl(selected === "outlet", any)} />
         </mesh>
       </group>
@@ -338,17 +339,17 @@ export function BiogasDigester({ layer, detail, onPick, selected, running, knob 
       <group onClick={pick("stove")}>
         <mesh position={[0, 30, 0]}>
           <cylinderGeometry args={[2.2, 2.2, 34, 12]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.4} metalness={0.7}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.4} metalness={0.7}
             {...hl(selected === "stove", any)} />
         </mesh>
         <mesh position={[26, 47, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[2.2, 2.2, 52, 12]} />
-          <meshPhysicalMaterial color={STEEL_DARK} roughness={0.4} metalness={0.7}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL_DARK} roughness={0.4} metalness={0.7}
             {...hl(selected === "stove", any)} />
         </mesh>
         <mesh position={[52, 42, 0]} castShadow>
           <cylinderGeometry args={[12, 13, 8, 20]} />
-          <meshPhysicalMaterial color={STEEL} roughness={0.45} metalness={0.6}
+          <LabTissueMaterial detail={detail} kind="metal" color={STEEL} roughness={0.45} metalness={0.6}
             {...hl(selected === "stove", any)} />
         </mesh>
       </group>

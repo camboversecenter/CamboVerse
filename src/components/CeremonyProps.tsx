@@ -7,7 +7,7 @@ import type { PropKind, PropPlacement } from "../ceremony";
 import type { Detail } from "./LabOrgans";
 
 /**
- * The **ceremony prop kit** — everything the app supplies so that a family only
+ * The **ceremony prop kit** everything the app supplies so that a family only
  * has to bring photographs.
  *
  * These recur across almost every Khmer ceremony, which is exactly why they are
@@ -28,7 +28,7 @@ import type { Detail } from "./LabOrgans";
  * These are recognisable rather than accurate. Real ceremonial trays are
  * silverwork with detail no procedural mesh is going to reach, and the folded
  * banana-leaf work is an art form in itself. What is right here is the size, the
- * arrangement and the count — which is what a scene needs in order to read as
+ * arrangement and the count which is what a scene needs in order to read as
  * the right ceremony rather than a generic party.
  */
 
@@ -65,7 +65,7 @@ export function Pavilion({ detail, w = 8, d = 8 }: { detail: Detail; w?: number;
 
       {/* One four-sided cone is the hipped canopy: a square pyramid with its
           base on the eave line. Two things here were wrong the first time and
-          both are easy to repeat — a cone is centred on its own origin, so it
+          both are easy to repeat a cone is centred on its own origin, so it
           has to be lifted by half its height or the eave hangs below the posts
           it is supposed to sit on; and a 4-gon cone puts a *corner* on the +X
           axis, so without the 45° turn the marquee stands diagonally to its own
@@ -86,7 +86,7 @@ export function Pavilion({ detail, w = 8, d = 8 }: { detail: Detail; w?: number;
         />
       </mesh>
 
-      {/* The valance hanging from the eave — the detail that says "hired
+      {/* The valance hanging from the eave the detail that says "hired
           marquee" rather than "carport" at a glance. */}
       {([[0, -hd, 0], [0, hd, 0], [-hw, 0, Math.PI / 2], [hw, 0, Math.PI / 2]] as const).map(
         ([x, z, r], i) => (
@@ -103,7 +103,7 @@ export function Pavilion({ detail, w = 8, d = 8 }: { detail: Detail; w?: number;
 /* ------------------------------------------------------------ the offering --- */
 
 /**
- * A pedestal tray. The single most recurrent object in Khmer ceremonial life —
+ * A pedestal tray. The single most recurrent object in Khmer ceremonial life  
  * food, flowers, betel, folded leaves, all raised off the ground on a footed
  * stand because offerings are not set down flat.
  */
@@ -247,7 +247,7 @@ function MonkSeating({ detail, seats = 4 }: { detail: Detail; seats?: number }) 
   );
 }
 
-/** A woven floor mat — where most of a Khmer ceremony actually takes place. */
+/** A woven floor mat where most of a Khmer ceremony actually takes place. */
 function FloorMat({ detail }: { detail: Detail }) {
   return (
     <group>
@@ -305,7 +305,7 @@ function Parasol({ detail }: { detail: Detail }) {
   );
 }
 
-/** A skor — the barrel drum that leads the procession. */
+/** A skor the barrel drum that leads the procession. */
 function Drum({ detail }: { detail: Detail }) {
   return (
     <group>
@@ -400,7 +400,7 @@ function BananaStem({ detail }: { detail: Detail }) {
         <cylinderGeometry args={[0.13, 0.16, 0.68, seg(detail, 8, 16)]} />
         <meshStandardMaterial color="#8fa860" roughness={0.85} />
       </mesh>
-      {/* Folded leaf points around the rim — the sluk chek work, schematically. */}
+      {/* Folded leaf points around the rim the sluk chek work, schematically. */}
       {Array.from({ length: points }, (_, i) => {
         const a = (i / points) * Math.PI * 2;
         return (
@@ -475,7 +475,7 @@ const PROP_SIZE: Record<PropKind, number> = {
   "low-table": 1.02, "parasol": 1.7, "drum": 0.8, "gift-box": 0.38, "water-vessel": 0.32,
 };
 
-/** How far a moment's staging reaches from the centre — the radius to frame. */
+/** How far a moment's staging reaches from the centre the radius to frame. */
 export function stagingRadius(staging: PropPlacement[]): number {
   let r = 0;
   for (const p of staging) {
@@ -510,7 +510,7 @@ export function Staging({
         return (
           <group key={`${p.kind}-${pi}`}>
             {/* Anything staged above the ground is staged on *something*. The
-                templates place trays at 0.8 m and blessing candles at 0.5 m —
+                templates place trays at 0.8 m and blessing candles at 0.5 m  
                 waist and table height, because in life a person is holding them
                 or a table is under them. With no people modelled yet, that
                 height reads as a bug: a row of candles hanging in mid-air. So

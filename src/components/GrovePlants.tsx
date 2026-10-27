@@ -10,19 +10,19 @@ import { barkTexture } from "../lib/groundTexture";
 /**
  * Procedurally grown plants for the Grove Garden.
  *
- * Every plant is generated from its species and its measured growth stage — a
+ * Every plant is generated from its species and its measured growth stage a
  * recursively branched skeleton merged into a single mesh, a canopy of instanced
  * leaf clumps, folded-ribbon fronds for palms and bananas. All of it is built at
  * runtime from primitives: no model files, no textures to download, and a whole
  * tree costs about three draw calls, so a plot still runs on a low-end phone.
  *
  * Generation is seeded, so a given plant looks the same on every device and
- * every reload — but no two trees in a garden are identical.
+ * every reload but no two trees in a garden are identical.
  */
 
 /* ------------------------------------------------------------------ util --- */
 
-/** Deterministic PRNG — same tree, every device, every reload. */
+/** Deterministic PRNG same tree, every device, every reload. */
 function rng(seed: number) {
   let t = seed >>> 0;
   return () => {
@@ -36,7 +36,7 @@ function rng(seed: number) {
 const UP = new Vector3(0, 1, 0);
 
 /**
- * A folded ribbon along a curve — the shape of a palm frond or a banana leaf.
+ * A folded ribbon along a curve the shape of a palm frond or a banana leaf.
  * Each rib gets a raised centre so the blade reads as a V-section catching light
  * on one side, not a flat card.
  */
@@ -131,7 +131,7 @@ function buildTree(shape: TreeShape, height: number, seed: number) {
       // Rotate `dir` out by `tilt` around an axis perpendicular to it.
       const axis = new Vector3(Math.cos(az), 0, Math.sin(az)).cross(dir).normalize();
       const nd = dir.clone().applyAxisAngle(axis.lengthSq() < 1e-6 ? UP : axis, tilt).normalize();
-      // Branches keep some upward bias — real limbs reach for the light.
+      // Branches keep some upward bias real limbs reach for the light.
       nd.y += 0.18;
       nd.normalize();
       grow(end, nd, len * (0.62 + rand() * 0.16), r1, depth - 1);
@@ -149,7 +149,7 @@ function buildTree(shape: TreeShape, height: number, seed: number) {
 
 /* ------------------------------------------------------------- the canopy --- */
 
-/** Leaf clumps as instanced blobs — one draw call for a whole crown. */
+/** Leaf clumps as instanced blobs one draw call for a whole crown. */
 function Canopy({
   tips, radius, colorA, colorB, seed, detail = 1, flatten = 1,
 }: {
@@ -192,7 +192,7 @@ function Canopy({
   );
 }
 
-/** Fruit as one instanced batch — a tree's whole crop costs a single draw call. */
+/** Fruit as one instanced batch a tree's whole crop costs a single draw call. */
 function Fruits({
   at, radius, color, stretch = 1,
 }: {
@@ -221,7 +221,7 @@ function Fruits({
 }
 
 /**
- * Merge a plant's blades into one geometry per colour — a palm crown goes from
+ * Merge a plant's blades into one geometry per colour a palm crown goes from
  * nine draw calls to two, which is what keeps this affordable on a cheap phone.
  */
 function mergedBlades(
@@ -272,7 +272,7 @@ export interface PlantLook {
   fruit?: { color: string; size: number; where: "canopy" | "trunk"; count: number };
 }
 
-/** Gentle wind — the whole plant leans and recovers, phase-offset per plant. */
+/** Gentle wind the whole plant leans and recovers, phase-offset per plant. */
 function useWind(ref: React.RefObject<Group | null>, amount: number, seed: number) {
   useFrame(({ clock }) => {
     const g = ref.current;
@@ -303,7 +303,7 @@ export function BroadleafPlant({
     const out: Vector3[] = [];
     for (let i = 0; i < fruit.count; i++) {
       if (fruit.where === "trunk") {
-        // Cauliflory — jackfruit hangs its fruit straight off the trunk.
+        // Cauliflory jackfruit hangs its fruit straight off the trunk.
         const a = rand() * Math.PI * 2;
         const r = height * 0.028 * shape.girth;
         out.push(new Vector3(Math.cos(a) * r, height * (0.12 + rand() * 0.3), Math.sin(a) * r));
@@ -331,7 +331,7 @@ export function BroadleafPlant({
   );
 }
 
-/** Geometry for one arching blade — a folded ribbon along a rising, drooping curve. */
+/** Geometry for one arching blade a folded ribbon along a rising, drooping curve. */
 function bladeGeometry(length: number, width: number, droop: number, taper = 0.25): BufferGeometry {
   const n = 8;
   const pts: Vector3[] = [];
@@ -438,7 +438,7 @@ export function BananaPlant({
   const leaves = 7;
   return (
     <group ref={ref}>
-      {/* pseudostem — sheathed leaf bases, not wood */}
+      {/* pseudostem sheathed leaf bases, not wood */}
       <mesh position={[0, height * 0.32, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[height * 0.045, height * 0.07, height * 0.64, 9]} />
         <meshStandardMaterial color={look.bark} roughness={0.85} transparent={opacity < 1} opacity={opacity} />
@@ -481,7 +481,7 @@ export function PapayaPlant({
   );
 }
 
-/** A young plant that hasn't made a trunk yet — a few leaves out of the soil. */
+/** A young plant that hasn't made a trunk yet a few leaves out of the soil. */
 export function Seedling({ look, height, seed, opacity }: { look: PlantLook; height: number; seed: number; opacity: number }) {
   const n = 5;
   return (

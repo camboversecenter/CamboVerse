@@ -1,7 +1,7 @@
 /**
  * Compose a keepsake "postcard" PNG from a source canvas (a try-on snapshot),
  * framed in warm silk with a Khmer + English caption. Shared by the Fashion and
- * Sak Yant try-on experiences. Self-contained — draws with the Canvas 2D API and
+ * Sak Yant try-on experiences. Self-contained draws with the Canvas 2D API and
  * returns a data URL the visitor can save; nothing is uploaded.
  */
 export function makePostcard(

@@ -1,7 +1,7 @@
 import { CanvasTexture, RepeatWrapping, SRGBColorSpace, type Texture } from "three";
 
 /**
- * Procedural surfaces for the NUM International Campus — paving, facades,
+ * Procedural surfaces for the NUM International Campus paving, facades,
  * window bands, ribbed metal roofing, the running track, and signage lettering.
  * All drawn on a canvas at runtime: no image files, no CDN, nothing to download
  * (the self-contained rule), and cached so each is built once per page.
@@ -72,11 +72,11 @@ export function paveTexture(repeat = 12): Texture {
 }
 
 /**
- * Radial "sunburst" plaza paving — wedge slabs radiating from a centre point,
+ * Radial "sunburst" plaza paving wedge slabs radiating from a centre point,
  * for a circular platform. Meant for a single non-repeating `circleGeometry`:
  * its default UVs put the centre at (0.5, 0.5) and the rim at the texture
  * edge, so the wedges/rings drawn here line up with the geometry's own
- * radius automatically — no custom UV work needed, unlike a tiling texture.
+ * radius automatically no custom UV work needed, unlike a tiling texture.
  */
 export function radialPaveTexture(wedges = 28): Texture {
   return tex(`radial:${wedges}`, 512, (ctx, s) => {
@@ -263,7 +263,7 @@ export function glazingTexture(bays = 18): Texture {
   }, [1, 1]);
 }
 
-/** Ribbed metal roofing — the campus's signature red roofs. */
+/** Ribbed metal roofing the campus's signature red roofs. */
 export function roofTexture(color = "#b23a34", ribs = 40, repeat: [number, number] = [1, 1]): Texture {
   return tex(`roof:${color}:${ribs}:${repeat.join("x")}`, 256, (ctx, s) => {
     ctx.fillStyle = color;
@@ -279,7 +279,7 @@ export function roofTexture(color = "#b23a34", ribs = 40, repeat: [number, numbe
 }
 
 /**
- * Signage lettering drawn to a transparent texture — used for the entrance
+ * Signage lettering drawn to a transparent texture used for the entrance
  * monument and building name boards. Text is baked at runtime, so no font file
  * is downloaded and it stays crisp on the plane it's mapped to.
  */

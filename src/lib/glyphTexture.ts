@@ -28,7 +28,7 @@ export function makeGlyphTexture(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // The glyph, large, in the chosen Khmer font — shrunk to fit the card width.
+  // The glyph, large, in the chosen Khmer font shrunk to fit the card width.
   ctx.fillStyle = fg;
   let fontSize = Math.round(size * 0.56);
   ctx.font = `${fontSize}px "${opts.family}"`;

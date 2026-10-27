@@ -1,0 +1,198 @@
+{
+  "license": "CC-BY-4.0",
+  "attribution": "CamboVerse contributors",
+  "assets": [
+    {
+      "asset": "house",
+      "mode": "normal",
+      "triangles": 1144,
+      "bytes": 104524
+    },
+    {
+      "asset": "house-blue",
+      "mode": "normal",
+      "triangles": 1184,
+      "bytes": 107940
+    },
+    {
+      "asset": "house-kitchen",
+      "mode": "normal",
+      "triangles": 1192,
+      "bytes": 109048
+    },
+    {
+      "asset": "fence",
+      "mode": "normal",
+      "triangles": 120,
+      "bytes": 12556
+    },
+    {
+      "asset": "jar",
+      "mode": "normal",
+      "triangles": 264,
+      "bytes": 20024
+    },
+    {
+      "asset": "bench",
+      "mode": "normal",
+      "triangles": 72,
+      "bytes": 8060
+    },
+    {
+      "asset": "basket",
+      "mode": "normal",
+      "triangles": 44,
+      "bytes": 4712
+    },
+    {
+      "asset": "palm",
+      "mode": "normal",
+      "triangles": 315,
+      "bytes": 32116
+    },
+    {
+      "asset": "tree",
+      "mode": "normal",
+      "triangles": 580,
+      "bytes": 59168
+    },
+    {
+      "asset": "hall",
+      "mode": "normal",
+      "triangles": 420,
+      "bytes": 39176
+    },
+    {
+      "asset": "stupa",
+      "mode": "normal",
+      "triangles": 308,
+      "bytes": 28948
+    },
+    {
+      "asset": "buffalo",
+      "mode": "normal",
+      "triangles": 540,
+      "bytes": 53668
+    },
+    {
+      "asset": "road",
+      "mode": "normal",
+      "triangles": 60,
+      "bytes": 6896
+    },
+    {
+      "asset": "plot",
+      "mode": "normal",
+      "triangles": 24,
+      "bytes": 3552
+    },
+    {
+      "asset": "pond",
+      "mode": "normal",
+      "triangles": 676,
+      "bytes": 57120
+    },
+    {
+      "asset": "paddy",
+      "mode": "normal",
+      "triangles": 636,
+      "bytes": 86452
+    },
+    {
+      "asset": "house",
+      "mode": "ultra",
+      "triangles": 2516,
+      "bytes": 214136
+    },
+    {
+      "asset": "house-blue",
+      "mode": "ultra",
+      "triangles": 2588,
+      "bytes": 219856
+    },
+    {
+      "asset": "house-kitchen",
+      "mode": "ultra",
+      "triangles": 2564,
+      "bytes": 218660
+    },
+    {
+      "asset": "fence",
+      "mode": "ultra",
+      "triangles": 144,
+      "bytes": 14812
+    },
+    {
+      "asset": "jar",
+      "mode": "ultra",
+      "triangles": 440,
+      "bytes": 32600
+    },
+    {
+      "asset": "bench",
+      "mode": "ultra",
+      "triangles": 72,
+      "bytes": 8060
+    },
+    {
+      "asset": "basket",
+      "mode": "ultra",
+      "triangles": 716,
+      "bytes": 67200
+    },
+    {
+      "asset": "palm",
+      "mode": "ultra",
+      "triangles": 2241,
+      "bytes": 212028
+    },
+    {
+      "asset": "tree",
+      "mode": "ultra",
+      "triangles": 1620,
+      "bytes": 157988
+    },
+    {
+      "asset": "hall",
+      "mode": "ultra",
+      "triangles": 1876,
+      "bytes": 153524
+    },
+    {
+      "asset": "stupa",
+      "mode": "ultra",
+      "triangles": 660,
+      "bytes": 60284
+    },
+    {
+      "asset": "buffalo",
+      "mode": "ultra",
+      "triangles": 1404,
+      "bytes": 133832
+    },
+    {
+      "asset": "road",
+      "mode": "ultra",
+      "triangles": 84,
+      "bytes": 9156
+    },
+    {
+      "asset": "plot",
+      "mode": "ultra",
+      "triangles": 24,
+      "bytes": 3552
+    },
+    {
+      "asset": "pond",
+      "mode": "ultra",
+      "triangles": 1836,
+      "bytes": 145396
+    },
+    {
+      "asset": "paddy",
+      "mode": "ultra",
+      "triangles": 3260,
+      "bytes": 378168
+    }
+  ]
+}

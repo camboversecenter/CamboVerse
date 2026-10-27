@@ -1,8 +1,8 @@
 /**
  * Keccak-256 against reference vectors.
  *
- * The digests below were produced by ethers' `id()` — the same function the CSB
- * side uses to compute a plot key — so a mismatch here means CamboVerse would
+ * The digests below were produced by ethers' `id()` the same function the CSB
+ * side uses to compute a plot key so a mismatch here means CamboVerse would
  * ask the chain about a plot that does not exist and quietly render every grove
  * as unanchored. That failure is invisible without this test, which is the
  * reason it exists.
@@ -33,7 +33,7 @@ describe("keccak256", () => {
     });
   }
 
-  it("is not SHA3-256 — the padding byte differs and the digest is unrelated", async () => {
+  it("is not SHA3-256 the padding byte differs and the digest is unrelated", async () => {
     // If someone ever 'simplifies' this to Web Crypto or Node's sha3-256, this
     // fails rather than silently returning a key the chain has never seen.
     const sha3 = "0x3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532"; // SHA3-256("abc")

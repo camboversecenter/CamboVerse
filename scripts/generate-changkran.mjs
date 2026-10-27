@@ -1,5 +1,5 @@
 /**
- * public/models/changkran.glb — ចង្ក្រាន (changkran), a traditional Khmer clay
+ * public/models/changkran.glb - ចង្ក្រាន (changkran), a traditional Khmer clay
  * cookstove: a bucket-shaped fired-clay body with an arched fuel mouth at the
  * front, a sunken fire chamber, three pot supports on the rim, and a lidded clay
  * cookpot resting on top. Warm terracotta with sooty darkening around the fire.

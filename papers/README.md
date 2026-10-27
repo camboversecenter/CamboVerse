@@ -7,7 +7,7 @@ This folder contains research papers, publications, and scholarly works related 
 ### The Virtual Precinct: Place-Anchored Retail, Encounter-Based Demand, and Ground Rent as Platform Value Capture
 
 - **DOI:** https://dx.doi.org/10.2139/ssrn.7414718
-- **File:** The Virtual Precinct - Place-Anchored Retail, Encounter-Based Demand, and Ground Rent as Platform Value Capture — A CamboVerse Case.pdf
+- **File:** The Virtual Precinct - Place-Anchored Retail, Encounter-Based Demand, and Ground Rent as Platform Value Capture - A CamboVerse Case.pdf
 - **Description:** A case study examining how CamboVerse enables place-anchored retail through virtual commerce infrastructure, with analysis of encounter-based demand mechanisms and platform value capture through ground rent economics.
 
 ### Trees, Not Tonnes: Survival-Linked Settlement for Smallholder Green Finance

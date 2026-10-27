@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { drawYantra, YANTRAS } from "../sakyant";
 import { claimCredential } from "../lib/identity";
 import { makePostcard } from "../lib/postcard";
+import { useYantraArtwork } from "./useYantraArtwork";
 
 /**
  * Preview a yant on your own skin. The front camera runs a live feed and the
- * chosen yant is composited on top as "ink" (multiply blend) — drag to place it,
+ * chosen yant is composited on top as "ink" (multiply blend) drag to place it,
  * and use the sliders to size and rotate. No camera? A faux-skin panel stands in
  * so the preview still works. Everything runs on-device: nothing is uploaded,
- * and the snapshot is yours to keep. A preview is not a real Sak Yant — the hub
+ * and the snapshot is yours to keep. A preview is not a real Sak Yant the hub
  * points you to a genuine master to receive a blessed one.
  */
 const INKS = [
@@ -16,11 +17,12 @@ const INKS = [
   { id: "red", label: "Red", color: "#7c1f16" },
 ];
 
-export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose: () => void }) {
-  const [inkI, setInkI] = useState(0);
+export function SakYantTryOn({ yantraId, onClose, initialInk = 0 }: { yantraId: string; onClose: () => void; initialInk?: number }) {
+  const [inkI, setInkI] = useState(initialInk);
   const [scale, setScale] = useState(0.5);
   const [rot, setRot] = useState(0);
-  const [hasCam, setHasCam] = useState<boolean | null>(null);
+  const [hasCam, setHasCam] = useState<boolean | null>(false);
+  const [cameraRequested, setCameraRequested] = useState(false);
   const [postcard, setPostcard] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -36,6 +38,7 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
   rotRef.current = rot;
 
   const ink = INKS[inkI].color;
+  const {ready:artReady,error:artError,retry:retryArt}=useYantraArtwork(yantraId);
 
   // Pre-render the yant to a transparent decal canvas (re-made when it changes).
   const decal = useMemo(() => {
@@ -43,19 +46,20 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
     d.width = 512;
     d.height = 512;
     const ctx = d.getContext("2d");
-    if (ctx) {
+    if (ctx && artReady) {
       ctx.translate(256, 256);
       drawYantra(ctx, yantraId, 470, ink);
     }
     return d;
-  }, [yantraId, ink]);
+  }, [yantraId, ink, artReady]);
   const decalRef = useRef(decal);
   decalRef.current = decal;
 
-  // Camera + render loop (the loop also drives the faux-skin fallback).
+  // Camera is opt-in. Stop tracks on close, denial, or switching back to swatch.
   useEffect(() => {
+    if (!cameraRequested) return;
     let live = true;
-
+    setHasCam(null);
     (async () => {
       try {
         if (!navigator.mediaDevices?.getUserMedia) throw new Error("no camera");
@@ -70,13 +74,27 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
         streamRef.current = stream;
         const v = videoRef.current!;
         v.srcObject = stream;
-        await v.play().catch(() => {});
-        setHasCam(true);
+        await v.play();
+        if (live) setHasCam(true);
       } catch {
-        if (live) setHasCam(false);
+        if (live) {
+          streamRef.current?.getTracks().forEach(t=>t.stop());
+          streamRef.current=null;
+          setHasCam(false);
+          setCameraRequested(false);
+        }
       }
     })();
+    return () => {
+      live=false;
+      streamRef.current?.getTracks().forEach(t=>t.stop());
+      streamRef.current=null;
+      if(videoRef.current) videoRef.current.srcObject=null;
+    };
+  },[cameraRequested]);
 
+  useEffect(() => {
+    let live = true;
     const loop = () => {
       if (!live) return;
       const canvas = canvasRef.current;
@@ -84,9 +102,12 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
       if (canvas) {
         const ctx = canvas.getContext("2d");
         const live2d = ctx != null;
-        const camReady = video && video.readyState >= 2 && video.videoWidth > 0;
-        const w = camReady ? video!.videoWidth : 720;
-        const h = camReady ? video!.videoHeight : 960;
+        const camReady = streamRef.current && video && video.readyState >= 2 && video.videoWidth > 0;
+        // Match visible aspect ratio so a dragged mark stays under the pointer.
+        const rect=canvas.getBoundingClientRect();
+        const resolution=Math.min(1.5,960/Math.max(rect.width,rect.height,1));
+        const w=Math.max(1,Math.round(rect.width*resolution));
+        const h=Math.max(1,Math.round(rect.height*resolution));
         if (canvas.width !== w) canvas.width = w;
         if (canvas.height !== h) canvas.height = h;
         if (live2d) {
@@ -95,7 +116,9 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
             ctx.save();
             ctx.translate(w, 0);
             ctx.scale(-1, 1);
-            ctx.drawImage(video!, 0, 0, w, h);
+            const zoom=Math.max(w/video!.videoWidth,h/video!.videoHeight);
+            const vw=video!.videoWidth*zoom,vh=video!.videoHeight*zoom;
+            ctx.drawImage(video!, (w-vw)/2, (h-vh)/2, vw, vh);
             ctx.restore();
           } else {
             // faux-skin gradient stand-in
@@ -152,7 +175,7 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
   const snap = () => {
     const src = canvasRef.current;
     if (!src) return;
-    setPostcard(makePostcard(src, "សាក់យ័ន្ត", "My Sak Yant preview · CamboVerse"));
+    setPostcard(makePostcard(src, "សាក់យ័ន្ត", "Illustrative study · inscriptions omitted · CamboVerse"));
     if (!claimedRef.current) {
       claimedRef.current = true;
       claimCredential("sakyant:tried-it-on", `yant:${yantraId}`).catch(() => {});
@@ -167,6 +190,8 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
       <canvas
         ref={canvasRef}
         className="sy-canvas"
+        role="img"
+        aria-label={`${name} placement preview`}
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
@@ -175,17 +200,19 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
 
       <div className="tryon-top">
         <button className="backbtn" onClick={onClose}>✕ Close</button>
-        <span className="tryon-title">🪷 {name} — preview</span>
+        <span className="tryon-title">🪷 {name} preview</span>
       </div>
 
       {hasCam === false && (
-        <div className="sy-cam-note">Camera off — previewing on a skin swatch. Drag the yant to place it.</div>
+        <div className="sy-cam-note">Camera off previewing on a skin swatch. Drag the yant to place it.</div>
       )}
-      {hasCam !== false && (
-        <div className="sy-cam-note">Drag the yant onto your skin. Runs on your phone — nothing is uploaded.</div>
+      {hasCam === null && <div className="sy-cam-note">Waiting for camera permission. The swatch stays available.</div>}
+      {hasCam === true && (
+        <div className="sy-cam-note">Drag the yant onto your skin. Runs on your phone nothing is uploaded.</div>
       )}
 
       <div className="tryon-controls">
+        {!artReady && <p role="status" className="tryon-note">{artError ? <button className="pc-close" onClick={retryArt}>Retry loading drawing</button> : 'Loading drawing…'}</p>}
         <div className="sy-inks">
           {INKS.map((k, i) => (
             <button
@@ -194,6 +221,7 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
               style={{ background: k.color }}
               onClick={() => setInkI(i)}
               aria-label={`${k.label} ink`}
+              aria-pressed={i === inkI}
               title={`${k.label} ink`}
             />
           ))}
@@ -207,11 +235,12 @@ export function SakYantTryOn({ yantraId, onClose }: { yantraId: string; onClose:
           <input type="range" min={-3.14} max={3.14} step={0.01} value={rot} onChange={(e) => setRot(+e.target.value)} />
         </label>
         <div className="tryon-actions">
-          <button className="tryon-snap" onClick={snap}>📸 Snapshot</button>
+          <button className="pc-close" onClick={()=>{posRef.current={x:0.5,y:0.5};setScale(0.5);setRot(0);}}>Reset placement</button>
+          <button className="pc-close" onClick={()=>{setCameraRequested(v=>!v);setHasCam(false);}}>{cameraRequested ? 'Use swatch' : 'Use camera'}</button>
+          <button className="tryon-snap" disabled={!artReady} onClick={snap}>📸 Snapshot</button>
         </div>
         <p className="tryon-note">
-          A preview only — a real Sak Yant is applied and blessed by a Khmer master. Find one under
-          “Get one for real”.
+          Original illustration with sacred inscriptions omitted. This flat preview does not track your body.
         </p>
       </div>
 

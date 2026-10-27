@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
 import type { FaceLandmarker } from "@mediapipe/tasks-vision";
 import { DAY_COLORS, type Outfit } from "../fashion";
 import { FashionFigure, SKIN_TONES, SKIN } from "./FashionFigure";
@@ -8,17 +8,17 @@ import { claimCredential } from "../lib/identity";
 import { makePostcard } from "../lib/postcard";
 
 /**
- * "Try it on" — let a visitor wear Khmer dress virtually, two ways:
+ * "Try it on" let a visitor wear Khmer dress virtually, two ways:
  *
  *  • Mirror (camera): the device's front camera plus MediaPipe FaceLandmarker
  *    (Apache-2.0, WASM + model vendored locally under /public/mediapipe) tracks
  *    the head *entirely on-device* and paints an apsara mkot crown, earrings, a
  *    gold collar, and a sbai onto the live selfie. Nothing is ever uploaded.
- *  • Avatar (no camera): dress a procedural figure — pick a skin tone and a
- *    colour — for phones without a camera, or for full privacy.
+ *  • Avatar (no camera): dress a procedural figure pick a skin tone and a
+ *    colour for phones without a camera, or for full privacy.
  *
  * Either way you can snap a postcard to keep. No AI server, no account, no data
- * leaving the phone — the try-on fits the $150-phone / 4G, self-contained,
+ * leaving the phone the try-on fits the $150-phone / 4G, self-contained,
  * consent-first brief.
  */
 type Sub = "mirror" | "avatar";
@@ -116,7 +116,7 @@ export function FashionTryOn({
       await video.play().catch(() => {});
 
       // Load the tracker lazily (WASM + model are only fetched when a visitor
-      // actually opens the mirror — protects the 4G budget).
+      // actually opens the mirror protects the 4G budget).
       try {
         const { FilesetResolver, FaceLandmarker } = await import("@mediapipe/tasks-vision");
         const fileset = await FilesetResolver.forVisionTasks("/mediapipe/wasm");
@@ -189,7 +189,7 @@ export function FashionTryOn({
                 {status === "loading" && <p>Opening the mirror… allow camera access to try it on.</p>}
                 {status === "denied" && (
                   <p>
-                    Camera access was declined. Nothing is ever uploaded — the mirror runs on your
+                    Camera access was declined. Nothing is ever uploaded the mirror runs on your
                     phone. You can dress an avatar instead.
                   </p>
                 )}
@@ -221,7 +221,7 @@ export function FashionTryOn({
               </mesh>
               <FashionFigure outfit={outfit} />
               <OrbitControls
-                enablePan={false}
+                enablePan
                 minDistance={1.8}
                 maxDistance={5}
                 maxPolarAngle={Math.PI / 1.9}
@@ -285,8 +285,8 @@ export function FashionTryOn({
         </div>
         <p className="tryon-note">
           {sub === "mirror"
-            ? "The mirror runs entirely on your phone — no photo is uploaded."
-            : "A private avatar — no camera used."}{" "}
+            ? "The mirror runs entirely on your phone no photo is uploaded."
+            : "A private avatar no camera used."}{" "}
           Head-tracking by MediaPipe (Apache-2.0).
         </p>
       </div>

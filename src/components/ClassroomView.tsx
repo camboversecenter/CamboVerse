@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import { LetterTile } from "./LetterTile";
@@ -13,7 +13,7 @@ import { KHMER_GROUPS, KHMER_FONTS, type KhmerShape, type KhmerLetter } from "..
 import { playLetterAudio } from "../lib/letterAudio";
 
 /**
- * The Khmer Alphabet Classroom — every Khmer letter as a 3D tile on a board,
+ * The Khmer Alphabet Classroom every Khmer letter as a 3D tile on a board,
  * shown in either the Normal or the Moul (ceremonial) shape using embedded
  * Google Khmer fonts. Tap a letter to study it in both shapes; explore in 3D or
  * step inside in VR. A calm place to learn to read Khmer.
@@ -224,7 +224,7 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
       ) : (
         <div className="cls-hint">
           <p>
-            <b>{group.title}</b> · {group.khmer} — {group.note}
+            <b>{group.title}</b> · {group.khmer} {group.note}
           </p>
           <p className="cls-hint-sub">
             Tap a letter to see it in both the <b>Normal</b> and <b>Moul</b> shapes. 🥽 or step inside in VR.
@@ -239,14 +239,14 @@ export function ClassroomView({ onBackToMap }: { onBackToMap: () => void }) {
   );
 }
 
-/** Flat-screen orbit controls — suppressed while a VR session is active. */
+/** Flat-screen orbit controls suppressed while a VR session is active. */
 function Nav() {
   const inXR = useXR((s) => s.session != null);
   if (inXR) return null;
   return (
     <OrbitControls
       makeDefault
-      enablePan={false}
+      enablePan
       minDistance={4}
       maxDistance={26}
       maxPolarAngle={Math.PI / 1.8}

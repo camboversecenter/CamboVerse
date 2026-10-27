@@ -1,7 +1,7 @@
-# Reference partner app — Angkor Treasure Hunt
+# Reference partner app Angkor Treasure Hunt
 
 A **worked example** of an independent app built entirely on the CamboVerse
-[`/v1` rails](../../docs/API.md). It is **not** part of the CamboVerse product —
+[`/v1` rails](../../docs/API.md). It is **not** part of the CamboVerse product  
 it's a starting point for ecosystem builders (startups, schools, museums) that
 shows how the open rails compose end-to-end.
 
@@ -22,18 +22,18 @@ A tiny "treasure hunt" over Angkor Wat that touches every rail:
 
 Key ideas it illustrates for partners:
 
-- **Identity is lazy and anonymous** — no account until the player first earns
+- **Identity is lazy and anonymous** no account until the player first earns
   something; passive browsing creates nothing.
-- **Credentials gate the reward** — the app *references* learning credentials to
+- **Credentials gate the reward** the app *references* learning credentials to
   unlock a reward, but never buys or sells them (they're non-monetary).
-- **The core never takes payment** — the reward is *routed* to a real in-region
+- **The core never takes payment** the reward is *routed* to a real in-region
   provider (`settlement: "ecosystem"`); the player pays the local provider, not
   CamboVerse. This is the Digital-to-Physical model in miniature.
 
 ## Run it
 
 The rails send permissive CORS headers on `/v1`, so this page works from any
-origin — including `file://`.
+origin including `file://`.
 
 1. Point it at a host running the rails:
    - **Local:** `npm run dev` in the repo root, then use `http://127.0.0.1:5173`.

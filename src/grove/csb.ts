@@ -1,5 +1,5 @@
 /**
- * The chain's half of a verified twin — CamboVerse reading CSB.
+ * The chain's half of a verified twin CamboVerse reading CSB.
  *
  * Grove already gives this viewer everything it needs to DRAW a garden: a
  * device-signed record it verifies for itself, with no server in the trust path
@@ -12,14 +12,14 @@
  *                                 a validator set that has never met them.
  *   WHO says it is true?          Grove's attestations come from device keys
  *                                 anybody can generate by the thousand. CSB
- *                                 counts only LICENSED field verifiers — a
+ *                                 counts only LICENSED field verifiers a
  *                                 commune agriculture officer with a licence
  *                                 they can lose.
  *
  * This module is strictly additive and strictly optional. If no CSB node is
  * configured, or it is unreachable, or the grove was never anchored, the garden
  * renders exactly as it does today from the signed records alone. Nothing here
- * can make a plant appear — only add provenance to one Grove already verified.
+ * can make a plant appear only add provenance to one Grove already verified.
  *
  * Honest scope, unchanged: nothing on either side is a carbon credit. The chain
  * records TREES, which somebody can walk out and count.
@@ -28,7 +28,7 @@ import { keccak256, plotKey } from "./keccak";
 
 export interface CsbVerifier {
   address: string;
-  /** Licence classes held — "commune", "agronomist", "ngo", … */
+  /** Licence classes held "commune", "agronomist", "ngo", … */
   classes: string[];
   suspended: boolean;
   /** The licence's public label, e.g. "Commune agriculture officer". Never a name. */
@@ -46,7 +46,7 @@ export interface CsbHead {
   species: string;
   liveCount: number;
   anchoredBy: string;
-  /** Block time (seconds) — consensus, not the device's clock. */
+  /** Block time (seconds) consensus, not the device's clock. */
   anchoredAt: number;
   confirms: number;
   disputes: number;
@@ -62,7 +62,7 @@ export interface CsbTitle {
   lastSyncedCount: number;
   lastSyncedAt: number;
   active: boolean;
-  /** Shares in issue — one per verified living tree, when in sync. */
+  /** Shares in issue one per verified living tree, when in sync. */
   supply: number;
   inSync: boolean;
   driftReason: string;
@@ -104,7 +104,7 @@ export interface CsbPlotStatus {
   records?: number;
   requiredConfirmations?: number;
   /** Living trees at the latest record, IF a licensed verifier confirmed it.
-   *  0 means "nobody has confirmed the latest record" — never "no trees". */
+   *  0 means "nobody has confirmed the latest record" never "no trees". */
   verifiedCount?: number;
   head?: CsbHead;
   verifier?: CsbVerifier | null;
@@ -114,7 +114,7 @@ export interface CsbPlotStatus {
 }
 
 /**
- * Where to read the chain from — set at build time, and **empty by default**.
+ * Where to read the chain from set at build time, and **empty by default**.
  *
  * Empty means the chain layer is simply off: the garden renders from the signed
  * records, exactly as it did before any of this existed. That is the right
@@ -127,11 +127,11 @@ export interface CsbPlotStatus {
  *     VITE_CSB_BASE=https://csb.example npm run build
  *
  * Any CSB app server exposes the same public `/grove` endpoint. A visitor can
- * also type one into the Grove Garden screen — federation is first-class here
+ * also type one into the Grove Garden screen federation is first-class here
  * for the same reason it is for Grove nodes: a badge you can only check by
  * asking the project that drew it is worth nothing.
  *
- * Write it as the bare `import.meta.env.VITE_CSB_BASE` — that exact text is what
+ * Write it as the bare `import.meta.env.VITE_CSB_BASE` that exact text is what
  * Vite substitutes at build time. An earlier version used optional chaining
  * (`import.meta.env?.VITE_CSB_BASE`), which is not the pattern Vite matches, so
  * the value never reached the bundle: the documented deploy command appeared to
@@ -158,7 +158,7 @@ export class CsbClient {
    * the name in clear for any published record. See CSB `3245244`.
    *
    * Returns `{ available: false }` rather than throwing when CSB is not
-   * configured or not reachable — an unanchored garden is a normal garden, and a
+   * configured or not reachable an unanchored garden is a normal garden, and a
    * viewer that broke when the chain was down would be a worse viewer.
    */
   async plotStatus(plot: string, { ttlMs = 30_000 }: { ttlMs?: number } = {}): Promise<CsbPlotStatus> {
@@ -196,7 +196,7 @@ export class CsbClient {
  * out; the grower reads what they commit and signs with their own wallet.
  *
  * @param liveCount The PLOT's living total (`GrovePlot.count`), not the single
- *                  record's own count — the chain reads this as the whole
+ *                  record's own count the chain reads this as the whole
  *                  grove, and it feeds a title's supply and a pledge's survival
  *                  threshold.
  */
@@ -273,7 +273,7 @@ export function provenanceTier(s: CsbPlotStatus | undefined): ProvenanceTier {
   return "anchored";
 }
 
-/** Colour cue per tier — green for checked, amber for waiting, red for contested. */
+/** Colour cue per tier green for checked, amber for waiting, red for contested. */
 export const TIER_COLOR: Record<ProvenanceTier, string> = {
   unanchored: "#8b9aa7",
   anchored: "#d9a326",
@@ -296,7 +296,7 @@ export function riel(amount: string): string {
 }
 
 /**
- * Total riel already released to growers and verifiers on a plot — the number
+ * Total riel already released to growers and verifiers on a plot the number
  * that answers "did sponsoring this actually reach anyone?".
  */
 export function paidOut(pledges: CsbPledge[] | undefined): number {

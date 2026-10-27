@@ -1,5 +1,5 @@
 /**
- * public/models/kaom.glb — ក្អម (k'am), a traditional Khmer earthenware water
+ * public/models/kaom.glb - ក្អម (k'am), a traditional Khmer earthenware water
  * pot: a round-bellied terracotta jar with a narrow neck, a small flared lip,
  * and a domed lid with a knob finial. A body of revolution built from stacked
  * frustums, in warm fired-clay tones with the shared builder's weathering.
@@ -37,7 +37,7 @@ for (let i = 0; i < PROFILE.length - 1; i++) {
   b.cyl(r1, r0, h, 28, 0, (y0 + y1) / 2, 0, color); // cyl(rTop, rBottom, h, seg, x, y, z)
 }
 
-// ---- The lid (គំរប) — a shallow terracotta dome with a knob finial ----------
+// ---- The lid (គំរប) - a shallow terracotta dome with a knob finial ----------
 b.cyl(0.44, 0.46, 0.06, 28, 0, 1.82, 0, TERRA); // flange resting on the lip
 b.sphere(0.42, 0, 1.9, 0, TERRA, 0.62);          // squashed dome
 b.cyl(0.05, 0.07, 0.13, 12, 0, 2.17, 0, TERRA);  // knob stem

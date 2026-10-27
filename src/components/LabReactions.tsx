@@ -5,12 +5,12 @@ import { MOLECULE, Structure, Readout, type MoleculeSpec } from "./LabChemistry"
 import type { MachineProps } from "./LabMachines";
 
 /**
- * Experiments — reactions you can watch happen, over and over.
+ * Experiments reactions you can watch happen, over and over.
  *
  * Every other exhibit in the Lab is a *thing*. These are *events*: reactants
  * approach, bonds break and reform, products separate, energy goes in or comes
  * out. The loop is the point, because the single hardest idea in school
- * chemistry is that atoms are rearranged rather than created or destroyed —
+ * chemistry is that atoms are rearranged rather than created or destroyed  
  * and the way to make that land is to let a student count the atoms before and
  * count them again after.
  *
@@ -115,7 +115,7 @@ function Flame({ phase, kind }: { phase: { current: number }; kind: "flame" | "w
  *
  * Reactants and products are both always in the scene; what changes is which is
  * visible. The swap happens under the flash, so the moment of change is covered
- * — and a student can count the same atoms on either side of it.
+ * and a student can count the same atoms on either side of it.
  */
 export function Reaction({
   def, layer, detail, onPick, selected, running, knob,
@@ -169,7 +169,7 @@ export function Reaction({
 
       <Readout at={[0, 116, 0]}>
         <b>{def.equation}</b>
-        <span>{def.energyOut ? "energy comes out — this one gets hot" : "energy has to be put in"}</span>
+        <span>{def.energyOut ? "energy comes out this one gets hot" : "energy has to be put in"}</span>
       </Readout>
       <Readout at={[0, -112, 0]}><span>{def.note}</span></Readout>
     </group>
@@ -218,7 +218,7 @@ export const REACTIONS: Record<string, ReactionDef> = {
     right: [{ spec: MOLECULE.H2O, count: 2, at: [R, 4, 0] }],
     energyOut: true,
     effect: "flame",
-    note: "Run it backwards and you have electrolysis — which needs electricity put in.",
+    note: "Run it backwards and you have electrolysis which needs electricity put in.",
   },
   neutralise: {
     equation: "HCl + NaOH  →  Na⁺ + Cl⁻ + H₂O",
@@ -233,7 +233,7 @@ export const REACTIONS: Record<string, ReactionDef> = {
     ],
     energyOut: true,
     effect: "warm",
-    note: "The salt does not come out as molecules — it stays as separate ions in the water.",
+    note: "The salt does not come out as molecules it stays as separate ions in the water.",
   },
 };
 

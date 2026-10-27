@@ -1,593 +1,221 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Mesh, MeshBasicMaterial } from "three";
-import { Fighter } from "./Fighter";
-import { KUN_MOVES, KUN_ABOUT, KUN_CREDENTIAL, moveById, type KunMove } from "../kunkhmer";
-import { claimCredential, getIdentity, earnedAchievements } from "../lib/identity";
-import { playHit, playWhoosh, playBell, setMuted, isMuted, type HitKind } from "../lib/kunSound";
+import { Canvas, useFrame } from '@react-three/fiber';
+import { createXRStore, XR, XROrigin, useXR } from '@react-three/xr';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fighter } from './Fighter';
+import { ExploreControls } from './ExploreControls';
+import { KunXRPanel } from './KunXRPanel';
+import { useKunTraining } from './useKunTraining';
+import { KUN_MOVES, KUN_ABOUT, KUN_CREDENTIAL, moveById, type KunMove } from '../kunkhmer';
+import { KUN_PASS, KUN_RECORD_KEY, KUN_ROUND, kunScore, parseKunRecord, promptSeconds, type KunLevel, type KunRecord } from '../kunTraining';
+import { claimCredential, getIdentity, earnedAchievements } from '../lib/identity';
+import { playBell, playHit, playWhoosh, setMuted, isMuted } from '../lib/kunSound';
+import './KunKhmer.css';
 
-const hitKind = (m: KunMove): HitKind =>
-  m.id === "ti" ? "kick" : m.id === "kumpleang" ? "knee" : m.id === "sok" ? "elbow" : "punch";
-
-/**
- * The Kun Khmer Dojo — play and learn Cambodia's ancient martial art, in a ring
- * with an opponent, the way the reference game stages a fight.
- *
- * LEARN: your boxer demonstrates each of the seven techniques against a sparring
- * partner who recoils when struck (and throws at you so you can block or dodge);
- * tap a technique to see it performed and read what it is. PLAY: a sparring bout
- * calls out techniques — land the right one in time to hit the opponent, miss
- * and you take one. Win the round and a "Kun Khmer training" learning credential
- * is stamped in your Heritage Passport. Explorable in 3D and in VR.
- *
- * Move set, names, controls, and the two-fighter ring follow the CamboVerse
- * "Kun Khmer Fight 3D" reference game (Apache-2.0, camboversecenter/kunkhmer);
- * this is an educational adaptation on CamboVerse's own R3F/XR stack.
- */
-const ROUND = 8; // prompts per sparring bout
-const PASS = 0.75;
-const WINDOW = 2600; // ms to react to each prompt
-const HIT = 16; // opponent HP lost per landed strike
-const TAKE = 22; // your HP lost per miss
-
-type Mode = "learn" | "play";
-const isDefensive = (id: string) => id === "rung" || id === "romiel";
-
+type Mode = 'learn' | 'train';
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'failed';
+const defensive = (id: string) => id === 'rung' || id === 'romiel';
+function readRecord() { try { return parseKunRecord(localStorage.getItem(KUN_RECORD_KEY)); } catch { return parseKunRecord(null); } }
+function detectQuality() {
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  return (navigator.hardwareConcurrency ?? 4) <= 4 || memory <= 3 || Math.min(screen.width, screen.height) < 500 ? 'normal' : 'ultra';
+}
 export function KunKhmer({ onBackToMap }: { onBackToMap: () => void }) {
   const store = useMemo(() => createXRStore({ emulate: false }), []);
-  const [vrSupported, setVrSupported] = useState(false);
-  const [mode, setMode] = useState<Mode>("learn");
-
-  // Two fighters, each driven by a move id + a trigger counter (increment to
-  // replay). "guard" is the neutral stance; "hurt" is a struck recoil.
-  const [pMove, setPMove] = useState("guard");
-  const [pTrig, setPTrig] = useState(0);
-  const [oMove, setOMove] = useState("guard");
-  const [oTrig, setOTrig] = useState(0);
-  const reactTimer = useRef<number | undefined>(undefined);
-
-  const [selected, setSelected] = useState<KunMove>(KUN_MOVES[0]);
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const [alreadyTrained, setAlreadyTrained] = useState(false);
-  const [muted, setMutedState] = useState(isMuted());
-
-  // Impact burst + screen shake on contact.
-  const [impact, setImpact] = useState<{ n: number; x: number; color: string } | null>(null);
-  const [shaking, setShaking] = useState(false);
-  const impactN = useRef(0);
-  const shakeTimer = useRef<number | undefined>(undefined);
-
-  useEffect(() => () => {
-    window.clearTimeout(reactTimer.current);
-    window.clearTimeout(shakeTimer.current);
+  const [inVR, setInVR] = useState(false);
+  const [vrSupported, setVRSupported] = useState(false);
+  const [vrError, setVRError] = useState('');
+  const [quality, setQuality] = useState(detectQuality);
+  const ultra = inVR || quality === 'ultra';
+  const [mode, setMode] = useState<Mode>('learn');
+  const [selected, setSelected] = useState(KUN_MOVES[0]);
+  const [level, setLevel] = useState<KunLevel>('relaxed');
+  const [slow, setSlow] = useState(false);
+  const [frozen, setFrozen] = useState(false);
+  const [motion, setMotion] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [muted, setMutedState] = useState(() => { try { return localStorage.getItem('camboverse.kun.sound') === 'off' || isMuted(); } catch { return isMuted(); } });
+  const [record, setRecord] = useState(readRecord);
+  const records = useRef(record);
+  const [localSaved, setLocalSaved] = useState(true);
+  const [credential, setCredential] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const saveGeneration = useRef(0), saveBusy = useRef(false);
+  const session = useKunTraining(inVR);
+  const { state: s } = session;
+  const [fighter, setFighter] = useState({ move: 'guard', partner: 'guard', trigger: 0, partnerTrigger: 0 });
+  const reaction = useRef<ReturnType<typeof setTimeout>>();
+  const lastDemo = useRef(0);
+  const handled = useRef(0), resultHandled = useRef(false);
+  const panel = useRef<HTMLElement>(null);
+  const studio = useRef<HTMLDivElement>(null);
+  const resetStance = useCallback(() => {
+    clearTimeout(reaction.current); setFrozen(false);
+    setFighter(f => ({ move: 'guard', partner: 'guard', trigger: f.trigger + 1, partnerTrigger: f.partnerTrigger + 1 }));
   }, []);
-
-  const bumpP = (id: string) => { setPMove(id); setPTrig((t) => t + 1); };
-  const bumpO = (id: string) => { setOMove(id); setOTrig((t) => t + 1); };
-
-  // A landed strike: spark at the impact point (x) + a quick screen shake.
-  const boom = useCallback((x: number, color: string) => {
-    impactN.current += 1;
-    setImpact({ n: impactN.current, x, color });
-    setShaking(true);
-    window.clearTimeout(shakeTimer.current);
-    shakeTimer.current = window.setTimeout(() => setShaking(false), 220);
+  const remember = useCallback((change: (old: KunRecord) => KunRecord) => {
+    const next = change(records.current); records.current = next; setRecord(next);
+    try { localStorage.setItem(KUN_RECORD_KEY, JSON.stringify(next)); setLocalSaved(true); } catch { setLocalSaved(false); }
   }, []);
-
-  // Your fighter strikes; the opponent responds. A defensive technique makes
-  // the opponent throw a punch that you block/dodge; otherwise it recoils.
-  const strikeOpponent = useCallback((m: KunMove) => {
-    window.clearTimeout(reactTimer.current);
-    setSelected(m);
-    bumpP(m.id);
-    playWhoosh();
-    if (isDefensive(m.id)) {
-      bumpO("mat");
-      if (m.id === "rung") {
-        // a block makes contact (on your guard); a dodge slips it cleanly
-        reactTimer.current = window.setTimeout(() => { playHit("block"); boom(-0.46, m.color); }, 180);
-      }
-    } else {
-      reactTimer.current = window.setTimeout(() => {
-        bumpO("hurt");
-        playHit(hitKind(m));
-        boom(0.46, m.color);
-      }, 180);
-    }
-  }, [boom]);
-
-  // The opponent lands one on you: it jabs, then you recoil.
-  const takeHit = useCallback(() => {
-    window.clearTimeout(reactTimer.current);
-    bumpO("mat");
-    playWhoosh();
-    reactTimer.current = window.setTimeout(() => {
-      bumpP("hurt");
-      playHit("punch");
-      boom(-0.46, "#2f6ae0");
-    }, 190);
-  }, [boom]);
-
-  const resetStances = useCallback(() => {
-    window.clearTimeout(reactTimer.current);
-    bumpP("guard");
-    bumpO("guard");
-  }, []);
-
-  useEffect(() => {
-    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
-  }, []);
-
-  // Show a "✓ trained" state if this visitor already holds the credential.
+  useEffect(() => { setMuted(muted); try { localStorage.setItem('camboverse.kun.sound', muted ? 'off' : 'on'); } catch { /* session preference still works */ } }, [muted]);
   useEffect(() => {
     let live = true;
-    (async () => {
-      const set = await earnedAchievements(await getIdentity(false));
-      if (live) setAlreadyTrained(set.has(KUN_CREDENTIAL));
-    })();
-    return () => {
-      live = false;
-    };
+    navigator.xr?.isSessionSupported('immersive-vr').then(ok => { if (live) setVRSupported(ok); }).catch(() => {});
+    getIdentity(false).then(earnedAchievements).then(set => { if (live) setCredential(set.has(KUN_CREDENTIAL)); });
+    return () => { live = false; clearTimeout(reaction.current); saveGeneration.current++; };
   }, []);
-
-  return (
-    <div className="kun">
-      <div className={`kun-stage${shaking ? " kun--shake" : ""}`}>
-        <Canvas dpr={[1, 2]} camera={{ position: [0, 1.6, 7.4], fov: 40 }} gl={{ antialias: true }} shadows>
-          <XR store={store}>
-            <color attach="background" args={["#1a1220"]} />
-            <fog attach="fog" args={["#1a1220", 11, 22]} />
-            <ambientLight intensity={0.7} />
-            <directionalLight position={[3, 7, 5]} intensity={1.15} castShadow shadow-mapSize={[1024, 1024]} />
-            <spotLight position={[0, 8, 3]} angle={0.7} intensity={0.7} color="#ffd9a0" penumbra={0.6} castShadow />
-
-            <Ring />
-
-            {/* Two boxers at real fighting range, facing each other. */}
-            <Fighter move={pMove} trigger={pTrig} facing={Math.PI / 2} palette="red" position={[-0.52, 0.16, 0.1]} />
-            <Fighter move={oMove} trigger={oTrig} facing={-Math.PI / 2} palette="blue" position={[0.52, 0.16, -0.1]} />
-
-            {impact && <Impact key={impact.n} position={[impact.x, 1.25, 0.15]} color={impact.color} />}
-
-            <XROrigin position={[0, 1.1, 3.9]} />
-            <Nav />
+  const perform = useCallback((m: KunMove) => {
+    clearTimeout(reaction.current); setSelected(m); setFrozen(false);
+    setFighter(f => ({ move: m.id, partner: defensive(m.id) ? 'mat' : 'guard', trigger: f.trigger + 1, partnerTrigger: f.partnerTrigger + 1 }));
+    playWhoosh();
+    reaction.current = setTimeout(() => {
+      if (!defensive(m.id)) setFighter(f => ({ ...f, partner: 'hurt', partnerTrigger: f.partnerTrigger + 1 }));
+      if (m.id !== 'romiel') playHit(m.id === 'rung' ? 'block' : m.id === 'ti' ? 'kick' : m.id === 'kumpleang' ? 'knee' : m.id === 'sok' ? 'elbow' : 'punch');
+    }, mode === 'learn' && slow ? 480 : 240);
+  }, [mode, slow]);
+  const demo = useCallback((m: KunMove) => {
+    const now = performance.now(); if (now - lastDemo.current < 250) return;
+    lastDemo.current = now; perform(m);
+    remember(old => old.seen.includes(m.id) ? old : { ...old, seen: [...old.seen, m.id] });
+  }, [perform, remember]);
+  const invalidateSave = () => { saveGeneration.current++; saveBusy.current = false; setSaveStatus('idle'); };
+  const switchMode = (next: Mode) => {
+    invalidateSave(); session.reset(level); handled.current = 0; resultHandled.current = false;
+    setMode(next); resetStance(); panel.current?.scrollTo({ top: 0 });
+  };
+  const start = () => {
+    invalidateSave(); handled.current = 0; resultHandled.current = false; resetStance();
+    session.start(level); playBell();
+  };
+  const saveVictory = useCallback(async (score: number) => {
+    if (saveBusy.current) return;
+    if (credential) { setSaveStatus('saved'); return; }
+    saveBusy.current = true; setSaveStatus('saving');
+    const generation = ++saveGeneration.current;
+    let ok = false;
+    try { ok = await claimCredential(KUN_CREDENTIAL, `spar:${score}/${KUN_ROUND}`); } catch { /* allow retry */ }
+    if (generation !== saveGeneration.current) return;
+    saveBusy.current = false; setSaveStatus(ok ? 'saved' : 'failed'); if (ok) setCredential(true);
+  }, [credential]);
+  useEffect(() => {
+    if (s.phase === 'paused') clearTimeout(reaction.current);
+    if (s.phase === 'feedback' && s.answers.length > handled.current) {
+      handled.current = s.answers.length;
+      const last = s.answers.at(-1)!;
+      if (last.correct) perform(moveById(last.wanted)!); else resetStance();
+    }
+    if (s.phase === 'done' && !resultHandled.current) {
+      resultHandled.current = true; resetStance();
+      const score = kunScore(s);
+      remember(old => ({ ...old, rounds: old.rounds + 1, wins: old.wins + Number(score >= KUN_PASS), best: Math.max(old.best, score) }));
+      playBell(score >= KUN_PASS ? 2 : 1);
+      if (score >= KUN_PASS) void saveVictory(score);
+    }
+  }, [s, perform, remember, saveVictory, resetStance]);
+  const keyboard = useRef({ mode, s, demo, session }); keyboard.current = { mode, s, demo, session };
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || (e.target instanceof HTMLElement && e.target.closest('input, textarea, select, [contenteditable=true], summary'))) return;
+      const current = keyboard.current;
+      if (e.code === 'Escape') { current.session.pause(); return; }
+      // A focused button keeps native Space activation; B is always available for Block.
+      if (e.code === 'Space' && e.target instanceof HTMLElement && e.target.closest('button')) return;
+      const move = e.code === 'KeyB' ? moveById('rung') : KUN_MOVES.find(m => m.key === e.key.toLowerCase());
+      if (!move) return;
+      if (current.mode === 'learn' || current.s.phase === 'prompt') {
+        e.preventDefault(); if (current.mode === 'learn') current.demo(move); else current.session.answer(move.id);
+      }
+    };
+    window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);
+  }, []);
+  useEffect(() => { if (mode === 'train' && ['ready', 'paused', 'done'].includes(s.phase)) { panel.current?.scrollTo({ top: 0 }); panel.current?.querySelector<HTMLButtonElement>('[data-primary]')?.focus({ preventScroll: true }); } }, [mode, s.phase]);
+  useEffect(() => { session.pause(); }, [inVR, session.pause]);
+  useEffect(() => { if (s.phase === 'countdown') { studio.current?.scrollTo({ top: 0 }); panel.current?.scrollTo({ top: 0 }); } }, [s.phase]);
+  const score = kunScore(s), last = s.answers.at(-1), target = moveById(s.order[s.index]);
+  const active = ['countdown', 'prompt', 'feedback'].includes(s.phase);
+  const review = [...new Set(s.answers.filter(a => !a.correct).map(a => a.wanted))];
+  const inspect = (id: string) => { switchMode('learn'); setSelected(moveById(id)!); };
+  const trainingMessage = s.phase === 'countdown' ? `Get ready · ${Math.ceil(s.remaining)}` : s.phase === 'prompt' ? `Choose ${target?.english}` : s.phase === 'feedback' ? last?.correct ? 'Correct · return to guard' : `${last?.picked === null ? 'Time ended' : 'Not quite'} · ${target?.english}` : s.phase === 'paused' ? 'Round paused' : s.phase === 'done' ? `${score} / ${KUN_ROUND} correct` : 'Eight prompts · six correct to complete';
+  return <div ref={studio} className={`kk-studio${mode === 'train' && s.phase !== 'ready' ? ' kk-training-active' : ''}`}>
+    <header className="kk-header"><button className="kk-secondary" onClick={onBackToMap}>← Map</button><div><span className="kk-eyebrow">MOVEMENT · CULTURE · COORDINATION</span><h1>Kun Khmer <span className="khmer">គុនខ្មែរ</span></h1></div><span className="kk-badge">{record.seen.length}/7 explored{credential ? ' · Passport ✓' : ''}</span></header>
+    <nav className="kk-toolbar" aria-label="Training mode"><div className="kk-segment"><button aria-pressed={mode === 'learn'} onClick={() => switchMode('learn')}>01 · Explore techniques</button><button aria-pressed={mode === 'train'} onClick={() => switchMode('train')}>02 · Training challenge</button></div><button className="kk-secondary" aria-pressed={!muted} onClick={() => setMutedState(v => !v)}>Sound {muted ? 'off' : 'on'}</button></nav>
+    <div className="kk-layout">
+      <div className="kk-stage">
+        <Canvas shadows={ultra} dpr={ultra ? [1, 2] : [1, 1.25]} camera={{ position: [3.6, 2.7, 6.7], fov: 39 }}>
+          <XR store={store}><XRSession changed={setInVR} tick={session.tick} pause={session.pause} />
+            <color attach="background" args={['#222b30']} /><fog attach="fog" args={['#222b30', 12, 28]} />
+            <ambientLight intensity={.9} /><hemisphereLight args={['#ffefd8', '#48515b', 1.5]} />
+            <directionalLight position={[-3, 8, 5]} intensity={2.1} castShadow={ultra} shadow-mapSize={[1024, 1024]} shadow-normalBias={.035} />
+            <TrainingRing ultra={ultra} />
+            <Fighter move={fighter.move} trigger={fighter.trigger} facing={Math.PI / 2} position={[-.75, .16, .05]} ultra={ultra} speed={mode === 'learn' && slow ? .5 : 1} paused={s.phase === 'paused' || frozen} idleMotion={motion && ultra && mode === 'learn'} />
+            <Fighter move={fighter.partner} trigger={fighter.partnerTrigger} facing={-Math.PI / 2} palette="blue" position={[.75, .16, -.05]} ultra={ultra} speed={mode === 'learn' && slow ? .5 : 1} paused={s.phase === 'paused' || frozen} idleMotion={motion && ultra && mode === 'learn'} />
+            <XROrigin position={[0, 0, 6]} /><Nav />
+            <KunXRPanel mode={mode} onMode={switchMode} selected={selected} onDemo={demo} session={session} level={level} onLevel={setLevel} onStart={start} slow={slow} onSlow={() => setSlow(v => !v)} frozen={frozen} onFreeze={() => { clearTimeout(reaction.current); setFrozen(v => !v); }} saveStatus={saveStatus} onRetry={() => saveVictory(score)} onExit={() => store.getState().session?.end()} muted={muted} onMute={() => setMutedState(v => !v)} />
           </XR>
         </Canvas>
+        <div className="kk-stage-tools"><div className="kk-segment" aria-label="Scene detail">{['normal','ultra'].map(q => <button key={q} disabled={inVR} aria-pressed={(ultra ? 'ultra' : 'normal') === q} onClick={() => setQuality(q)}>{q === 'normal' ? 'Normal' : 'Ultra'}</button>)}</div><button className="kk-secondary" disabled={!ultra} aria-pressed={motion && ultra} onClick={() => setMotion(v => !v)}>Ambient motion {motion && ultra ? 'on' : 'off'}</button></div>
+        <div className="kk-caption"><span className="kk-eyebrow">THE TRAINING RING</span><b>{mode === 'learn' ? selected.english : trainingMessage}</b><small>Red · demonstrator &nbsp; Blue · training partner</small></div>
       </div>
-
-      {/* ---- HUD ---- */}
-      <div className="cls-top">
-        <button className="backbtn" onClick={onBackToMap}>
-          ← Map
-        </button>
-        <span className="cls-title">🥊 Kun Khmer Dojo</span>
-        {vrSupported && (
-          <button className="vr-btn cls-vr" onClick={() => store.enterVR()}>
-            🥽 VR
-          </button>
-        )}
-      </div>
-
-      <div className="kun-modes">
-        <button
-          className={mode === "learn" ? "kun-seg on" : "kun-seg"}
-          onClick={() => { setMode("learn"); resetStances(); }}
-        >
-          📖 Learn
-        </button>
-        <button
-          className={mode === "play" ? "kun-seg on" : "kun-seg"}
-          onClick={() => { setMode("play"); resetStances(); }}
-        >
-          🥊 Spar{alreadyTrained ? " ✓" : ""}
-        </button>
-        <button
-          className="kun-about-btn"
-          aria-label={muted ? "Unmute" : "Mute"}
-          onClick={() => { const m = !muted; setMuted(m); setMutedState(m); }}
-        >
-          {muted ? "🔇" : "🔊"}
-        </button>
-        <button className="kun-about-btn" onClick={() => setAboutOpen(true)}>
-          ℹ️ About
-        </button>
-      </div>
-
-      {mode === "learn" ? (
-        <LearnPanel move={selected} onDemo={strikeOpponent} />
-      ) : (
-        <SparPanel
-          onStrike={strikeOpponent}
-          onTake={takeHit}
-          onReset={resetStances}
-          onEarned={() => setAlreadyTrained(true)}
-          alreadyTrained={alreadyTrained}
-        />
-      )}
-
-      {aboutOpen && <AboutPanel onClose={() => setAboutOpen(false)} />}
+      <section className={`kk-panel${mode === 'train' ? ' kk-panel--train' : ''}`} ref={panel} aria-label={mode === 'learn' ? 'Technique study' : 'Training challenge'}>
+        {mode === 'learn' ? <>
+          <span className="kk-eyebrow">TECHNIQUE {KUN_MOVES.indexOf(selected) + 1} OF 7</span><h2>{selected.english}</h2><p className="kk-native khmer">{selected.khmer} <span>{selected.name}</span></p>
+          <p className="kk-description">{selected.desc}</p>
+          <div className="kk-segment" aria-label="Demonstration speed"><button aria-pressed={!slow} onClick={() => setSlow(false)}>Normal speed</button><button aria-pressed={slow} onClick={() => setSlow(true)}>Slow · 0.5×</button></div>
+          <div className="kk-actions"><button className="kk-primary" onClick={() => demo(selected)}>Replay movement</button><button className="kk-secondary" aria-pressed={frozen} onClick={() => { clearTimeout(reaction.current); setFrozen(v => !v); }}>{frozen ? 'Resume pose' : 'Freeze pose'}</button></div>
+          <TechniquePad selected={selected.id} seen={record.seen} onPick={demo} />
+          <button className="kk-next" onClick={() => demo(KUN_MOVES[(KUN_MOVES.indexOf(selected) + 1) % KUN_MOVES.length])}>Next technique →</button>
+          <p className="kk-note">Rotate the scene to study the movement. These simplified animations illustrate recognition, not a coached physical lesson.</p>
+        </> : <>
+          <span className="kk-eyebrow">RECOGNITION & REACTION</span><h2>Training challenge</h2>
+          {s.phase === 'ready' ? <>
+            <p className="kk-description">Match the called technique using its button or key. Eight prompts cover all seven moves; six correct completes the round.</p>
+            <div className="kk-segment" aria-label="Challenge difficulty">{(['relaxed','challenge'] as const).map(l => <button key={l} aria-pressed={level === l} onClick={() => setLevel(l)}>{l === 'relaxed' ? 'Relaxed · 4.5s' : 'Challenge · 2.6s'}</button>)}</div>
+            <p className="kk-note">Start when ready. You can pause at any time; leaving this tab also pauses your round.</p><button data-primary className="kk-primary kk-wide" onClick={start}>Start training</button>
+          </> : s.phase === 'done' ? <>
+            <div className="kk-result"><strong>{score}<small> / 8</small></strong><span>{score >= KUN_PASS ? 'Round complete' : 'Keep practising'}</span></div>
+            <p>Best streak: {s.bestStreak} · Accuracy: {Math.round(score / KUN_ROUND * 100)}%</p>
+            <p className="kk-note" role="status">{localSaved ? 'Progress saved on this device.' : 'Progress is kept for this visit; device storage is unavailable.'} {score >= KUN_PASS ? saveStatus === 'saving' ? 'Saving Passport…' : saveStatus === 'saved' ? 'Passport stamp saved.' : saveStatus === 'failed' ? 'Passport save failed. You can retry.' : '' : ''}</p>
+            {saveStatus === 'failed' && <button className="kk-secondary" onClick={() => saveVictory(score)}>Retry Passport save</button>}
+            {review.length > 0 && <div className="kk-review"><h3>Revisit these moves</h3>{review.map(id => <button key={id} className="kk-secondary" onClick={() => inspect(id)}>{moveById(id)?.english} ↗</button>)}</div>}
+            <div className="kk-actions"><button data-primary className="kk-primary" onClick={start}>Train again</button><button className="kk-secondary" onClick={() => switchMode('learn')}>Explore moves</button></div>
+          </> : <>
+            <div className="kk-round-top"><span>Prompt {s.index + 1} / 8 · {score} correct</span><button className="kk-secondary" onClick={s.phase === 'paused' ? session.resume : session.pause}>{s.phase === 'paused' ? 'Resume' : 'Pause'}</button></div>
+            <div className="kk-call" role="status" aria-live="polite">{trainingMessage}</div>
+            {s.phase === 'prompt' && <><progress aria-label="Response time remaining" value={s.remaining} max={promptSeconds(s.level)} /><span className="kk-timer">{s.remaining.toFixed(1)} seconds</span></>}
+            {s.phase === 'paused' ? <div className="kk-actions"><button data-primary className="kk-primary" onClick={session.resume}>Resume round</button><button className="kk-secondary" onClick={start}>Restart round</button></div> : <TechniquePad selected={s.phase === 'feedback' ? target?.id : undefined} disabled={s.phase !== 'prompt'} onPick={m => session.answer(m.id)} />}
+            <p className="kk-note">Tap the matching move · Esc pauses · each prompt accepts one answer.</p>
+          </>}
+          {!active && s.phase !== 'paused' && <div className="kk-records"><span><b>{record.best}/8</b>Best result</span><span><b>{record.rounds}</b>Rounds</span><span><b>{record.wins}</b>Completed</span></div>}
+        </>}
+        <details className="kk-about"><summary>Culture & this experience</summary>{KUN_ABOUT.map(f => <div key={f.title}><h3>{f.title}</h3><p>{f.body}</p></div>)}<p>Adapted from the CamboVerse “Kun Khmer Fight 3D” reference (Apache-2.0). This is a solo learning challenge; its scores are not competition scoring.</p></details>
+        {!localSaved && mode === 'learn' && <p role="status" className="kk-note">Device storage is unavailable; progress lasts for this visit.</p>}
+        {vrSupported && <button className="kk-secondary kk-wide" onClick={() => { setVRError(''); store.enterVR().catch(() => setVRError('VR could not start. You can keep using the screen controls.')); }}>Enter VR</button>}{vrError && <p role="status">{vrError}</p>}
+      </section>
     </div>
-  );
+  </div>;
 }
-
-/** A quick impact burst — an expanding ring + a bright flash — at a strike. */
-function Impact({ position, color }: { position: [number, number, number]; color: string }) {
-  const ring = useRef<Mesh>(null);
-  const flash = useRef<Mesh>(null);
-  const t = useRef(0);
-  useFrame((_, dt) => {
-    t.current += dt;
-    const p = Math.min(1, t.current / 0.42); // life ~0.42s
-    const s = 0.3 + p * 1.7;
-    if (ring.current) {
-      ring.current.scale.setScalar(s);
-      (ring.current.material as MeshBasicMaterial).opacity = 1 - p;
-    }
-    if (flash.current) {
-      flash.current.scale.setScalar(Math.max(0.001, (1 - p) * 0.8 + 0.2));
-      (flash.current.material as MeshBasicMaterial).opacity = (1 - p) * 0.95;
-    }
-  });
-  return (
-    <group position={position}>
-      <mesh ref={ring}>
-        <torusGeometry args={[0.42, 0.07, 8, 24]} />
-        <meshBasicMaterial color={color} transparent toneMapped={false} />
-      </mesh>
-      <mesh ref={flash}>
-        <sphereGeometry args={[0.42, 12, 12]} />
-        <meshBasicMaterial color="#fff3c4" transparent toneMapped={false} />
-      </mesh>
-    </group>
-  );
+function TechniquePad({ selected, seen = [], disabled = false, onPick }: { selected?: string; seen?: string[]; disabled?: boolean; onPick: (m: KunMove) => void }) {
+  return <div className="kk-pad" aria-label="Techniques">{KUN_MOVES.map(m => <button key={m.id} aria-pressed={selected === m.id} disabled={disabled} onClick={() => onPick(m)}><span className="khmer">{m.khmer}</span><b>{m.english}{seen.includes(m.id) ? ' ✓' : ''}</b><kbd>{m.id === 'rung' ? 'B / Space' : m.key.toUpperCase()}</kbd></button>)}</div>;
 }
-
-/** A raised ring: canvas floor, four corner posts, three ropes per side. */
-function Ring() {
-  const corners: [number, number][] = [[-2.7, -2.7], [2.7, -2.7], [-2.7, 2.7], [2.7, 2.7]];
-  const ropeY = [0.55, 0.95, 1.35];
-  return (
-    <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <boxGeometry args={[6, 6, 0.28]} />
-        <meshStandardMaterial color="#2c3550" roughness={0.95} />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.15, 0]} receiveShadow>
-        <planeGeometry args={[5.4, 5.4]} />
-        <meshStandardMaterial color="#c7ccd8" roughness={1} />
-      </mesh>
-      {corners.map(([x, z], i) => (
-        <mesh key={i} position={[x, 1.05, z]} castShadow>
-          <cylinderGeometry args={[0.1, 0.1, 2, 12]} />
-          <meshStandardMaterial color="#d94f4f" roughness={0.6} />
-        </mesh>
-      ))}
-      {ropeY.map((y) =>
-        [
-          { p: [0, y, 2.7] as [number, number, number], horiz: true },
-          { p: [0, y, -2.7] as [number, number, number], horiz: true },
-          { p: [2.7, y, 0] as [number, number, number], horiz: false },
-          { p: [-2.7, y, 0] as [number, number, number], horiz: false },
-        ].map((r, k) => (
-          <mesh key={`${y}-${k}`} position={r.p} rotation={[0, r.horiz ? 0 : Math.PI / 2, 0]}>
-            <boxGeometry args={[5.4, 0.03, 0.03]} />
-            <meshStandardMaterial color="#e6e2d6" roughness={0.7} />
-          </mesh>
-        )),
-      )}
-    </group>
-  );
-}
-
-/** Learn mode: a row of technique buttons + the selected move's explanation. */
-function LearnPanel({ move, onDemo }: { move: KunMove; onDemo: (m: KunMove) => void }) {
-  // Keyboard shortcuts mirror the reference game's controls.
+function XRSession({ changed, tick, pause }: { changed: (active: boolean) => void; tick: (seconds: number) => void; pause: () => void }) {
+  const xrSession = useXR(s => s.session); const elapsed = useRef(0);
+  useEffect(() => { changed(xrSession != null); elapsed.current = 0; }, [xrSession, changed]);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const m = KUN_MOVES.find((mv) => mv.key === e.key.toLowerCase());
-      if (m) {
-        e.preventDefault();
-        onDemo(m);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onDemo]);
-
-  return (
-    <>
-      <div className="kun-moves">
-        {KUN_MOVES.map((m) => (
-          <button
-            key={m.id}
-            className={m.id === move.id ? "kun-move on" : "kun-move"}
-            style={{ borderColor: m.color, ...(m.id === move.id ? { background: m.color } : {}) }}
-            onClick={() => onDemo(m)}
-          >
-            <span className="kun-move-kh khmer">{m.khmer}</span>
-            <span className="kun-move-en">{m.english}</span>
-            <span className="kun-move-key">{m.key === " " ? "␣" : m.key.toUpperCase()}</span>
-          </button>
-        ))}
-      </div>
-      <div className="kun-info" style={{ borderColor: move.color }}>
-        <div className="kun-info-head">
-          <span className="kun-info-kh khmer">{move.khmer}</span>
-          <span className="kun-info-name">
-            {move.name} · <b>{move.english}</b>
-          </span>
-        </div>
-        <p className="kun-info-desc">{move.desc}</p>
-        <button className="kun-replay" style={{ background: move.color }} onClick={() => onDemo(move)}>
-          ▶ Show me again
-        </button>
-      </div>
-    </>
-  );
+    if (!xrSession) return;
+    const visibility = () => { if (xrSession.visibilityState !== 'visible') pause(); };
+    xrSession.addEventListener('visibilitychange', visibility);
+    return () => xrSession.removeEventListener('visibilitychange', visibility);
+  }, [xrSession, pause]);
+  useFrame((_, dt) => { if (!xrSession) return; elapsed.current += dt; if (elapsed.current >= .032) { tick(elapsed.current); elapsed.current = 0; } });
+  return null;
 }
-
-type Phase = "idle" | "prompt" | "feedback" | "done";
-
-/** Play mode: a sparring bout that earns the training credential. */
-function SparPanel({
-  onStrike,
-  onTake,
-  onReset,
-  onEarned,
-  alreadyTrained,
-}: {
-  onStrike: (m: KunMove) => void;
-  onTake: () => void;
-  onReset: () => void;
-  onEarned: () => void;
-  alreadyTrained: boolean;
-}) {
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [order, setOrder] = useState<string[]>([]);
-  const [qi, setQi] = useState(0);
-  const [results, setResults] = useState<boolean[]>([]);
-  const [last, setLast] = useState<{ ok: boolean; wanted: KunMove } | null>(null);
-  const [oHP, setOHP] = useState(100);
-  const [pHP, setPHP] = useState(100);
-  const [claiming, setClaiming] = useState(false);
-  const [earned, setEarned] = useState(false);
-  const answered = useRef(false);
-  const timer = useRef<number | undefined>(undefined);
-
-  const target = phase === "prompt" ? moveById(order[qi]) : undefined;
-  const score = results.filter(Boolean).length;
-
-  const start = () => {
-    const seq = Array.from({ length: ROUND }, () => KUN_MOVES[Math.floor(Math.random() * KUN_MOVES.length)].id);
-    setOrder(seq);
-    setQi(0);
-    setResults([]);
-    setLast(null);
-    setEarned(false);
-    setOHP(100);
-    setPHP(100);
-    onReset();
-    playBell(1); // seconds out — the round begins
-    setPhase("prompt");
-  };
-
-  const nextPrompt = useCallback(
-    (all: boolean[], nextI: number) => {
-      if (nextI >= ROUND) {
-        setPhase("done");
-        onReset();
-        const s = all.filter(Boolean).length;
-        playBell(s / ROUND >= PASS ? 2 : 1); // double bell for a win
-        if (s / ROUND >= PASS) {
-          setClaiming(true);
-          claimCredential(KUN_CREDENTIAL, `spar:${s}/${ROUND}`).then((ok) => {
-            setClaiming(false);
-            if (ok) {
-              setEarned(true);
-              onEarned();
-            }
-          });
-        }
-        return;
-      }
-      setQi(nextI);
-      setPhase("prompt");
-    },
-    [onReset, onEarned],
-  );
-
-  const resolve = useCallback(
-    (picked: KunMove | null) => {
-      if (answered.current) return;
-      answered.current = true;
-      window.clearTimeout(timer.current);
-      const wanted = moveById(order[qi])!;
-      const ok = picked?.id === wanted.id;
-      if (ok) {
-        onStrike(wanted); // you land the technique; opponent recoils
-        setOHP((h) => Math.max(0, h - HIT));
-      } else {
-        onTake(); // you miss; the opponent lands one on you
-        setPHP((h) => Math.max(0, h - TAKE));
-      }
-      const next = [...results, ok];
-      setResults(next);
-      setLast({ ok, wanted });
-      setPhase("feedback");
-      window.setTimeout(() => nextPrompt(next, qi + 1), 1100);
-    },
-    [order, qi, results, onStrike, onTake, nextPrompt],
-  );
-
-  // Start each prompt's reaction window.
-  useEffect(() => {
-    if (phase !== "prompt") return;
-    answered.current = false;
-    setLast(null);
-    timer.current = window.setTimeout(() => resolve(null), WINDOW);
-    return () => window.clearTimeout(timer.current);
-  }, [phase, qi, resolve]);
-
-  // Keyboard: press the technique's key to answer.
-  useEffect(() => {
-    if (phase !== "prompt") return;
-    const onKey = (e: KeyboardEvent) => {
-      const m = KUN_MOVES.find((mv) => mv.key === e.key.toLowerCase());
-      if (m) {
-        e.preventDefault();
-        resolve(m);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [phase, resolve]);
-
-  const HealthBars = () => (
-    <div className="kun-hp">
-      <div className="kun-hp-row">
-        <span className="kun-hp-name you">You</span>
-        <span className="kun-hp-bar"><span className="kun-hp-fill you" style={{ width: `${pHP}%` }} /></span>
-      </div>
-      <div className="kun-hp-row">
-        <span className="kun-hp-name opp">Boxer</span>
-        <span className="kun-hp-bar"><span className="kun-hp-fill opp" style={{ width: `${oHP}%` }} /></span>
-      </div>
-    </div>
-  );
-
-  if (phase === "idle") {
-    return (
-      <div className="kun-train">
-        <p className="kun-train-lead">
-          <b>Sparring bout.</b> A technique will be called out — land it by tapping its button (or pressing
-          its key) before the timer runs out. Hit and the opponent recoils; miss and you take one. {ROUND}{" "}
-          exchanges; {Math.ceil(ROUND * PASS)} landed to earn your training credential.
-        </p>
-        <button className="kun-start" onClick={start}>
-          {alreadyTrained ? "Spar again" : "Touch gloves"} 🥊
-        </button>
-      </div>
-    );
-  }
-
-  if (phase === "done") {
-    const passed = score / ROUND >= PASS;
-    return (
-      <div className="kun-train">
-        <HealthBars />
-        <div className={passed ? "kun-score pass" : "kun-score"}>
-          {score} / {ROUND} landed
-        </div>
-        {passed ? (
-          <>
-            <p className="kun-train-msg pass">🎉 Victory! You fought fast and true.</p>
-            <p className="kun-train-sub">
-              {claiming
-                ? "Saving your credential…"
-                : earned
-                  ? "A Kun Khmer training credential was added to your Heritage Passport."
-                  : "Nice work!"}
-            </p>
-          </>
-        ) : (
-          <p className="kun-train-msg">Keep drilling — {Math.ceil(ROUND * PASS)} landed to win. Go again.</p>
-        )}
-        <button className="kun-start" onClick={start}>
-          Spar again 🥊
-        </button>
-      </div>
-    );
-  }
-
-  // prompt / feedback share the technique-button pad + health bars.
-  return (
-    <>
-      <div className="kun-spar-hud">
-        <HealthBars />
-        <div className="kun-spar-call">
-          <span className="kun-train-count">
-            {qi + 1} / {ROUND}
-          </span>
-          {phase === "prompt" && target ? (
-            <span className="kun-call">
-              Land: <span className="khmer">{target.khmer}</span> <b>{target.english}</b>
-            </span>
-          ) : last ? (
-            <span className={last.ok ? "kun-call ok" : "kun-call bad"}>
-              {last.ok ? "✓ Landed!" : `✕ It was ${last.wanted.english}`}
-            </span>
-          ) : (
-            <span className="kun-call">…</span>
-          )}
-        </div>
-      </div>
-      <div className="kun-moves kun-moves-pad">
-        {KUN_MOVES.map((m) => {
-          const reveal = phase === "feedback" && last?.wanted.id === m.id;
-          return (
-            <button
-              key={m.id}
-              className={reveal ? "kun-move on" : "kun-move"}
-              style={{ borderColor: m.color, ...(reveal ? { background: m.color } : {}) }}
-              disabled={phase !== "prompt"}
-              onClick={() => resolve(m)}
-            >
-              <span className="kun-move-kh khmer">{m.khmer}</span>
-              <span className="kun-move-en">{m.english}</span>
-            </button>
-          );
-        })}
-      </div>
-    </>
-  );
-}
-
-function AboutPanel({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="kun-about" onClick={onClose}>
-      <div className="kun-about-card" onClick={(e) => e.stopPropagation()}>
-        <div className="kun-about-top">
-          <span className="kun-about-title">
-            🥊 Kun Khmer <span className="khmer">កុនខ្មែរ</span>
-          </span>
-          <button className="cls-close" onClick={onClose} aria-label="Close">
-            ✕
-          </button>
-        </div>
-        {KUN_ABOUT.map((f) => (
-          <div key={f.title} className="kun-fact">
-            <h4>
-              {f.title} {f.khmer && <span className="khmer">{f.khmer}</span>}
-            </h4>
-            <p>{f.body}</p>
-          </div>
-        ))}
-        <p className="kun-credit">
-          Technique names, controls, and the two-fighter ring are adapted from the CamboVerse “Kun Khmer
-          Fight 3D” reference game (Apache-2.0, camboversecenter/kunkhmer). Kun Khmer is a living heritage of
-          the Cambodian people.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Nav() {
-  const inXR = useXR((s) => s.session != null);
-  if (inXR) return null;
-  return (
-    <OrbitControls
-      makeDefault
-      enablePan={false}
-      minDistance={2.5}
-      maxDistance={10}
-      maxPolarAngle={Math.PI / 2.05}
-      enableDamping
-      dampingFactor={0.08}
-      target={[0, 1.05, 0]}
-    />
-  );
+function Nav() { const active = useXR(s => s.session != null); return active ? null : <ExploreControls target={[0, 1, 0]} minDistance={3} maxDistance={12} maxPolarAngle={Math.PI / 2.05} enableDamping dampingFactor={.08} />; }
+function TrainingRing({ ultra }: { ultra: boolean }) {
+  return <group>
+    <mesh rotation={[-Math.PI / 2,0,0]} position={[0,-.22,0]} receiveShadow><planeGeometry args={[50,50]} /><meshStandardMaterial color="#263136" roughness={1} /></mesh>
+    <mesh position={[0,0,0]}><boxGeometry args={[6,.28,6]} /><meshStandardMaterial color="#273e46" roughness={.9} /></mesh>
+    <mesh rotation={[-Math.PI / 2,0,0]} position={[0,.145,0]} receiveShadow><planeGeometry args={[5.5,5.5]} /><meshStandardMaterial color="#b3b2a4" roughness={1} /></mesh>
+    <mesh rotation={[-Math.PI / 2,0,0]} position={[0,.15,0]}><ringGeometry args={[1.13,1.16,ultra ? 64 : 24]} /><meshStandardMaterial color="#e1d4ac" /></mesh>
+    {[-1,1].flatMap(x => [-1,1].map(z => <group key={`${x}${z}`} position={[x*2.72,0,z*2.72]}><mesh position={[0,.92,0]} castShadow={ultra}><cylinderGeometry args={[.075,.09,1.8,ultra ? 16 : 6]} /><meshStandardMaterial color={x < 0 ? '#a54336' : '#365d7d'} /></mesh><mesh position={[0,1.04,0]}><boxGeometry args={[.2,.63,.2]} /><meshStandardMaterial color={x < 0 ? '#b95643' : '#497595'} roughness={.8} /></mesh></group>))}
+    {[.58,.91,1.24].flatMap(y => [-1,1].flatMap(side => [true,false].map(horizontal => <mesh key={`${y}${side}${horizontal}`} position={horizontal ? [0,y,side*2.72] : [side*2.72,y,0]} rotation={horizontal ? [0,0,Math.PI/2] : [Math.PI/2,0,0]}><cylinderGeometry args={[.018,.018,5.44,ultra ? 8 : 4]} /><meshStandardMaterial color="#d9d0ba" roughness={.9} transparent opacity={side === 1 ? .45 : 1} /></mesh>)))}
+    {[-1,1].map(side => <mesh key={side} position={[side*4.2,.35,-1]}><boxGeometry args={[.6,.7,3]} /><meshStandardMaterial color="#594c3d" /></mesh>)}
+  </group>;
 }

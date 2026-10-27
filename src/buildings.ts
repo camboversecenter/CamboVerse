@@ -2,23 +2,24 @@
  * The buildings of CamboVerse.
  *
  * A **building** is a place a visitor can walk up to and then open a page of
- * its own — its architecture, what happens inside, and why it looks the way it
+ * its own its architecture, what happens inside, and why it looks the way it
  * does. A **site** is a group of buildings you can walk between: a campus, a
  * commune centre, a market square.
  *
  * Both are listed on the 🏛 Buildings page (`BuildingsHome`), which is the only
- * way in. The map carries one button, not one per building — the front page is
+ * way in. The map carries one button, not one per building the front page is
  * a map of Cambodia, not a directory.
  *
  * A building may belong to a site or stand alone. A standalone building has no
  * walkable scene; it just gets its page. Either way, adding one is an entry
- * here — see `docs/BUILDINGS.md`.
+ * here see `docs/BUILDINGS.md`.
  *
  * Where each one *stands* is not repeated here: `view` and `spanM` are derived
  * from `campusLayout.ts`, the single source of truth for the ground plan. Move
  * a building in the editor and its landmark viewpoint follows automatically.
  */
 import { viewpointFor, spanOf } from "./campusLayout";
+import type { PoiCapture } from './spots';
 
 export interface Site {
   id: string;
@@ -55,21 +56,23 @@ export interface Building {
    */
   view: { at: [number, number, number]; yaw: number };
   /**
-   * Roughly how tall the building's *mass* is, so its page can frame it — the
+   * Roughly how tall the building's *mass* is, so its page can frame it the
    * roof ridge, not the tip of a finial or an aerial. Framing aims the camera
    * at 0.7 × this, so counting a thin spike points it at empty sky.
    */
   heightM: number;
-  /** Its widest plan dimension — framing needs the footprint, not just height. */
+  /** Its widest plan dimension framing needs the footprint, not just height. */
   spanM: number;
   /**
    * A glTF under `public/models/` (without the extension) to render instead of
-   * a hand-written component — the output of
+   * a hand-written component the output of
    * `scripts/generate-building.mjs`, which is the no-3D-skills route in
    * `docs/BUILDINGS.md`. Landmarks are authored as components in
    * `CampusBuildings.tsx` instead; this is for ordinary blocks.
    */
   model?: string;
+  /** Optional photo capture on the building's detail page; loaded on entry. */
+  capture?: PoiCapture;
 }
 
 export const NUM_SITE = "NUM International Campus";
@@ -94,7 +97,7 @@ export const siteByName = (name: string) => SITES.find((s) => s.name === name) ?
 export const siteById = (id: string) => SITES.find((s) => s.id === id) ?? null;
 /** The buildings standing on a site, in registry order (= walking order). */
 export const buildingsOfSite = (name: string) => BUILDINGS.filter((b) => b.site === name);
-/** Buildings that belong to no site — a page, but no walkable scene. */
+/** Buildings that belong to no site a page, but no walkable scene. */
 export const standaloneBuildings = () => BUILDINGS.filter((b) => b.site === null);
 
 /**
@@ -111,7 +114,7 @@ export const BUILDINGS: Building[] = [
     site: NUM_SITE,
     about: [
       "The campus gate stands at the far end of the entrance avenue, where it meets the public road: square piers carrying a red hipped roof, with the university's name across the beam in Khmer and English.",
-      "Sugar palms (ដើមត្នោត) line the avenue running north from it — Cambodia's national tree, and the shape most people picture when they picture the Cambodian countryside.",
+      "Sugar palms (ដើមត្នោត) line the avenue running north from it Cambodia's national tree, and the shape most people picture when they picture the Cambodian countryside.",
     ],
     facts: [
       { label: "Marks", value: "The foot of the entrance avenue" },
@@ -130,7 +133,7 @@ export const BUILDINGS: Building[] = [
     site: NUM_SITE,
     about: [
       "The entrance monument carries the university's name in gold on a dark plinth, set on a curved flight of steps between clipped hedges.",
-      "It stands where the avenue arrives at the campus proper, so it is the thing you actually read on the way in — the gate announces the address, this announces the place.",
+      "It stands where the avenue arrives at the campus proper, so it is the thing you actually read on the way in the gate announces the address, this announces the place.",
     ],
     facts: [
       { label: "Marks", value: "The head of the entrance avenue" },
@@ -168,7 +171,7 @@ export const BUILDINGS: Building[] = [
     site: NUM_SITE,
     about: [
       "Beside the teaching block stands a bare frame: columns, floor slabs and a part-clad top storey. It is in every photograph of the campus, and leaving it out would make the place look finished when it isn't.",
-      "A university campus is never one moment. This block is the campus growing — and when it is finished, this model should be updated to match.",
+      "A university campus is never one moment. This block is the campus growing and when it is finished, this model should be updated to match.",
     ],
     facts: [
       { label: "Status", value: "Structure up, cladding started" },
@@ -186,7 +189,7 @@ export const BUILDINGS: Building[] = [
     site: NUM_SITE,
     about: [
       "Three long white canopies shade the car park. In a country where an afternoon dashboard can pass 70 °C, shade is infrastructure, not luxury.",
-      "Their thin steel frames and single-slope roofs are the plainest structures on the campus — and a good place to see how much of the site's character comes from the roofs alone.",
+      "Their thin steel frames and single-slope roofs are the plainest structures on the campus and a good place to see how much of the site's character comes from the roofs alone.",
     ],
     facts: [
       { label: "Canopies", value: "Three, about 60 m each" },
@@ -203,7 +206,7 @@ export const BUILDINGS: Building[] = [
     english: "Ceremonial hall and auditorium",
     site: NUM_SITE,
     about: [
-      "The campus landmark: a glazed hall standing inside a white colonnade, sheltered by a hipped roof whose eaves cantilever some six metres past the walls and throw them into shade — the oldest trick in tropical architecture, done at scale.",
+      "The campus landmark: a glazed hall standing inside a white colonnade, sheltered by a hipped roof whose eaves cantilever some six metres past the walls and throw them into shade the oldest trick in tropical architecture, done at scale.",
       "The glazing stops short of the soffit, leaving an open shaded storey you can see straight through between the columns, so the great roof appears to float above the building rather than sit on it.",
       "A Khmer gable and a slender spire ride the ridge, so a thoroughly modern steel-and-glass building still reads unmistakably as Cambodian. Guardian figures flank the stone entrance portal under its glass canopy.",
     ],
@@ -224,15 +227,33 @@ export const BUILDINGS: Building[] = [
     site: NUM_SITE,
     about: [
       "A small shrine stands in the plaza on its own columns, with a tiered white-and-orange roof rising to a finial. Shrines like this stand outside homes, offices and campuses across Cambodia.",
-      "Students leave incense, flowers or a drink here — often before an exam. It is a working part of the campus, not decoration.",
+      "Students leave incense, flowers or a drink here often before an exam. It is a working part of the campus, not decoration.",
     ],
     facts: [
-      { label: "Khmer", value: "ខ្ទមទេវតា — a spirit house" },
+      { label: "Khmer", value: "ខ្ទមទេវតា a spirit house" },
       { label: "Offerings", value: "Incense, flowers, fruit" },
     ],
     view: viewpointFor("shrine"),
     heightM: 8,
     spanM: spanOf("shrine"),
+    capture: {
+      normal: '/models/local/campus-shrine-capture-v1/original-normal.splat',
+      ultra: '/models/local/campus-shrine-capture-v1/original-ultra.splat',
+      cleanup: {
+        normal: '/models/local/campus-shrine-capture-v1/clean-normal.splat',
+        ultra: '/models/local/campus-shrine-capture-v1/clean-ultra.splat',
+        lookLimits: { minPitch: -1.1, maxPitch: .8 },
+      },
+      rotation: [Math.PI/2,0,0], position: [0,0,0], scale: 20,
+      target: [0,1.3,0], camera: [0,3.2,10],
+      // Authored navigation apron fitted to the visible pavement; scene units
+      // are relative, not surveyed metres. Keep the pedestal protected.
+      walkAround: {
+        center: [0,0], innerRadius: 1.85, outerRadius: 4.6,
+        start: [0,3.8], ground: { height: -.78, slopeX: .006, slopeZ: .002 },
+        eyeHeight: 1.25, speed: 1.25, startYaw: 0, startPitch: .05,
+      },
+    },
   },
   {
     id: "field",
@@ -241,7 +262,7 @@ export const BUILDINGS: Building[] = [
     english: "Running track and pitch",
     site: NUM_SITE,
     about: [
-      "A running track rings the football pitch on the campus's western side — the open ground that every aerial photograph of the campus is framed around.",
+      "A running track rings the football pitch on the campus's western side the open ground that every aerial photograph of the campus is framed around.",
       "It is where the campus is loudest: sports days, inter-faculty matches, and the evening runners once the heat drops.",
     ],
     facts: [

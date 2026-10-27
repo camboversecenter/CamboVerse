@@ -1,0 +1,236 @@
+[
+  {
+    "id": "seasons",
+    "bytes": 21817,
+    "minY": -12,
+    "triangles": 3968
+  },
+  {
+    "id": "eye",
+    "bytes": 15806,
+    "minY": -10.998806953430176,
+    "triangles": 4352
+  },
+  {
+    "id": "head-anatomy",
+    "bytes": 14328,
+    "minY": -7.994999885559082,
+    "triangles": 720
+  },
+  {
+    "id": "human-body",
+    "bytes": 18992,
+    "minY": -86.11570739746094,
+    "triangles": 6555
+  },
+  {
+    "id": "heart",
+    "bytes": 27827,
+    "minY": -5.800539016723633,
+    "triangles": 3760
+  },
+  {
+    "id": "lungs",
+    "bytes": 26359,
+    "minY": -7.518976497650146,
+    "triangles": 6351
+  },
+  {
+    "id": "lever",
+    "bytes": 8269,
+    "minY": -14.5,
+    "triangles": 116
+  },
+  {
+    "id": "gear-train",
+    "bytes": 8521,
+    "minY": -42,
+    "triangles": 972
+  },
+  {
+    "id": "engine",
+    "bytes": 7351,
+    "minY": -18.5,
+    "triangles": 400
+  },
+  {
+    "id": "water",
+    "bytes": 19306,
+    "minY": -36.39999961853027,
+    "triangles": 504
+  },
+  {
+    "id": "methane",
+    "bytes": 14287,
+    "minY": -36.586235868333844,
+    "triangles": 840
+  },
+  {
+    "id": "salt",
+    "bytes": 39508,
+    "minY": -89.80000152587891,
+    "triangles": 4536
+  },
+  {
+    "id": "carbon",
+    "bytes": 23554,
+    "minY": -101,
+    "triangles": 8904
+  },
+  {
+    "id": "burn-methane",
+    "bytes": 17770,
+    "minY": -111.39999961853027,
+    "triangles": 1512
+  },
+  {
+    "id": "make-water",
+    "bytes": 16344,
+    "minY": -86.39999961853027,
+    "triangles": 1008
+  },
+  {
+    "id": "neutralise",
+    "bytes": 18682,
+    "minY": -82.39999961853027,
+    "triangles": 840
+  },
+  {
+    "id": "treadle-pump",
+    "bytes": 8401,
+    "minY": -67,
+    "triangles": 754
+  },
+  {
+    "id": "biogas",
+    "bytes": 12405,
+    "minY": -41,
+    "triangles": 944
+  },
+  {
+    "id": "organ-brain",
+    "bytes": 21327,
+    "minY": -6.0810723304748535,
+    "triangles": 468
+  },
+  {
+    "id": "organ-spinal-cord",
+    "bytes": 9829,
+    "minY": -12.049927711486816,
+    "triangles": 320
+  },
+  {
+    "id": "organ-thyroid",
+    "bytes": 22971,
+    "minY": -2.0270063877105713,
+    "triangles": 468
+  },
+  {
+    "id": "organ-great-vessels",
+    "bytes": 12773,
+    "minY": -16.2237606048584,
+    "triangles": 704
+  },
+  {
+    "id": "organ-airways",
+    "bytes": 14249,
+    "minY": -22.030715942382812,
+    "triangles": 1720
+  },
+  {
+    "id": "organ-diaphragm",
+    "bytes": 15351,
+    "minY": -3.3244693279266357,
+    "triangles": 468
+  },
+  {
+    "id": "organ-oesophagus",
+    "bytes": 11620,
+    "minY": 21.646642684936523,
+    "triangles": 288
+  },
+  {
+    "id": "organ-liver",
+    "bytes": 19700,
+    "minY": -4.978482723236084,
+    "triangles": 468
+  },
+  {
+    "id": "organ-gallbladder",
+    "bytes": 16163,
+    "minY": -2.5338168144226074,
+    "triangles": 468
+  },
+  {
+    "id": "organ-stomach",
+    "bytes": 18040,
+    "minY": -7.1646246910095215,
+    "triangles": 468
+  },
+  {
+    "id": "organ-pancreas",
+    "bytes": 19169,
+    "minY": -1.7320994138717651,
+    "triangles": 468
+  },
+  {
+    "id": "organ-spleen",
+    "bytes": 15641,
+    "minY": -4.1836676597595215,
+    "triangles": 468
+  },
+  {
+    "id": "organ-small-intestine",
+    "bytes": 27230,
+    "minY": -12.608305931091309,
+    "triangles": 728
+  },
+  {
+    "id": "organ-large-intestine",
+    "bytes": 20019,
+    "minY": -18.996889114379883,
+    "triangles": 544
+  },
+  {
+    "id": "organ-kidneys",
+    "bytes": 22730,
+    "minY": -6.156624794006348,
+    "triangles": 936
+  },
+  {
+    "id": "organ-ureters",
+    "bytes": 14212,
+    "minY": -14.157027244567871,
+    "triangles": 336
+  },
+  {
+    "id": "organ-bladder",
+    "bytes": 21332,
+    "minY": -3.608677864074707,
+    "triangles": 468
+  },
+  {
+    "id": "organ-skeleton",
+    "bytes": 16168,
+    "minY": -90,
+    "triangles": 14718
+  },
+  {
+    "id": "humerus-study",
+    "bytes": 14794,
+    "minY": -14.46506335289567,
+    "triangles": 800
+  },
+  {
+    "id": "bone-cutaway-study",
+    "bytes": 15532,
+    "minY": -14.46506335289567,
+    "triangles": 864
+  },
+  {
+    "id": "osteon-study",
+    "bytes": 39473,
+    "minY": -4.48991918335097,
+    "triangles": 3152
+  }
+]

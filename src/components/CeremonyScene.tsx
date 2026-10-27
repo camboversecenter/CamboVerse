@@ -14,7 +14,7 @@ import type { Detail } from "./LabOrgans";
  * at the water's edge. The hired function hall is one option among several, and
  * a recent one.
  *
- * So a `Venue` always carries a `theme` — a setting built procedurally, here —
+ * So a `Venue` always carries a `theme` a setting built procedurally, here  
  * and a real building from the registry is an optional addition on top. A client
  * that has never downloaded a single building model can still stage every
  * ceremony in the catalogue.
@@ -44,7 +44,7 @@ const LIGHT: Record<TimeOfDay, {
 }> = {
   // Low-light hours carry more ambient than a physical model would give them.
   // Pchum Ben happens before dawn and a reception runs past dusk, so those two
-  // settings have to stay *readable* on a phone held outdoors — a correctly
+  // settings have to stay *readable* on a phone held outdoors a correctly
   // black pre-dawn yard is a blank screen, which loses the ceremony entirely.
   dawn: {
     sky: "#3a5075", ground: "#3a3a42", sun: "#ffb178", sunPos: [-30, 8, 22],
@@ -102,7 +102,7 @@ export const skyOf = (time: TimeOfDay) => LIGHT[time].sky;
 
 /* ---------------------------------------------------------------- pieces --- */
 
-/** Deterministic scatter — the same yard every time you open it. */
+/** Deterministic scatter the same yard every time you open it. */
 function scatter(n: number, seed: number, spread: number, inner = 0) {
   const out: [number, number][] = [];
   let s = seed;
@@ -159,7 +159,7 @@ function Palms({ at, detail }: { at: [number, number][]; detail: Detail }) {
 
 const seg = (d: Detail) => (d === "normal" ? 6 : 10);
 
-/** A Khmer house on stilts — the thing the yard belongs to. */
+/** A Khmer house on stilts the thing the yard belongs to. */
 function StiltHouse({ detail, position = [0, 0, -11] as [number, number, number] }: {
   detail: Detail; position?: [number, number, number];
 }) {
@@ -455,7 +455,7 @@ export const THEME_INFO: Record<SceneTheme, { label: string; icon: string; note:
   },
   "garden": {
     label: "Garden", icon: "🌺",
-    note: "A laid-out garden — increasingly common for a wedding with the space for it.",
+    note: "A laid-out garden increasingly common for a wedding with the space for it.",
   },
   "riverside": {
     label: "Riverside", icon: "🛶",

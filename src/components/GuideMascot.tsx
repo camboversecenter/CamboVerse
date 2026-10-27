@@ -1,5 +1,5 @@
 /**
- * Kiri — the monkey tour guide. Original CC-BY artwork (so it's DPG-clean),
+ * Kiri the monkey tour guide. Original CC-BY artwork (so it's DPG-clean),
  * drawn as an inline SVG and animated purely with CSS, so it's tiny and smooth
  * on a cheap phone. He wears a Cambodian *krama* scarf. Three states:
  *   - "idle"     gentle bob + occasional blink
@@ -100,7 +100,7 @@ export function GuideMascot({
         {/* Nose */}
         <ellipse cx="60" cy="54" rx="3.4" ry="2.3" fill="#7a5a3c" />
 
-        {/* Mouth — chatters when talking */}
+        {/* Mouth chatters when talking */}
         <ellipse className="mascot-mouth" cx="60" cy="62" rx="7" ry="3" fill="#7a3b2e" />
       </g>
     </svg>

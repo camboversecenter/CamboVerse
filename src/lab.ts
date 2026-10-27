@@ -71,7 +71,7 @@ export const SUBJECTS: Subject[] = [
     icon: "🧪",
   },
   {
-    id: "earth", name: "Earth and sky", khmer: null,
+    id: "earth", name: "Earth and sky", khmer: "ផែនដី និងមេឃ",
     blurb: "The monsoon, the Mekong flood pulse, the solar system, the seasons.",
     icon: "🌏",
   },
@@ -205,6 +205,142 @@ export interface Specimen {
 
 export const SPECIMENS: Specimen[] = [
   {
+    id: "seasons",
+    name: "The Seasons",
+    khmer: "រដូវ",
+    english: "Earth's tilt and its journey around the Sun",
+    subject: "earth",
+    topic: "The Solar System",
+    animated: true,
+    knob: { label: "Month of the year", min: 1, max: 12, step: 0.1, value: 1, unit: "" },
+    layers: [
+      { id: "whole", label: "Whole", hint: "The Earth and the Sun" },
+      { id: "cutaway", label: "Orbit", hint: "Show the path and the Equator" },
+      { id: "frame", label: "Axis", hint: "Just the tilt and the sunlight rays" },
+    ],
+    about: [
+      "The Earth does not sit straight up and down. Its axis is tilted at 23.5 degrees. As it orbits the sun, that axis stays pointing in the exact same direction into space.",
+      "Move the Month slider. Notice how for half the year, the Northern Hemisphere leans toward the Sun (summer), and for the other half, it leans away (winter).",
+      "Cambodia is near the equator, so it gets relatively direct sunlight all year round. That is why it has wet and dry seasons instead of snowy winters like the poles."
+    ],
+    parts: [
+      { id: "sun", name: "The Sun", khmer: "ព្រះអាទិត្យ", layer: "whole", at: [0, 0, 0],
+        blurb: "The center of our solar system. It is actually 109 times wider than the Earth, but we shrink it here so both can fit on the screen." },
+      { id: "earth", name: "The Earth", khmer: "ផែនដី", layer: "whole", at: [35, 0, 0],
+        blurb: "Our home planet. It takes exactly one year to make a complete orbit around the Sun." },
+      { id: "axis", name: "23.5° Axis", khmer: "អ័ក្ស", layer: "frame", at: [35, 12, 0],
+        blurb: "The imaginary line the Earth spins on. The fact that it is tilted, and stays pointing the same way, is the sole reason we have seasons." },
+      { id: "equator", name: "The Equator", khmer: "ខ្សែអេក្វាទ័រ", layer: "cutaway", at: [35, 0, 6],
+        blurb: "The line around the middle. Places near the equator get strong sunlight all year, which is why they stay warm while the poles freeze." },
+      { id: "rays", name: "Sunlight", khmer: "ពន្លឺព្រះអាទិត្យ", layer: "frame", at: [15, 0, 0],
+        blurb: "Notice how the light hits the tilted Earth. When a hemisphere leans toward the Sun, the light hits it directly, delivering more heat." }
+    ],
+    quiz: [
+      {
+        q: "Why do we have seasons?",
+        options: ["The Earth gets closer to the Sun in summer", "The Sun burns hotter in some months", "The Earth is tilted on its axis", "The moon blocks the heat"],
+        answer: 2,
+        why: "Because of the 23.5-degree tilt! The Earth's distance from the Sun actually barely changes; the tilt determines which hemisphere gets the direct sunlight."
+      },
+      {
+        q: "What happens to the Earth's axis as it orbits?",
+        options: ["It wobbles back and forth", "It stays pointing in the exact same direction", "It always points directly at the Sun", "It points at the moon"],
+        answer: 1,
+        why: "It acts like a gyroscope, staying pointed at the North Star. This means each hemisphere gets a turn leaning toward the Sun."
+      }
+    ],
+    sizeU: 80,
+    spanU: 100,
+    centreU: 0,
+    reallife: "Not to scale! In reality, if the Earth were a 1cm marble, the Sun would be a 1m ball sitting 117 meters away."
+  },
+  {
+    id: "eye",
+    name: "The Human Eye",
+    khmer: "ភ្នែក",
+    english: "How we focus light to see the world",
+    subject: "biology",
+    topic: "Sensory organs",
+    animated: true,
+    knob: { label: "Light brightness", min: 0, max: 100, step: 1, value: 50, unit: "%" },
+    layers: [
+      { id: "whole", label: "Whole", hint: "The eye from the outside" },
+      { id: "cutaway", label: "Cutaway", hint: "Look inside the eyeball" },
+      { id: "frame", label: "Optics", hint: "Just the lens and retina" },
+    ],
+    about: [
+      "The human eye works like a camera. Light enters through the clear cornea, passes through the pupil, and is focused by the lens onto the retina at the back.",
+      "The colored part, the iris, is a muscle that automatically changes the size of the pupil to let in the right amount of light. Move the light slider to watch it dilate and constrict!",
+      "The retina is packed with millions of light-sensitive cells that turn the image into electrical signals. The optic nerve carries these signals to the brain."
+    ],
+    parts: [
+      { id: "sclera", name: "Sclera", khmer: null, layer: "whole", at: [0, 10, -5],
+        blurb: "The tough white outer layer of the eyeball. It protects the delicate structures inside and gives the eye its shape." },
+      { id: "cornea", name: "Cornea", khmer: null, layer: "whole", at: [0, 0, 11],
+        blurb: "The clear dome at the front of the eye. It does most of the focusing, bending light as it enters the eye." },
+      { id: "iris", name: "Iris", khmer: null, layer: "cutaway", at: [0, -7, 6],
+        blurb: "The colored part of the eye. It controls the size of the pupil, acting like the aperture of a camera to regulate light." },
+      { id: "lens", name: "Lens", khmer: null, layer: "cutaway", at: [0, 0, 4],
+        blurb: "Sits right behind the pupil. It changes shape to fine-tune the focus, allowing you to see objects clearly whether they are near or far." },
+      { id: "retina", name: "Retina", khmer: null, layer: "cutaway", at: [-7, 0, -6],
+        blurb: "The light-sensitive lining at the back of the eye. It contains photoreceptor cells called rods and cones." },
+      { id: "optic-nerve", name: "Optic Nerve", khmer: null, layer: "frame", at: [0, 0, -14],
+        blurb: "The cable that connects the eye to the brain. Because there are no light-sensitive cells where the nerve exits, everyone has a blind spot here." },
+      { id: "vitreous", name: "Vitreous Humor", khmer: null, layer: "cutaway", at: [0, -4, -2],
+        blurb: "A clear, jelly-like substance that fills the middle of the eye, helping it keep its round shape." }
+    ],
+    quiz: [
+      {
+        q: "Which part of the eye controls how much light gets in?",
+        options: ["The lens", "The cornea", "The iris", "The retina"],
+        answer: 2,
+        why: "The iris is a ring of muscle that expands and contracts the pupil to control light, just like a camera aperture."
+      },
+      {
+        q: "Where is the image actually focused so we can see it?",
+        options: ["On the retina", "On the cornea", "In the optic nerve", "In the vitreous humor"],
+        answer: 0,
+        why: "The cornea and lens work together to focus light onto the retina at the back of the eye, which then sends the image to the brain."
+      }
+    ],
+    sizeU: 24,
+    spanU: 24,
+    centreU: 0,
+    reallife: "About 2.4 cm across roughly the size of a large marble."
+  },
+  {
+    id: "head-anatomy",
+    name: "Head anatomy",
+    khmer: "ក្បាល",
+    english: "Surface, facial muscles, skull and brain",
+    subject: "biology",
+    topic: "Human anatomy",
+    layers: [
+      { id: "whole", label: "Surface", hint: "The exterior head" },
+      { id: "cutaway", label: "Muscles", hint: "Facial muscles and the structures beneath" },
+      { id: "frame", label: "Skull & brain", hint: "The bony framework and brain" },
+    ],
+    about: [
+      "A head is more than the face we see. This model lets you move from the exterior to the muscles that shape expression, then to the skull and brain inside.",
+      "Use Muscles to identify the broad muscle groups that move the forehead, eyelids, cheek and jaw. Use Skull & brain to see how bone protects the brain and forms the eye sockets and jaw.",
+    ],
+    parts: [
+      { id: "skin", name: "Skin and face", khmer: "ស្បែក", layer: "whole", at: [0, 2, 9], blurb: "The skin, eyes, ears and soft facial tissues form the visible surface of the head." },
+      { id: "eye", name: "Eyes", khmer: "ភ្នែក", layer: "whole", at: [2.08, 6, 8.4], detail: "eye", blurb: "The eyes sit in the bony eye sockets. Open the eye model to explore the cornea, iris, lens and retina." },
+      { id: "facial-muscles", name: "Facial muscles", khmer: null, layer: "cutaway", at: [-3, 4, 8.5], blurb: "Broad simplified muscle groups on one side illustrate how muscles under the skin move the forehead, eyelids, cheeks and jaw." },
+      { id: "skull", name: "Skull", khmer: "លលាដ៍ក្បាល", layer: "frame", at: [0, 4, 8.5], blurb: "The skull protects the brain and gives the face its structure. The eye sockets and jaw are part of the same framework. The upper skull is removed in this teaching view to expose the brain." },
+      { id: "brain", name: "Brain", khmer: "ខួរក្បាល", layer: "frame", at: [0, 10, 2.5], detail: "organ-brain", blurb: "The brain sits inside the cranial cavity, protected by the skull. This simplified model shows two folded hemispheres, the cerebellum and the brainstem; it is not clinical detail." },
+    ],
+    quiz: [
+      { q: "Which structure protects the brain?", options: ["The skull", "The iris", "The cheek muscle", "The ear"], answer: 0, why: "The skull is the bony structure around the brain. It also shapes the face and eye sockets." },
+      { q: "Which layer is best for studying the broad facial muscle groups?", options: ["Surface", "Muscles", "Skull & brain", "None of them"], answer: 1, why: "The Muscles layer makes the simplified facial muscle groups visible while keeping their relationship to the head clear." },
+    ],
+    sizeU: 26,
+    spanU: 30,
+    centreU: 3,
+    reallife: "A simplified head anatomy model. It shows relationships between systems and is not a diagnostic, clinical or surgical reference.",
+  },
+  {
     id: "human-body",
     name: "The human body",
     khmer: "រាងកាយមនុស្ស",
@@ -226,6 +362,14 @@ export const SPECIMENS: Specimen[] = [
         blurb: "The body's largest organ, and the one people forget is an organ at all. It keeps water in, keeps infection out, and does much of the work of holding your temperature steady." },
       { id: "brain", name: "Brain", khmer: "ខួរក្បាល", layer: "cutaway", at: [0, 82, 0], detail: "organ-brain",
         blurb: "About 1.4 kg, using roughly a fifth of the body's energy while being a fiftieth of its weight. The folds are there to fit more surface into the skull." },
+      { id: "eyes", name: "Eyes", khmer: "ភ្នែក", layer: "cutaway", at: [4, 78, 10], detail: "eye",
+        blurb: "Two spheres that turn light into electrical signals. Each one has about 120 million rod cells for dim light and 6 million cone cells for colour. The brain flips the image the lens projects upside-down." },
+      { id: "ears", name: "Ears", khmer: "ត្រចៀក", layer: "cutaway", at: [10, 76, 0],
+        blurb: "Sound funnels through the outer ear, vibrates the eardrum, crosses three tiny bones, and reaches the cochlea where hair cells turn vibration into nerve signals. The inner ear also handles balance." },
+      { id: "nose", name: "Nose", khmer: "ច្រមុះ", layer: "cutaway", at: [0, 74, 12],
+        blurb: "Warms, moistens and filters air before it reaches the lungs. High inside is a postage-stamp-sized patch of about 10 million smell receptors that can distinguish over a trillion scents." },
+      { id: "mouth", name: "Mouth and tongue", khmer: "មាត់ និងអណ្តាត", layer: "cutaway", at: [0, 68, 12],
+        blurb: "The tongue has about 10,000 taste buds detecting sweet, salty, sour, bitter and umami. The mouth begins digestion with saliva enzymes and shapes the air from the lungs into speech." },
       { id: "spinal-cord", name: "Spinal cord", khmer: null, layer: "cutaway", at: [0, 40, -14], detail: "organ-spinal-cord",
         blurb: "The bundle of nerves running down inside the spine, carrying every message between the brain and the rest of you." },
       { id: "thyroid", name: "Thyroid", khmer: null, layer: "cutaway", at: [0, 55, 10], detail: "organ-thyroid",
@@ -445,6 +589,12 @@ export const SPECIMENS: Specimen[] = [
         options: ["About 3 times", "About 20 times", "About 200 times", "It does not branch"],
         answer: 1,
         why: "Around twenty generations of branching. Each split makes the tubes narrower but there are far more of them, so the total surface for gas exchange becomes enormous.",
+      },
+      {
+        q: "Where does oxygen actually enter the blood?",
+        options: ["In the windpipe", "In the main bronchi", "In tiny air sacs called alveoli at the ends of the airways", "Through the lung surface"],
+        answer: 2,
+        why: "Alveoli are microscopic air sacs at the very ends of the bronchial tree. Their walls are one cell thick, so oxygen can cross into the blood vessels wrapped around them.",
       },
     ],
     sizeU: 24,
@@ -1108,6 +1258,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What are the brain's folds for?", options: ["Cooling it", "Fitting more surface into the skull", "Holding it in place", "Storing fat"], answer: 1,
         why: "Folding packs a much larger surface into the same volume. The surface layer is where most of the processing happens, so more of it in the same skull is worth having." },
+      { q: "Why does the brain use so much energy?", options: ["It is the heaviest organ", "Neurons fire electrical signals constantly", "It stores all your memories physically", "It generates body heat"], answer: 1,
+        why: "Neurons communicate through electrical and chemical signals that never stop, even during sleep. Keeping billions of these connections running takes about a fifth of your energy." },
+      { q: "What cushions the brain inside the skull?", options: ["Fat tissue", "Air pockets", "Cerebrospinal fluid", "Blood vessels"], answer: 2,
+        why: "The brain floats in cerebrospinal fluid, which acts as a shock absorber. Without it, every step you took would bruise the tissue." },
     ],
     sizeU: 16,
     spanU: 20,
@@ -1134,6 +1288,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Why is the spinal cord inside the spine?", options: ["To keep it warm", "Because bone protects it", "To make you taller", "It is not — it runs outside"], answer: 1,
         why: "The vertebrae form a bony tunnel. Nerve tissue does not heal like skin, so it is worth armouring." },
+      { q: "What is a reflex?", options: ["A thought you have quickly", "A response handled by the spinal cord before the brain knows", "A muscle that moves on its own", "A type of nerve cell"], answer: 1,
+        why: "Reflexes are short-circuit responses. The signal goes to the spinal cord and back to the muscle without waiting for the brain, which is why pulling your hand off a hot surface happens before you feel the pain." },
+      { q: "Can a damaged spinal cord heal like a broken bone?", options: ["Yes, fully within weeks", "Usually not nerve tissue barely regrows", "Only in children", "Yes, if kept still"], answer: 1,
+        why: "Nerve cells in the spinal cord do not regenerate the way bone or skin cells do. That is why spinal injuries often cause permanent paralysis." },
     ],
     sizeU: 74,
     spanU: 10,
@@ -1160,6 +1318,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What does the thyroid mostly control?", options: ["How fast you burn energy", "How much you sleep", "Your blood type", "How tall you will be"], answer: 0,
         why: "It sets your metabolic rate — the speed the whole body runs at. Growth is affected too, but the rate is the main job." },
+      { q: "What element does the thyroid need to work?", options: ["Iron", "Calcium", "Iodine", "Sodium"], answer: 2,
+        why: "Iodine is built into the hormones the thyroid makes. Without enough of it, the gland swells and cannot do its job. Iodised salt was introduced to prevent this." },
+      { q: "What shape is the thyroid?", options: ["Round like a ball", "Butterfly-shaped across the windpipe", "A long tube", "A flat disc"], answer: 1,
+        why: "Two lobes connected by a thin bridge, draped across the front of the windpipe. The shape is often compared to a butterfly." },
     ],
     sizeU: 6,
     spanU: 9,
@@ -1186,6 +1348,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "The aorta carries blood…", options: ["To the lungs", "Away from the heart to the body", "From the body to the heart", "Only during exercise"], answer: 1,
         why: "Away from the heart. Arteries carry blood away, veins bring it back — the pulmonary artery is the one exception that carries oxygen-poor blood." },
+      { q: "Why are artery walls thicker than vein walls?", options: ["They carry more blood", "They must withstand higher pressure", "They are older tissue", "They carry oxygen"], answer: 1,
+        why: "Blood leaves the heart under high pressure. Arteries need thick, elastic walls to handle the force of each heartbeat without bursting." },
+      { q: "What colour is deoxygenated blood really?", options: ["Bright blue", "Dark red", "Clear", "Green"], answer: 1,
+        why: "It is dark red, not blue. The blue colour on diagrams is a convention to distinguish oxygen-poor from oxygen-rich blood." },
     ],
     sizeU: 66,
     spanU: 20,
@@ -1212,6 +1378,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Why does an inhaled object usually end up in the right lung?", options: ["The right lung is bigger", "The right bronchus is wider and more upright", "People breathe in on the right", "It does not — the left is more common"], answer: 1,
         why: "Geometry. The right main bronchus leaves the windpipe at a shallower angle, so anything falling takes that route." },
+      { q: "Why does the windpipe have cartilage rings?", options: ["To make it flexible", "To keep it open so air can always pass", "To filter dust", "To warm the air"], answer: 1,
+        why: "Without the C-shaped rings of cartilage, the windpipe would collapse when you breathe in hard, like a straw that kinks." },
+      { q: "What happens to the airway tubes as they branch deeper?", options: ["They get wider", "They get narrower but more numerous", "They stay the same size", "They merge back together"], answer: 1,
+        why: "Each split makes the tubes narrower, but there are far more of them. The total cross-section grows, which slows the air down for gas exchange." },
     ],
     sizeU: 22,
     spanU: 18,
@@ -1238,6 +1408,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What actually pulls air into your lungs?", options: ["The lungs expanding on their own", "The diaphragm flattening", "Swallowing air", "The heart pushing"], answer: 1,
         why: "Lungs have no muscle of their own. The diaphragm flattens, the chest cavity gets bigger, pressure drops, and air follows." },
+      { q: "What causes hiccups?", options: ["The lungs contracting", "The diaphragm twitching involuntarily", "Swallowing too fast", "A blocked airway"], answer: 1,
+        why: "A hiccup is a sudden, involuntary contraction of the diaphragm followed by the vocal cords snapping shut, which makes the sound." },
+      { q: "Where is the diaphragm?", options: ["In the throat", "Between the chest and the abdomen", "Around the heart", "At the base of the spine"], answer: 1,
+        why: "It is a dome-shaped sheet of muscle that separates the chest cavity above from the abdominal cavity below." },
     ],
     sizeU: 14,
     spanU: 32,
@@ -1264,6 +1438,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "How does food get down the oesophagus?", options: ["It falls", "Muscles squeeze it along in a wave", "Water washes it down", "Air pressure"], answer: 1,
         why: "Peristalsis — a travelling wave of muscle contraction. Gravity helps but is not required." },
+      { q: "What stops stomach acid from coming up?", options: ["Gravity alone", "A ring of muscle at the bottom of the oesophagus", "A valve made of bone", "Mucus plugs the gap"], answer: 1,
+        why: "The lower oesophageal sphincter stays clenched between swallows. When it leaks, acid reaches the oesophagus lining and that is heartburn." },
+      { q: "Can you swallow food while upside down?", options: ["No, food needs gravity", "Yes, peristalsis pushes it regardless", "Only liquids", "Only if you hold your breath"], answer: 1,
+        why: "Peristalsis is muscular, not gravitational. Astronauts eat in zero gravity for the same reason." },
     ],
     sizeU: 38,
     spanU: 12,
@@ -1290,6 +1468,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Which of these is NOT a job of the liver?", options: ["Storing sugar", "Making bile", "Pumping blood", "Breaking down alcohol"], answer: 2,
         why: "Pumping is the heart's job. The liver does the other three and several hundred more." },
+      { q: "What makes the liver unusual among organs?", options: ["It can pump blood", "It can regrow after being partly removed", "It is made of bone", "It does not need blood supply"], answer: 1,
+        why: "The liver is the only internal organ that can regenerate. Remove up to three quarters and the remaining tissue will rebuild to full size." },
+      { q: "Where does the liver sit in the body?", options: ["Behind the heart", "Under the ribs on the right side", "In the pelvis", "In the throat"], answer: 1,
+        why: "It sits in the upper right abdomen, protected by the rib cage. It is the heaviest internal organ at about 1.5 kg." },
     ],
     sizeU: 14,
     spanU: 22,
@@ -1316,6 +1498,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What does the gallbladder store?", options: ["Blood", "Bile", "Urine", "Acid"], answer: 1,
         why: "Bile, made by the liver. Its job is timing: releasing a concentrated dose when fatty food arrives." },
+      { q: "What triggers the gallbladder to squeeze?", options: ["Drinking water", "Fatty food arriving in the small intestine", "Sleeping", "Exercise"], answer: 1,
+        why: "Hormones released when fat reaches the small intestine signal the gallbladder to contract and release bile, which breaks fat into smaller droplets." },
+      { q: "Can you survive without a gallbladder?", options: ["No, bile is essential and only comes from here", "Yes, bile just trickles from the liver continuously instead", "Only with medication", "Only children can"], answer: 1,
+        why: "The liver still makes bile. Without the gallbladder it just flows continuously rather than being stored and released in a concentrated burst." },
     ],
     sizeU: 8,
     spanU: 6,
@@ -1342,6 +1528,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Why does the stomach not digest itself?", options: ["Its acid is weak", "A layer of mucus protects it", "It is made of bone", "It only makes acid at night"], answer: 1,
         why: "The lining constantly replaces a mucus barrier. When that barrier fails you get an ulcer." },
+      { q: "What is the pH of stomach acid?", options: ["About 7 (neutral)", "About 2 (very acidic)", "About 10 (alkaline)", "About 5 (mildly acidic)"], answer: 1,
+        why: "Around pH 2, strong enough to dissolve metal. It needs to be that strong to break down tough food proteins and kill bacteria." },
+      { q: "Does the stomach absorb most of your nutrients?", options: ["Yes, that is its main job", "No, it mostly breaks food down for the small intestine", "Only fats", "Only water"], answer: 1,
+        why: "Very little is absorbed in the stomach. Its job is mechanical and chemical breakdown. The small intestine downstream does the actual absorbing." },
     ],
     sizeU: 18,
     spanU: 15,
@@ -1368,6 +1558,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What does the pancreas make besides digestive juice?", options: ["Bile", "Insulin", "Blood cells", "Adrenaline"], answer: 1,
         why: "Insulin, from small clusters of cells scattered through it. It is the hormone that lets your cells take sugar out of the blood." },
+      { q: "What happens when the insulin-making cells stop working?", options: ["You stop digesting food", "You develop diabetes", "Your blood pressure drops", "Nothing noticeable"], answer: 1,
+        why: "Without insulin, cells cannot take sugar from the blood. Blood sugar rises and stays high, which is diabetes." },
+      { q: "Where is the pancreas?", options: ["In the throat", "Behind the stomach", "Inside the liver", "Below the kidneys"], answer: 1,
+        why: "It sits behind the stomach, tucked against the back wall of the abdomen. Its hidden position makes pancreatic problems hard to detect early." },
     ],
     sizeU: 8,
     spanU: 20,
@@ -1394,6 +1588,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What does the spleen mainly do?", options: ["Makes bile", "Filters blood and recycles old red cells", "Digests fat", "Stores urine"], answer: 1,
         why: "It filters blood, retires old red cells, and holds a reserve of immune cells." },
+      { q: "Can you survive without a spleen?", options: ["No, it is essential", "Yes, but you are more vulnerable to certain infections", "Only with a transplant", "Yes, with no consequences at all"], answer: 1,
+        why: "You can live without it, but the spleen holds immune cells that fight specific bacteria. Without it, you need vaccinations and sometimes daily antibiotics." },
+      { q: "What does the spleen do with old red blood cells?", options: ["Sends them to the kidneys", "Breaks them down and recycles the iron", "Stores them for later", "Turns them into white cells"], answer: 1,
+        why: "Red blood cells wear out after about 120 days. The spleen traps old ones, breaks them apart, and salvages the iron for new cells." },
     ],
     sizeU: 12,
     spanU: 10,
@@ -1420,6 +1618,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Why is the small intestine so long and folded?", options: ["To store food", "To maximise the surface that can absorb", "To make room for the stomach", "To slow you down"], answer: 1,
         why: "Absorption happens across a surface, so more surface means more nutrition from the same meal. Length plus folds plus microscopic projections multiply it enormously." },
+      { q: "What are villi?", options: ["Bacteria in the gut", "Tiny finger-like projections that increase surface area", "Muscles that push food along", "Valves between sections"], answer: 1,
+        why: "Villi are microscopic projections covering the inner wall. They massively increase the surface area available for absorbing nutrients from digested food." },
+      { q: "Why is it called 'small' if it is longer than the large intestine?", options: ["It was named first", "Small refers to its width, not its length", "It is shorter in children", "It is a translation error"], answer: 1,
+        why: "The small intestine is narrower (about 2.5 cm wide) while the large intestine is wider (about 6 cm). The names refer to diameter, not length." },
     ],
     sizeU: 18,
     spanU: 18,
@@ -1446,6 +1648,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What is the large intestine's main job?", options: ["Absorbing nutrients", "Reclaiming water", "Making acid", "Storing bile"], answer: 1,
         why: "Most nutrition has already been absorbed upstream. This stretch reclaims water and forms what is left into waste." },
+      { q: "What lives inside the large intestine?", options: ["Nothing, it is sterile", "Trillions of bacteria that help digestion", "Red blood cells", "Bile salts"], answer: 1,
+        why: "The large intestine hosts trillions of bacteria, your gut microbiome. They break down fibre, produce some vitamins, and help train your immune system." },
+      { q: "What happens if the large intestine absorbs too little water?", options: ["Constipation", "Diarrhoea", "Heartburn", "Hiccups"], answer: 1,
+        why: "If food passes through too quickly, not enough water is reclaimed and the result is diarrhoea. Too slowly, and too much water is absorbed, causing constipation." },
     ],
     sizeU: 32,
     spanU: 26,
@@ -1472,6 +1678,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Roughly how often do the kidneys filter all your blood?", options: ["Once a day", "About 40 times a day", "Once a week", "Continuously but only while asleep"], answer: 1,
         why: "Around 40 times a day — about 180 litres filtered, of which nearly all the water is put straight back." },
+      { q: "What is a nephron?", options: ["A type of kidney stone", "The tiny filtering unit inside the kidney", "A nerve in the kidney", "A blood vessel"], answer: 1,
+        why: "Each kidney contains about a million nephrons. Each one is a tiny tube with a filter at one end that separates waste from useful substances in the blood." },
+      { q: "Besides filtering waste, what else do the kidneys do?", options: ["Digest food", "Help control blood pressure", "Produce bile", "Store fat"], answer: 1,
+        why: "The kidneys regulate blood pressure by adjusting how much water stays in the blood. They also signal the body to make more red blood cells when oxygen is low." },
     ],
     sizeU: 14,
     spanU: 10,
@@ -1498,6 +1708,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Why do the ureters enter the bladder at an angle?", options: ["To make them longer", "So a full bladder pinches them shut", "To reach the kidneys", "No reason — it is random"], answer: 1,
         why: "The angle makes a one-way valve. Pressure in a full bladder closes them, so urine cannot be pushed back toward the kidneys." },
+      { q: "How does urine move down the ureters?", options: ["Gravity alone", "Peristalsis, like the oesophagus", "Blood pressure pushes it", "It flows freely like a pipe"], answer: 1,
+        why: "Smooth muscle in the ureter walls contracts in waves, squeezing urine downward. This works even when you are lying down or upside down." },
+      { q: "What happens if a ureter is blocked?", options: ["Nothing, the other one takes over", "Urine backs up and the kidney swells painfully", "The bladder stops working", "Blood pressure drops"], answer: 1,
+        why: "A blocked ureter causes urine to back up into the kidney, which swells. This is extremely painful and can damage the kidney if not relieved. Kidney stones are the most common cause." },
     ],
     sizeU: 24,
     spanU: 20,
@@ -1524,6 +1738,10 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "What tells you the bladder is filling?", options: ["Its weight", "Stretch sensors in its wall", "The kidneys", "The stomach"], answer: 1,
         why: "Nerve endings in the muscular wall respond to stretch, and report earlier and more insistently as it fills." },
+      { q: "About how much can the bladder hold comfortably?", options: ["50 ml", "400 to 600 ml", "2 litres", "10 litres"], answer: 1,
+        why: "About half a litre comfortably. You start feeling the urge at around 200 ml, well before it is full, which is the stretch sensors doing their job." },
+      { q: "What muscle controls when you urinate?", options: ["The diaphragm", "The urethral sphincter", "The heart", "Abdominal muscles only"], answer: 1,
+        why: "The internal urethral sphincter relaxes involuntarily when the bladder is full. The external sphincter is under voluntary control, which is what lets you wait." },
     ],
     sizeU: 10,
     spanU: 11,
@@ -1550,12 +1768,35 @@ export const SPECIMENS: Specimen[] = [
     quiz: [
       { q: "Where are most blood cells made?", options: ["In the heart", "In bone marrow", "In the liver", "In the spleen"], answer: 1,
         why: "Bone marrow, especially in the pelvis, ribs, spine and the ends of the long bones. The liver does it before you are born." },
+      { q: "What gives bones their hardness?", options: ["Iron", "Calcium and phosphorus minerals", "Keratin", "Water pressure"], answer: 1,
+        why: "Calcium phosphate crystals embedded in a collagen framework give bone its rigidity. The collagen provides flexibility so bones bend slightly before breaking." },
+      { q: "Are bones alive?", options: ["No, they are like rocks", "Yes, they constantly rebuild themselves", "Only in children", "Only the marrow is alive"], answer: 1,
+        why: "Bone is living tissue with its own blood supply. Old bone is constantly being broken down and replaced, which is how fractures heal and bones adapt to the loads placed on them." },
     ],
     sizeU: 180,
     spanU: 62,
     reallife: "206 bones in an adult. A newborn has about 270; several fuse during growth.",
   },
 ];
+
+// Local Blender study pilots are intentionally absent from production catalogs.
+if (import.meta.env.DEV) SPECIMENS.push(
+  { id: 'humerus-study', name: 'Humerus — external bone', khmer: null,
+    english: 'A continuous Blender bone surface', subject: 'biology', topic: 'Bone study pilots',
+    centreU: 0, layers: [{id:'whole',label:'External',hint:'Illustrative humerus surface'}],
+    about: ['Explore the refined external humerus. This is a simplified teaching shape, not a scan or medically validated specimen.'],
+    parts: [], quiz: [], sizeU: 34, spanU: 12, reallife: 'External bone study; proportions are illustrative.' },
+  { id: 'bone-cutaway-study', name: 'Inside a long bone', khmer: null,
+    english: 'Bone layers, marrow and vessels', subject: 'biology', topic: 'Bone study pilots',
+    centreU: 0, layers: [{id:'whole',label:'Cutaway',hint:'Generic long-bone tissue diagram'}],
+    about: ['A schematic tissue cutaway, not an exact section through the humerus mesh.'],
+    parts: [], quiz: [], sizeU: 32, spanU: 12, reallife: 'Schematic tissue layout—not a measured section.' },
+  { id: 'osteon-study', name: 'Osteon — magnified', khmer: null,
+    english: 'Magnified — not to body scale', subject: 'biology', topic: 'Bone study pilots',
+    centreU: 0, layers: [{id:'whole',label:'Magnified',hint:'Not to body scale'}],
+    about: ['Magnified—not to body scale. Cells and microchannels are exaggerated for visibility. Colors distinguish learning structures.'],
+    parts: [], quiz: [], sizeU: 10, spanU: 12, reallife: 'Magnified—not to body scale; no numerical magnification claimed.' }
+);
 
 export const specimenById = (id: string) => SPECIMENS.find((s) => s.id === id) ?? null;
 

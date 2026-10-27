@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Line, Html, OrbitControls } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
+import { Line, Html } from "@react-three/drei";
 import { Shape } from "three";
 import { CAMBODIA_PROVINCES } from "../cambodia-provinces";
 import { projectLatLng } from "../cambodia-outline";
@@ -30,12 +31,12 @@ function centroid(g: Region): [number, number] {
 }
 
 /**
- * The province map — the second teleport tier. Tapping a province on the
+ * The province map the second teleport tier. Tapping a province on the
  * national map lands here: that province drawn large (its neighbours faint for
  * orientation), with a marker for every heritage site inside it. Tapping a site
  * opens its points of interest in detail before you teleport in.
  *
- * District (ADM2) boundaries will subdivide each province here later — the data
+ * District (ADM2) boundaries will subdivide each province here later the data
  * slots straight into this same map plane (see TODO.md · "district boundaries").
  */
 export function ProvinceView({
@@ -67,7 +68,7 @@ export function ProvinceView({
     };
   }, [province]);
 
-  // District (ADM2) boundaries — lazy-loaded (kept out of the initial bundle).
+  // District (ADM2) boundaries lazy-loaded (kept out of the initial bundle).
   const [districts, setDistricts] = useState<District[]>([]);
   const [activeD, setActiveD] = useState<District | null>(null);
   useEffect(() => {
@@ -84,7 +85,7 @@ export function ProvinceView({
     };
   }, [province]);
 
-  // Commune (ADM3) boundaries — the fourth tier, loaded only once a district is
+  // Commune (ADM3) boundaries the fourth tier, loaded only once a district is
   // opened (one province's communes at a time, ~30 KB).
   const [communes, setCommunes] = useState<Commune[]>([]);
   const [activeC, setActiveC] = useState<Commune | null>(null);
@@ -134,13 +135,13 @@ export function ProvinceView({
   }
 
   const { shapes, boundaries, cx, cz, r } = geo;
-  // Province identity — Khmer name, one-line identity, known-for chips.
+  // Province identity Khmer name, one-line identity, known-for chips.
   const info = PROVINCE_INFO[province.pcode];
   const camDist = r * 2.4 + 1.2;
   const markerScale = Math.max(0.12, r * 0.16);
 
   // Farm pin positions. Coarse geo collapses nearby farms to the same cell, so
-  // fan out any that would land on top of each other (privacy is preserved —
+  // fan out any that would land on top of each other (privacy is preserved  
   // this only separates the markers, it doesn't reveal a real location).
   const farmPos = useMemo(() => {
     const cell = new Map<string, number>();
@@ -202,7 +203,7 @@ export function ProvinceView({
     [districtCommunes],
   );
 
-  // What falls inside the active region (district, or a commune within it) —
+  // What falls inside the active region (district, or a commune within it)  
   // the "filter to an area" tiers.
   const contentsOf = (region: Region | null) => {
     if (!region) return { sites: [] as Spot[], farms: [] as SharedPlot[] };
@@ -259,7 +260,7 @@ export function ProvinceView({
           <Line key={i} points={b} color="#e9e2c8" lineWidth={2.5} />
         ))}
 
-        {/* District (ADM2) subdivisions — thin borders + clickable fills. */}
+        {/* District (ADM2) subdivisions thin borders + clickable fills. */}
         {districtGeo.map(({ d, shapes: dsh, lines }) => {
           const on = activeD?.pcode === d.pcode;
           return (
@@ -289,7 +290,7 @@ export function ProvinceView({
           );
         })}
 
-        {/* Commune (ADM3) subdivisions of the open district — finer borders. */}
+        {/* Commune (ADM3) subdivisions of the open district finer borders. */}
         {communeGeo.map(({ c, shapes: csh, lines }) => {
           const on = activeC?.pcode === c.pcode;
           return (
@@ -347,7 +348,7 @@ export function ProvinceView({
         ))}
 
         <OrbitControls
-          enablePan={false}
+          enablePan
           minDistance={camDist * 0.5}
           maxDistance={camDist * 1.8}
           maxPolarAngle={Math.PI / 2.2}
@@ -421,7 +422,7 @@ export function ProvinceView({
           </p>
           <p className="prov-hint-sub">
             {districts.length > 0
-              ? "Tap a district, then a commune to zoom in — or a marker for a site's points of interest, or a 🌾 pin for a real farm's season."
+              ? "Tap a district, then a commune to zoom in or a marker for a site's points of interest, or a 🌾 pin for a real farm's season."
               : "Tap a marker for a site's points of interest, or a 🌾 pin for a real farm's season."}
           </p>
         </div>
@@ -430,7 +431,7 @@ export function ProvinceView({
   );
 }
 
-/** Bottom sheet for a tapped district or commune — the "filter to an area" tiers. */
+/** Bottom sheet for a tapped district or commune the "filter to an area" tiers. */
 function RegionPanel({
   icon,
   name,
@@ -464,7 +465,7 @@ function RegionPanel({
         {farms.length === 1 ? "farm" : "farms"} in this {kind}.{sub ? ` · ${sub}` : ""}
       </p>
       {empty ? (
-        <p className="prov-nopoi">Nothing mapped in this {kind} yet — add a site (see TODO.md) or share your farm.</p>
+        <p className="prov-nopoi">Nothing mapped in this {kind} yet add a site (see TODO.md) or share your farm.</p>
       ) : (
         <ul className="prov-dist-list">
           {sites.map((s) => (
@@ -489,7 +490,7 @@ function RegionPanel({
   );
 }
 
-/** A site marker on the province map — tap to reveal its points of interest. */
+/** A site marker on the province map tap to reveal its points of interest. */
 function SiteMarker({
   spot,
   scale,
@@ -614,7 +615,7 @@ function FarmMarker({
   );
 }
 
-/** Bottom sheet: a shared farm's season — photos + stage, scrub the timeline. */
+/** Bottom sheet: a shared farm's season photos + stage, scrub the timeline. */
 function FarmDetail({ plot, onClose }: { plot: SharedPlot; onClose: () => void }) {
   const [i, setI] = useState(Math.max(0, (plot.checkins?.length ?? 1) - 1));
   const checks = plot.checkins ?? [];
@@ -628,7 +629,7 @@ function FarmDetail({ plot, onClose }: { plot: SharedPlot; onClose: () => void }
       </div>
       <p className="prov-blurb">
         {prettyProvince(plot.province)}
-        {plot.variety ? ` · ${plot.variety}` : ""} — a real farm's season, shared to the commons.
+        {plot.variety ? ` · ${plot.variety}` : ""} a real farm's season, shared to the commons.
       </p>
       {c ? (
         <>
@@ -692,7 +693,7 @@ function SiteDetail({ spot, onClose, onEnter }: { spot: Spot; onClose: () => voi
           </ul>
         </>
       ) : (
-        <p className="prov-nopoi">Points of interest for this site haven't been authored yet — a great way to help.</p>
+        <p className="prov-nopoi">Points of interest for this site haven't been authored yet a great way to help.</p>
       )}
 
       <button className="prov-enter" onClick={onEnter} disabled={!spot.live}>

@@ -1,5 +1,5 @@
 /**
- * public/models/royal-palace.glb — an authored, recognizable Royal Palace
+ * public/models/royal-palace.glb - an authored, recognizable Royal Palace
  * (Phnom Penh): the Throne Hall with cream walls, steep tiered Khmer roofs, and
  * a tall gilded central spire (with smaller end spires), on a terrace. Uses the
  * shared temple builder with cream/gold/roof tones. Stylized stand-in.

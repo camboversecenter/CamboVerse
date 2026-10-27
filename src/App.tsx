@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { MapView } from "./components/MapView";
 import { SpotView } from "./components/SpotView";
+import { PhnomKulenView } from "./components/PhnomKulenView";
 import { ProvinceView } from "./components/ProvinceView";
 import { ToolsView } from "./components/ToolsView";
 import { ClassroomView } from "./components/ClassroomView";
@@ -13,6 +14,10 @@ import { FashionView } from "./components/FashionView";
 import { SakYantView } from "./components/SakYantView";
 import { GroveGardenView } from "./components/GroveGardenView";
 import { LabView } from "./components/LabView";
+import { ExperienceRoom } from "./components/ExperienceRoom";
+import { PhysicsRoom } from "./components/PhysicsRoom";
+import { EarthSkyRoom } from "./components/EarthSkyRoom";
+import { BiologyRoom, initialBiologyState } from "./components/BiologyRoom";
 import { CeremonyHome } from "./components/CeremonyHome";
 import { CeremonyView } from "./components/CeremonyView";
 import { SpecimenView } from "./components/SpecimenView";
@@ -24,9 +29,14 @@ import { specimenById } from "./lab";
 import { templateById } from "./ceremony";
 import { SPOTS } from "./spots";
 
+const ProvinceSongs = lazy(() => import('./components/ProvinceSongs'));
+const PanoramaTour = lazy(() => import('./components/PanoramaTour'));
+
 export function App() {
+  const [panoramaOpen,setPanoramaOpen] = useState(() => new URLSearchParams(window.location.search).get('view') === '360-test');
   const [spotId, setSpotId] = useState<string | null>(null);
   const [provinceName, setProvinceName] = useState<string | null>(null);
+  const [provinceSongsOpen, setProvinceSongsOpen] = useState(() => new URLSearchParams(window.location.search).get('view') === 'province-songs');
   const [toolsOpen, setToolsOpen] = useState(false);
   const [classroomOpen, setClassroomOpen] = useState(false);
   const [kunOpen, setKunOpen] = useState(false);
@@ -45,6 +55,11 @@ export function App() {
   const [roomId, setRoomId] = useState<string | null>(null);
   // 🔬 Learning Lab: a directory, then one specimen's page.
   const [labOpen, setLabOpen] = useState(false);
+  const [chemistryOpen, setChemistryOpen] = useState(false);
+  const [physicsOpen, setPhysicsOpen] = useState(false);
+  const [earthSkyOpen, setEarthSkyOpen] = useState(false);
+  const [biologyOpen, setBiologyOpen] = useState(false);
+  const [biologyState, setBiologyState] = useState(initialBiologyState);
   // A stack, not a single id: an organ's screen is reached from inside the body
   // it belongs to, and Back has to return there rather than to the hub.
   const [specimenStack, setSpecimenStack] = useState<string[]>([]);
@@ -95,10 +110,18 @@ export function App() {
 
   return (
     <>
-      {spot ? (
+      {panoramaOpen ? (
+        <Suspense fallback={<p role="status">Loading 360° test tour…</p>}><PanoramaTour onBack={() => setPanoramaOpen(false)} /></Suspense>
+      ) : provinceSongsOpen ? (
+        <Suspense fallback={<p role="status" style={{ padding: 24 }}>Loading province collection…</p>}>
+          <ProvinceSongs initialId={new URLSearchParams(window.location.search).get('province') ?? undefined} onBack={() => setProvinceSongsOpen(false)} />
+        </Suspense>
+      ) : spot ? (
         // Leaving a site returns to the province map if one is open, else the
         // national map.
-        <SpotView spot={spot} onBack={() => go(null)} />
+        spot.id === 'phnom-kulen'
+          ? <PhnomKulenView spot={spot} onBack={() => go(null)} />
+          : <SpotView spot={spot} onBack={() => go(null)} />
       ) : provinceName ? (
         <ProvinceView
           provinceName={provinceName}
@@ -130,7 +153,7 @@ export function App() {
           specimen={specimen}
           onBack={() => setSpecimenStack((st) => st.slice(0, -1))}
           onOpenSpecimen={(id) => setSpecimenStack((st) => [...st, id])}
-          backLabel={parent ? `← ${parent.name}` : "← Lab"}
+          backLabel={parent ? `← ${parent.name}` : biologyOpen ? "← Biology & Anatomy" : chemistryOpen ? "← Experience Room" : physicsOpen ? "← Physics Lab" : earthSkyOpen ? "← Earth & Sky" : "← Lab"}
         />
       ) : ceremony ? (
         <CeremonyView template={ceremony} onBack={() => setCeremonyId(null)} />
@@ -139,13 +162,25 @@ export function App() {
           onBackToMap={() => setCeremoniesOpen(false)}
           onOpenCeremony={(id) => setCeremonyId(id)}
         />
+      ) : biologyOpen ? (
+        <BiologyRoom state={biologyState} onChange={setBiologyState} onBack={() => setBiologyOpen(false)} onOpenSpecimen={(id) => setSpecimenStack([id])} />
+      ) : chemistryOpen ? (
+        <ExperienceRoom onBack={() => setChemistryOpen(false)} onOpenSpecimen={(id) => setSpecimenStack([id])} />
+      ) : physicsOpen ? (
+        <PhysicsRoom onBack={() => setPhysicsOpen(false)} onOpenSpecimen={(id) => setSpecimenStack([id])} />
+      ) : earthSkyOpen ? (
+        <EarthSkyRoom onBack={() => setEarthSkyOpen(false)} onOpenSpecimen={(id) => setSpecimenStack([id])} />
       ) : labOpen ? (
         <LabView
           onBackToMap={() => setLabOpen(false)}
           onOpenSpecimen={(id) => setSpecimenStack([id])}
+          onOpenChemistry={() => setChemistryOpen(true)}
+          onOpenBiology={() => setBiologyOpen(true)}
+          onOpenPhysics={() => setPhysicsOpen(true)}
+          onOpenEarthSky={() => setEarthSkyOpen(true)}
         />
       ) : building ? (
-        // A building's own page — reached from the directory, or by tapping it
+        // A building's own page reached from the directory, or by tapping it
         // inside a site. Back goes wherever you came from.
         <BuildingView
           building={building}
@@ -184,6 +219,8 @@ export function App() {
           onOpenLab={() => setLabOpen(true)}
           onOpenCeremonies={() => setCeremoniesOpen(true)}
           onOpenBuildings={() => setBuildingsOpen(true)}
+          onOpenProvinceSongs={() => setProvinceSongsOpen(true)}
+          onOpenPanorama={() => setPanoramaOpen(true)}
         />
       )}
 

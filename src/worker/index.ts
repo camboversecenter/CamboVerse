@@ -2,8 +2,8 @@
  * CamboVerse edge Worker.
  *
  * Static assets are served by the edge; the Worker handles a small API surface:
- *   - GET  /api/health  — liveness/metadata
- *   - POST /api/guide   — the AI tour guide ("Kiri" the monkey)
+ *   - GET  /api/health  liveness/metadata
+ *   - POST /api/guide   the AI tour guide ("Kiri" the monkey)
  *
  * The guide is grounded in our own per-POI facts (see src/spots.ts) so it stays
  * accurate, and it answers in the visitor's language. It is key-gated: set the
@@ -15,6 +15,7 @@ import { MARKETS } from "../shops";
 import { ERAS } from "../history";
 import { fulfillmentFor } from "../lib/economy";
 import { handleRails } from "./rails";
+import { handleLocationGuide } from './locationGuide';
 
 interface Env {
   ASSETS: Fetcher;
@@ -31,6 +32,9 @@ const LANG_NAMES: Record<string, string> = {
 };
 
 interface GuideBody {
+  experienceId?: unknown;
+  locationId?: unknown;
+  objectId?: unknown;
   spotId?: string;
   poiId?: string | null;
   eraId?: string;
@@ -91,6 +95,9 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
     return Response.json({ text: "", fallback: true }, { status: 400 });
   }
 
+  if (!body || typeof body !== 'object') return Response.json({ error: 'Invalid guide request' }, { status: 400 });
+  if (body.experienceId !== undefined) return handleLocationGuide(body, env);
+
   const spot = SPOTS.find((s) => s.id === body.spotId);
   if (!spot) return Response.json({ text: "", fallback: true }, { status: 404 });
   const poi = spot.pois?.find((p) => p.id === body.poiId);
@@ -100,7 +107,7 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
   // Grounding + fallback differ for a POI/site vs. a historical era.
   const siteNote = era?.sites?.[spot.id];
   const grounding = era
-    ? `Era: ${era.name} (${era.khmer}), ${era.years} — ${era.age}.\n` +
+    ? `Era: ${era.name} (${era.khmer}), ${era.years} ${era.age}.\n` +
       `About the era: ${era.story}\n` +
       (siteNote ? `${spot.name} in this era: ${siteNote}\n` : "") +
       `Highlights: ${era.highlights.join("; ")}.`
@@ -119,7 +126,7 @@ async function handleGuide(request: Request, env: Env): Promise<Response> {
     ? `You are Kiri, a warm, playful young monkey who takes visitors "back in ` +
       `time" through Cambodia's history. Narrate this era vividly and briefly ` +
       `(2–4 sentences), as if the visitor is standing at ${spot.name} watching ` +
-      `it unfold. Be respectful — especially about difficult periods. `
+      `it unfold. Be respectful especially about difficult periods. `
     : `You are Kiri, a warm, playful young monkey who guides visitors around ` +
       `Cambodia's Khmer heritage sites. Speak in short, vivid, friendly turns ` +
       `(2–4 sentences). `;
@@ -191,7 +198,7 @@ async function ensureSchema(db: D1Database): Promise<void> {
 /**
  * Place a (demo) order. Prices are recomputed server-side from the catalogue,
  * fulfillment is resolved from the visitor's country, and the order is persisted
- * to D1 when the binding is present (otherwise it still confirms — the PoC never
+ * to D1 when the binding is present (otherwise it still confirms the PoC never
  * breaks). No real payment is taken.
  */
 async function handleOrder(request: Request, env: Env): Promise<Response> {
@@ -224,7 +231,7 @@ async function handleOrder(request: Request, env: Env): Promise<Response> {
         .bind(orderId, market.id, fx.country, JSON.stringify(body.items ?? []), total, new Date().toISOString())
         .run();
     } catch {
-      // D1 unavailable — confirm anyway (persistence is optional, never blocks).
+      // D1 unavailable confirm anyway (persistence is optional, never blocks).
     }
   }
 

@@ -1,14 +1,14 @@
 import { SITES, BUILDINGS, standaloneBuildings, buildingsOfSite } from "../buildings";
 
 /**
- * 🏛 **Buildings** — the directory, and the only way in.
+ * 🏛 **Buildings** the directory, and the only way in.
  *
  * The map carries one Buildings button; everything else is reached from here.
  * A **site** is a group of buildings you can walk between, so its card opens the
  * walkable scene. Under it, each building links straight to its own page for
  * anyone who knows what they want and does not care to walk there.
  *
- * Standalone buildings — ones that belong to no site — are listed last. They
+ * Standalone buildings ones that belong to no site are listed last. They
  * have a page but no scene.
  *
  * This is a plain DOM page on purpose. It is the first thing a visitor on a
@@ -37,7 +37,7 @@ export function BuildingsHome({
           <h1>Buildings and campuses</h1>
           <p>
             Walkable sites and the buildings on them. Every one is built
-            procedurally from photographs — the massing is an informed
+            procedurally from photographs the massing is an informed
             approximation, not survey data.
           </p>
         </header>
@@ -90,7 +90,7 @@ export function BuildingsHome({
         <p className="bhome-foot">
           {BUILDINGS.length} buildings across {SITES.length} site
           {SITES.length === 1 ? "" : "s"}. Adding one is a photograph and a
-          registry entry — see <code>docs/BUILDINGS.md</code>.
+          registry entry see <code>docs/BUILDINGS.md</code>.
         </p>
       </div>
     </div>

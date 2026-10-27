@@ -1,0 +1,35 @@
+.location-guide-host { position:fixed; z-index:60; left:16px; top:78px; color:#f4f4e9; font-family:system-ui,sans-serif; }
+.location-guide-host .location-guide-launcher { position:static; display:flex; align-items:center; gap:7px; min-height:48px; padding:3px 15px 3px 4px; border:1px solid #b3c99c; border-radius:999px; background:#14362dee; color:#f4f4e9; font:700 14px system-ui,sans-serif; box-shadow:0 4px 20px #0004; cursor:pointer; }
+.location-guide-panel { position:fixed; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); max-height:min(610px,calc(100dvh - 180px)); display:flex; flex-direction:column; border:1px solid #839f80; border-radius:20px; background:#102b25f5; box-shadow:0 12px 50px #0006; overflow:hidden; }
+.location-guide-header { display:flex; align-items:center; gap:9px; padding:12px 14px; border-bottom:1px solid #a5bf8233; flex-shrink:0; }
+.location-guide-header>div { flex:1; min-width:0; }
+.location-guide-header strong { font-size:17px; color:#dcebbb; }
+.location-guide-header p { margin:3px 0 0; font-size:12px; line-height:1.4; color:#c4d5c6; }
+.location-guide-host button { touch-action:manipulation; }
+.location-guide-host .location-guide-close { position:static; border:1px solid #9eb8a1; border-radius:50%; width:44px; height:44px; min-height:44px; padding:0; flex-shrink:0; background:#23463a; color:white; font:700 24px system-ui; cursor:pointer; }
+.location-guide-scroll { padding:0 15px 10px; min-height:0; overflow:auto; overscroll-behavior:contain; }
+.location-guide-intro { font-size:14px; line-height:1.55; margin:13px 0; }
+.location-guide-suggestions { display:flex; flex-wrap:wrap; gap:7px; }
+.location-guide-host .location-guide-suggestions button { position:static; min-height:44px; padding:7px 10px; border:1px solid #8fa779; border-radius:11px; background:#244837; color:#ecf0dc; font:600 12px system-ui; cursor:pointer; text-align:left; }
+.location-guide-messages article { margin-top:14px; font-size:14px; line-height:1.55; }
+.location-guide-question { margin:0 0 6px 28px; padding:9px 12px; border-radius:13px 13px 2px 13px; background:#42613b; }
+.location-guide-answer { padding:11px 12px; border-radius:2px 13px 13px 13px; background:#1a3b31; }
+.location-guide-answer>p { margin:6px 0; white-space:pre-wrap; }
+.location-guide-answer small { font-size:10px; letter-spacing:.04em; color:#cadca7; text-transform:uppercase; }
+.location-guide-sources { display:grid; gap:5px; margin-top:9px; font-size:11px; line-height:1.5; color:#b8c9ba; }
+.location-guide-sources a { color:#d2e8af; text-decoration:underline; }
+.location-guide-form { padding:10px 15px 0; border-top:1px solid #a5bf8233; flex-shrink:0; }
+.location-guide-label { display:block; font-size:11px; margin-bottom:5px; color:#d2dfcc; }
+.location-guide-form>div { display:flex; gap:7px; }
+.location-guide-form input { min-width:0; flex:1; min-height:44px; box-sizing:border-box; padding:10px; border:1px solid #77947d; border-radius:11px; background:#0c211d; color:white; font:14px system-ui; }
+.location-guide-host .location-guide-form button { position:static; min-height:44px; padding:8px 15px; border:1px solid #afcb84; border-radius:11px; background:#4a6c37; color:white; font:700 13px system-ui; cursor:pointer; }
+.location-guide-host button:disabled { opacity:.55; cursor:wait; }
+.location-guide-host button:focus-visible,.location-guide-form input:focus-visible { outline:3px solid #efd395; outline-offset:2px; }
+.location-guide-footnote { margin:8px 15px 12px; font-size:10px; line-height:1.4; color:#b5c6b8; flex-shrink:0; }
+.pano-tour:has(.location-guide-panel) .pano-look { right:438px; }
+@media(max-width:640px) {
+  .location-guide-host { left:12px; top:120px; }
+  .location-guide-host.room-360 { top:112px; }
+  .location-guide-panel { right:12px; left:12px; bottom:82px; width:auto; max-height:calc(100dvh - 170px); }
+  .pano-tour:has(.location-guide-panel) .pano-look { visibility:hidden; }
+}

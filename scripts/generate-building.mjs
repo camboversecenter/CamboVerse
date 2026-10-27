@@ -1,10 +1,10 @@
 /**
  * Build a stylized model of an ordinary Cambodian building from a small JSON
- * spec — the photo-to-virtual-building path.
+ * spec - the photo-to-virtual-building path.
  *
  *     node scripts/generate-building.mjs scripts/data/buildings/<name>.json
  *
- * CONTRIBUTING A BUILDING: docs/BUILDINGS.md walks through the whole path —
+ * CONTRIBUTING A BUILDING: docs/BUILDINGS.md walks through the whole path -
  * what to photograph, every spec field, the size budget, and the rules about
  * not naming or badging a real institution. Read it before writing a spec.
  *
@@ -17,8 +17,8 @@
  *
  * What a photograph reliably gives is TYPOLOGY: storeys, bays, roof kind,
  * balcony, colour, proportion. Those are the fifteen-odd numbers the hand-
- * authored generators in this folder are already made of. So a reader — a
- * person, or a vision model — writes them down as JSON, and this file turns any
+ * authored generators in this folder are already made of. So a reader - a
+ * person, or a vision model - writes them down as JSON, and this file turns any
  * such JSON into geometry from the same box/cylinder/cone vocabulary as every
  * temple here.
  *
@@ -103,7 +103,7 @@ b.box(W + 1.2, 0.45, D + 1.2, 0, 0.22, 0, PLINTH);
 b.box(W, H, D, 0, 0.45 + H / 2, 0, WALL);
 
 // ---- storey bands: a cornice at every floor line ----------------------------
-// Cheap and load-bearing for legibility — without the horizontal lines a
+// Cheap and load-bearing for legibility - without the horizontal lines a
 // four-storey block reads as one tall wall from any distance.
 for (let s = 1; s <= N; s++) {
   const y = 0.45 + s * SH;
@@ -116,7 +116,7 @@ const back = -D / 2;
 for (let i = 0; i < BAYS; i++) {
   const x = -half + (i + 0.5) * bayW;
 
-  // Pilasters sit on the bay JOINS, not the middle — a pilaster centred on a
+  // Pilasters sit on the bay JOINS, not the middle - a pilaster centred on a
   // window is the tell that a façade was generated rather than looked at.
   if (spec.pilasters !== false && i > 0) {
     const px = -half + i * bayW;
@@ -131,10 +131,10 @@ for (let i = 0; i < BAYS; i++) {
     if (s === 0 && spec.ground?.arcade) {
       // Ground floor: a recessed glazed arcade behind columns.
       // The glazing is the WIDE element and the column the narrow one. Drawn
-      // the other way round — fat columns over a recessed pane — a glazed
+      // the other way round - fat columns over a recessed pane - a glazed
       // ground floor reads as blank wall, which is what the first pass did.
       // NOTE the sign. At `front - 0.12` with a 0.2-deep box the pane sits
-      // entirely BEHIND the wall face and is invisible — which is exactly what
+      // entirely BEHIND the wall face and is invisible - which is exactly what
       // the first two renders showed, and reads as "the generator ignored the
       // ground floor" rather than as a depth bug.
       b.box(bayW - 0.15, SH - 0.7, 0.22, x, sy + (SH - 0.7) / 2 + 0.1, front + 0.02, GLASS);
@@ -150,7 +150,7 @@ for (let i = 0; i < BAYS; i++) {
       b.box(bayW - 0.35, 0.1, 0.26, x, sy + 0.72, front + 0.16, TRIM); // hand rail
     }
   }
-  // The back is seen from the map and from the air, so it is not left blank —
+  // The back is seen from the map and from the air, so it is not left blank -
   // but it is plainer, because a single photograph of the front says nothing
   // about it and inventing detail there would be inventing evidence.
   for (let s = 1; s < N; s++) {
@@ -191,7 +191,7 @@ if (centre) {
   b.box(cW - 1.6, SH - 0.8, 0.14, cx, 0.45 + (SH - 0.8) / 2, cD / 2 - 0.2, GLASS);
 
   // Pediment: stacked shrinking courses, because the builder has no box
-  // rotation — which also reads as the stepped tile courses of a real gable.
+  // rotation - which also reads as the stepped tile courses of a real gable.
   if (centre.pediment !== false) {
     const pedY = 0.45 + cH;
     const steps = 9;
@@ -230,7 +230,7 @@ if ((roof.kind ?? "hipped-tile").startsWith("hipped")) {
     const dd = D + eave * 2 - t * (D + eave * 2) * 0.72;
     b.box(w, pitchH / courses + 0.06, dd, 0, y0 + 0.3 + (k + 0.5) * (pitchH / courses), 0, ROOFC);
   }
-  // Upturned finials at the hip ends — the detail that makes an otherwise
+  // Upturned finials at the hip ends - the detail that makes an otherwise
   // ordinary block unmistakably Khmer, and the one thing worth spending
   // triangles on.
   if (roof.finials !== false) {
@@ -246,7 +246,7 @@ if ((roof.kind ?? "hipped-tile").startsWith("hipped")) {
 
 // ---- the site: paving, lawn, kerbs, planting --------------------------------
 // A building alone floats. What makes the render read as a PLACE is the ground
-// it stands on — and in the photograph that ground is very specific: a wide
+// it stands on - and in the photograph that ground is very specific: a wide
 // pale concrete apron, lawn strips edged with kerbs, and rows of young staked
 // trees that have obviously been in about a season.
 //
@@ -288,7 +288,7 @@ if (spec.site && !BARE) {
    *
    * The stake matters more than it sounds. Every tree in a new Cambodian
    * forecourt is staked, and leaving it off is what makes CGI planting look
-   * like it grew there on its own — the giveaway that nobody looked at a photo.
+   * like it grew there on its own - the giveaway that nobody looked at a photo.
    */
   function tree(x, z, h, seed, kind = "young-broadleaf") {
     // Deterministic jitter: same spec in, same model out, so a rebuild is a
@@ -299,7 +299,7 @@ if (spec.site && !BARE) {
     // Honest limit: this produces a passable palm at distance and a spiky star
     // up close, because a frond is a folded ribbon along a curve and all this
     // vocabulary has is cones. src/components/GrovePlants.tsx already builds
-    // real fronds for the Grove Garden at runtime — for anything where a palm
+    // real fronds for the Grove Garden at runtime - for anything where a palm
     // is in the foreground, place it from there rather than baking it here.
     if (kind === "palm") {
       const seg = 7;
@@ -309,7 +309,7 @@ if (spec.site && !BARE) {
           x + lean * k, (k + 0.5) * (h / seg), z, SITE.trunk);
       }
       // Fronds DROOP. Radiating them flat off the top gives a pole with a disc
-      // on it — which is what a street lamp looks like, and was exactly what
+      // on it - which is what a street lamp looks like, and was exactly what
       // the first render produced. The tilt below the horizontal is the whole
       // silhouette of a palm.
       const fronds = 11;
@@ -329,7 +329,7 @@ if (spec.site && !BARE) {
       return;
     }
 
-    // Young broadleaf — the staked sapling in the photograph.
+    // Young broadleaf - the staked sapling in the photograph.
     b.cyl(0.07, 0.11, h * 0.62, 6, x, h * 0.31, z, SITE.trunk);
     const cy = h * 0.62;
     const clumps = 3;
@@ -361,7 +361,7 @@ if (spec.site && !BARE) {
     }
   }
 
-  // Flagpoles — the other thing every institutional forecourt has.
+  // Flagpoles - the other thing every institutional forecourt has.
   for (let k = 0; k < (s.flagpoles ?? 0); k++) {
     const fx = ((k - ((s.flagpoles ?? 1) - 1) / 2) * 3.5);
     const fz = D / 2 + (s.flagpoleOffsetM ?? 16);
@@ -371,7 +371,7 @@ if (spec.site && !BARE) {
 }
 
 b.build(OUT, { scale: spec.scale ?? 1, weathering: spec.weathering ?? 0.25 });
-console.log(`  ${spec.name ?? spec.id} — ${N} storeys, ${BAYS} bays, ${W} × ${D} m`);
+console.log(`  ${spec.name ?? spec.id} - ${N} storeys, ${BAYS} bays, ${W} × ${D} m`);
 if (spec.confidence) {
   console.log("  guessed, and worth remembering:");
   for (const [k, v] of Object.entries(spec.confidence)) console.log(`    ${k}: ${v}`);

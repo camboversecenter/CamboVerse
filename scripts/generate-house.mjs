@@ -1,12 +1,12 @@
 /**
- * public/models/phteah.glb — ផ្ទះខ្មែរ (phteah Khmer), a traditional Khmer
+ * public/models/phteah.glb - ផ្ទះខ្មែរ (phteah Khmer), a traditional Khmer
  * wooden stilt house: sturdy posts raising a plank-walled living floor with
  * shuttered windows, an open front veranda reached by a steep staircase, and a
  * steep gabled tiled roof with upturned finials. Weathered wood + red-brown tile.
  *
  * A stylized, licence-clean stand-in (CC-BY) authored by the CamboVerse Center,
  * pending a real capture. Built only from box/cyl/cone (no box rotation is
- * available, so the gable roof is a stack of tile courses — which also reads as
+ * available, so the gable roof is a stack of tile courses - which also reads as
  * rows of roof tiles). Run: `node scripts/generate-house.mjs`
  */
 import { resolve, dirname } from "node:path";

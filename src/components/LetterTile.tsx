@@ -3,7 +3,7 @@ import type { Texture } from "three";
 import type { KhmerLetter } from "../khmer";
 
 /**
- * A single 3D letter tile — a card carrying one Khmer letter (rendered into a
+ * A single 3D letter tile a card carrying one Khmer letter (rendered into a
  * texture in the current font), that you can look at from any angle or in VR.
  * a-series and o-series consonants get a subtly different card tint so the two
  * series read at a glance.

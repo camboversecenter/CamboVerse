@@ -2,13 +2,13 @@
  * The Khmer alphabet (អក្សរខ្មែរ), as data for the Khmer Alphabet Classroom.
  *
  * Khmer letters have two written shapes:
- *  - "Normal" (Siemreap here) — the everyday upright shapes.
- *  - "Moul" (អក្សរមូល) — the rounded, ceremonial shapes used for titles, temple
+ *  - "Normal" (Siemreap here) the everyday upright shapes.
+ *  - "Moul" (អក្សរមូល) the rounded, ceremonial shapes used for titles, temple
  *    signs, and formal headings.
  * The classroom shows every letter in both, using embedded Google fonts.
  *
  * Consonants carry a "series" (a-series អ / o-series អ) that colours the vowels
- * pronounced with them — the single most important idea in reading Khmer.
+ * pronounced with them the single most important idea in reading Khmer.
  * Dependent vowels are shown on a dotted circle (◌, U+25CC) since they attach to
  * a consonant; romanisations are approximate teaching aids, not strict IPA.
  */
@@ -42,7 +42,7 @@ export interface KhmerGroup {
 }
 
 const DOT = "◌"; // dotted circle base for combining vowels
-// Dependent vowel: two readings (a-series / o-series) — approximate teaching aids.
+// Dependent vowel: two readings (a-series / o-series) approximate teaching aids.
 const dv = (char: string, aRoman: string, oRoman: string): KhmerLetter => ({
   char,
   display: DOT + char,
@@ -93,7 +93,7 @@ export const KHMER_GROUPS: KhmerGroup[] = [
     id: "independent-vowels",
     title: "Independent vowels",
     khmer: "ស្រៈពេញតួ",
-    note: "Full vowels that stand on their own (no consonant needed) — used in a smaller set of words.",
+    note: "Full vowels that stand on their own (no consonant needed) used in a smaller set of words.",
     letters: [
       { char: "ឥ", display: "ឥ", roman: "’e" }, { char: "ឦ", display: "ឦ", roman: "’ei" },
       { char: "ឧ", display: "ឧ", roman: "’o" }, { char: "ឩ", display: "ឩ", roman: "’u" },
@@ -173,7 +173,7 @@ export function usageFor(letter: KhmerLetter, groupId: string): LetterUsage {
     });
     return {
       title: `Using the vowel ${letter.display}`,
-      lesson: `This vowel attaches to a consonant, and its sound follows the consonant's series — “${letter.aRoman}” after a-series, “${letter.oRoman}” after o-series.`,
+      lesson: `This vowel attaches to a consonant, and its sound follows the consonant's series “${letter.aRoman}” after a-series, “${letter.oRoman}” after o-series.`,
       syllables,
     };
   }
@@ -191,7 +191,7 @@ export function usageFor(letter: KhmerLetter, groupId: string): LetterUsage {
   // independent vowels
   return {
     title: `Using ${letter.char} (${letter.roman})`,
-    lesson: "An independent vowel stands on its own — it begins a word without needing a consonant.",
+    lesson: "An independent vowel stands on its own it begins a word without needing a consonant.",
     syllables: [],
   };
 }

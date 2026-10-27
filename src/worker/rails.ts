@@ -1,5 +1,5 @@
 /**
- * CamboVerse rails (Stage 2) — the open interfaces from ARCHITECTURE.md, backed
+ * CamboVerse rails (Stage 2) the open interfaces from ARCHITECTURE.md, backed
  * by D1. Identity, Asset registry, Entitlement, and Learning credentials, under
  * a versioned /v1 surface. The heritage content we already have is seeded into
  * the Asset registry (with license/provenance/consent) as the first commons.
@@ -32,7 +32,7 @@ const CONTRIBUTOR = "CamboVerse Center / NUM";
 const STEWARD = "APSARA / Ministry of Culture and Fine Arts";
 
 // The rails are an OPEN, cross-origin API: ecosystem apps call them from their
-// own web origins. CORS `*` is correct here — reads are a public commons, and
+// own web origins. CORS `*` is correct here reads are a public commons, and
 // writes authenticate with a bearer token in a header (not cookies), so `*`
 // carries no ambient-authority risk.
 const CORS = {
@@ -50,7 +50,7 @@ const rid = (p: string) => `${p}_${crypto.randomUUID().replace(/-/g, "").slice(0
 // Scene descriptors are derived from the heritage data (SPOTS), so ecosystem
 // apps can drop experiences into ONE shared CamboVerse world. Asset refs use the
 // same ids as the Asset registry seed, and resolve via GET /v1/assets/:id.
-// Pure-derived — no database needed — so the Experience rail works everywhere.
+// Pure-derived no database needed so the Experience rail works everywhere.
 
 const siteAssetId = (spotId: string) => `ast_site_${spotId}`;
 const poiAssetId = (spotId: string, poiId: string) => `ast_poi_${spotId}_${poiId}`;
@@ -141,7 +141,7 @@ interface ProviderSeed {
  * A reference provider registry. CamboVerse defines the routing standard and
  * ships reference partners (clearly placeholder, DPG-safe) so ecosystem apps can
  * plug in real merchants/operators later. delivery + purchase everywhere;
- * Cambodia — the heritage home — also offers tour booking and event ticketing.
+ * Cambodia the heritage home also offers tour booking and event ticketing.
  */
 function seedProviders(): ProviderSeed[] {
   const out: ProviderSeed[] = [];
@@ -269,7 +269,7 @@ const bearer = (req: Request) => (req.headers.get("authorization") || "").replac
 /**
  * Resolve a certified partner from the request's bearer key. Returns the
  * partner's id (for attribution) or null if the key is missing/unrecognised.
- * Writes are closed unless PARTNER_KEYS is configured — never open by default.
+ * Writes are closed unless PARTNER_KEYS is configured never open by default.
  */
 function certifiedPartner(request: Request, env: RailsEnv): string | null {
   const key = bearer(request);
@@ -291,7 +291,7 @@ async function identityFromToken(db: D1Database, request: Request): Promise<stri
   return s?.identity_id ?? null;
 }
 
-/** Round a coordinate to ~village level (0.05° ≈ 5 km) — we never store the
+/** Round a coordinate to ~village level (0.05° ≈ 5 km) we never store the
  * exact location of someone's field or home. */
 const coarse = (n: number) => Math.round(n / 0.05) * 0.05;
 
@@ -339,7 +339,7 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
   // CORS preflight for any /v1 endpoint.
   if (m === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
-  // Experience / scene rail (open read, pure-derived — works without a DB) -----
+  // Experience / scene rail (open read, pure-derived works without a DB) -----
   if (p === "/v1/scenes" && m === "GET") {
     const scenes = SPOTS.map(buildScene).map((s) => ({
       id: s.id, anchor: s.anchor, name: s.name, khmer: s.khmer, live: s.live, capabilities: s.capabilities,
@@ -456,7 +456,7 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
     return json({ granted: false });
   }
   if (p === "/v1/entitlements" && m === "POST") {
-    // Granting a right is a certified write — only a certified partner may issue
+    // Granting a right is a certified write only a certified partner may issue
     // ownership/use/rental rights (the public-good "view" needs no grant).
     const partner = certifiedPartner(request, env);
     if (!partner) return json({ error: "certified partner key required" }, 403);
@@ -506,7 +506,7 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
 
   // D2P fulfillment (ARCHITECTURE.md §6) ------------------------------------
   // The core only ROUTES a digital action to a real, in-region provider. It
-  // never takes payment — settlement happens in the ecosystem. Money-neutral.
+  // never takes payment settlement happens in the ecosystem. Money-neutral.
   if (p === "/v1/providers" && m === "GET") {
     const type = url.searchParams.get("type");
     const region = url.searchParams.get("region")?.toUpperCase();
@@ -663,7 +663,7 @@ export async function handleRails(request: Request, env: RailsEnv, url: URL): Pr
     return json({ id, plotId, status: "pending", note: "awaiting review before it appears publicly" }, 201);
   }
 
-  // Moderate a check-in (certified partner only) — approve or reject before it
+  // Moderate a check-in (certified partner only) approve or reject before it
   // is shown publicly. This is the guardrail for real photos of real places.
   if (p.startsWith("/v1/farm/checkins/") && p.endsWith("/moderate") && m === "POST") {
     const partner = certifiedPartner(request, env);

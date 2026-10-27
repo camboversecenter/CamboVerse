@@ -1,6 +1,6 @@
 /**
  * A lightweight client for the Identity rail. A visitor gets a free, portable
- * CamboVerse ID — created lazily and only when they first *do* something that
+ * CamboVerse ID created lazily and only when they first *do* something that
  * needs one (e.g. earn a learning credential), so passive viewers create no
  * account. The token is kept in localStorage; later, real login/avatar binding
  * makes the same identity portable across devices and ecosystem apps.
@@ -26,7 +26,7 @@ function fromStore(): Identity | null {
 
 /**
  * Get the visitor's identity. With `create=false` (default) it only returns an
- * existing one — it will never mint an account just for reading. With
+ * existing one it will never mint an account just for reading. With
  * `create=true` it creates one on demand.
  */
 export async function getIdentity(create = false): Promise<Identity | null> {
@@ -71,7 +71,7 @@ export interface Credential {
 /**
  * The full list of learning credentials the current visitor holds (for the
  * Heritage Passport). Returns an empty list for a passive visitor with no
- * identity — it never mints one.
+ * identity it never mints one.
  */
 export async function myCredentials(): Promise<Credential[]> {
   const id = await getIdentity(false);

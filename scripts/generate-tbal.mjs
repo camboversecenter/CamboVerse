@@ -1,5 +1,5 @@
 /**
- * public/models/tbal.glb — ត្បាល់ និង អង្រែ (tbal & angre), the Khmer kitchen
+ * public/models/tbal.glb - ត្បាល់ និង អង្រែ (tbal & angre), the Khmer kitchen
  * mortar and pestle: a heavy footed stone mortar (a body of revolution built
  * from stacked frustums, like the k'am pot) with a hardwood pestle leaning in
  * its bowl. Grey stone tones with the shared builder's weathering; warm wood
@@ -20,7 +20,7 @@ const STONE = [0.46, 0.46, 0.48];
 const STONE_DARK = [0.34, 0.34, 0.37];
 const WOOD = [0.52, 0.4, 0.25];
 
-// Mortar profile: [height, radius] from the base — a footed goblet: a broad
+// Mortar profile: [height, radius] from the base - a footed goblet: a broad
 // foot, a pinched waist, then the wide pounding bowl.
 const PROFILE = [
   [0.0, 0.52], [0.1, 0.58], [0.2, 0.44], [0.34, 0.37], [0.5, 0.44],
@@ -33,10 +33,10 @@ for (let i = 0; i < PROFILE.length - 1; i++) {
   const color = i === 2 || i === 3 ? STONE_DARK : STONE;
   b.cyl(r1, r0, y1 - y0, 24, 0, (y0 + y1) / 2, 0, color);
 }
-// The open bowl — a dark recessed disc where the pounding happens.
+// The open bowl - a dark recessed disc where the pounding happens.
 b.cyl(0.58, 0.58, 0.05, 24, 0, 1.12, 0, STONE_DARK);
 
-// ---- The pestle (អង្រែ) — hardwood, standing in the bowl -------------------
+// ---- The pestle (អង្រែ) - hardwood, standing in the bowl -------------------
 // Near-vertical, its working end sunk in the bowl as if left mid-pounding.
 const TILT = 0.18; // radians from vertical
 const LEN = 1.3;

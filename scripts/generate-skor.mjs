@@ -1,5 +1,5 @@
 /**
- * public/models/skor.glb — ស្គរ (skor), a Khmer two-headed barrel drum: a
+ * public/models/skor.glb - ស្គរ (skor), a Khmer two-headed barrel drum: a
  * hardwood barrel headed at both ends with stretched hide, laced with cord,
  * cradled on a wooden stand. The rhythm of the Pinpeat ensemble and ceremonies.
  *

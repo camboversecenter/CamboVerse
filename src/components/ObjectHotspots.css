@@ -1,0 +1,19 @@
+.object-hotspot-marker,.pano-tour .object-hotspot-marker { position:static; display:flex; align-items:center; gap:7px; min-height:44px; width:max-content; padding:5px 11px 5px 5px; border:1px solid #f0dfac; border-radius:999px; background:#173a2eea; color:#fff6dc; font:700 12px system-ui,sans-serif; box-shadow:0 2px 12px #0005; cursor:pointer; touch-action:manipulation; white-space:nowrap; }
+.object-hotspot-marker>span { display:grid; place-items:center; width:29px; height:29px; border-radius:50%; background:#e6ce8e; color:#163326; font:bold 19px Georgia,serif; }
+.object-hotspot-marker:hover,.pano-tour .object-hotspot-marker:hover { background:#396343; }
+.object-hotspot-marker:focus-visible { outline:3px solid #ffe49a; outline-offset:3px; }
+.object-info-card { position:fixed; z-index:70; right:16px; bottom:86px; width:min(390px,calc(100vw - 32px)); box-sizing:border-box; padding:16px; border:1px solid #abbf8c; border-radius:18px; background:#112f28f7; color:#f5f2df; box-shadow:0 8px 38px #0006; font-family:system-ui,sans-serif; max-height:calc(100dvh - 180px); overflow:auto; overscroll-behavior:contain; }
+.object-info-card header { display:flex; gap:12px; justify-content:space-between; align-items:center; }
+.object-info-card small { color:#c6d7a5; font-size:10px; letter-spacing:.1em; }
+.object-info-card h2 { margin:5px 0 0; font-size:20px; }
+.object-info-card>p { font-size:14px; line-height:1.65; margin:14px 0; }
+.object-info-card button,.pano-tour .object-info-card button { position:static; min-height:44px; border:1px solid #a6bb88; border-radius:11px; padding:8px 12px; background:#34543b; color:#f8f5e9; font:600 12px system-ui,sans-serif; cursor:pointer; }
+.object-info-card header>button { flex-shrink:0; width:44px; font-size:24px; padding:0; }
+.object-info-actions { display:flex; gap:8px; margin-top:15px; flex-wrap:wrap; }
+.object-info-card .object-info-actions button:first-child { background:#e1ca89; color:#183225; }
+.object-info-card button:disabled { opacity:.5; cursor:default; }
+.object-info-source { font-size:11px; line-height:1.45; color:#bacbb7; }
+.object-info-source a { color:#d9e9b6; }
+.object-info-card .object-info-audio-note { font-size:11px; line-height:1.5; color:#d3dbbf; margin:10px 0 0; }
+.object-info-card button:focus-visible { outline:3px solid #ffe49a; outline-offset:3px; }
+@media(max-width:640px) { .object-info-card { left:12px; right:12px; bottom:82px; width:auto; } }

@@ -1,5 +1,5 @@
 /**
- * CamboVerse Rails SDK — a tiny, dependency-free client for the open `/v1` rails.
+ * CamboVerse Rails SDK - a tiny, dependency-free client for the open `/v1` rails.
  *
  * One ES module. No build step, no dependencies, no external assets. Works in the
  * browser and in modern Node (uses the global `fetch`). It wraps the same public
@@ -13,7 +13,7 @@
  *   const route = await cv.fulfill({ type: "purchase", country: "KH" });
  *
  * Design notes:
- *  - Identity is created LAZILY and anonymously — only the first time you claim a
+ *  - Identity is created LAZILY and anonymously - only the first time you claim a
  *    credential (or call getIdentity(true)). Passive reads never make an account.
  *  - The token persists via a pluggable `storage` (localStorage in the browser by
  *    default; an in-memory store elsewhere), so the same identity survives reloads.
@@ -77,7 +77,7 @@ export function createClient(options = {}) {
   const storage = options.storage ?? defaultStorage();
   const doFetch = options.fetch ?? (typeof fetch !== "undefined" ? fetch : null);
   const partnerKey = options.partnerKey ?? null;
-  if (!doFetch) throw new Error("No fetch available — pass options.fetch");
+  if (!doFetch) throw new Error("No fetch available - pass options.fetch");
 
   let cached = /** @type {Identity|null} */ (null);
 
@@ -110,7 +110,7 @@ export function createClient(options = {}) {
 
   /**
    * Get the visitor's identity. `create=false` (default) never mints an account
-   * — it only returns an existing one. `create=true` creates one on demand.
+   * - it only returns an existing one. `create=true` creates one on demand.
    * @param {boolean} [create]
    * @returns {Promise<Identity|null>}
    */
@@ -155,7 +155,7 @@ export function createClient(options = {}) {
     return call(`/v1/assets/${encodeURIComponent(id)}`);
   }
   /**
-   * Register a commons asset (certified write — needs `partnerKey`). Licence must
+   * Register a commons asset (certified write - needs `partnerKey`). Licence must
    * be an open licence (CC0 / CC-BY / CC-BY-SA); `provenance.contributor` and
    * `consent.steward` are required.
    * @param {{type:string, name:string, description?:string, media?:any[], attributes?:any[], externalUrl?:string, license?:string, provenance:{contributor:string, method?:string}, consent:{steward:string, consentRef?:string}}} asset
@@ -172,7 +172,7 @@ export function createClient(options = {}) {
     if (subject) q.set("subject", subject);
     return call(`/v1/entitlements?${q.toString()}`);
   }
-  /** Grant a right (own | view | use | rent) — certified write, needs `partnerKey`. `expiresAt` makes it a rental. */
+  /** Grant a right (own | view | use | rent) - certified write, needs `partnerKey`. `expiresAt` makes it a rental. */
   function grant({ assetId, subjectId, right, grantedBy, expiresAt }) {
     return call("/v1/entitlements", { method: "POST", token: partnerKey, body: { assetId, subjectId, right, grantedBy, expiresAt } });
   }
@@ -222,7 +222,7 @@ export function createClient(options = {}) {
     return call(`/v1/providers${qs ? `?${qs}` : ""}`);
   }
   /**
-   * Route a digital action to a real in-region provider. The core only routes —
+   * Route a digital action to a real in-region provider. The core only routes -
    * settlement happens in the ecosystem (the response carries settlement:"ecosystem").
    * @param {{type?:string, country?:string, buyerId?:string, details?:any}} req
    */

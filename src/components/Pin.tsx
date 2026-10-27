@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { Html } from "@react-three/drei";
-import type { Spot } from "../spots";
 import { projectLatLng } from "../cambodia-outline";
+import { LandmarkArt } from "./LandmarkArt";
 
-/** A clickable map marker for a heritage site. Tapping it teleports in. */
-export function Pin({ spot, onEnter }: { spot: Spot; onEnter: (id: string) => void }) {
+/** One named province group on the national map; individual sites are in Places. */
+export function Pin({ province, siteId, lat, lng, offset = [0, 0], labelOffset = [0, 0], count, selected, onSelect }: {
+  province: string;
+  siteId: string;
+  lat: number;
+  lng: number;
+  offset?: [number, number];
+  labelOffset?: [number, number];
+  count: number;
+  selected: boolean;
+  onSelect: (province: string) => void;
+}) {
   const [hovered, setHovered] = useState(false);
-  const [px, pz] = projectLatLng(spot.lat, spot.lng);
-  const [nx, nz] = spot.nudge ?? [0, 0];
-  const x = px + nx;
-  const z = pz + nz;
-  const color = spot.live ? "#4c8a3f" : "#8b9099";
+  const [px, pz] = projectLatLng(lat, lng);
+  const x = px + offset[0];
+  const z = pz + offset[1];
+  const color = "#4c8a3f";
 
   const over = () => {
     setHovered(true);
@@ -24,10 +33,10 @@ export function Pin({ spot, onEnter }: { spot: Spot; onEnter: (id: string) => vo
   return (
     <group
       position={[x, 0, z]}
-      scale={hovered ? 1.18 : 1}
+      scale={hovered || selected ? 1.18 : 1}
       onClick={(e) => {
         e.stopPropagation();
-        onEnter(spot.id);
+        onSelect(province);
       }}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -35,9 +44,9 @@ export function Pin({ spot, onEnter }: { spot: Spot; onEnter: (id: string) => vo
       }}
       onPointerOut={out}
     >
-      {/* larger invisible hit target for easy tapping on phones */}
+      {/* The province key remains the reliable touch/keyboard route. */}
       <mesh position={[0, 0.6, 0]}>
-        <cylinderGeometry args={[0.4, 0.4, 1.4, 8]} />
+        <cylinderGeometry args={[0.48, 0.48, 1.4, 8]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
@@ -53,39 +62,20 @@ export function Pin({ spot, onEnter }: { spot: Spot; onEnter: (id: string) => vo
       </mesh>
       {/* head */}
       <mesh position={[0, 0.92, 0]}>
-        <sphereGeometry args={[0.17, 20, 20]} />
+        <sphereGeometry args={[0.2, 16, 16]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={spot.live && hovered ? 0.5 : 0.15}
+          emissiveIntensity={selected ? 0.65 : hovered ? 0.4 : 0.15}
           roughness={0.4}
         />
       </mesh>
-
-      <Html position={[0, 1.35, 0]} center distanceFactor={11} occlude={false}>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onEnter(spot.id);
-          }}
-          onPointerOver={over}
-          onPointerOut={out}
-          style={{
-            transform: "translateY(-50%)",
-            padding: "3px 9px",
-            borderRadius: 8,
-            background: "rgba(20,16,10,0.82)",
-            color: "#f4ece0",
-            font: "600 12px system-ui, sans-serif",
-            whiteSpace: "nowrap",
-            border: `1px solid ${spot.live ? "rgba(76,138,63,0.7)" : "rgba(139,144,153,0.5)"}`,
-            cursor: "pointer",
-          }}
-        >
-          {spot.name}
-          {!spot.live && (
-            <span style={{ opacity: 0.6, fontWeight: 500 }}> · soon</span>
-          )}
+      <Html position={[0, 1.04, 0]} center distanceFactor={12}>
+        <button type="button" className={`map-pin-name${selected ? " selected" : ""}`}
+          style={{ transform: `translate(${labelOffset[0]}px, ${labelOffset[1]}px)` }}
+          aria-label={`${province}: ${count} ${count === 1 ? "place" : "places"}`}
+          onClick={(event) => { event.stopPropagation(); onSelect(province); }}>
+          <LandmarkArt siteId={siteId} compact /><strong>{province}</strong><small>{count}</small>
         </button>
       </Html>
     </group>

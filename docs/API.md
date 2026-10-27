@@ -1,4 +1,4 @@
-# CamboVerse Rails — `/v1` API reference
+# CamboVerse Rails `/v1` API reference
 
 The **rails** are the open interfaces ecosystem apps build on (see
 [`ARCHITECTURE.md`](../ARCHITECTURE.md) for the design, and
@@ -6,8 +6,8 @@ The **rails** are the open interfaces ecosystem apps build on (see
 This is the concrete HTTP contract: a small, versioned, JSON API served by the
 edge Worker.
 
-CamboVerse's own app is just the **first consumer** of these rails. Anyone —
-a startup, a school, a museum — can call them to build on the same heritage
+CamboVerse's own app is just the **first consumer** of these rails. Anyone  
+a startup, a school, a museum can call them to build on the same heritage
 commons and the same shared world.
 
 > **Stability.** Everything is versioned under `/v1`. Additive changes (new
@@ -21,13 +21,13 @@ commons and the same shared world.
 - **Base path:** all rails live under `/v1`. Responses are JSON with
   `cache-control: no-store`.
 - **Reads are open.** Public read endpoints (assets, scenes, providers,
-  a person's public credentials) need no auth — this is a commons.
+  a person's public credentials) need no auth this is a commons.
 - **Identity-bound writes** carry a bearer token:
   `Authorization: Bearer <token>` (obtained from `POST /v1/id`).
 - **Certified writes** (growing the commons) carry a **partner key**:
   `Authorization: Bearer <partner-key>` (charter §8 trust mark). Registering an
   asset and granting an entitlement are certified writes. Keys are configured on
-  the host (`PARTNER_KEYS`); **writes are closed unless a key is configured** —
+  the host (`PARTNER_KEYS`); **writes are closed unless a key is configured**  
   never open by default. Unrecognised key ⇒ `403`.
 - **Money-neutral.** No endpoint takes a payment. The D2P rail only *routes* to a
   real provider; settlement happens in the ecosystem, never in the core.
@@ -48,26 +48,26 @@ entitlements a `source` (`db` today, `chain` later). All are `null`/`db` now.
 
 | Rail | Method & path | Auth | Purpose |
 |---|---|---|---|
-| Identity | `POST /v1/id` | — | Create a portable CamboVerse identity + session token |
+| Identity | `POST /v1/id` | | Create a portable CamboVerse identity + session token |
 | Identity | `GET /v1/id/me` | Bearer | The current identity |
-| Asset | `GET /v1/assets[?type=]` | — | List commons assets |
-| Asset | `GET /v1/assets/:id` | — | One asset (NFT-metadata-compatible) |
+| Asset | `GET /v1/assets[?type=]` | | List commons assets |
+| Asset | `GET /v1/assets/:id` | | One asset (NFT-metadata-compatible) |
 | Asset | `POST /v1/assets` | Partner key | Register a commons asset (open licence enforced) |
-| Entitlement | `GET /v1/entitlements?subject=&asset=&action=` | — | `can(subject, action, asset)` |
+| Entitlement | `GET /v1/entitlements?subject=&asset=&action=` | | `can(subject, action, asset)` |
 | Entitlement | `POST /v1/entitlements` | Partner key | Grant a right (`own`/`view`/`use`/`rent`) |
 | Credential | `POST /v1/credentials/claim` | Bearer or `subjectId` | Claim a learning credential |
-| Credential | `GET /v1/credentials?subject=` | — | A person's credentials |
-| Experience | `GET /v1/scenes` | — | List scene descriptors |
-| Experience | `GET /v1/scenes/:id` | — | One scene descriptor |
-| D2P | `GET /v1/providers?type=&region=` | — | Provider registry |
-| D2P | `POST /v1/fulfill` | — | Route a digital action to a real in-region provider |
+| Credential | `GET /v1/credentials?subject=` | | A person's credentials |
+| Experience | `GET /v1/scenes` | | List scene descriptors |
+| Experience | `GET /v1/scenes/:id` | | One scene descriptor |
+| D2P | `GET /v1/providers?type=&region=` | | Provider registry |
+| D2P | `POST /v1/fulfill` | | Route a digital action to a real in-region provider |
 
 ---
 
 ## Quick start
 
 ```bash
-# 1. Get a free, portable identity (anonymous — no personal data required)
+# 1. Get a free, portable identity (anonymous no personal data required)
 curl -sX POST https://<host>/v1/id -H 'content-type: application/json' -d '{}'
 # → { "id": "cid_…", "token": "…", "handle": null, "displayName": null }
 
@@ -85,8 +85,8 @@ curl -s https://<host>/v1/assets/ast_site_angkor-wat
 
 ## Identity
 
-A visitor gets a free, portable CamboVerse identity. It's created lazily — only
-when someone first *does* something that needs one (e.g. earns a credential) —
+A visitor gets a free, portable CamboVerse identity. It's created lazily only
+when someone first *does* something that needs one (e.g. earns a credential)  
 so passive viewers create no account.
 
 ### `POST /v1/id`
@@ -98,7 +98,7 @@ Body (all optional): `handle`, `displayName`, `khmerName`.
 { "id": "cid_…", "token": "…", "handle": null, "displayName": null }
 ```
 
-`409` if a requested `handle` is already taken. Keep the `token` — it
+`409` if a requested `handle` is already taken. Keep the `token` it
 authenticates identity-bound writes.
 
 ### `GET /v1/id/me`
@@ -155,11 +155,11 @@ Optional `?type=` filter: `heritage-site` | `poi` | `history-era`.
 `404` if the id is unknown. The `media`/`attributes` layout is deliberately
 OpenSea-style so a startup can mint without re-modelling.
 
-### `POST /v1/assets` — register a commons asset *(certified write)*
+### `POST /v1/assets` register a commons asset *(certified write)*
 
 Grows the archive. Requires a **partner key** (`Authorization: Bearer <key>`).
 `type` and `name` are required; **`license` must be an open licence**
-(`CC0-1.0` / `CC-BY-4.0` / `CC-BY-SA-4.0` — NC/ND are refused), and
+(`CC0-1.0` / `CC-BY-4.0` / `CC-BY-SA-4.0` NC/ND are refused), and
 `provenance.contributor` and `consent.steward` are **mandatory**.
 
 ```jsonc
@@ -181,7 +181,7 @@ provenance/consent.
 
 ## Entitlement
 
-`can(subject, action, asset)` — the permission rail. Rights are
+`can(subject, action, asset)` the permission rail. Rights are
 `own` · `view` · `use` · `rent`.
 
 **Public-good rule:** `view` on any known commons asset is *always granted*. We
@@ -208,7 +208,7 @@ Query: `asset` (required), `subject` (required unless the action is a public
 
 ### `POST /v1/entitlements` *(certified write)*
 
-Requires a **partner key** — issuing an `own`/`use`/`rent` right is privileged
+Requires a **partner key** issuing an `own`/`use`/`rent` right is privileged
 (the public-good `view` needs no grant). Body: `assetId`, `subjectId`, `right`
 (required); `grantedBy`, `expiresAt` (optional; `expiresAt` makes it a rental).
 
@@ -227,7 +227,7 @@ Requires a **partner key** — issuing an `own`/`use`/`rent` right is privileged
 ## Learning credentials
 
 Non-monetary, non-transferable proof of learning (Open Badges / W3C VC shape).
-They represent learning, not value — they cannot be bought or sold. A person's
+They represent learning, not value they cannot be bought or sold. A person's
 Museum can display them; startups may *reference* them to gate a reward.
 
 ### `POST /v1/credentials/claim`
@@ -262,7 +262,7 @@ verifiable.
 
 Scene descriptors let apps drop experiences into **one shared CamboVerse world**.
 Each scene anchors into a canonical heritage site; its asset refs resolve through
-the Asset rail. Pure-derived — works with or without a database.
+the Asset rail. Pure-derived works with or without a database.
 
 `capabilities` can include: `orbit` and `vr` (always), `walk` (site has POIs),
 `aerial` (arrives from above), `photoreal` (a Gaussian-splat capture exists).
@@ -302,7 +302,7 @@ Accepts `scene_<site>` or a bare `<site>` id.
 
 ## D2P fulfillment
 
-The bridge from a digital action to a **real, in-region provider** — how
+The bridge from a digital action to a **real, in-region provider** how
 CamboVerse *pushes* the physical economy instead of competing with it. The core
 only routes; **it never takes payment**. Every fulfill response carries
 `"settlement": "ecosystem"`.
@@ -351,6 +351,6 @@ labelled reference so a call never dead-ends (`providerId: null`).
 
 The Worker also serves a few app-specific endpoints used by the CamboVerse
 reference client. They are **not** part of the versioned `/v1` contract and may
-change: `GET /api/health`, `GET /api/geo`, `POST /api/order` (the shop PoC — see
+change: `GET /api/health`, `GET /api/geo`, `POST /api/order` (the shop PoC see
 [`DIGITAL_ECONOMY.md`](../DIGITAL_ECONOMY.md)), and `POST /api/guide` (the Kiri
-AI tour guide — see [`AI_GUIDE.md`](./AI_GUIDE.md)).
+AI tour guide see [`AI_GUIDE.md`](./AI_GUIDE.md)).

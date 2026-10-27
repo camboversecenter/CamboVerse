@@ -1,5 +1,5 @@
 /**
- * 🎋 **Ceremonies** — the format behind virtual events.
+ * 🎋 **Ceremonies** the format behind virtual events.
  *
  * Cambodia has two quite different kinds of event, and conflating them is the
  * mistake this format exists to avoid:
@@ -16,7 +16,7 @@
  *
  * ## Template and instance
  *
- * A {@link CeremonyTemplate} is the canonical sequence — authored once, by
+ * A {@link CeremonyTemplate} is the canonical sequence authored once, by
  * people who know the tradition. A {@link Ceremony} is one family's actual
  * event, referencing a template and supplying their own photographs.
  *
@@ -35,7 +35,7 @@
  *
  * ## Privacy is not a feature here, it is the schema
  *
- * Every other thing CamboVerse models — organs, buildings, molecules, plants —
+ * Every other thing CamboVerse models organs, buildings, molecules, plants  
  * contains no people. A wedding is full of identifiable people, including
  * children. So consent, visibility and location precision are **required
  * fields**, `visibility` defaults to private, and {@link canPublish} refuses
@@ -49,7 +49,7 @@
  *
  * Same rule as the Learning Lab: `km` is `null` when no Khmer speaker has
  * confirmed the wording, and the interface says so rather than showing a guess.
- * A wrong term for a ritual is worse than a missing one — more so here, because
+ * A wrong term for a ritual is worse than a missing one more so here, because
  * these are people's own traditions being described back to them.
  */
 export interface Text {
@@ -67,23 +67,23 @@ export const t = (en: string, km: string | null = null): Text => ({ en, km });
  * Three sources, deliberately separated, because they have very different
  * privacy consequences:
  *
- * - `local` — inside the bundle. Nothing leaves the device unless the family
+ * - `local` inside the bundle. Nothing leaves the device unless the family
  *   shares the file. This is the default and the only one that works offline.
- * - `url` — a plain image or video on a URL the family controls.
- * - `embed` — a third-party service: a video host, a photo album, a social
+ * - `url` a plain image or video on a URL the family controls.
+ * - `embed` a third-party service: a video host, a photo album, a social
  *   platform.
  *
  * **An `embed` means the viewer's device contacts that company**, which hands
  * them the viewer's IP address and whatever else they collect, and breaks
  * CamboVerse's no-external-runtime-assets rule. It is supported because
  * families already keep their wedding videos on those services and asking them
- * to re-upload is unrealistic — but it must never load without being asked.
+ * to re-upload is unrealistic but it must never load without being asked.
  * See {@link EmbedPolicy}.
  */
 export type MediaRef =
   | {
     kind: "local";
-    /** Content hash — the bundle addresses media by hash, as Grove does. */
+    /** Content hash the bundle addresses media by hash, as Grove does. */
     sha256: string;
     mime: string;
     bytes: number;
@@ -100,14 +100,14 @@ export type MediaRef =
   }
   | {
     kind: "embed";
-    /** `youtube`, `facebook`, `google-photos`, `vimeo`, … — free-form on
+    /** `youtube`, `facebook`, `google-photos`, `vimeo`, … free-form on
      *  purpose: a provider list in a type would need a release to extend. */
     provider: string;
     /** The provider's own id for the item. */
     ref: string;
     /**
-     * A still frame stored locally, so the moment can be shown — and the
-     * ceremony can be read end to end — without ever contacting the provider.
+     * A still frame stored locally, so the moment can be shown and the
+     * ceremony can be read end to end without ever contacting the provider.
      * Strongly encouraged, and required to publish.
      */
     poster?: { sha256: string; mime: string; bytes: number };
@@ -119,7 +119,7 @@ export type MediaRef =
  *
  * `facade` is the only default that respects a viewer who did not choose to be
  * tracked: show the local poster, name the provider, and contact it only when
- * the viewer taps. `never` is for a client that will not phone out at all —
+ * the viewer taps. `never` is for a client that will not phone out at all  
  * which is the right setting for a school deployment.
  */
 export type EmbedPolicy = "facade" | "never" | "auto";
@@ -133,8 +133,8 @@ export const DEFAULT_EMBED_POLICY: EmbedPolicy = "facade";
  *
  * Most Cambodian ceremonies are **not** in a building. A wedding is usually
  * under a marquee in the yard in front of the house; an ordination is on pagoda
- * ground; a boat blessing is at the water. So the default is a **scene theme** —
- * a named outdoor setting the renderer knows how to build procedurally — and a
+ * ground; a boat blessing is at the water. So the default is a **scene theme**  
+ * a named outdoor setting the renderer knows how to build procedurally and a
  * building is one option among several rather than the assumption.
  */
 export type SceneTheme =
@@ -144,7 +144,7 @@ export type SceneTheme =
   | "pagoda-ground"
   /** Laid-out garden, clipped hedges, flowers. */
   | "garden"
-  /** Beside water — a river, a lake, a pond. */
+  /** Beside water a river, a lake, a pond. */
   | "riverside"
   /** Standing rice, dry season or wet. */
   | "paddy"
@@ -159,7 +159,7 @@ export type TimeOfDay = "dawn" | "morning" | "midday" | "afternoon" | "dusk" | "
 
 export interface Venue {
   /**
-   * A procedural setting, always present — even when a building is named, so a
+   * A procedural setting, always present even when a building is named, so a
    * client that does not have that building can still stage the ceremony.
    */
   theme: SceneTheme;
@@ -169,7 +169,7 @@ export interface Venue {
   /** A marquee/pavilion the app supplies. Most yard ceremonies have one. */
   pavilion?: boolean;
   /**
-   * Optionally, a real place from the Buildings registry — a specific pagoda,
+   * Optionally, a real place from the Buildings registry a specific pagoda,
    * a hall. Additive: the theme still describes the setting around it.
    */
   buildingId?: string;
@@ -214,7 +214,7 @@ export interface PropPlacement {
 /**
  * One step of the ceremony.
  *
- * A Khmer wedding is not a single event — it is a sequence of distinct rituals
+ * A Khmer wedding is not a single event it is a sequence of distinct rituals
  * over one to three days, each with its own name and meaning. Modelling the
  * sequence rather than the day is what lets the app explain what is happening
  * at each point instead of showing an undifferentiated album.
@@ -232,7 +232,7 @@ export interface Moment {
   /** What the app should stage around them. */
   staging?: PropPlacement[];
   /**
-   * True when the moment is not universal — regional variation, or a family
+   * True when the moment is not universal regional variation, or a family
    * choice. A template marks these so an instance that skips them is not
    * treated as incomplete.
    */
@@ -273,7 +273,7 @@ export interface CeremonyTemplate {
   /**
    * **Set until a cultural authority has signed the sequence off.** There is
    * real regional variation in these ceremonies, and a template that is wrong
-   * is worse than no template — it teaches ten thousand families a version of
+   * is worse than no template it teaches ten thousand families a version of
    * their own tradition that nobody performs. Clients should show a plain
    * "under review" note while this is true.
    */
@@ -294,7 +294,7 @@ export interface CeremonyTemplate {
  */
 export interface Consent {
   /**
-   * Who recorded it — a **pseudonym or handle**, never a legal name. The point
+   * Who recorded it a **pseudonym or handle**, never a legal name. The point
    * is a stable owner for takedown requests, not identification.
    */
   recordedBy: string;
@@ -302,7 +302,7 @@ export interface Consent {
   recordedAt: string;
   /**
    * Who can see it. **Private by default**, and it takes a deliberate act to
-   * change — a family recording a funeral should never find it public because
+   * change a family recording a funeral should never find it public because
    * a default said so.
    */
   visibility: "private" | "link" | "public";
@@ -313,7 +313,7 @@ export interface Consent {
   /** Children appear and a parent or guardian has agreed for each of them. */
   | "includes-minors-guardian-consented";
   /**
-   * How precisely the location may be shown. Never finer than a commune, ever —
+   * How precisely the location may be shown. Never finer than a commune, ever  
    * the same coarsening rule Grove applies to garden coordinates, for the same
    * reason: a precise location is a person's home address.
    */
@@ -407,7 +407,7 @@ export function mediaHashes(c: Ceremony): string[] {
 /**
  * Is this a well-formed ceremony?
  *
- * Structural only — it cannot tell whether the consent answers are *true*, and
+ * Structural only it cannot tell whether the consent answers are *true*, and
  * says so. No validator ever could; that is what the takedown route is for.
  */
 export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Check {
@@ -417,7 +417,7 @@ export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Chec
   if (!c.id) errors.push("ceremony needs an id");
   if (!c.templateId) errors.push("ceremony needs a templateId");
   if (!c.moments?.length) errors.push("a ceremony with no moments is an empty album");
-  if (!c.venue?.theme) errors.push("venue.theme is required — a ceremony happens somewhere");
+  if (!c.venue?.theme) errors.push("venue.theme is required a ceremony happens somewhere");
 
   const consent = c.consent;
   if (!consent) {
@@ -434,7 +434,7 @@ export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Chec
   // exactly this reason, and a ceremony is held at somebody's home.
   if (c.place && consent?.locationPrecision === "none" &&
     (c.place.commune || c.place.district || c.place.province)) {
-    errors.push("locationPrecision is 'none' but a place is set — remove one or the other");
+    errors.push("locationPrecision is 'none' but a place is set remove one or the other");
   }
   if (c.place && "lat" in (c.place as object)) {
     errors.push("ceremonies never carry coordinates; commune is the finest allowed");
@@ -450,7 +450,7 @@ export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Chec
     for (const item of m.media) {
       if (item.kind === "embed" && !item.poster) {
         warnings.push(
-          `moment ${m.id} embeds ${item.provider} with no local poster — it cannot be read offline, ` +
+          `moment ${m.id} embeds ${item.provider} with no local poster it cannot be read offline, ` +
           "and it cannot be published",
         );
       }
@@ -464,7 +464,7 @@ export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Chec
     const required = template.moments.filter((m) => !m.optional).map((m) => m.id);
     const missing = required.filter((id) => !seen.has(id));
     if (missing.length) {
-      warnings.push(`no photographs for: ${missing.join(", ")} — the sequence will have gaps`);
+      warnings.push(`no photographs for: ${missing.join(", ")} the sequence will have gaps`);
     }
     if (template.needsReview) {
       warnings.push(
@@ -481,8 +481,8 @@ export function validateCeremony(c: Ceremony, template?: CeremonyTemplate): Chec
  * May this ceremony leave the device?
  *
  * Deliberately stricter than {@link validateCeremony}. Publishing is the
- * irreversible step — once a photograph of somebody's wedding is public it is
- * public — so anything unanswered is a refusal rather than a warning.
+ * irreversible step once a photograph of somebody's wedding is public it is
+ * public so anything unanswered is a refusal rather than a warning.
  */
 export function canPublish(c: Ceremony): Check {
   const base = validateCeremony(c);
@@ -492,7 +492,7 @@ export function canPublish(c: Ceremony): Check {
 
   if (!consent) return { ok: false, errors: ["no consent block"], warnings };
   if (consent.visibility === "private") {
-    errors.push("visibility is private — publishing needs a deliberate change, not a default");
+    errors.push("visibility is private publishing needs a deliberate change, not a default");
   }
   if (!consent.peopleDepicted) {
     errors.push("who appears in these photographs has not been answered");
@@ -514,7 +514,7 @@ export function canPublish(c: Ceremony): Check {
 }
 
 /**
- * A private, empty ceremony against a template — the state "create" starts in.
+ * A private, empty ceremony against a template the state "create" starts in.
  *
  * The venue is **copied**, not referenced. A picker naturally hands the same
  * preset object to every ceremony it creates, and one of them later editing the
@@ -556,27 +556,43 @@ export const templatesOfKind = (k: CeremonyKind) => TEMPLATES.filter((x) => x.ki
  */
 export const TEMPLATES: CeremonyTemplate[] = [
   {
+    id:'khmer-new-year',kind:'calendar',name:t('Khmer New Year',null),
+    summary:t('Explore New Year traditions: generosity, sand mounds, water blessings and folk games'),
+    about:[t('Khmer New Year is a three-day celebration around mid-April. These five learning stations introduce selected practices across homes and pagodas, not five consecutive required rites.'),t('The Blender courtyard and object arrangements are illustrative. Local customs and terminology need Khmer cultural review; no annual deity or astrological arrival time is invented.')],
+    venues:['pagoda-ground'],days:3,needsReview:true,
+    whenDescribed:t('Around mid-April; check the Cambodian calendar for the dates in a particular year'),
+    source:'National Museum of Cambodia, Khmer New Year; National Radio of Cambodia, 14 April 2026; Ministry of Culture and Fine Arts, Tugging rituals and games, 21 April 2026. See docs/KHMER-NEW-YEAR-REFERENCES.md.',
+    moments:[
+      {id:'welcome',name:t('Welcoming the New Year'),day:1,timeOfDay:'morning',meaning:t('Maha Sangkran begins the observance. Families prepare their homes and offerings to welcome the year. Inspect the fruit display in this shared learning setting.')},
+      {id:'generosity',name:t('Generosity and remembrance'),day:2,timeOfDay:'morning',meaning:t('Giving is associated with the second day, often called Virak Vanabat. Learn about generosity to elders and others, alongside food offerings to monks.')},
+      {id:'sand',name:t('Sand-mound merit-making'),timeOfDay:'morning',meaning:t('At pagodas, people build sand mounds as a merit-making practice. Arrangement and timing vary; the five mounds here are illustrative.')},
+      {id:'water',name:t('Respectful water blessings'),day:3,timeOfDay:'morning',meaning:t('The third day, often called Leung Sak, includes respectfully bathing Buddha images with fragrant water and honouring elders. This stop explains the practice through its objects.')},
+      {id:'games',name:t('Traditional games and gathering'),timeOfDay:'morning',meaning:t('Communities gather for games such as chhoung and tugging. Tugging can have both recreational and ritual meaning. Inspect the two objects and learn how their activities differ.')},
+    ],
+  },
+  {
     id: "wedding",
     kind: "life-event",
     name: t("Khmer wedding", null),
-    summary: t("A sequence of rituals over one to three days, usually at the bride's family home"),
+    summary: t("Explore a traditional home wedding through ritual objects and selected moments"),
     about: [
-      t("A Khmer wedding is not one ceremony but a series of them, traditionally spread over three days and now more often compressed into one or two. Each has its own name, its own meaning, and its own place in the order."),
-      t("Almost all of it happens at home rather than in a building: a marquee goes up in the yard, the family cooks, and neighbours come and go for two days."),
-      t("The sequence below is the commonly described one. Families and regions differ, and this template is waiting on review by someone who can speak for the tradition."),
+      t("A Khmer wedding includes several rites. This study presents selected moments rather than a complete historical schedule. Their order, duration and inclusion vary between communities and families."),
+      t("This study places the rituals at the bride's house, with a temporary shelter nearby for the groom. The timber setting and object arrangements are interpretive."),
+      t("Selected moments are presented for learning, not as a complete ritual timetable. Regional order, dress and terminology still need review by a Khmer ceremony specialist."),
     ],
-    venues: ["home-yard", "garden", "hall", "pagoda-ground"],
+    venues: ["home-yard"],
     days: 2,
     needsReview: true,
+    source: "Ker Nou and Nhieuk Nou, Kpuon abah-bibah, translated and edited by Saveros Lewitz, BEFEO 60 (1973), pp. 243–328; SEAMEO SPAFA, Cultural Understanding through Paintings of Southeast Asia and Korea, pp. 22–25. See docs/WEDDING-REFERENCES.md for consulted passages and interpretation limits.",
     moments: [
       {
         id: "procession",
         name: t("Procession of gifts", null),
-        meaning: t("The groom's family walks to the bride's home carrying food and gifts, in pairs, in a line. It is a public announcement as much as a delivery — the whole street sees it arrive."),
+        meaning: t("Food and gifts arrive at the bride's home. Inspect the offering trays in this simplified staging of the arrival."),
         day: 1,
         timeOfDay: "morning",
         staging: [
-          { kind: "gift-box", at: [0, 0, 0], count: 8 },
+          { kind: "offering-tray", at: [0, 0, 0], count: 6 },
           { kind: "parasol", at: [-2, 0, 1] },
           { kind: "drum", at: [2, 0, 1] },
         ],
@@ -608,7 +624,7 @@ export const TEMPLATES: CeremonyTemplate[] = [
       {
         id: "hair-cutting",
         name: t("Symbolic hair cutting", null),
-        meaning: t("A ceremonial trimming of the couple's hair, done with real scissors and no real cutting. It marks leaving one stage of life for the next, and it is usually the part everybody laughs at."),
+        meaning: t("A symbolic hair-cutting rite. The comb, scissors and mirror make the action visible here; no cutting is simulated."),
         day: 2,
         timeOfDay: "morning",
         staging: [
@@ -618,19 +634,19 @@ export const TEMPLATES: CeremonyTemplate[] = [
       },
       {
         id: "candles",
-        name: t("Passing the blessing candles", null),
-        meaning: t("Married elders sit in a circle and pass lit candles around the couple, always in the same direction, sending the smoke toward them. Each pass is a blessing from a marriage that lasted."),
+        name: t("Passing the popil", null),
+        meaning: t("Married participants pass the lit popil around the seated couple to offer blessings. Select the popil to inspect its form."),
         day: 2,
         timeOfDay: "morning",
         staging: [
-          { kind: "candle", at: [0, 0.5, 0], count: 7 },
+          { kind: "candle", at: [0, 0.5, 0] },
           { kind: "floor-mat", at: [0, 0, 0] },
         ],
       },
       {
         id: "knot-tying",
         name: t("Tying the wrists", null),
-        meaning: t("Guests tie red thread around the couple's wrists, one at a time, each with a wish spoken aloud. By the end both wrists are covered, and the threads are left on for days afterwards."),
+        meaning: t("The achar and relatives bless the couple with white wrist threads. A sheathed sword accompanies the union in the published account."),
         day: 2,
         timeOfDay: "midday",
         staging: [
@@ -640,15 +656,30 @@ export const TEMPLATES: CeremonyTemplate[] = [
         ],
       },
       {
+        id: "areca-flowers",
+        name: t("Areca-flower blessing", null),
+        meaning: t("Participants scatter areca blossoms over the couple with wishes for prosperity and fertility."),
+        day: 2,
+        timeOfDay: "morning",
+        staging: [{ kind: "offering-tray", at: [0, 0, 0] }],
+      },
+      {
+        id: "scarf-leading",
+        name: t("Following the bride's cloth", null),
+        meaning: t("At the close, the groom follows the bride into the room while holding the end of her breast cloth."),
+        day: 2,
+        timeOfDay: "morning",
+        staging: [{ kind: "floor-mat", at: [0, 0, 0] }],
+      },
+      {
         id: "reception",
-        name: t("The reception", null),
-        meaning: t("The public part: several hundred guests, long tables, music, and an envelope at the door that helps the family cover what the day cost."),
+        name: t("Family meal", null),
+        meaning: t("A shared meal closes this learning visit. The domestic meal arrangement is an illustration, not a prescribed historical ritual."),
         day: 2,
         timeOfDay: "dusk",
         optional: true,
         staging: [
-          { kind: "pavilion", at: [0, 0, 0] },
-          { kind: "low-table", at: [0, 0, 3], count: 10 },
+          { kind: "low-table", at: [0, 0, 0], count: 2 },
         ],
       },
     ],
@@ -657,19 +688,20 @@ export const TEMPLATES: CeremonyTemplate[] = [
     id: "housewarming",
     kind: "life-event",
     name: t("Blessing a new house", null),
-    summary: t("Monks, offerings and a meal, before a family moves in"),
+    summary: t("Explore a timber home, its blessing and the central-post ceremony"),
     about: [
-      t("A new house is blessed before it is lived in. Monks chant, offerings are made, and the household's first meal is cooked and shared with everyone who helped build it."),
-      t("Held in the yard or on the ground floor, almost never in a finished room."),
+      t("This study concerns entering a completed house, distinct from earlier construction rites. The ACCU report describes different practices in Svay Rieng and Kampong Cham; this is not a universal timetable."),
+      t("Open the roof to inspect the interior. Architecture, object shapes and placement are illustrative and await Khmer cultural review. Daylight is used for visibility, not to prescribe a ritual time."),
     ],
-    venues: ["home-yard", "garden"],
+    venues: ["home-yard"],
     days: 1,
     needsReview: true,
+    source: "ACCU Nara, 2005 training report, The Ceremony for Entering a New House, pp. 63–64; Angkor Database review of Collins and Hok, Cambodian Wooden Houses (SIPAR, 2022). See docs/HOUSEWARMING-REFERENCES.md.",
     moments: [
       {
         id: "offerings",
         name: t("Setting out the offerings", null),
-        meaning: t("Trays of food, flowers, incense and candles are arranged before anything begins."),
+        meaning: t("Explore the stair, threshold and prepared interior. The food trays introduce the setting; their contents are illustrative."),
         staging: [
           { kind: "offering-tray", at: [0, 0.8, 0], count: 4 },
           { kind: "banana-stem", at: [-1, 0, 0.5] },
@@ -679,16 +711,22 @@ export const TEMPLATES: CeremonyTemplate[] = [
       {
         id: "chanting",
         name: t("Chanting and blessing", null),
-        meaning: t("Monks chant, and blessed water is sprinkled through the house."),
+        meaning: t("In the reported Svay Rieng example, monks chant while the householders kneel respectfully and receive a water blessing."),
         staging: [
           { kind: "monk-seating", at: [0, 0, -2] },
           { kind: "water-vessel", at: [0.7, 0.4, -1.5] },
         ],
       },
       {
+        id: "central-post",
+        name: t("Blessing the central post", null),
+        meaning: t("The achar addresses the central post with wishes for the household. Select the post to locate it inside the house."),
+        staging: [{ kind: "floor-mat", at: [0, 0, 0] }],
+      },
+      {
         id: "meal",
-        name: t("The first meal", null),
-        meaning: t("Everyone who helped build the house eats in it. In practice this is the part that matters most to the neighbours."),
+        name: t("An optional meal", null),
+        meaning: t("A meal can follow the blessing. Its timing and arrangement vary; this is not a compulsory final rite."),
         optional: true,
         staging: [{ kind: "low-table", at: [0, 0, 2], count: 4 }],
       },
@@ -698,28 +736,37 @@ export const TEMPLATES: CeremonyTemplate[] = [
     id: "pchum-ben",
     kind: "calendar",
     name: t("Pchum Ben", "បុណ្យភ្ជុំបិណ្ឌ"),
-    summary: t("Fifteen days of offerings for the ancestors, ending on the largest day"),
+    summary: t("Remembering ancestors: rice offerings, support for monks and dedication of merit"),
     about: [
-      t("For fifteen days, families rise before dawn and bring food to the pagoda for their ancestors. Many visit several different pagodas over the period rather than the same one each time."),
-      t("It is the most widely observed ceremony in the country, and for Khmer families living abroad it is the one they most often cannot get home for."),
-      t("The dates follow the lunar calendar and move each year."),
+      t("Pchum Ben is a fifteen-day observance of remembrance and merit-making. These selected moments explain different practices, not a compulsory timetable for every pagoda."),
+      t("The Blender scene is an original illustrative pagoda setting. Architecture, object counts and placement are not a reconstruction of one named temple. Participants and chants are not simulated."),
+      t("Dates follow the lunar calendar; local schedules and practices vary."),
     ],
-    venues: ["pagoda-ground", "temple-interior"],
+    venues: ["pagoda-ground"],
     days: 15,
-    whenDescribed: t("Fifteen days ending on the fifteenth day of the tenth lunar month — late September or early October"),
+    whenDescribed: t("Fifteen days ending on the fifteenth day of the tenth lunar month late September or early October"),
     needsReview: true,
+    source: "John Clifford Holt, Caring for the Dead Ritually in Cambodia, Southeast Asian Studies 1(1), 2012, DOI 10.20495/seas.1.1_3; VOA Khmer, 29 September 2015. See docs/PCHUM-BEN-REFERENCES.md.",
     moments: [
       {
         id: "before-dawn",
-        name: t("Before dawn", null),
-        meaning: t("Food is prepared and brought to the pagoda while it is still dark."),
+        name: t("Preparing before dawn", null),
+        meaning: t("Visitors bring prepared offerings to the pagoda before sunrise. Inspect the rice tray, leaf cone, paper flag and incense."),
         timeOfDay: "dawn",
         staging: [{ kind: "offering-tray", at: [0, 0.8, 0], count: 3 }],
       },
       {
+        id: "bay-ben",
+        name: t("Bay ben: rice offerings", null),
+        meaning: t("Where bay ben is observed, rice is distributed in remembrance of the dead. Some pagodas provide containers; others omit this rite. This study does not simulate throwing food."),
+        optional: true,
+        timeOfDay: "dawn",
+        staging: [{ kind: "offering-tray", at: [0, 0, 0] }],
+      },
+      {
         id: "offering",
-        name: t("The offering", null),
-        meaning: t("Food is offered to the monks, and through them to ancestors who may have no living relatives left to remember them."),
+        name: t("Offering food to monks", null),
+        meaning: t("Families support the monks with food offerings. This differs from the pre-dawn distribution of rice portions."),
         timeOfDay: "morning",
         staging: [
           { kind: "monk-seating", at: [0, 0, -2] },
@@ -727,9 +774,16 @@ export const TEMPLATES: CeremonyTemplate[] = [
         ],
       },
       {
+        id: "dedication",
+        name: t("Dedicating merit", null),
+        meaning: t("Chanting and acts of generosity accompany the dedication of merit to deceased relatives. Beliefs are presented respectfully as religious practice."),
+        timeOfDay: "morning",
+        staging: [{ kind: "monk-seating", at: [0, 0, -2] }],
+      },
+      {
         id: "ben-thom",
-        name: t("Ben Thom — the last day", null),
-        meaning: t("The largest day, when the whole family attends together. Everything closes."),
+        name: t("Pchum Ben: the concluding day", null),
+        meaning: t("The final day gathers families for remembrance and offerings. It concludes the fifteen-day period; local programmes differ."),
         timeOfDay: "morning",
       },
     ],

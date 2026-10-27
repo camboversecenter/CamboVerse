@@ -1,8 +1,8 @@
 # Training 3D Gaussian Splatting on Kaggle (free GPU)
 
-**Yes — you can train 3DGS on Kaggle for free.** Kaggle Notebooks give you an
+**Yes you can train 3DGS on Kaggle for free.** Kaggle Notebooks give you an
 NVIDIA GPU (**Tesla T4 ×2** or **P100 16 GB**), about **30 GPU-hours per week**,
-and up to **12 hours per session** — enough to turn a set of Wat Phnom photos
+and up to **12 hours per session** enough to turn a set of Wat Phnom photos
 into a `.splat` the app can load.
 
 This is the "compute" companion to the field guide
@@ -14,41 +14,45 @@ photos → COLMAP (camera poses) → train 3DGS → export .ply → convert to .
        → public/models/wat-phnom.splat
 ```
 
+> **Shortcut:** [`notebooks/train_3dgs_kaggle.ipynb`](../notebooks/train_3dgs_kaggle.ipynb)
+> runs Steps 3–5 end to end (including `.ply → .splat` with a mobile splat
+> budget). Import it via **File → Import Notebook** on Kaggle.
+
 ---
 
-## Before you start — limits & account
+## Before you start limits & account
 
 - **Phone-verify your Kaggle account.** GPU *and* Internet access in notebooks
   are only unlocked for verified accounts (Settings → Phone verification).
-- **Session limit:** 12 h max, and the machine is **ephemeral** — save/download
+- **Session limit:** 12 h max, and the machine is **ephemeral** save/download
   your outputs before it ends.
 - **Weekly quota:** ~30 GPU-hours/week (shared across sessions).
 - **Disk:** ~20 GB of writable space at `/kaggle/working`.
 - **First-run CUDA build:** the 3DGS rasterizer is a CUDA extension that compiles
   on first use; this is the most common source of friction (see Troubleshooting).
 
-> **Colab works too** with the same commands — Kaggle just gives more predictable
+> **Colab works too** with the same commands Kaggle just gives more predictable
 > free GPU hours.
 
 ---
 
-## Step 1 — Upload your photos as a Kaggle Dataset
+## Step 1 Upload your photos as a Kaggle Dataset
 
 1. **Datasets → New Dataset**, upload your images. Start with **one subject**
    (e.g. the stupa, ~150–400 photos) so you fit the disk and time budget.
 2. Keep it **Private**, and put the **CC-BY provenance** note in the description
-   (who shot it, when, licence) — it travels with the asset.
+   (who shot it, when, licence) it travels with the asset.
 3. In your notebook, **Add Input** → your dataset. It mounts read-only at
    `/kaggle/input/<dataset-name>/`.
 
-## Step 2 — Create the notebook
+## Step 2 Create the notebook
 
 - **New Notebook** → **Settings**: **Accelerator = GPU T4 ×2** (or P100),
   **Internet = On**.
 
 ---
 
-## Step 3 — Train (Option A, recommended: Nerfstudio + gsplat)
+## Step 3 Train (Option A, recommended: Nerfstudio + gsplat)
 
 Nerfstudio's `splatfacto` uses **gsplat**, which builds more reliably on Kaggle
 than the original CUDA submodules, and `ns-process-data` wraps COLMAP for you.
@@ -63,7 +67,7 @@ than the original CUDA submodules, and `ns-process-data` wraps COLMAP for you.
 ```
 
 ```python
-# 3) Estimate camera poses from the images (this runs COLMAP — the slow step).
+# 3) Estimate camera poses from the images (this runs COLMAP the slow step).
 !ns-process-data images \
   --data /kaggle/input/watphnom-stupa/images \
   --output-dir /kaggle/working/proc
@@ -86,7 +90,7 @@ print('config:', cfg)
 !ns-export gaussian-splat --load-config "{cfg}" --output-dir /kaggle/working/export
 ```
 
-## Step 3 — Train (Option B: INRIA `gaussian-splatting`)
+## Step 3 Train (Option B: INRIA `gaussian-splatting`)
 
 The research reference. Needs the CUDA arch flag matching the GPU
 (**T4 = 7.5**, **P100 = 6.0**).
@@ -107,7 +111,7 @@ os.environ["TORCH_CUDA_ARCH_LIST"] = "7.5"   # 6.0 on a P100
 
 ---
 
-## Step 4 — Convert `.ply` → `.splat`
+## Step 4 Convert `.ply` → `.splat`
 
 The app loads the antimatter15 **`.splat`** binary. Easiest, no install:
 
@@ -118,7 +122,7 @@ The app loads the antimatter15 **`.splat`** binary. Easiest, no install:
 (If you prefer to convert in-notebook, use antimatter15's `ply → splat`
 converter script; SuperSplat is simpler and lets you clean stray splats.)
 
-## Step 5 — Get the file out of Kaggle
+## Step 5 Get the file out of Kaggle
 
 - Click **Save Version** to persist `/kaggle/working` to the run's **Output**
   (downloadable), **or** download files directly from the right-hand **Output**
@@ -127,17 +131,22 @@ converter script; SuperSplat is simpler and lets you clean stray splats.)
   kaggle kernels output <user>/<notebook> -p ./out
   ```
 
-## Step 6 — Drop it into the app
+## Step 6 Drop it into the app
 
 1. Rename to the site's filename and place it (keep the **same name**):
    `public/models/wat-phnom.splat` (replaces the synthetic placeholder).
-2. The in-app **◍ Photoreal** toggle will show it — **no code change** (the spot
+2. The in-app **◍ Photoreal** toggle will show it **no code change** (the spot
    is already wired with `splat: "/models/wat-phnom.splat"`).
-3. **Coordinate convention:** real 3DGS captures are already Y-down/Z-flipped and
-   load **upright as-is** — do **not** apply the Y/Z pre-flip our *synthetic*
-   generator uses. If it loads upside-down/underground, rotate the `<Splat>`
-   180° about X (see `CAPTURE.md` §A.4).
-4. **Mobile budget:** keep the splat count modest and **test on a real ~$150
+3. **Preview first:** with `npm run dev`, open
+   `/splat-preview.html?src=/models/<site>.splat&rx=90&cam=0,0.9,0.9` to orbit the
+   capture with the app's own renderer. Nerfstudio exports are **Z-up**: `rx=90`
+   stands them upright, and the subject sits near the origin at roughly unit scale.
+4. **Coordinate convention:** do **not** apply the Y/Z pre-flip our *synthetic*
+   generator uses. INRIA `gaussian-splatting` exports are Y-down and load upright
+   as-is (if not, rotate the `<Splat>` 180° about X, see `CAPTURE.md` §A.4).
+   **Nerfstudio (`splatfacto`) exports are Z-up** and need +90° about X, as
+   confirmed on the NUM statue capture.
+5. **Mobile budget:** keep the splat count modest and **test on a real ~$150
    Android over 4G**. Downsample in SuperSplat if load/framerate is poor.
 
 ---
@@ -146,7 +155,7 @@ converter script; SuperSplat is simpler and lets you clean stray splats.)
 
 - **One subject per run.** Train the stupa, vihara, staircase, etc. separately;
   it's faster, fits memory, and matches the in-app POIs.
-- **Cache COLMAP.** SfM is the slow part — save the processed folder
+- **Cache COLMAP.** SfM is the slow part save the processed folder
   (`/kaggle/working/proc`) as a **new Dataset** so re-training doesn't re-run it.
 - **Downscale huge photos** (`ns-process-data` can) to save VRAM and time.
 - **7k iterations** is a good preview if a session is running low on time; go to
@@ -157,6 +166,14 @@ converter script; SuperSplat is simpler and lets you clean stray splats.)
 - **`pip install nerfstudio` fights the preinstalled torch** → note the image's
   torch/CUDA (`import torch; torch.__version__`, `torch.version.cuda`) and install
   a matching `gsplat`; or install nerfstudio with `--no-deps` after pinning torch.
+- **`ns-export` fails with `UnpicklingError: Weights only load failed`** → PyTorch
+  ≥ 2.6 refuses Nerfstudio checkpoints by default. Set
+  `os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"` before exporting (the
+  notebook does). Note: a *failed* Kaggle run's output can't be attached as input,
+  so a crash at export means retraining make sure this is set first.
+- **COLMAP takes hours** → it's CPU-only on Kaggle and scales with image size and
+  matching pairs. Resize frames to ~1600 px and use `--matching-method sequential`
+  for video frames (full-res + vocab-tree took ~5.5 h for 294 frames).
 - **CUDA extension fails to build** → make sure Accelerator is **GPU** (not CPU),
   set `TORCH_CUDA_ARCH_LIST` to the GPU's arch (T4 `7.5`, P100 `6.0`), and re-run
   the cell so it rebuilds.

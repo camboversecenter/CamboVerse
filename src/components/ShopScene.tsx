@@ -1,5 +1,6 @@
 import { useMemo, useRef } from "react";
-import { Sky, OrbitControls, Html } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
+import { Sky, Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { Kiosk } from "./Kiosk";
@@ -10,7 +11,7 @@ import type { Market } from "../shops";
 import type { MutableRefObject } from "react";
 
 /**
- * The virtual market — a paved clearing set inside the forest near the site,
+ * The virtual market a paved clearing set inside the forest near the site,
  * ringed by brand kiosks, with a central fountain and an entrance arch. Orbit
  * and tap a stall to browse, or switch to Walk and stroll up to one (a prompt
  * appears when you're near). The forest is a single instanced draw (mobile-cheap).
@@ -151,7 +152,7 @@ export function ShopScene({
       ) : (
         <OrbitControls
           makeDefault
-          enablePan={false}
+          enablePan
           minDistance={5}
           maxDistance={40}
           maxPolarAngle={Math.PI / 2.15}

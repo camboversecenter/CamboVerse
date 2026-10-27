@@ -1,5 +1,5 @@
 /**
- * public/models/kancheu.glb — កញ្ជើ (Kancheu), a traditional Khmer woven bamboo basket.
+ * public/models/kancheu.glb - កញ្ជើ (Kancheu), a traditional Khmer woven bamboo basket.
  * Used for carrying goods, measuring rice, or washing vegetables, it is an essential
  * everyday tool in rural Cambodian life.
  * 

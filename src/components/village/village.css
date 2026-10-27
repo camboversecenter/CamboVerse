@@ -1,0 +1,53 @@
+.village-refined { background: #d9e3da; color: #283a29; }
+.village-toolbar { position:absolute; z-index:2; pointer-events:auto; top:16px; left:16px; right:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.village-refined button { font:inherit; cursor:pointer; border:1px solid #40563833; border-radius:20px; padding:10px 16px; min-height:44px; color:#293e2e; background:#fbf9efed; }
+.village-refined button:focus-visible { outline:3px solid #ae6d27; outline-offset:3px; }
+.village-refined button[aria-pressed=true] { color:#fff8e7; background:#344e39; }
+.village-refined button:disabled { cursor:default; opacity:.65; }
+.village-heading { display:flex; flex-direction:column; background:#fbf9efed; padding:8px 16px; border-radius:12px; }
+.village-heading strong { font-family:Georgia,serif; font-size:19px; }
+.village-heading span { font-size:11px; margin-top:3px; }
+.village-modes { margin-left:auto; display:flex; gap:4px; }
+.village-time { display:flex; gap:4px; }
+.village-refined .village-motion { padding:3px 10px; font-size:10px; min-height:32px; margin-top:6px; }
+@media(max-width:600px) { .village-time button { font-size:12px; padding:7px 12px; } }
+.village-guide { position:absolute; z-index:2; pointer-events:auto; bottom:20px; left:20px; max-width:440px; padding:20px; border:1px solid #fff7; border-radius:16px; background:#faf7e9ed; box-shadow:0 6px 25px #263b2520; }
+.village-eyebrow { color:#756840; font-size:10px; letter-spacing:.15em; }
+.village-guide h1 { font:26px/1.16 Georgia,serif; margin:8px 0; }
+.village-guide p { font-size:12px; line-height:1.5; margin:10px 0; }
+.village-guide nav { display:flex; flex-wrap:wrap; gap:5px; }
+.village-guide nav button { font-size:12px; padding:8px 12px; }
+.village-guide small { display:block; margin-top:12px; font-size:10px; color:#686a54; }
+.village-loading { background:#fff9e9; padding:16px 22px; border-radius:12px; color:#344e39; width:220px; text-align:center; }
+.village-study {position:absolute;z-index:5;right:16px;top:110px;bottom:16px;width:min(440px,calc(100% - 32px));overflow:auto;box-sizing:border-box;background:#182c24;color:#fff5df;padding:20px;border-radius:16px;box-shadow:0 8px 40px #0007;pointer-events:auto;}
+.village-study header{display:flex;align-items:center;gap:12px;justify-content:space-between;}
+.village-study h2{font:24px Georgia,serif;margin:0;}.village-study p{line-height:1.6;font-size:14px;}
+.village-study nav{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0;}.village-study nav button{font-size:12px;padding:8px 10px;}
+.village-study .village-draft,.village-study small{font-size:11px;color:#dfceb1;}
+.household-preview{height:220px;background:#294137;border-radius:12px;touch-action:none;}
+.winnow-demo{height:160px;position:relative;overflow:hidden;background:#294137;border-radius:12px;margin:16px 0;}
+.winnow-demo .tray{position:absolute;bottom:25px;left:22%;width:56%;height:12px;border-radius:50%;background:#b88942;}
+.grain,.chaff{position:absolute;left:35%;bottom:38px;letter-spacing:5px;color:#f2d28c;}
+.chaff{color:#c4b494;bottom:65px;}.wind-1 .chaff{transform:translate(90px,-40px);}.wind-2 .chaff{transform:translate(150px,-60px);}.wind-2 .grain{transform:translate(55px,-20px);}
+.tossed .grain,.tossed .chaff{animation:household-toss 1s ease-out;}
+@keyframes household-toss{0%{transform:translate(0,0);}40%{transform:translate(0,-65px);}}
+@media(prefers-reduced-motion:reduce){.tossed .grain,.tossed .chaff{animation:none;}}
+.village-study select{font:inherit;color:#fff5df;background:#294137;padding:10px;border:1px solid #dfceb1;border-radius:8px;min-height:44px;}
+.village-study select:focus-visible{outline:3px solid #eeb76d;outline-offset:3px;}
+@media(max-width:600px){.village-study{top:145px;right:10px;width:calc(100% - 20px);bottom:10px;padding:14px;}}
+@media(max-width:600px) {
+  .village-toolbar { top:10px; left:10px; right:10px; gap:6px; }
+  .village-heading { flex:1; min-width:150px; padding:8px 10px; }
+  .village-heading strong { font-size:16px; }
+  .village-modes { margin-left:0; }
+  .village-modes button { font-size:12px; padding:7px 12px; }
+  .village-guide { left:10px; right:10px; bottom:10px; padding:13px; max-width:none; }
+  .village-guide h1 { font-size:20px; }
+  .village-guide p { margin:6px 0; font-size:11px; }
+  .village-guide nav { gap:4px; }
+  .village-guide nav button { padding:6px 9px; font-size:11px; }
+  .village-guide small { font-size:9px; margin-top:7px; }
+  .village-eyebrow { display:none; }
+  .village-guide h1 { font-size:17px; margin:3px 0 8px; }
+  .village-guide p { font-size:10px; }
+}

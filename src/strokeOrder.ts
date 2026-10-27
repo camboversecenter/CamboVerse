@@ -1,5 +1,5 @@
 /**
- * Stroke-order data for Khmer letters — each letter as an ordered list of
+ * Stroke-order data for Khmer letters each letter as an ordered list of
  * strokes, each stroke a median polyline ([x, y] points, in the same 0..100 box
  * as src/glyphPaths.ts) tracing the pen's path. The classroom animates the
  * strokes in sequence (numbered) over a faint outline of the letter.
@@ -7,7 +7,7 @@
  * ⚠️ COMMUNITY DRAFT. The numeral strokes below are a first pass: the *shapes*
  * are traced from the font, but the *order and direction* need verification by
  * Khmer educators, and the consonants and vowels are not authored yet. Please
- * help — see TODO.md ("true stroke order") and scripts/author-stroke-order.mjs.
+ * help see TODO.md ("true stroke order") and scripts/author-stroke-order.mjs.
  *
  * Letters without an entry here fall back to the write-on outline animation.
  */
@@ -21,7 +21,7 @@ export interface StrokeData {
 }
 
 export const STROKE_ORDER: Record<string, StrokeData> = {
-  // Consonants — draft (order/direction from a printed stroke-order reference
+  // Consonants draft (order/direction from a printed stroke-order reference
   // chart; coordinates traced to this font's actual glyph outline).
   "ញ": {
     verified: false,
@@ -391,7 +391,7 @@ export const STROKE_ORDER: Record<string, StrokeData> = {
       [[47, 18], [52, 14], [61, 11.5], [68, 15], [72, 20], [73.5, 24], [73, 26]],
     ],
   },
-  // Dependent vowels — draft.
+  // Dependent vowels draft.
   "ា": {
     verified: false,
     strokes: [
@@ -603,7 +603,7 @@ export const STROKE_ORDER: Record<string, StrokeData> = {
       [[86.6, 66.1], [84.6, 65.5], [82.7, 64.3], [82.1, 63], [82.1, 60], [84.3, 58.2], [87, 58], [89.1, 59.1], [90.4, 60.9], [90.4, 63.2], [89.1, 65], [86.8, 66.1]],
     ],
   },
-  // Independent vowels — draft.
+  // Independent vowels draft.
   "ឥ": {
     verified: false,
     strokes: [
@@ -756,7 +756,7 @@ export const STROKE_ORDER: Record<string, StrokeData> = {
       [[63.2, 29.8], [60.4, 24.3], [59.6, 21.1], [60, 17.1], [61.8, 14.3], [64.1, 12.3], [65.5, 12]],
     ],
   },
-  // Numerals ០–៩ — draft (shapes traced to the Siemreap glyph outline; order to verify).
+  // Numerals ០–៩ draft (shapes traced to the Siemreap glyph outline; order to verify).
   "០": {
     verified: false,
     strokes: [

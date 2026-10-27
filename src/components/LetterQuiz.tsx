@@ -5,7 +5,7 @@ import { claimCredential } from "../lib/identity";
 /**
  * A quick match-the-sound quiz for one group of Khmer letters. Shows a letter
  * (in the current shape) and asks which sound it makes. Pass the round and you
- * earn a learning credential on the rails — it appears in your Heritage
+ * earn a learning credential on the rails it appears in your Heritage
  * Passport, tying the classroom into the platform's learn-to-earn loop.
  */
 const ROUND = 8; // questions per round (fewer if the group is smaller)
@@ -113,7 +113,7 @@ export function LetterQuiz({
             </>
           ) : (
             <>
-              <p className="quiz-msg">Keep practising — {Math.ceil(questions.length * PASS)} correct to pass.</p>
+              <p className="quiz-msg">Keep practising {Math.ceil(questions.length * PASS)} correct to pass.</p>
               <p className="quiz-sub">Study the letters, then try again.</p>
             </>
           )}

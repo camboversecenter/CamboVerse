@@ -1,4 +1,5 @@
-import { useMemo, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
+import { LabPreviewContext } from "./LabPreviewContext";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { BufferGeometry, CylinderGeometry, Group, Quaternion, Vector3 } from "three";
@@ -20,7 +21,7 @@ import type { MachineProps } from "./LabMachines";
  * None of the three is "the real one". Space-filling is closest to the volume a
  * molecule occupies and useless for seeing structure; ball-and-stick shows the
  * connections and lies about the spacing. Students should meet all three and
- * know why each exists — so the layer buttons are the lesson here, not a
+ * know why each exists so the layer buttons are the lesson here, not a
  * convenience.
  *
  * Scale: **1 Å = 20 units**, so an O–H bond is about 19 units long. Atom radii
@@ -59,7 +60,7 @@ function bondGeometry(a: Vector3, b: Vector3, r: number, seg: number): BufferGeo
  * One molecule or lattice, drawn in whichever representation the layer asks for.
  *
  * `running` is thermal motion. Molecules are never still, and a student who only
- * ever sees the static ball-and-stick picture comes away believing they are —
+ * ever sees the static ball-and-stick picture comes away believing they are  
  * so the atoms jitter about their positions rather than sitting frozen. The
  * amplitude is exaggerated; real vibration at room temperature is a few percent
  * of a bond length.
@@ -74,9 +75,9 @@ export function Structure({
   running: boolean;
   onPick: (id: string) => void;
   selected: string | null;
-  /** An ionic lattice has no bonds to draw — the "sticks" are just neighbours. */
+  /** An ionic lattice has no bonds to draw the "sticks" are just neighbours. */
   ionic?: boolean;
-  /** Fade the whole structure — used by reactions to cross-fade reactants out. */
+  /** Fade the whole structure used by reactions to cross-fade reactants out. */
   dim?: number;
 }) {
   const seg = detail === "ultra" ? 24 : 12;
@@ -162,6 +163,8 @@ export function Structure({
 }
 
 export function Readout({ at, children }: { at: [number, number, number]; children: React.ReactNode }) {
+  const preview = useContext(LabPreviewContext);
+  if (preview) return null;
   return (
     <Html position={at} center occlude={false} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
       <div className="lab-readout">{children}</div>
@@ -172,12 +175,12 @@ export function Readout({ at, children }: { at: [number, number, number]; childr
 /* ---------------------------------------------------------------- water --- */
 
 /**
- * Water — bent, not straight, and that is the whole story.
+ * Water bent, not straight, and that is the whole story.
  *
  * Two lone pairs on the oxygen push the hydrogens down to about 104.5°. If the
  * molecule were linear the charges would cancel, water would not be polar, and
- * essentially nothing about it — dissolving salt, surface tension, ice floating
- * — would be true. One angle carries an extraordinary amount of consequence.
+ * essentially nothing about it dissolving salt, surface tension, ice floating
+ * would be true. One angle carries an extraordinary amount of consequence.
  */
 export function Water({ layer, detail, onPick, selected, running }: MachineProps) {
   const d = 0.96 * ANGSTROM;
@@ -205,7 +208,7 @@ export function Water({ layer, detail, onPick, selected, running }: MachineProps
 /* -------------------------------------------------------------- methane --- */
 
 /**
- * Methane — the tetrahedron, and the reason carbon builds everything.
+ * Methane the tetrahedron, and the reason carbon builds everything.
  *
  * Four bonds pushing as far apart as they can get in three dimensions land at
  * 109.5°, which is a shape you cannot draw honestly on paper. This is the single
@@ -227,7 +230,7 @@ export function Methane({ layer, detail, onPick, selected, running }: MachinePro
         detail={detail} running={running} onPick={onPick} selected={selected} />
       {layer !== "whole" && (
         <Readout at={[0, -30, 0]}>
-          <b>109.5° — a tetrahedron</b>
+          <b>109.5° a tetrahedron</b>
           <span>four bonds as far apart as three dimensions allow</span>
         </Readout>
       )}
@@ -238,7 +241,7 @@ export function Methane({ layer, detail, onPick, selected, running }: MachinePro
 /* ----------------------------------------------------------------- salt --- */
 
 /**
- * Table salt — and the point that there is **no such thing as an NaCl molecule**.
+ * Table salt and the point that there is **no such thing as an NaCl molecule**.
  *
  * A grain of salt is one enormous repeating lattice of alternating ions. "NaCl"
  * is a ratio, not a particle. It is one of the commonest misconceptions in
@@ -286,7 +289,7 @@ export function SaltCrystal({ layer, detail, onPick, selected, running, knob }: 
       <Structure atoms={atoms} bonds={bonds} layer={layer} detail={detail} running={running}
         onPick={onPick} selected={selected} ionic />
       <Readout at={[0, -(n * a) / 2 - 22, 0]}>
-        <b>{atoms.length} ions — and not one molecule</b>
+        <b>{atoms.length} ions and not one molecule</b>
         <span>every sodium has six chlorides around it, and the other way round</span>
       </Readout>
     </group>
@@ -333,7 +336,7 @@ export function Carbon({ layer, detail, onPick, selected, running }: MachineProp
 
   // Graphite: a real honeycomb, built from graphene's two sublattices rather
   // than from separate rings. The first attempt drew loose hexagons that did not
-  // share edges, which is exactly the wrong picture — the strength within a
+  // share edges, which is exactly the wrong picture the strength within a
   // sheet comes from it being one continuous net.
   const graphite = useMemo(() => {
     const list: Atom[] = [];
@@ -414,7 +417,7 @@ const tetra = (d: number) => {
  * The molecules the reactions are made of, at real bond lengths and angles.
  *
  * Kept here rather than in each reaction so that water is the same water
- * wherever it turns up — as a product of burning methane, as a product of
+ * wherever it turns up as a product of burning methane, as a product of
  * neutralisation, and as its own exhibit.
  */
 export const MOLECULE: Record<string, MoleculeSpec> = {

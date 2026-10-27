@@ -4,7 +4,7 @@
  * Shop icon teleports the visitor into its plaza of kiosks.
  *
  * IP-SAFE: these are ORIGINAL placeholder brands that only *represent* a
- * category (coffee / fried chicken / burgers). No real trademark is used —
+ * category (coffee / fried chicken / burgers). No real trademark is used  
  * real brands would join later via the official Partner Program.
  */
 export interface Product {
@@ -43,7 +43,7 @@ export const MARKETS: Market[] = [
     id: "angkor-market",
     spotId: "angkor-wat",
     title: "Angkor Market",
-    blurb: "A virtual market by the causeway — order a coffee or a meal, delivered for real from a merchant in your country.",
+    blurb: "A virtual market by the causeway order a coffee or a meal, delivered for real from a merchant in your country.",
     kiosks: [
       {
         id: "preah-brew",
@@ -115,7 +115,7 @@ MARKETS.push({
   id: "watphnom-market",
   spotId: "wat-phnom",
   title: "Phnom Penh Market",
-  blurb: "A market by the hill showcasing Cambodian food and crafts — order for real, delivered from a merchant in your country.",
+  blurb: "A market by the hill showcasing Cambodian food and crafts order for real, delivered from a merchant in your country.",
   kiosks: [
     {
       id: "num-pang",
@@ -157,7 +157,7 @@ MARKETS.push({
       pos: [4.5, -9.5],
       rot: -0.44,
       products: [
-        { id: "am-amok", name: "Fish Amok", emoji: "🍛", price: 450, desc: "Steamed coconut fish curry — the national dish." },
+        { id: "am-amok", name: "Fish Amok", emoji: "🍛", price: 450, desc: "Steamed coconut fish curry the national dish." },
         { id: "am-loklak", name: "Beef Lok Lak", emoji: "🥩", price: 500, desc: "Stir-fried beef with a lime-pepper dip." },
         { id: "am-kroeung", name: "Chicken Kroeung", emoji: "🍗", price: 450, desc: "Lemongrass curry paste, grilled." },
         { id: "am-rice", name: "Jasmine Rice", emoji: "🍚", price: 75, desc: "A bowl of fragrant rice." },

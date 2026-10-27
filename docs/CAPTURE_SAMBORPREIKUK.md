@@ -1,12 +1,12 @@
-# Field guide — capturing Sambor Prei Kuk for 3D Gaussian Splatting
+# Field guide capturing Sambor Prei Kuk for 3D Gaussian Splatting
 
 A practical, on-the-ground checklist for the team going to **Sambor Prei Kuk**, the ancient Chenla capital in **Kampong Thom**, to photograph the temple so we can train a **3D Gaussian Splatting (3DGS)** model and replace the placeholder with a photoreal capture.
 
-This is the site-specific companion to [`CAPTURE.md`](./CAPTURE.md) — read that too for the full pipeline. Where they differ, **`CAPTURE.md` wins on the technical pipeline; this file wins on what to shoot at Sambor Prei Kuk.**
+This is the site-specific companion to [`CAPTURE.md`](./CAPTURE.md) read that too for the full pipeline. Where they differ, **`CAPTURE.md` wins on the technical pipeline; this file wins on what to shoot at Sambor Prei Kuk.**
 
 ---
 
-## 0. Before you go — permission, licensing, etiquette
+## 0. Before you go permission, licensing, etiquette
 
 - **Permission first.** Sambor Prei Kuk is managed by the Ministry of Culture and Fine Arts and local authorities. You must coordinate with the site stewards in advance for a systematic capture. Explain it's a non-commercial **Digital Public Good**.
 - **Licensing (critical for the DPG).** Agree up front to **CC-BY** (or CC0) for the imagery and the resulting splat.

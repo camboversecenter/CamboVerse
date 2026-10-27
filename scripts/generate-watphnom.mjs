@@ -1,5 +1,5 @@
 /**
- * public/models/wat-phnom.glb (+ .splat) — the authored Wat Phnom model from
+ * public/models/wat-phnom.glb (+ .splat) - the authored Wat Phnom model from
  * the shared composition (scripts/models/watphnom.mjs): the hilltop terrace,
  * orange-roofed vihara, great white stupa and naga staircase.
  * Run: node scripts/generate-watphnom.mjs

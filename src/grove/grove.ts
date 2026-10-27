@@ -1,26 +1,26 @@
 /*
- * VENDORED — Grove reference verifier.
+ * VENDORED Grove reference verifier.
  * Source of truth: sengtha/iAny → grove/core/grove.ts (protocol: grove/SPEC.md).
  * Copied verbatim into CamboVerse so the viewer is self-contained (no external
  * runtime dependency) and can verify every record itself. Licence: Apache-2.0.
- * Do not diverge from SPEC.md §§4–5 — canonical JSON → SHA-256 → ECDSA-P256.
+ * Do not diverge from SPEC.md §§4–5 canonical JSON → SHA-256 → ECDSA-P256.
  * Re-sync from upstream if the spec revises. Web Crypto only; runs in browser,
  * Node, and Cloudflare Workers alike.
  */
 
 /**
- * Grove — an open, decentralized network for **verifiable garden/tree
+ * Grove an open, decentralized network for **verifiable garden/tree
  * observations**. The user's phone is the source of truth: it estimates a plant's
  * carbon from a photo + measurement on-device, then **signs** the observation with
- * a device key. Anyone — a startup dashboard, a community, CamboVerse — can verify
+ * a device key. Anyone a startup dashboard, a community, CamboVerse can verify
  * and aggregate the record with no central server and no trust in one operator.
  *
  * Design (see SPEC.md):
  *  • Content-addressed: `id` = SHA-256 of the canonical observation (tamper-evident).
- *  • Signed: `sig` = the device's ECDSA-P256 signature over `id` (authenticity —
+ *  • Signed: `sig` = the device's ECDSA-P256 signature over `id` (authenticity  
  *    proves *which device* said it, without a directory; the pubkey is embedded).
  *  • Attestable: other devices can co-sign an observation ("I visited, confirmed"),
- *    which is the decentralized trust layer — signatures prove *who said*, not
+ *    which is the decentralized trust layer signatures prove *who said*, not
  *    *what's true* (the oracle problem has no pure-crypto fix; see SPEC §6).
  *
  * Honest scope: `co2Kg` is an **estimate** from published allometry, never a
@@ -47,11 +47,11 @@ export interface Measure {
 export interface GardenObservation {
   v: 1
   kind: 'observation'
-  /** WHO — the signing device's public key (base64url raw P-256 point). The id. */
+  /** WHO the signing device's public key (base64url raw P-256 point). The id. */
   device: string
-  /** WHERE (logical) — a stable plot id grouping a garden's observations over time. */
+  /** WHERE (logical) a stable plot id grouping a garden's observations over time. */
   plot: string
-  /** WHAT — species id/name (from /species ID or typed), e.g. "mango". */
+  /** WHAT species id/name (from /species ID or typed), e.g. "mango". */
   species: string
   /** How many identical plants this record represents. */
   count: number
@@ -60,13 +60,13 @@ export interface GardenObservation {
   biomassKg: number
   /** Estimated CO₂e sequestered, kg (biomass × 0.47 carbon × 3.67 CO₂/C). */
   co2Kg: number
-  /** WHERE (physical) — optional GPS claim. */
+  /** WHERE (physical) optional GPS claim. */
   gps: { lat: number; lng: number; acc: number } | null
-  /** WHEN — device clock, an unverified claim. ISO-8601. */
+  /** WHEN device clock, an unverified claim. ISO-8601. */
   observedAt: string
-  /** SHA-256 (hex) of the photo — ties the record to a real image (Trace-style). */
+  /** SHA-256 (hex) of the photo ties the record to a real image (Trace-style). */
   photoHash: string
-  /** Previous observation id for this plot — links a growth chain (tamper-evident). */
+  /** Previous observation id for this plot links a growth chain (tamper-evident). */
   prev: string | null
   note: string
   /** Content id = SHA-256 of the canonical observation (all fields above). */
@@ -75,7 +75,7 @@ export interface GardenObservation {
   sig: string
 }
 
-/** A third-party co-signature on an observation — the decentralized trust layer. */
+/** A third-party co-signature on an observation the decentralized trust layer. */
 export interface Attestation {
   v: 1
   kind: 'attestation'
@@ -161,7 +161,7 @@ function unb64url(s: string): Uint8Array<ArrayBuffer> {
 /**
  * Estimate above-ground biomass + CO₂ from a measurement, using the Chave et al.
  * (2014) pantropical allometry: AGB = 0.0673·(ρ·D²·H)^0.976 (kg). Deliberately
- * **conservative** — woody plants only. Herbaceous plants (banana/papaya/veg) store
+ * **conservative** woody plants only. Herbaceous plants (banana/papaya/veg) store
  * negligible durable carbon, so they return ~0 rather than being over-credited.
  */
 export function estimateCarbon(measure: Measure, species = ''): { biomassKg: number; co2Kg: number } {
@@ -174,7 +174,7 @@ export function estimateCarbon(measure: Measure, species = ''): { biomassKg: num
     const h = measure.height_m ?? estHeightFromDbh(d) // fall back to a height–diameter guess
     agb = 0.0673 * Math.pow(rho * d * d * h, 0.976)
   } else if (measure.height_m != null && measure.height_m > 0) {
-    // Height-only: crude — assume a slender stem; strongly under-estimates on purpose.
+    // Height-only: crude assume a slender stem; strongly under-estimates on purpose.
     const d = measure.height_m * 2 // ~2 cm DBH per metre, conservative
     agb = 0.0673 * Math.pow(rho * d * d * measure.height_m, 0.976) * 0.5
   }
@@ -199,20 +199,20 @@ function estHeightFromDbh(dbh_cm: number): number {
 /* ------------------------------------------------------- what backs a number --- */
 
 /**
- * Which method actually produced a number — so the interface can say so.
+ * Which method actually produced a number so the interface can say so.
  *
  * A CO₂ figure on this screen is four separate things stacked together, and only
  * one of them is Chave et al. (2014). Labelling the whole number "Chave 2014
  * allometry" credited a published pantropical model for a chain that includes an
  * IPCC default, bare stoichiometry, a seven-row wood-density table of ours, and
- * — when height was not measured — a height guess that exists in no literature
+ * when height was not measured a height guess that exists in no literature
  * at all. `docs/REFERENCES.md` maps every component to its real source.
  *
  * Ordered weakest-last: a garden is only as well-founded as its flimsiest
  * record, so a total is labelled by the worst basis in it.
  */
 export type EstimateBasis =
-  /** Nothing measurable — contributes zero. */
+  /** Nothing measurable contributes zero. */
   | 'none'
   /** DBH *and* height measured: Chave et al. (2014) Eq. 4 as published. */
   | 'measured'
@@ -242,7 +242,7 @@ export function measureBasis(measure: Measure): EstimateBasis {
   return 'none'
 }
 
-/** The weakest basis across many measurements — how a garden total is founded. */
+/** The weakest basis across many measurements how a garden total is founded. */
 export function estimateBasis(measures: Measure[]): EstimateBasis {
   let worst: EstimateBasis = 'none'
   for (const m of measures) {
@@ -399,9 +399,9 @@ export async function verifyAttestation(a: Attestation): Promise<VerifyResult> {
 
 /**
  * A transparent, heuristic trust score (0–100) for an observation given the
- * attestations collected for it. NOT authority — just a legible signal:
+ * attestations collected for it. NOT authority just a legible signal:
  * base credibility + confirmations from *distinct* devices − disputes. The verifier
- * decides the threshold. (Real anti-Sybil needs reputation/known verifiers — SPEC §6.)
+ * decides the threshold. (Real anti-Sybil needs reputation/known verifiers SPEC §6.)
  */
 export function trustScore(obs: GardenObservation, attestations: Attestation[]): number {
   let score = 20 // a valid self-signed observation, unattested

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splat preview · CamboVerse</title>
+    <style>
+      html, body, #root { margin: 0; height: 100%; background: #101014; color: #ddd; font: 13px system-ui, sans-serif; }
+      #hud { position: fixed; top: 8px; left: 8px; z-index: 1; background: rgba(0, 0, 0, 0.6); padding: 6px 10px; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <!-- Dev tool: preview a capture before wiring it into a spot.
+         /splat-preview.html?src=/models/<site>.splat&rx=-90&cam=0,0.5,2
+         (options documented in src/splat-preview.tsx) -->
+    <div id="hud"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/splat-preview.tsx"></script>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 import type { LangCode } from "./voice";
+import type { GuideExperience, GuideSource } from '../locationGuide';
 
 /**
  * Client for the AI tour-guide endpoint (the monkey, "Kiri"). The Worker
@@ -10,10 +11,15 @@ export interface GuideReply {
   text: string;
   /** True when the server returned static facts instead of a model answer. */
   fallback?: boolean;
+  sources?: GuideSource[];
 }
 
 export interface GuideRequest {
-  spotId: string;
+  spotId?: string;
+  /** Server-resolved context for capture / panorama guide previews. */
+  experienceId?: GuideExperience;
+  locationId?: string;
+  objectId?: string;
   poiId?: string | null;
   /** When set, Kiri narrates this historical era (see history.ts) instead. */
   eraId?: string;
@@ -32,6 +38,6 @@ export async function askGuide(req: GuideRequest, signal?: AbortSignal): Promise
     if (!r.ok) return null;
     return (await r.json()) as GuideReply;
   } catch {
-    return null; // offline / aborted — caller uses its local fallback
+    return null; // offline / aborted caller uses its local fallback
   }
 }

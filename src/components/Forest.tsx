@@ -37,7 +37,7 @@ function darken(hex: string, f: number): string {
 export function Forest({ trees }: { trees: TreeDef[] }) {
   return (
     <group>
-      {/* Trunks — tapered, slightly rotated for variety */}
+      {/* Trunks tapered, slightly rotated for variety */}
       <Instances limit={trees.length} castShadow receiveShadow>
         <cylinderGeometry args={[0.06, 0.14, 1.0, 6]} />
         <meshStandardMaterial color="#6a563c" roughness={1} />
@@ -51,7 +51,7 @@ export function Forest({ trees }: { trees: TreeDef[] }) {
         ))}
       </Instances>
 
-      {/* Billowy canopy — several blobs per tree, one instanced draw */}
+      {/* Billowy canopy several blobs per tree, one instanced draw */}
       <Instances limit={trees.length * BLOBS.length} castShadow>
         <sphereGeometry args={[0.5, 7, 6]} />
         <meshStandardMaterial roughness={1} flatShading />

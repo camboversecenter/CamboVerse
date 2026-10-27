@@ -4,7 +4,7 @@ import type { Kiosk as KioskData } from "../shops";
 /**
  * A market stall for one brand: a coloured counter under a slanted awning with a
  * back panel and a floating sign. Tapping the stall (or its sign) opens the
- * brand's menu. Procedural — no textures, cheap on mobile.
+ * brand's menu. Procedural no textures, cheap on mobile.
  */
 export function Kiosk({
   kiosk,

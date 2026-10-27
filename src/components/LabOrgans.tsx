@@ -4,6 +4,7 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { LabLayer } from "../lab";
+import { LabTissueMaterial } from "./LabTissueMaterial";
 
 /**
  * Procedural anatomy for the 🔬 Learning Lab.
@@ -328,7 +329,9 @@ export function Heart({
               position={i === 0 ? [0, 0, 0] : i === 1 ? [2.4, 3.4, -0.8] : [-3.0, 3.4, 0.2]}
               castShadow={layer === "whole"}
             >
-              <meshStandardMaterial
+              <LabTissueMaterial
+                detail={detail}
+                kind="muscle"
                 color={ORGAN.myocardium}
                 roughness={0.52}
                 metalness={0.02}

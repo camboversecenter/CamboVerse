@@ -5,11 +5,11 @@ import { KHMER_FONTS, type KhmerLetter } from "../khmer";
 
 /**
  * Some dependent vowels visually wrap around a consonant via OpenType shaping
- * (a piece before, a piece after — e.g. ើ, ោ). A single codepoint's extracted
+ * (a piece before, a piece after e.g. ើ, ោ). A single codepoint's extracted
  * glyph outline (glyphPaths.ts) can't capture that and is wrong/incomplete
  * for these, so they render via the browser's own font shaping instead,
  * using `letter.display` (which already includes the dotted-circle
- * placeholder — see the `dv()` helper in khmer.ts).
+ * placeholder see the `dv()` helper in khmer.ts).
  */
 export const NEEDS_SHAPED_RENDER = new Set(["ើ", "ឿ", "ៀ", "ោ", "ៅ", "ុំ", "ាំ", "ុះ", "េះ", "ោះ"]);
 
@@ -17,7 +17,7 @@ export const NEEDS_SHAPED_RENDER = new Set(["ើ", "ឿ", "ៀ", "ោ", "ៅ", "
  * Rasterizes shaped text (e.g. "◌" + a wrap-around vowel) to a data URL,
  * fit to a size×size box without clipping. These composed glyphs can rise
  * far above a normal ascent (e.g. "◌ឿ" needs ~1.56em of height), so a fixed
- * font-size/baseline guess clips them — this measures the real ink bounding
+ * font-size/baseline guess clips them this measures the real ink bounding
  * box first and sizes/centers to it.
  */
 function renderShapedGlyph(text: string, family: string): string {
@@ -44,10 +44,10 @@ function renderShapedGlyph(text: string, family: string): string {
 }
 
 /**
- * Animate "how to write" a Khmer letter, in the Normal shape only — Moul is a
+ * Animate "how to write" a Khmer letter, in the Normal shape only Moul is a
  * ceremonial/decorative script, not a handwriting form, so stroke order isn't
  * taught for it. If stroke-order data exists, it draws the strokes in
- * sequence, numbered, over a faint outline — a true stroke-order animation.
+ * sequence, numbered, over a faint outline a true stroke-order animation.
  * Otherwise it traces the letter's outline (a write-on). Stroke order is
  * currently a community draft (see the ✎ badge).
  */
@@ -169,7 +169,7 @@ export function WriteAnimation({
         <div className="write-top">
           <span className="write-title">
             How to write · <b>{letter.roman}</b>
-            {mode === "strokes" && <span className="write-draft" title="Community draft — help verify">✎ draft</span>}
+            {mode === "strokes" && <span className="write-draft" title="Community draft help verify">✎ draft</span>}
           </span>
           <button className="write-x" onClick={onClose} aria-label="Close">
             ✕
@@ -248,7 +248,7 @@ export function WriteAnimation({
           </button>
         </div>
         {mode === "strokes" ? (
-          <p className="write-hint">Numbered strokes in order — a community draft. Help verify it (see the task board).</p>
+          <p className="write-hint">Numbered strokes in order a community draft. Help verify it (see the task board).</p>
         ) : mode === "trace" && useShaped ? (
           <p className="write-hint">Reference shown (stroke order for this vowel isn't authored yet).</p>
         ) : mode === "trace" ? (

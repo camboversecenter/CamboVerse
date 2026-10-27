@@ -1,17 +1,17 @@
 /**
- * The NUM campus ground plan — **one source of truth**.
+ * The NUM campus ground plan **one source of truth**.
  *
  * Three different things need to agree about where a building is and how big
  * it is: the walkable scene (`BuildingsView`), the camera that a landmark
  * button drops you at (`buildings.ts` → `view`), and the isolated model on the
  * building's own page (`BuildingView`). When each kept its own copy they
- * drifted — pages showed a 45 m teaching block while the campus had a 53 m
+ * drifted pages showed a 45 m teaching block while the campus had a 53 m
  * one, and landmark buttons still pointed at positions from an older layout.
  *
  * So the plan lives here and everything reads from it. This block is the
  * verbatim export of `public/campus-editor.html`: drag the layout there, hit
  * **Export JSON**, and paste the four arrays in below. Nothing else needs
- * touching — viewpoints and page framing are derived, not typed out again.
+ * touching viewpoints and page framing are derived, not typed out again.
  */
 
 export type LayoutRect = {
@@ -30,7 +30,7 @@ export type LayoutSegment = {
   id: string;
   kind: "road" | "walkway" | "wall";
   widthM: number;
-  /** Walls only — how far the segment is extruded upward. */
+  /** Walls only how far the segment is extruded upward. */
   heightM?: number;
   from: [number, number];
   to: [number, number];
@@ -89,9 +89,9 @@ export const CAMPUS_WALLS: LayoutSegment[] = [
 /** Plan size for components that take no size prop, so framing still works. */
 const KIND_SIZE: Record<string, [number, number]> = {
   "main-gate": [15, 6],
-  // The monument is a circular plaza — steps + hedge mounds carry it out to
+  // The monument is a circular plaza steps + hedge mounds carry it out to
   // ~16 m, and the palm ring a bit further to ~18 m across (see
-  // EntranceMonument's palmR in CampusBuildings.tsx) — which is what
+  // EntranceMonument's palmR in CampusBuildings.tsx) which is what
   // planting has to keep clear of and what the page camera has to frame.
   // Square-ish footprint since it's round, not oblong.
   monument: [19, 19],
@@ -144,7 +144,7 @@ export function bboxOf(id: string) {
   };
 }
 
-/** Widest plan dimension — what page framing needs. */
+/** Widest plan dimension what page framing needs. */
 export const spanOf = (id: string): number => {
   const bb = bboxOf(id);
   return Math.round(Math.max(bb.w, bb.d));
@@ -159,7 +159,7 @@ export const EYE_HEIGHT_M = 1.65;
 
 /**
  * Which side you walk up to a building from and how far back to stand. Only
- * the *approach* is a judgement call — the actual coordinates come from the
+ * the *approach* is a judgement call the actual coordinates come from the
  * plan, so moving a building moves its viewpoint. `eyeY` should be left alone
  * unless a viewpoint genuinely is above ground: the walker is snapped to the
  * terrain at eye height every frame, so a raised value only reads as flying.

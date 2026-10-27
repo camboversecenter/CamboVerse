@@ -8,7 +8,7 @@ anything, and you do not need to be a 3D artist. You need a photograph, fifteen
 numbers, and half an hour.
 
 A school, a commune hall, a health centre, a market, a pagoda hall, a district
-office, a university block — Cambodia has thousands of them and almost none are
+office, a university block Cambodia has thousands of them and almost none are
 in any virtual world. Each one somebody adds makes the twin a little less of a
 demo and a little more of a place.
 
@@ -38,16 +38,16 @@ So:
   that is deliberate. Leave them blank.
 - **Say what you guessed.** Every spec carries a `confidence` block. A photo
   taken from the front cannot show you the depth of the building or the back
-  wall — write that down instead of letting a guess harden into a fact.
+  wall write that down instead of letting a guess harden into a fact.
 - **Photograph public exteriors from public ground.** Do not photograph private
   homes, do not photograph people, and do not enter anywhere to get the shot.
 - **Use your own photograph.** Do not work from an image you found online unless
-  you are certain of its licence. Your photo is never committed — only the
-  numbers you read off it are — but the numbers still have to come from
+  you are certain of its licence. Your photo is never committed only the
+  numbers you read off it are but the numbers still have to come from
   something you were allowed to look at.
 
-If a building is culturally or religiously sensitive — an active pagoda, a
-memorial, a site under APSARA or Ministry of Culture stewardship — open an issue
+If a building is culturally or religiously sensitive an active pagoda, a
+memorial, a site under APSARA or Ministry of Culture stewardship open an issue
 first. Those go through the heritage-consent path in
 [`STRATEGY.md`](../STRATEGY.md), not through this one.
 
@@ -75,18 +75,18 @@ what it does.
 One shot, from the front or front three-quarter, standing far enough back that
 the whole façade and the roofline are in frame.
 
-What to look for while you are there — you are collecting the numbers, not the
+What to look for while you are there you are collecting the numbers, not the
 picture:
 
 | Look at | You are counting |
 |---|---|
-| Windows across the façade | **bays** — one repeating vertical slice |
+| Windows across the façade | **bays** one repeating vertical slice |
 | Floor lines / window rows | **storeys** |
 | A person or door in frame | scale: a door is ~2.1 m, a storey ~3.5 m |
 | The roof | flat, or hipped with tiles? how steep? |
 | The middle of the façade | does it step forward and get taller? |
 | The ground floor | open arcade/columns, or the same as the floors above? |
-| Colours | wall, trim, roof, glass — approximate hex is fine |
+| Colours | wall, trim, roof, glass approximate hex is fine |
 
 Count the bays twice. At an angle the far end foreshortens and it is the number
 people get wrong most.
@@ -95,22 +95,22 @@ people get wrong most.
 
 Adopted from [`img2threejs`](https://github.com/img2threejs/img2threejs) after we
 evaluated it on the NUM Great Hall (see
-[`EVAL_IMG2THREEJS.md`](./EVAL_IMG2THREEJS.md)). We did not adopt its code — only
+[`EVAL_IMG2THREEJS.md`](./EVAL_IMG2THREEJS.md)). We did not adopt its code only
 this discipline, which caught two real errors in a building we thought we already
 understood. Work it in order, and write the answers down before you touch JSON.
 
 1. **Observe before you infer.** Say what is in the pixels. Not "it has a nice
-   entrance" — "a polished dark red-brown stone frame stands about 0.5 m proud of
+   entrance" "a polished dark red-brown stone frame stands about 0.5 m proud of
    the glass, roughly 9 m wide, running from the plinth to the eave."
 2. **Decompose big to small.** Macro (the masses: base, body, roof), then meso
    (the parts: fascia band, portal, canopy), then micro (the details: finial,
    guardian figures, rooftop plant). Do not jump to details.
-3. **Name three identity-defining features** — the ones that, if you got them
+3. **Name three identity-defining features** the ones that, if you got them
    wrong, would stop a local recognising the building. For the Great Hall they
    are the ~6 m eave cantilever, the colonnade rhythm with the glass set back
    behind it, and the Khmer gable on the ridge. Everything else is negotiable.
 4. **Write down what one photo cannot show.** The back elevation, the soffit, the
-   true depth. These become `assumptions`, not silent guesses — and they are what
+   true depth. These become `assumptions`, not silent guesses and they are what
    a reviewer checks first.
 5. **Overlay a coordinate grid on the photo and re-read it.** Cheap, and it is
    where both of our Great Hall errors surfaced: what looked like a flush glazed
@@ -118,7 +118,7 @@ understood. Work it in order, and write the answers down before you touch JSON.
    half again as deep as the first estimate.
 
 The point of step 4 is honesty. A reconstruction from one photograph is an
-informed approximation. Saying so is not a weakness of the model — it is what
+informed approximation. Saying so is not a weakness of the model it is what
 makes it usable as public data.
 
 ---
@@ -126,7 +126,7 @@ makes it usable as public data.
 ## 3. Write the spec
 
 Copy [`scripts/data/buildings/annex-block.json`](../scripts/data/buildings/annex-block.json)
-— it is the smaller of the two and easier to read — into
+  it is the smaller of the two and easier to read into
 `scripts/data/buildings/<your-id>.json` and change the numbers.
 
 ```jsonc
@@ -160,7 +160,7 @@ Copy [`scripts/data/buildings/annex-block.json`](../scripts/data/buildings/annex
     "projectM": 1.0,     // how far forward
     "extraH": 1.8,       // how much taller
     "pediment": true,
-    "emblem": false,     // a BLANK disc — never a reproduced crest
+    "emblem": false,     // a BLANK disc never a reproduced crest
     "spire": false
   },
 
@@ -180,13 +180,13 @@ Copy [`scripts/data/buildings/annex-block.json`](../scripts/data/buildings/annex
 
   "confidence": {        // REQUIRED. One line per thing you could not see.
     "depthM": "GUESSED. Only the façade is visible; 12 m is a normal single-corridor block.",
-    "bays": "counted at an oblique angle — the far end foreshortens, so ±1",
+    "bays": "counted at an oblique angle the far end foreshortens, so ±1",
     "rear": "entirely unseen. Modelled plain on purpose rather than invented."
   }
 }
 ```
 
-Everything has a default. Leave out what you did not see — but if you leave it
+Everything has a default. Leave out what you did not see but if you leave it
 out *because you could not see it*, say so in `confidence`.
 
 ### The `confidence` block is not optional paperwork
@@ -217,8 +217,8 @@ Output lands in `public/models/<your-id>-bare.glb`.
 - a bare block should be **under ~350 KB**
 - with its own site, **under ~800 KB**
 
-If you are over, the usual culprits are `roof.courses` and — if you edited the
-site — sphere segment counts. Geometry here is de-indexed, so every sphere costs
+If you are over, the usual culprits are `roof.courses` and if you edited the
+site sphere segment counts. Geometry here is de-indexed, so every sphere costs
 three times what you think.
 
 ---
@@ -240,7 +240,7 @@ Add an entry to [`src/buildings.ts`](../src/buildings.ts):
   site: null,                          // null = stands alone, no walkable scene
   about: [
     "Two sentences on what it is and what happens inside.",
-    "A sentence on why it looks the way it does — the roof, the arcade, the orientation.",
+    "A sentence on why it looks the way it does the roof, the arcade, the orientation.",
   ],
   facts: [
     { label: "Storeys", value: "Two" },
@@ -259,7 +259,7 @@ Fields that are easy to get wrong:
 
 - **`model`** is the file under `public/models/` without `.glb`. Leave it out
   only if you are hand-authoring a component in
-  [`CampusBuildings.tsx`](../src/components/CampusBuildings.tsx) instead — that
+  [`CampusBuildings.tsx`](../src/components/CampusBuildings.tsx) instead that
   is the route for landmarks, and it is more work.
 - **`heightM` is the building's *mass*, not its tallest point.** The page aims
   its camera at 0.7 × this, so counting a spire points it at empty sky.
@@ -330,17 +330,17 @@ You are the contributor, not the model. The spec goes in under your name.
 
 ## Where this fits
 
-- [`scripts/generate-building.mjs`](../scripts/generate-building.mjs) — the
+- [`scripts/generate-building.mjs`](../scripts/generate-building.mjs) the
   generator, and a long comment on why it works this way
-- [`src/buildings.ts`](../src/buildings.ts) — the registry of sites and buildings
-- [`src/components/BuildingsHome.tsx`](../src/components/BuildingsHome.tsx) — the
+- [`src/buildings.ts`](../src/buildings.ts) the registry of sites and buildings
+- [`src/components/BuildingsHome.tsx`](../src/components/BuildingsHome.tsx) the
   🏛 Buildings directory, the only way in
-- [`src/components/BuildingView.tsx`](../src/components/BuildingView.tsx) — one
+- [`src/components/BuildingView.tsx`](../src/components/BuildingView.tsx) one
   building's page, which renders your `.glb` or a hand-written component
-- [`src/components/BuildingsView.tsx`](../src/components/BuildingsView.tsx) — a
+- [`src/components/BuildingsView.tsx`](../src/components/BuildingsView.tsx) a
   walkable site, if your building belongs to one
-- [`src/lib/groundTexture.ts`](../src/lib/groundTexture.ts) — runtime canvas
+- [`src/lib/groundTexture.ts`](../src/lib/groundTexture.ts) runtime canvas
   ground, no files, nothing downloaded
-- [`AGENTS.md`](../AGENTS.md) — the three view modes and the hard constraints
-- [`GROVE_INTEGRATION.md`](../GROVE_INTEGRATION.md) — how the twin connects to
+- [`AGENTS.md`](../AGENTS.md) the three view modes and the hard constraints
+- [`GROVE_INTEGRATION.md`](../GROVE_INTEGRATION.md) how the twin connects to
   real-world records on CSB

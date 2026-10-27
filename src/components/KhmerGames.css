@@ -1,0 +1,61 @@
+.kg-hub { position:fixed;inset:0;z-index:5;overflow:auto;background:#112822;color:#f0eddf;font-family:system-ui,sans-serif; }
+.kg-collection { height:100%;display:flex;flex-direction:column; }
+.kg-header { display:flex;align-items:center;gap:20px;padding:18px 28px 12px;flex:none; }
+.kg-header h1 { font:400 28px Georgia,serif;margin:3px 0 0; }
+.kg-eyebrow { color:#a7baab;font-size:10px;letter-spacing:.13em;font-weight:700; }
+.kg-progress { margin-left:auto;font-size:12px;color:#d2d9bd;border:1px solid #3a5143;padding:9px 13px;border-radius:24px;white-space:nowrap; }
+.kg-hub button { font-family:inherit;cursor:pointer;touch-action:manipulation; }
+.kg-hub button:disabled { cursor:default;opacity:.5; }
+.kg-hub button:focus-visible,.kg-hub summary:focus-visible { outline:3px solid #e5c77d;outline-offset:3px; }
+.kg-tabs { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:5px 28px 17px;flex:none; }
+.kg-tabs button { display:flex;align-items:center;gap:12px;min-height:65px;text-align:left;border:1px solid #375345;background:#1a342b;color:#c9d3c5;border-radius:12px;padding:10px 16px; }
+.kg-tabs button[aria-pressed=true] { background:#e7e6cf;color:#233d2e;border-color:#e7e6cf; }
+.kg-tabs b { display:block;font-size:15px;font-weight:600; }.kg-tabs small { display:block;font-size:11px;margin-top:3px; }
+.kg-game-number { font:400 24px Georgia,serif;opacity:.65; }.kg-won { margin-left:auto; }
+.kg-layout { flex:1;display:grid;grid-template-columns:minmax(0,1fr) 350px;min-height:0; }
+.kg-stage { position:relative;min-height:350px;overflow:hidden;background:#c8d7cf; }
+.kg-stage-top { position:absolute;top:14px;left:16px;right:16px;display:flex;justify-content:space-between;gap:8px;pointer-events:none; }
+.kg-stage-top>* { pointer-events:auto; }
+.kg-stage-top .kg-secondary { background:#f7f4e9e6;color:#374b3d;border-color:#a1afa0;font-size:11px; }
+.kg-quality { display:flex;background:#f7f4e9e6;padding:3px;border-radius:24px; }
+.kg-quality button { border:0;border-radius:21px;background:transparent;color:#405441;padding:8px 12px;min-height:36px;font-size:11px; }
+.kg-quality button[aria-pressed=true] { color:#fff;background:#37503a; }
+.kg-scene-caption { position:absolute;left:25px;bottom:25px;display:flex;flex-direction:column;gap:7px;pointer-events:none;color:#293d2b;text-shadow:0 1px 10px #fff7; }
+.kg-scene-caption span { letter-spacing:.15em;font-size:9px;font-weight:700; }.kg-scene-caption b { font:400 25px Georgia,serif; }.kg-scene-caption small { font-size:11px; }
+.kg-info { padding:30px 26px 26px;overflow:auto;background:#183229; }
+.kg-info h2 { font:400 32px Georgia,serif;margin:12px 0 5px; }.kg-native { margin:0 0 23px;color:#b9cbb7;font-size:17px; }
+.kg-lead { font-size:18px;line-height:1.5;margin:12px 0; }.kg-facts { display:flex;flex-wrap:wrap;gap:6px; }
+.kg-facts span { border:1px solid #3c5748;border-radius:15px;font-size:10px;color:#c0cdbb;padding:6px 9px; }
+.kg-level { display:flex;gap:4px;padding:4px;border:1px solid #3b5949;border-radius:10px;margin-top:24px; }
+.kg-level button { flex:1;min-height:40px;border:0;border-radius:7px;color:#c0d3be;background:transparent; }
+.kg-level button[aria-pressed=true] { background:#365341;color:#f7f2df; }
+.kg-hint { color:#adc1af;font-size:12px;line-height:1.6;min-height:38px; }
+.kg-primary { border:0;background:#d5dfb7;color:#203827;border-radius:11px;padding:13px 18px;min-height:48px;font-weight:750;font-size:14px; }
+.kg-primary:hover { background:#e4edcb; }.kg-secondary { border:1px solid #54705b;background:#213e30;color:#e8ecdb;border-radius:10px;padding:10px 15px;min-height:44px;font-size:12px; }
+.kg-launch { width:100%;display:flex;justify-content:space-between;gap:10px;margin-top:12px; }
+.kg-records { display:flex;justify-content:space-between;border-block:1px solid #365343;margin:26px 0 16px;padding:18px 0;gap:10px; }
+.kg-records span { color:#a4baa6;font-size:10px; }.kg-records b { display:block;font-size:23px;color:#e5e9d4;font-weight:500;margin-bottom:5px; }
+.kg-learn { font-size:12px;line-height:1.8;color:#bacbb6; }.kg-learn summary { cursor:pointer;color:#e6e8d5;font-weight:600; }.kg-vr { margin-top:20px;width:100%; }
+.kg-overlay { position:fixed;inset:0;z-index:40;background:#061713d9;display:grid;place-items:center;padding:18px; }
+.kg-dialog { width:min(600px,100%);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid #49604c;border-radius:20px;background:#163128;box-shadow:0 25px 100px #0006; }
+.kg-dialog-head { position:sticky;top:0;z-index:2;background:#163128;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:20px 24px 18px; }
+.kg-dialog-head h2 { font:400 27px Georgia,serif;margin:7px 0 5px; }.kg-dialog-head .khmer { font-size:13px;color:#b5c9b6; }
+.kg-icon { border:1px solid #53674e;border-radius:50%;width:44px;height:44px;flex-shrink:0;background:#213e31;color:#e9ebd6;font-size:24px; }
+.kg-board { width:100%;height:auto;display:block;aspect-ratio:600/280;background:#183b36; }
+.kg-game-content { display:flex;flex-direction:column;gap:12px;padding:20px 24px 24px; }
+.kg-game-content h3 { margin:0;font-size:18px;font-weight:650; }.kg-game-content p { margin:0;font-size:13px;line-height:1.65;color:#c5d1be; }
+.kg-game-content small { color:#a6bba7;font-size:11px;line-height:1.6; }.kg-game-content .kg-key-hint { color:#9fb99f;font-size:11px; }
+.kg-action-row { display:flex;gap:10px; }.kg-action-row>* { flex:1; }
+.kg-text-button { background:none;border:0;color:#b0c4ad;text-decoration:underline;padding:8px;min-height:40px;font-size:12px; }
+.kg-scoreline { display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#d3dfc7; }
+.kg-feedback { min-height:22px; }.kg-hop { border:2px solid #4c6851;min-height:58px;color:#e3ebd3;border-radius:12px;background:#213b2d;font-size:15px;font-weight:700; }
+.kg-hop.next { background:#d5dfb7;color:#203827;border-color:#e2e9ce; }.kg-result-heading { display:flex;justify-content:space-between;align-items:center;color:#d8e8ba;font-size:24px;gap:12px; }
+.kg-result-heading strong { font:400 36px Georgia,serif; }.kg-result-heading small { font-size:14px; }.kg-main-action { min-height:54px; }
+@media(max-width:800px) {
+  .kg-collection { height:auto;min-height:100%; }.kg-header { padding:14px 14px 10px;gap:12px; }.kg-header h1 { font-size:23px; }.kg-header .kg-eyebrow { font-size:8px; }.kg-progress { font-size:10px;padding:8px; }
+  .kg-tabs { padding:5px 12px 12px;gap:5px; }.kg-tabs button { min-height:70px;justify-content:center;padding:8px 5px;text-align:center; }.kg-tabs .kg-game-number { display:none; }.kg-tabs b { font-size:12px; }.kg-tabs small { font-size:9px; }.kg-won { display:none; }
+  .kg-layout { display:flex;flex-direction:column; }.kg-stage { height:44vh;min-height:310px; }.kg-info { overflow:visible;padding:25px 22px; }.kg-info h2 { font-size:30px; }.kg-hint { min-height:0; }.kg-scene-caption { left:18px;bottom:16px; }.kg-scene-caption small { display:none; }.kg-stage-top { left:10px;right:10px;top:10px; }
+  .kg-overlay { padding:10px; }.kg-dialog { max-height:calc(100dvh - 20px);border-radius:15px; }.kg-dialog-head { padding:16px 18px; }.kg-game-content { padding:18px;gap:10px; }.kg-dialog-head h2 { font-size:24px; }
+}
+@media(max-height:600px) and (min-width:650px) { .kg-dialog { display:grid;grid-template-columns:1fr 1fr;width:min(940px,100%); }.kg-dialog-head { grid-column:1/-1; }.kg-board { align-self:center; }.kg-game-content { padding-top:8px; } }
+@media(prefers-reduced-motion:reduce) { .kg-hub * { scroll-behavior:auto; } }

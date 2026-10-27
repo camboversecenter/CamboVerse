@@ -1,0 +1,696 @@
+/* ── Room container: fully isolated, first-person ───────── */
+.bio-room {
+  position: fixed; inset: 0;
+  background: #0e1e26; color: #edf4f1;
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  z-index: 100;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bio-room button { font: inherit; border: 1px solid #3a535e; border-radius: 10px; background: #203440; color: #edf5f6; padding: 10px 13px; cursor: pointer; min-height: 42px; }
+.bio-room button:hover { background: #2d4d57; }
+.bio-room button:focus-visible, .bio-room input:focus-visible { outline: 3px solid #7fdfc3; outline-offset: 3px; }
+.bio-room button:disabled { opacity: .55; cursor: default; }
+
+/* ── Full-screen 3D canvas ───────────────────────────────── */
+.bio-canvas {
+  position: absolute; inset: 0;
+  cursor: crosshair;
+}
+.bio-canvas canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.bio-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  pointer-events: none;
+  z-index: 10;
+}
+.bio-top > * { pointer-events: auto; }
+.bio-title {
+  font-weight: 700; font-size: 15px;
+  opacity: .85; margin-right: auto;
+}
+.bio-top-right { margin-left: auto; display: flex; gap: 8px; }
+.bio-top button {
+  font-size: 12px; padding: 8px 12px;
+  background: rgba(14,30,38,.82);
+  border: 1px solid rgba(80,200,170,.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.bio-top button:hover { background: rgba(30,80,70,.88); border-color: rgba(80,220,170,.5); }
+
+/* A small, optional lesson card. It observes the visitor's actions rather than
+   moving the model or completing steps for them. */
+.bio-guide {
+  position: absolute; top: 72px; left: 16px;
+  width: min(280px, calc(100vw - 32px));
+  box-sizing: border-box;
+  background: rgba(10,24,32,.95);
+  border: 1px solid rgba(127,240,196,.5);
+  border-radius: 12px;
+  padding: 12px 14px;
+  z-index: 18;
+  touch-action: pan-y;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+.bio-guide-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.bio-guide-head b { color: #a6f2d5; font-size: 14px; }
+.bio-guide-head button { min-width: 42px; padding: 5px; }
+.bio-guide small { display: block; margin-top: 4px; color: #9bc7bd; }
+.bio-guide p { margin: 8px 0 10px; color: #edf5f6; font-size: 13px; line-height: 1.45; }
+.bio-guide .bio-guide-action { background: #266b61; border-color: #75c6b1; width: 100%; }
+
+/* ── Crosshair ───────────────────────────────────────────── */
+.bio-crosshair {
+  position: fixed; top: 50%; left: 50%;
+  width: 20px; height: 20px;
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: 6;
+}
+.bio-crosshair::before,
+.bio-crosshair::after {
+  content: ''; position: absolute;
+  background: rgba(127,223,195,.55);
+  border-radius: 1px;
+}
+.bio-crosshair::before {
+  left: 50%; top: 0; width: 2px; height: 100%;
+  transform: translateX(-50%);
+}
+.bio-crosshair::after {
+  top: 50%; left: 0; width: 100%; height: 2px;
+  transform: translateY(-50%);
+}
+
+/* ── Hover info card: slides in from the right when looking at a part ── */
+.bio-hover-card {
+  position: absolute; top: 50%; right: 20px;
+  transform: translateY(-50%);
+  background: rgba(10,24,32,.92);
+  border: 1px solid rgba(80,200,170,.3);
+  border-left: 3px solid #7ff0c4;
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 320px; width: 28vw; min-width: 220px;
+  pointer-events: none;
+  z-index: 15;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: bio-slide-in .2s ease-out;
+}
+.bio-hover-label {
+  font-size: 18px; font-weight: 700;
+  color: #7ff0c4;
+  margin-bottom: 6px;
+}
+.bio-hover-latin {
+  font-size: 12px; font-style: italic; color: #80c8b0; margin-bottom: 4px; letter-spacing: .3px;
+}
+.bio-hover-blurb {
+  font-size: 12px; line-height: 1.55;
+  color: #b0cdd8;
+  margin: 0;
+}
+.bio-hover-hint {
+  display: block;
+  font-size: 11px; color: #6a9a90;
+  margin-top: 8px;
+  border-top: 1px solid rgba(80,200,170,.15);
+  padding-top: 8px;
+}
+
+/* ── Selected part card: compact right-side card with actions ── */
+.bio-selected-card {
+  position: absolute; top: 50%; right: 20px;
+  transform: translateY(-50%);
+  background: rgba(10,24,32,.92);
+  border: 1px solid rgba(80,200,170,.25);
+  border-left: 3px solid #75c6b1;
+  border-radius: 12px;
+  padding: 14px 18px;
+  max-width: 260px;
+  max-height: calc(100dvh - 180px);
+  overflow-y: auto;
+  touch-action: pan-y;
+  z-index: 15;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: bio-slide-in .2s ease-out;
+}
+.bio-selected-status {
+  font-size: 9px; letter-spacing: .14em;
+  color: #81c9b5;
+}
+.bio-selected-name {
+  font-size: 16px; font-weight: 700;
+  margin: 4px 0 10px;
+}
+.bio-selected-action {
+  display: block; width: 100%;
+  background: rgba(38,107,97,.7);
+  border-color: #75c6b1;
+  padding: 8px 12px;
+  margin: 5px 0;
+  font-size: 12px;
+}
+.bio-selected-action:hover { background: #308a7a; }
+.bio-selected-tray {
+  display: flex; gap: 5px; margin: 6px 0;
+}
+.bio-selected-tray button {
+  flex: 1; font-size: 16px; padding: 6px; min-height: 36px;
+}
+
+/* ── Tray interactive controls ─────────────────────────── */
+.bio-tray-controls {
+  margin: 6px 0 2px;
+  padding: 6px 0;
+  border-top: 1px solid rgba(80,200,170,.12);
+}
+.bio-rotate-pad {
+  padding: 12px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed #75c6b1;
+  border-radius: 8px;
+  color: #b8e8da;
+  font-size: 12px;
+  cursor: grab;
+  touch-action: none;
+}
+.bio-rotate-pad:active { cursor: grabbing; background: #23473f; }
+.bio-zoom-row {
+  display: flex; align-items: center; gap: 6px;
+}
+.bio-zoom-label {
+  font-size: 10px; color: #5ea090; text-transform: uppercase; letter-spacing: .5px; min-width: 32px;
+}
+.bio-zoom-row input[type="range"] {
+  flex: 1; accent-color: #40b0a0; height: 4px;
+}
+.bio-zoom-val {
+  font-size: 11px; color: #80c8b8; min-width: 36px; text-align: right;
+}
+.bio-tray-hints {
+  margin: 4px 0 2px;
+}
+.bio-tray-hints small {
+  font-size: 10px; color: #4a8a7a; font-style: italic;
+}
+.bio-pin-toggle {
+  display: block; width: 100%;
+  background: rgba(30,60,55,.5);
+  border: 1px solid rgba(80,200,170,.2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #6ab0a0;
+  cursor: pointer; font: inherit; font-size: 11px;
+  margin-top: 4px;
+  transition: all .15s;
+}
+.bio-pin-toggle:hover { border-color: rgba(80,200,170,.4); color: #90d8c8; }
+.bio-pin-toggle.on { background: rgba(30,80,70,.5); border-color: rgba(80,200,170,.4); color: #90d8c8; }
+.bio-pin-hint { color: #4a8a7a; font-size: 9px; margin-left: 4px; }
+.bio-pin-info {
+  background: rgba(15,40,38,.6);
+  border: 1px solid rgba(80,200,170,.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+}
+.bio-pin-info b { font-size: 12px; color: #80d0c0; display: block; margin-bottom: 3px; }
+.bio-pin-latin { display: block; font-size: 11px; color: #60b8a0; margin-bottom: 3px; letter-spacing: .3px; }
+.bio-pin-info p { font-size: 11px; color: #6aa89a; margin: 0; line-height: 1.4; }
+.bio-head-landmarks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.bio-head-landmarks p { flex-basis: 100%; margin: 0 0 4px; color: #b9d5d5; font-size: 12px; line-height: 1.5; }
+.bio-head-landmarks button { min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid #456a70; border-radius: 8px; background: #152d37; color: #e6f4f3; font: inherit; font-size: 12px; text-align: left; }
+.bio-head-landmarks button[aria-pressed="true"] { background: #20564d; border-color: #83dbc8; }
+.bio-head-landmarks button:focus-visible { outline: 2px solid #b0f5df; outline-offset: 2px; }
+
+/* ── Help overlay ────────────────────────────────────────── */
+.bio-help {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10,24,32,.94);
+  border: 1px solid rgba(80,200,170,.25);
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 420px; width: 90vw;
+  text-align: center;
+  z-index: 60;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: bio-fadein .3s ease-out;
+}
+.bio-help b { font-size: 18px; display: block; margin-bottom: 10px; }
+.bio-help p { font-size: 13px; color: #b0d4cc; line-height: 1.55; margin: 8px 0; }
+.bio-help button { margin-top: 14px; background: #266b61; border-color: #75c6b1; padding: 10px 24px; }
+.bio-help-keys {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 14px 0;
+}
+.bio-help-keys span { font-size: 12px; color: #8eb8b0; }
+.bio-help-keys kbd {
+  display: inline-block; background: rgba(80,200,170,.12);
+  border: 1px solid rgba(80,200,170,.3);
+  border-radius: 5px; padding: 3px 7px; font-size: 11px;
+  color: #7ff0c4; margin-right: 3px; font-family: ui-monospace, monospace;
+}
+
+/* ── Station dock ────────────────────────────────────────── */
+.bio-dock {
+  position: absolute; bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  z-index: 20;
+  pointer-events: auto;
+  max-width: 96vw;
+  animation: bio-dock-in .3s ease-out;
+}
+.bio-dock-tabs {
+  display: flex; gap: 2px;
+  background: rgba(9,24,32,.88);
+  border: 1px solid rgba(80,200,170,.15);
+  border-radius: 10px;
+  padding: 3px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.bio-dock-tab {
+  font: 600 11px/1 system-ui, sans-serif;
+  background: none; border: none; cursor: pointer;
+  color: #6a9a90; padding: 6px 12px;
+  border-radius: 8px;
+  transition: all .2s;
+  white-space: nowrap;
+  min-height: 30px;
+}
+.bio-dock-tab:hover { color: #b0d4cc; }
+.bio-dock-tab.active {
+  background: rgba(40,120,100,.7);
+  color: #7ff0c4;
+  box-shadow: 0 0 8px rgba(80,220,170,.2);
+}
+.bio-stations {
+  display: flex; gap: 6px;
+  overflow-x: auto; max-width: 96vw;
+  padding: 4px 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+}
+.bio-stations::-webkit-scrollbar { display: none; }
+.bio-station {
+  display: flex; align-items: center; gap: 6px;
+  font: 500 12px/1 system-ui, sans-serif;
+  background: rgba(14,40,52,.82);
+  color: #b0d4cc; border: 1px solid rgba(80,200,170,.2);
+  border-radius: 10px;
+  padding: 8px 14px; cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  flex-shrink: 0;
+  min-height: 38px;
+}
+.bio-station:hover,
+.bio-station.active {
+  background: rgba(30,80,70,.88);
+  border-color: rgba(80,220,170,.5);
+  color: #fff;
+}
+.bio-station.primary {
+  background: rgba(38,107,97,.85);
+  border-color: #75c6b1;
+  color: #fff;
+}
+.bio-station:active { transform: scale(.96); }
+
+/* ── Scrim ───────────────────────────────────────────────── */
+.bio-scrim {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 55;
+  animation: bio-scrim-in .2s ease-out;
+}
+@keyframes bio-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Overlay search panel (only for search) ──────────────── */
+.bio-panel {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10,24,32,.96);
+  border: 1px solid rgba(80,200,170,.2);
+  border-radius: 16px;
+  width: 90vw; max-width: 480px;
+  max-height: 80vh;
+  display: flex; flex-direction: column;
+  z-index: 60;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: bio-panel-in .25s ease-out;
+}
+.bio-panel-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(80,200,170,.1);
+}
+.bio-panel-bar b { font-size: 15px; }
+.bio-x {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: #a0b8c0; font-size: 16px; cursor: pointer;
+  transition: all .15s;
+  padding: 0; min-height: 32px;
+}
+.bio-x:hover { background: rgba(255,80,80,.18); border-color: rgba(255,80,80,.3); color: #ff9090; }
+.bio-panel-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1; min-height: 0;
+}
+.bio-panel-body::-webkit-scrollbar { width: 6px; }
+.bio-panel-body::-webkit-scrollbar-thumb { background: rgba(80,220,170,.3); border-radius: 3px; }
+.bio-panel-body::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Organ search ────────────────────────────────────────── */
+.bio-organ-search {
+  display: block; width: 100%; box-sizing: border-box;
+  border: 1px solid #3a535e; background: #0b1b24;
+  border-radius: 9px; color: #fff; padding: 11px; font: inherit;
+  margin-bottom: 14px;
+}
+.bio-organ-list {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  max-height: 50vh; overflow-y: auto;
+}
+.bio-organ-list button {
+  font-size: 12px; padding: 7px 10px; min-height: 35px;
+}
+.bio-organ-list button.selected {
+  background: #266b61; border-color: #75c6b1;
+}
+
+/* ── Error toast ─────────────────────────────────────────── */
+.bio-error {
+  position: absolute; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(180,40,40,.9); color: #fff;
+  padding: 10px 20px; border-radius: 10px;
+  font-size: 13px; z-index: 70;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes bio-fadein {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.93); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes bio-panel-in {
+  from { opacity: 0; transform: translate(-50%, -50%) translateY(16px) scale(.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) translateY(0) scale(1); }
+}
+@keyframes bio-dock-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes bio-slide-in {
+  from { opacity: 0; transform: translateY(-50%) translateX(16px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+/* ── Sound toggle ───────────────────────────────────────── */
+.bio-selected-action.sound-on {
+  background: rgba(40,120,100,.7);
+  border-color: #7ff0c4;
+}
+
+/* ── Microscope panel ───────────────────────────────────── */
+.bio-microscope {
+  position: absolute; top: 50%; left: 16px;
+  transform: translateY(-50%);
+  background: rgba(10,24,32,.95);
+  border: 1px solid rgba(80,200,170,.25);
+  border-radius: 14px;
+  width: 320px; max-width: 42vw;
+  max-height: 85vh;
+  z-index: 50;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: bio-panel-in .25s ease-out;
+  display: flex; flex-direction: column;
+}
+.bio-microscope-body {
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+.bio-microscope-svg {
+  width: 100%;
+  border-radius: 50%;
+  border: 3px solid #333;
+  background: #000;
+  margin-bottom: 10px;
+}
+.bio-microscope-desc {
+  font-size: 11px; color: #a0c8c0; line-height: 1.5; margin: 0 0 8px;
+}
+.bio-microscope-legend {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.bio-legend-item {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; color: #80b0a0;
+}
+.bio-legend-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Quiz panel ─────────────────────────────────────────── */
+.bio-quiz-panel {
+  position: absolute; top: 50%; left: 16px;
+  transform: translateY(-50%);
+  background: rgba(10,24,32,.95);
+  border: 1px solid rgba(80,200,170,.25);
+  border-radius: 14px;
+  width: 320px; max-width: 42vw;
+  max-height: 85vh;
+  z-index: 50;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: bio-panel-in .25s ease-out;
+  display: flex; flex-direction: column;
+}
+.bio-quiz-body {
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+.bio-quiz-instruction {
+  font-size: 11px; color: #80b0a0; line-height: 1.5; margin: 0 0 10px;
+}
+.bio-quiz-labels {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-bottom: 12px;
+}
+.bio-quiz-label {
+  font-size: 11px; padding: 6px 10px;
+  background: rgba(30,60,55,.6);
+  border: 1px solid rgba(80,200,170,.3);
+  border-radius: 8px;
+  color: #b0dcc8; cursor: pointer;
+  transition: all .15s;
+  min-height: 30px;
+}
+.bio-quiz-label:hover:not(:disabled) {
+  background: rgba(40,100,80,.7);
+  border-color: #7ff0c4;
+}
+.bio-quiz-label.dragging {
+  background: rgba(60,140,120,.8);
+  border-color: #7ff0c4;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(80,220,170,.3);
+}
+.bio-quiz-label.placed {
+  opacity: .35; text-decoration: line-through;
+}
+.bio-quiz-slots {
+  display: flex; flex-direction: column; gap: 5px;
+  margin-bottom: 10px;
+}
+.bio-quiz-slot {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: rgba(20,40,50,.6);
+  border: 1px dashed rgba(80,200,170,.2);
+  width: 100%; text-align: left; font: inherit; color: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  min-height: 36px;
+}
+.bio-quiz-slot:hover { border-color: rgba(80,220,170,.5); }
+.bio-quiz-slot.filled {
+  border-style: solid;
+  border-color: rgba(80,200,170,.4);
+  background: rgba(30,60,55,.4);
+}
+.bio-quiz-slot-num {
+  width: 22px; height: 22px;
+  background: rgba(80,200,170,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  color: #7ff0c4;
+  flex-shrink: 0;
+}
+.bio-quiz-slot-text {
+  font-size: 11px; color: #80b0a0;
+}
+.bio-quiz-slot.filled .bio-quiz-slot-text { color: #b0dcc8; }
+.bio-quiz-actions {
+  display: flex; gap: 6px;
+}
+.bio-quiz-actions button {
+  flex: 1; font-size: 11px; padding: 8px;
+  min-height: 34px;
+}
+.bio-quiz-actions button:first-child {
+  background: rgba(38,107,97,.7); border-color: #75c6b1;
+}
+.bio-quiz-result {
+  text-align: center; padding: 16px 0;
+}
+.bio-quiz-score {
+  font-size: 36px; font-weight: 800;
+  color: #7ff0c4;
+  margin-bottom: 8px;
+}
+.bio-quiz-result p {
+  font-size: 12px; color: #80b0a0; line-height: 1.5; margin: 0 0 12px;
+}
+.bio-quiz-result button {
+  background: rgba(38,107,97,.7); border-color: #75c6b1; padding: 8px 20px;
+}
+
+/* ── Comparison panel ───────────────────────────────────── */
+.bio-compare {
+  position: absolute; top: 50%; left: 16px;
+  transform: translateY(-50%);
+  background: rgba(10,24,32,.95);
+  border: 1px solid rgba(80,200,170,.25);
+  border-radius: 14px;
+  width: 380px; max-width: 50vw;
+  max-height: 85vh;
+  z-index: 50;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: bio-panel-in .25s ease-out;
+  display: flex; flex-direction: column;
+}
+.bio-compare-body {
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+.bio-compare-columns {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 12px;
+}
+.bio-compare-col {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 11px; line-height: 1.5;
+}
+.bio-compare-col.healthy {
+  background: rgba(40,100,60,.2);
+  border: 1px solid rgba(80,200,100,.2);
+}
+.bio-compare-col.healthy p { color: #90c8a0; margin: 6px 0 0; }
+.bio-compare-col.diseased {
+  background: rgba(120,40,40,.2);
+  border: 1px solid rgba(200,80,80,.2);
+}
+.bio-compare-col.diseased p { color: #c8a090; margin: 6px 0 0; }
+.bio-compare-badge {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.bio-compare-badge.healthy { color: #60c080; }
+.bio-compare-badge.diseased { color: #c06060; }
+.bio-compare-changes {
+  background: rgba(20,40,50,.5);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.bio-compare-changes b { font-size: 11px; color: #80c0b0; }
+.bio-compare-changes ul {
+  margin: 6px 0 0; padding-left: 18px;
+  font-size: 11px; color: #90b0a8; line-height: 1.6;
+}
+.bio-compare-risk {
+  background: rgba(40,30,20,.4);
+  border: 1px solid rgba(200,160,80,.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.bio-compare-risk b { font-size: 11px; color: #c0a060; }
+.bio-compare-risk p { font-size: 11px; color: #a09880; line-height: 1.5; margin: 4px 0 0; }
+
+.bio-learn-more { color: #d9e9ee; font-size: 13px; line-height: 1.6; margin: 8px 0; }
+.bio-learn-more summary { cursor: pointer; min-height: 44px; align-content: center; color: #a9e8de; font-weight: 600; }
+.bio-learn-more summary:focus-visible, .bio-learn-more a:focus-visible { outline: 2px solid #8de0d0; outline-offset: 3px; }
+.bio-learn-more h4 { margin: 14px 0 4px; color: #f1f7f9; }
+.bio-learn-more p { margin: 4px 0 10px; }
+.bio-learn-more ul { padding-left: 20px; margin: 6px 0; }
+.bio-learn-more li { margin: 6px 0; }
+.bio-learn-more a { color: #a9d9ff; text-decoration: underline; overflow-wrap: anywhere; }
+.bio-learn-more small { color: #bed0d8; }
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .bio-top { padding: 8px 10px; gap: 6px; }
+  .bio-title { font-size: 13px; }
+  .bio-top button { font-size: 11px; padding: 6px 8px; min-height: 42px; }
+  .bio-dock-tab { font-size: 11px; padding: 7px 10px; min-height: 42px; }
+  .bio-station { font-size: 11px; padding: 8px 10px; min-height: 44px; }
+  .bio-guide { top: 58px; left: 8px; width: min(280px, calc(100vw - 16px)); }
+  .bio-help { padding: 20px 22px; }
+  .bio-help b { font-size: 16px; }
+  .bio-panel { max-width: 95vw; }
+  .bio-hover-card { right: 10px; max-width: 45vw; min-width: 180px; padding: 12px 14px; }
+  .bio-hover-label { font-size: 15px; }
+  .bio-hover-blurb { font-size: 11px; }
+  .bio-room--studying .bio-canvas { top: 56px; bottom: calc(32dvh + 116px); }
+  .bio-selected-card {
+    top: auto; bottom: 108px; left: 8px; right: 8px;
+    transform: none; max-width: none; height: 32dvh;
+    max-height: 32dvh; box-sizing: border-box;
+    padding: 10px 14px; animation: none;
+  }
+  .bio-selected-card .bio-selected-action { min-height: 44px; }
+  .bio-selected-name { font-size: 14px; }
+  .bio-microscope, .bio-quiz-panel { left: 8px; width: 260px; max-width: 55vw; }
+  .bio-compare { left: 8px; width: 300px; max-width: 65vw; }
+  .bio-compare-columns { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .bio-title { display: none; }
+  .bio-top-right { gap: 4px; }
+}

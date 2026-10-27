@@ -1,5 +1,5 @@
 /**
- * public/models/ta-prohm.glb — an authored, recognizable Ta Prohm: a low,
+ * public/models/ta-prohm.glb - an authored, recognizable Ta Prohm: a low,
  * sprawling galleried temple with a couple of modest towers, overtaken by giant
  * silk-cotton trees whose roots drape over the walls (its signature). Uses the
  * shared temple builder with weathered vertex colours; trees use wood/moss

@@ -1,11 +1,11 @@
 /**
- * On-device speech, using the browser's built-in Web Speech API — free, no
- * network, no external dependency (so it stays a Digital Public Good and works
- * on a cheap Android). Text-to-speech reads the guide's words aloud;
+ * Speech using the browser's built-in Web Speech API, with no bundled voice
+ * engine. Voice availability and network requirements depend on the device.
+ * Text-to-speech reads the guide's words aloud;
  * speech-recognition lets a visitor ask a question by voice.
  *
  * Reality check for low-end devices: English / French / Chinese voices are
- * widely available, but Khmer TTS is patchy — callers should degrade to
+ * widely available, but Khmer TTS is patchy callers should degrade to
  * text-only when {@link voiceFor} returns null.
  */
 
@@ -51,7 +51,7 @@ export function voiceFor(bcp: string): SpeechSynthesisVoice | null {
 export function speak(
   text: string,
   bcp: string,
-  handlers: { onStart?: () => void; onEnd?: () => void } = {},
+  handlers: { onStart?: () => void; onEnd?: () => void; onError?: () => void } = {},
 ): boolean {
   if (!ttsSupported() || !text.trim()) return false;
   const synth = window.speechSynthesis;
@@ -61,11 +61,11 @@ export function speak(
   const v = voiceFor(bcp);
   if (v) u.voice = v;
   u.rate = 1.0;
-  u.pitch = 1.2; // a touch higher — reads as friendly/cute
+  u.pitch = 1.2; // a touch higher reads as friendly/cute
   if (handlers.onStart) u.onstart = handlers.onStart;
   const done = () => handlers.onEnd?.();
   u.onend = done;
-  u.onerror = done;
+  u.onerror = () => { done(); handlers.onError?.(); };
   synth.speak(u);
   return true;
 }

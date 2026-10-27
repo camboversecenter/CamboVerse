@@ -1,0 +1,13 @@
+.explore-camera { position:absolute; right:10px; top:30%; pointer-events:auto; color:#f3f5ee; font:500 13px/1.4 system-ui,sans-serif; max-width:calc(100% - 20px); }
+.explore-camera button { position:static; min-width:44px; min-height:44px; margin:0; padding:8px 10px; border:1px solid #738878; border-radius:10px; background:#1a2c25; color:#f3f5ee; font:inherit; cursor:pointer; touch-action:manipulation; }
+.explore-camera button:hover { background:#345442; }
+.explore-camera button:focus-visible { outline:3px solid #f1d483; outline-offset:2px; }
+.explore-camera button[aria-pressed="true"] { background:#496d42; border-color:#c9dfa2; }
+.explore-camera-toggle { float:right; box-shadow:0 2px 12px #0005; }
+.explore-camera-panel { clear:both; width:232px; max-width:100%; max-height:55vh; overflow:auto; padding:10px; margin-top:6px; border:1px solid #617d67; border-radius:12px; background:#12231ff5; box-shadow:0 8px 24px #0005; }
+.explore-camera-panel p { margin:8px 0; font:inherit; }
+.explore-camera-panel small { display:block; margin:8px 0; color:#d0d9cf; font-size:11px; }
+.explore-camera-modes, .explore-camera-directions { display:flex; gap:4px; margin:4px 0; }
+.explore-camera-modes button, .explore-camera-directions button { flex:1; }
+.explore-camera-hide { width:100%; }
+canvas:focus-visible { outline:3px solid #e6c96e; outline-offset:-3px; }

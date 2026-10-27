@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Html, Sky } from "@react-three/drei";
+import { ExploreControls as OrbitControls } from './ExploreControls';
+import { Html, Sky } from "@react-three/drei";
 import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
 import { ACESFilmicToneMapping, Color, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
 import { importBundle, importBundleFile } from "../grove/bundle";
@@ -23,13 +24,13 @@ import demoBundle from "../grove/fixtures/grove-bundle.json";
 /**
  * CamboVerse's view modes (see AGENTS.md → "The three view modes"):
  *
- *  • **normal** — the hard baseline, a ~$150 Android on 4G: fewer branch
+ *  • **normal** the hard baseline, a ~$150 Android on 4G: fewer branch
  *    generations, faceted foliage, no shadows, no grass, no wind, lower DPR.
- *  • **ultra**  — a high-end phone, tablet or desktop: the full scene.
- *  • **VR**     — not a third setting but a presentation of **ultra**; entering
+ *  • **ultra**  a high-end phone, tablet or desktop: the full scene.
+ *  • **VR**     not a third setting but a presentation of **ultra**; entering
  *    a WebXR session raises the view to ultra for its duration.
  *
- * Auto-detected, always overridable by the visitor — detection is only a guess.
+ * Auto-detected, always overridable by the visitor detection is only a guess.
  * The tiers change *detail, never content*: the same species at the same scale.
  */
 export type ViewMode = "normal" | "ultra";
@@ -43,7 +44,7 @@ const REFERENCES_URL =
  *
  * The old footer said "a conservative estimate (Chave 2014 allometry)" whatever
  * had been measured. That credited one published pantropical model for a number
- * whose weakest component — when height was not measured — is a height guess of
+ * whose weakest component when height was not measured is a height guess of
  * ours that appears in no paper at all. The wording now moves with the data:
  * name Chave et al. (2014) Eq. 4 only where Eq. 4 was actually the thing that
  * ran, and say plainly when it was not.
@@ -54,16 +55,16 @@ const REFERENCES_URL =
 function basisNote(basis: EstimateBasis): string {
   switch (basis) {
     case "measured":
-      return "CO₂ is an estimate — Chave et al. (2014) Eq. 4 from measured DBH and height,"
+      return "CO₂ is an estimate Chave et al. (2014) Eq. 4 from measured DBH and height,"
         + " IPCC carbon fraction. Never a tradable credit.";
     case "modelled-height":
-      return "CO₂ is a rough estimate — height was not measured for every plant, so an"
+      return "CO₂ is a rough estimate height was not measured for every plant, so an"
         + " in-house approximation stands in for it. Never a tradable credit.";
     case "height-only":
-      return "CO₂ is a rough estimate — trunk diameter was not measured, so an in-house"
+      return "CO₂ is a rough estimate trunk diameter was not measured, so an in-house"
         + " approximation deliberately under-counts. Never a tradable credit.";
     case "supplied":
-      return "CO₂ is an estimate — biomass was supplied by the recorder rather than"
+      return "CO₂ is an estimate biomass was supplied by the recorder rather than"
         + " derived from a measurement. Never a tradable credit.";
     default:
       return "CO₂ is an estimate. Never a tradable credit.";
@@ -79,11 +80,11 @@ function detectViewMode(): ViewMode {
 }
 
 /**
- * 🌱 Grove Garden — CamboVerse's virtual twin of a real, device-signed garden.
+ * 🌱 Grove Garden CamboVerse's virtual twin of a real, device-signed garden.
  *
  * It reads Grove records two ways (BRIDGE.md §1): an offline export bundle from a
  * phone (Path A), or a Grove node's public feeds (Path B, base URL configurable).
- * Every record is **verified locally** before anything is drawn — a tampered or
+ * Every record is **verified locally** before anything is drawn a tampered or
  * forged record never reaches the scene. Each verified plot grows a virtual
  * parcel; the `prev` chain replays growth over time; `co2Kg` is shown only as an
  * estimate, and `trust` as a translucency cue.
@@ -103,6 +104,25 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [csb, setCsb] = useState<Map<string, CsbPlotStatus>>(new Map());
 
   const plots = useMemo(() => buildPlots(records, coarseGps), [records, coarseGps]);
+
+  // Per-plot GPS positions for individual trees (chain → lat/lng from latest observation with GPS).
+  const plotGpsPositions = useMemo(() => {
+    const result = new Map<string, Map<number, { lat: number; lng: number }>>();
+    for (const plot of plots) {
+      const chainGps = new Map<number, { lat: number; lng: number }>();
+      plot.chains.forEach((chain, ci) => {
+        for (let i = chain.length - 1; i >= 0; i--) {
+          const g = chain[i].observation.gps;
+          if (g && g.lat && g.lng) {
+            chainGps.set(ci, { lat: g.lat, lng: g.lng });
+            break;
+          }
+        }
+      });
+      if (chainGps.size > 0) result.set(plot.id, chainGps);
+    }
+    return result;
+  }, [plots]);
   const totals = useMemo(() => gardenTotals(plots), [plots]);
   // What actually backs the CO₂ figure on screen. A total is only as
   // well-founded as its flimsiest record, so the weakest basis labels the lot.
@@ -189,14 +209,14 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
       setStatus(
         page.records.length
           ? `${page.records.length} verified from node` + (page.dropped ? ` · ${page.dropped} dropped` : "")
-          : "The node returned no records we could verify — showing the offline bundle.",
+          : "The node returned no records we could verify showing the offline bundle.",
       );
       if (!page.records.length) {
         const imp = await importBundle(demoBundle);
         setRecords(imp.records);
       }
     } catch (err) {
-      setStatus("Node unreachable: " + (err as Error).message + " — using the offline bundle instead.");
+      setStatus("Node unreachable: " + (err as Error).message + " using the offline bundle instead.");
     }
   };
 
@@ -205,7 +225,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
    *
    * Strictly additive: the garden is already drawn from records this device
    * verified itself, and every one of these lookups can fail without changing a
-   * single plant. What it adds is the half a signature cannot carry — a
+   * single plant. What it adds is the half a signature cannot carry a
    * consensus timestamp, and whether anyone with a licence to lose has actually
    * been to look. Only `keccak256(plot)` leaves the browser; the plot's name
    * does not.
@@ -261,6 +281,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               selected={p.id === selected}
               onSelect={() => setSelected(p.id === selected ? null : p.id)}
               csb={csb.get(p.id)}
+              chainGps={plotGpsPositions.get(p.id)}
             />
           ))}
           {/* In VR, stand back on the ground and look along the row of plots. */}
@@ -276,7 +297,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
         <button
           className="grove-quality"
           onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
-          title="View mode — Normal is the low-end baseline, Ultra is the full 3D scene"
+          title="View mode Normal is the low-end baseline, Ultra is the full 3D scene"
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
@@ -290,7 +311,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
         )}
       </div>
 
-      {/* verification banner — the trust story, front and centre */}
+      {/* verification banner the trust story, front and centre */}
       <div className="grove-verify">🔏 {status}</div>
 
       {/* data source */}
@@ -308,7 +329,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
           />
           <button onClick={loadNode}>Read node</button>
         </div>
-        {/* The chain is a second, independent source — and like the node, it is
+        {/* The chain is a second, independent source and like the node, it is
             whichever one you point at. Clear it and the garden still renders. */}
         <div className="grove-node grove-chain-src">
           <input
@@ -342,13 +363,13 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
             onChange={(e) => { setPlaying(false); setT(+e.target.value); }}
             aria-label="growth timeline"
           />
-          <span className="grove-date">{span.dur > 1 ? new Date(now).toISOString().slice(0, 10) : "—"}</span>
+          <span className="grove-date">{span.dur > 1 ? new Date(now).toISOString().slice(0, 10) : " "}</span>
         </div>
         <p className="grove-foot">
           {basisNote(basis)}{" "}
           <a className="grove-cite" href={REFERENCES_URL} target="_blank" rel="noreferrer noopener">
             Sources
-          </a>. Every record is verified on this device — nothing here is trusted from a server.
+          </a>. Every record is verified on this device nothing here is trusted from a server.
         </p>
       </div>
 
@@ -376,7 +397,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
             )}
             <p className="grove-note">
               Device id is a pseudonym. Location is coarsened to ~1 km. Verified from the signed record
-              itself — {sel.latest.attestations.length} attestation
+              itself {sel.latest.attestations.length} attestation
               {sel.latest.attestations.length === 1 ? "" : "s"} checked.
             </p>
             <CsbPanel status={selCsb} plot={sel} csbBase={csbBase} />
@@ -409,7 +430,7 @@ function CsbPanel({
   if (!status?.available) {
     return (
       <p className="grove-note grove-chain-note">
-        ⛓ Not checked against CSB — this garden is drawn from the signed records alone,
+        ⛓ Not checked against CSB this garden is drawn from the signed records alone,
         which is the whole of what a device signature can promise.
       </p>
     );
@@ -506,7 +527,7 @@ function CsbPanel({
           <p className="grove-note grove-chain-note">
             {riel(String(paid))} already released, {riel(String(held))} still held against
             future survival checks. Money moves only when a licensed verifier confirms the
-            trees are still standing — nobody is paid for planting day.
+            trees are still standing nobody is paid for planting day.
           </p>
         </div>
       )}
@@ -523,14 +544,14 @@ function CsbPanel({
 }
 
 /**
- * "Is this your garden?" — a link out to CSB's signing page, prefilled.
+ * "Is this your garden?" a link out to CSB's signing page, prefilled.
  *
  * This viewer never signs and never holds a key. It builds the calldata from a
  * record it has already verified and hands it over; the grower reads what it
  * commits and signs with their own wallet on CSB.
  *
  * The wording is careful on purpose. Anchoring a plot nobody has anchored makes
- * you its steward, and Grove records are PUBLIC — so a stranger browsing this
+ * you its steward, and Grove records are PUBLIC so a stranger browsing this
  * garden is one tap away from claiming stewardship of somebody else's plot.
  * Neither the chain nor this page can tell whose garden it is, so the only
  * honest thing to do is say so before the tap rather than after it.
@@ -557,7 +578,7 @@ function AnchorAction({
     );
   }
 
-  // `plot.count` is the plot's living total across growth chains — the number
+  // `plot.count` is the plot's living total across growth chains the number
   // the chain reads as the whole grove, not this one record's own count.
   const call = anchorCall(latest, plot.count, headId);
   if (!call) return null;
@@ -584,7 +605,7 @@ function AnchorAction({
         ) : (
           <>
             Adds this plot's newest record ({call.liveCount} living {call.liveCount === 1 ? "plant" : "plants"}).
-            Only the plot's steward can complete it — CSB refuses an anchor from
+            Only the plot's steward can complete it CSB refuses an anchor from
             anyone else, so a stranger's signature simply will not settle.
           </>
         )}
@@ -601,7 +622,7 @@ const SUN: [number, number, number] = [18, 11, 8];
 
 /**
  * A late-afternoon tropical sky and the light rig under it. Everything is
- * procedural — Preetham sky, a warm sun, cool sky-fill bounce, and a grass plane
+ * procedural Preetham sky, a warm sun, cool sky-fill bounce, and a grass plane
  * whose texture is drawn on a canvas at runtime. No HDRI, nothing downloaded.
  */
 function GardenSky({ mode }: { mode: ViewMode }) {
@@ -637,7 +658,7 @@ function GardenSky({ mode }: { mode: ViewMode }) {
 }
 
 /**
- * Instanced grass blades around a plot — one draw call for the lot. They sell
+ * Instanced grass blades around a plot one draw call for the lot. They sell
  * the ground far better than a flat texture alone, so they're the first thing
  * dropped on a low-end device.
  */
@@ -661,12 +682,12 @@ function GrassTufts({ count, radius, seed }: { count: number; radius: number; se
     const b = new Color("#93ab52");
     const c = new Color();
     for (let i = 0; i < count; i++) {
-      // Denser at the pad's edge, thinning outward — how grass meets bare soil.
+      // Denser at the pad's edge, thinning outward how grass meets bare soil.
       const ang = rand() * Math.PI * 2;
       const r = radius * (0.85 + rand() * 0.9);
       const h = 0.1 + rand() * 0.14;
       const w = 0.03 + rand() * 0.035;
-      p.set(Math.cos(ang) * r, h / 2, Math.sin(ang) * r); // cone is centred — lift so the base sits on the ground
+      p.set(Math.cos(ang) * r, h / 2, Math.sin(ang) * r); // cone is centred lift so the base sits on the ground
       q.setFromAxisAngle(new Vector3(0, 1, 0), rand() * Math.PI);
       s.set(w, h, w);
       m.compose(p, q, s);
@@ -686,7 +707,7 @@ function GrassTufts({ count, radius, seed }: { count: number; radius: number; se
   );
 }
 
-/** VR always presents the Ultra scene — if a session starts while the view is in
+/** VR always presents the Ultra scene if a session starts while the view is in
  *  Normal (headset "enter VR", a deep link), raise it for the session. */
 function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
   const inXR = useXR((s) => s.session != null);
@@ -701,7 +722,7 @@ function GardenControls() {
   if (inXR) return null;
   return (
     <OrbitControls
-      enablePan={false}
+      enablePan
       minDistance={4}
       maxDistance={140}
       maxPolarAngle={Math.PI / 2.15}
@@ -713,8 +734,22 @@ function GardenControls() {
 
 /* ---------------- one plot parcel in the 3D world ---------------- */
 
+/**
+ * Convert GPS lat/lng offsets from a center point to local 3D coordinates (metres).
+ * Uses equirectangular projection: 1 deg lat ~ 111,320 m, 1 deg lng ~ 111,320 * cos(lat) m.
+ */
+function gpsToLocal(
+  lat: number, lng: number, centerLat: number, centerLng: number,
+): [number, number] {
+  const M_PER_DEG_LAT = 111_320;
+  const M_PER_DEG_LNG = 111_320 * Math.cos((centerLat * Math.PI) / 180);
+  const x = (lng - centerLng) * M_PER_DEG_LNG;
+  const z = -(lat - centerLat) * M_PER_DEG_LAT;
+  return [x, z];
+}
+
 function PlotParcel({
-  plot, index, total, now, mode, selected, onSelect, csb,
+  plot, index, total, now, mode, selected, onSelect, csb, chainGps,
 }: {
   plot: GrovePlot;
   index: number;
@@ -723,23 +758,31 @@ function PlotParcel({
   mode: ViewMode;
   selected: boolean;
   onSelect: () => void;
-  /** Chain status for this plot, when a CSB endpoint is configured and reachable. */
   csb?: CsbPlotStatus;
+  chainGps?: Map<number, { lat: number; lng: number }>;
 }) {
   const tier = provenanceTier(csb);
   const tierTitle = provenanceLabel(csb);
-  // Lay the parcels out as an orchard grid rather than one long row, so a
-  // garden with many plots still frames in a single view.
-  const spacing = 9.5; // real orchard spacing — full-grown crowns need room
+
+  const spacing = 9.5;
   const cols = Math.ceil(Math.sqrt(total));
   const rows = Math.ceil(total / cols);
-  const x = ((index % cols) - (cols - 1) / 2) * spacing;
-  const z = (Math.floor(index / cols) - (rows - 1) / 2) * spacing;
+  const gridX = ((index % cols) - (cols - 1) / 2) * spacing;
+  const gridZ = (Math.floor(index / cols) - (rows - 1) / 2) * spacing;
+
+  // When chains have GPS data, compute their centre so we can offset the plot group.
+  const gpsCenter = useMemo(() => {
+    if (!chainGps || chainGps.size === 0) return null;
+    let sumLat = 0, sumLng = 0, n = 0;
+    for (const g of chainGps.values()) { sumLat += g.lat; sumLng += g.lng; n++; }
+    return { lat: sumLat / n, lng: sumLng / n };
+  }, [chainGps]);
+
+  // Use grid position for the plot group; individual trees get GPS offsets from centre.
+  const x = gridX;
+  const z = gridZ;
   const soil = useMemo(() => soilTexture(2), []);
 
-  // Each growth chain is one planting — its own plant(s), and its own label.
-  // A plot can hold several (a jackfruit and a guava side by side), so they are
-  // laid out separately and labelled separately rather than lumped together.
   const plantings = plot.chains
     .map((chain, ci) => {
       const g = growthAt(chain, now);
@@ -757,49 +800,80 @@ function PlotParcel({
     })
     .filter((p): p is NonNullable<typeof p> => p !== null);
 
-  // One spot per individual plant; remember which planting each spot belongs to.
-  const owners: number[] = [];
-  plantings.forEach((p, pi) => {
-    for (let k = 0; k < p.shown; k++) owners.push(pi);
-  });
-  const spots = layoutSpots(owners.length);
+  // Build per-tree positions: use GPS when available, fall back to ring layout.
+  const treePositions = useMemo(() => {
+    if (gpsCenter && chainGps && chainGps.size > 0) {
+      // GPS mode: each chain with GPS gets its real-world position.
+      const positions: { ci: number; pi: number; pos: [number, number] }[] = [];
+      plantings.forEach((p, pi) => {
+        const gps = chainGps.get(p.ci);
+        if (gps) {
+          const [lx, lz] = gpsToLocal(gps.lat, gps.lng, gpsCenter.lat, gpsCenter.lng);
+          for (let k = 0; k < p.shown; k++) {
+            const offset = p.shown > 1 ? k * 0.8 : 0;
+            positions.push({ ci: p.ci, pi, pos: [lx + offset, lz] });
+          }
+        } else {
+          // No GPS for this chain: place near the origin with a small offset.
+          for (let k = 0; k < p.shown; k++) {
+            const a = (positions.length / Math.max(1, plantings.length)) * Math.PI * 2;
+            positions.push({ ci: p.ci, pi, pos: [Math.cos(a) * 1.4, Math.sin(a) * 1.4] });
+          }
+        }
+      });
+      return positions;
+    }
+
+    // Fallback: ring layout.
+    const owners: number[] = [];
+    plantings.forEach((p, pi) => {
+      for (let k = 0; k < p.shown; k++) owners.push(pi);
+    });
+    const spots = layoutSpots(owners.length);
+    return spots.map((pos, i) => ({ ci: plantings[owners[i]].ci, pi: owners[i], pos }));
+  }, [plantings, gpsCenter, chainGps]);
+
+  // Compute the soil pad radius to encompass all trees when using GPS.
+  const padRadius = useMemo(() => {
+    if (!gpsCenter || treePositions.length === 0) return 2.4;
+    let maxDist = 0;
+    for (const t of treePositions) {
+      const d = Math.sqrt(t.pos[0] * t.pos[0] + t.pos[1] * t.pos[1]);
+      if (d > maxDist) maxDist = d;
+    }
+    return Math.max(2.4, maxDist + 2);
+  }, [gpsCenter, treePositions]);
 
   return (
     <group position={[x, 0, z]}>
-      {/* turned soil bed */}
       <mesh position={[0, 0.02, 0]} onClick={onSelect} receiveShadow>
-        <cylinderGeometry args={[2.4, 2.5, 0.16, 30]} />
+        <cylinderGeometry args={[padRadius, padRadius + 0.1, 0.16, 30]} />
         <meshStandardMaterial map={soil} color={selected ? "#ffd9a8" : "#ffffff"} roughness={1} />
       </mesh>
-      {/* a low rim of grass where the bed meets the lawn */}
-      {mode === "ultra" && <GrassTufts count={260} radius={2.4} seed={index * 31 + 5} />}
+      {mode === "ultra" && <GrassTufts count={Math.min(800, Math.round(260 * (padRadius / 2.4)))} radius={padRadius} seed={index * 31 + 5} />}
 
-      {/* the plants */}
-      {owners.map((pi, i) => (
-        <group key={`${plantings[pi].ci}:${i}`} position={[spots[i][0], 0.08, spots[i][1]]}>
+      {treePositions.map((t, i) => (
+        <group key={`${t.ci}:${i}`} position={[t.pos[0], 0.08, t.pos[1]]}>
           <Plant
-            species={plantings[pi].species}
-            heightM={plantings[pi].heightM}
-            opacity={plantings[pi].opacity}
+            species={plantings[t.pi].species}
+            heightM={plantings[t.pi].heightM}
+            opacity={plantings[t.pi].opacity}
             seed={index * 7 + i}
             mode={mode}
           />
         </group>
       ))}
 
-      {/* one label per planting, floating just above that plant's own crown */}
       {plantings.map((p, pi) => {
-        const mine = spots.filter((_, i) => owners[i] === pi);
+        const mine = treePositions.filter((t) => t.pi === pi);
         if (!mine.length) return null;
-        const cx = mine.reduce((s, sp) => s + sp[0], 0) / mine.length;
-        const cz = mine.reduce((s, sp) => s + sp[1], 0) / mine.length;
+        const cx = mine.reduce((s, t) => s + t.pos[0], 0) / mine.length;
+        const cz = mine.reduce((s, t) => s + t.pos[1], 0) / mine.length;
         return (
           <Billboard key={p.ci} position={[cx, p.heightM + 1, cz]}>
             <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
               <b>{p.species}{p.count > 1 ? `·${p.count}` : ""}</b>
               <span>≈{fmt(p.co2Kg)}kg</span>
-              {/* Provenance, at a glance and without a word of explanation: a
-                  green tick means somebody with a licence went and looked. */}
               {tier !== "unanchored" && (
                 <span className="grove-tag-tier" style={{ color: TIER_COLOR[tier] }} title={tierTitle}>
                   {TIER_ICON[tier]}
@@ -814,7 +888,7 @@ function PlotParcel({
 }
 
 /** Positions for N trees on a plot pad so none overlap: one at centre, the rest
- *  on a ring (with a second ring past six). Deterministic — no randomness. */
+ *  on a ring (with a second ring past six). Deterministic no randomness. */
 function layoutSpots(n: number): [number, number][] {
   if (n <= 0) return [];
   if (n === 1) return [[0, 0]];
@@ -837,7 +911,7 @@ function layoutSpots(n: number): [number, number][] {
  * How each species is built. `shape` drives the branch skeleton, so a mango's
  * dense round crown, a jackfruit's upright oval with fruit straight off the
  * trunk, and a tamarind's wide feathery umbrella all grow differently rather
- * than being the same blob in different colours. Extend freely — Grove's
+ * than being the same blob in different colours. Extend freely Grove's
  * species list is open.
  */
 const SHAPES: Record<string, TreeShape> = {
@@ -886,7 +960,7 @@ function lookFor(species: string): PlantLook {
 /**
  * Grow the right plant for a species, **at its measured height in metres**. Under
  * about waist height nothing has made a trunk yet, so every species starts as a
- * seedling — which is what a freshly planted sapling really looks like.
+ * seedling which is what a freshly planted sapling really looks like.
  */
 function Plant({
   species, heightM, opacity, seed, mode,
@@ -916,7 +990,7 @@ function Billboard({ position, children }: { position: [number, number, number];
   return (
     // zIndexRange is capped deliberately. drei's default tops out around
     // 16,777,271, which puts a floating plant label ABOVE the plot detail card
-    // and every other piece of page chrome — the label then prints straight
+    // and every other piece of page chrome the label then prints straight
     // through an open modal. These belong in the scene, under the interface.
     <Html
       position={position}

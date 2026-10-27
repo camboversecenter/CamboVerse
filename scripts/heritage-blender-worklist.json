@@ -1,0 +1,60 @@
+{
+  "objective": "Blender-authored models for every map site, integrated and visually checked, with reference-supported additional sites where feasible",
+  "completionGates": [
+    "Editable Blender source for every site",
+    "Normal and Ultra GLB assets preserve the same landmarks",
+    "Render review for each site; fix visual defects before approval",
+    "Runtime model paths resolve and hotspots align with each model",
+    "Normal uses reduced geometry without expensive shadows or reflection passes",
+    "VR uses Ultra assets",
+    "Preserve existing local work and approved map symbols",
+    "Review feasibility and references for additional map sites",
+    "Typecheck and runtime verification before final completion"
+  ],
+  "sites": {
+    "angkor-wat": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "bayon": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "ta-prohm": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "banteay-srei": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "preah-vihear": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "royal-palace": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "wat-phnom": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "sambor-prei-kuk": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "koh-ker": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "banteay-chhmar": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "preah-khan": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "beng-mealea": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "phnom-kulen": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "oudong": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked.",
+    "pre-rup": "Blender source and paired exports verified; render reviewed; imported; browser model/tier switching and all stop cards checked. New reference-supported destination and site symbol."
+  },
+  "references": [
+    "https://apsaraauthority.gov.kh/2021/06/14/angkor-wat/",
+    "https://www.wmf.org/sites/default/files/article/pdfs/Preah_Khan_Conservation_Project_Report_II.pdf",
+    "https://www.tourismcambodia.org/public/index.php/mot/cbet-destination/533/banteay-chhmar-community-based-tourism-site",
+    "https://tourismcambodia.org/public/provinces/search/detail/388/kulen-mountain-national-park-1550808107",
+    "https://whc.unesco.org/en/list/1667/",
+    "https://whc.unesco.org/en/list/1532/",
+    "https://apsaraauthority.gov.kh/2021/08/05/bayon/",
+    "https://apsaraauthority.gov.kh/2021/08/12/ta-prohm/",
+    "https://apsaraauthority.gov.kh/2021/08/04/banteay-srei/",
+    "https://whc.unesco.org/en/list/1224/",
+    "https://tourismcambodia.org/provinces/search/detail/127/royal-palace-1548301051",
+    "https://apsaraauthority.gov.kh/2026/06/01/pre-rup-temple-2/"
+  ],
+  "verification": {
+    "sourceCheck": "All 30 native files opened successfully in Blender 5.2.2; nonempty meshes and materials verified.",
+    "assetCheck": "All 30 GLBs pass bounds, detail reduction and Normal budgets; 15 review renders present and current.",
+    "runtime": "All 30 catalog GLBs served HTTP 200 with valid glTF header; all 15 destinations reviewed in browser. Stop cards opened for every destination; representative camera frames inspected.",
+    "cameraFixes": [
+      "Banteay Srei sanctuary side views",
+      "Sambor Flying Palaces view",
+      "Preah Khan pavilion view"
+    ],
+    "limits": [
+      "Illustrative, not surveyed replicas",
+      "Physical low-end Android and headset performance not tested",
+      "Ignored model binaries remain local; package separately before deployment"
+    ]
+  }
+}
