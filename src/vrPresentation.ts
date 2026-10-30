@@ -1,5 +1,9 @@
 import type { Vector3 } from 'three';
 
+/** Keep text readable at distant sculptures without moving its world anchor.
+ * The .95-wide label spans roughly 15 degrees instead of shrinking to a speck. */
+export function vrMarkerScale(distance:number):number {return Math.max(.0001,distance*.26/.95);}
+
 /** Snapshot a comfortable panel pose. Call on open/reset, never on head motion. */
 export function worldPanelPose(head:Pick<Vector3,'x'|'y'|'z'>,forward:Pick<Vector3,'x'|'y'|'z'>,scale:number,side=0) {
   const length=Math.hypot(forward.x,forward.z);

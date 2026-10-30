@@ -1,8 +1,12 @@
 import {describe,expect,it} from 'vitest';
-import {worldPanelPose,wrapVRText} from './vrPresentation';
+import {worldPanelPose,wrapVRText,vrMarkerScale} from './vrPresentation';
 import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from './objectHotspots';
 
 describe('world-anchored VR information',()=>{
+  it('keeps distant object labels readable at a consistent angular width',()=>{
+    for(const distance of [.1,.5,1,4,12])expect(.95*vrMarkerScale(distance)/distance).toBeCloseTo(.26);
+    expect(Number.isFinite(vrMarkerScale(0))).toBe(true);
+  });
   it('creates an upright snapshot unaffected by head pitch or later movement',()=>{
     const head={x:1,y:1.6,z:3},direction={x:0,y:.9,z:-.1};
     const pose=worldPanelPose(head,direction,1);

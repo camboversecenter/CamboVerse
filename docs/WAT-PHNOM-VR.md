@@ -48,7 +48,8 @@ eye-independent order is approximate for very close transparent splats.
 The Naga balustrade and guardian lion use the same reviewed anchors and object
 notes in both browser and VR. In VR, actual textured meshes replace the HTML
 markers, which are not rendered by an immersive session. The labels remain at
-the sculptures and rotate for readability. Controller-ray selection opens a
+the sculptures, rotate for readability and keep a roughly 15-degree angular
+width so the farther lion label does not become too small to read. Controller-ray selection opens a
 readable, world-anchored card with source credit, Close and optional Listen.
 Narration uses the existing browser speech API; text remains available if the
 headset has no usable voice. Closing/leaving a card stops its narration.

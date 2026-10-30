@@ -2,7 +2,7 @@ import {useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {useFrame} from '@react-three/fiber';
 import {Group,Vector3} from 'three';
 import {OBJECT_INFO,type ObjectAnchor,type ObjectInfo} from '../objectHotspots';
-import {worldPanelPose} from '../vrPresentation';
+import {worldPanelPose,vrMarkerScale} from '../vrPresentation';
 import {speak,stopSpeaking,ttsSupported} from '../lib/voice';
 import {VRSurface} from './VRSurface';
 
@@ -10,7 +10,11 @@ function VRMarker({anchor,scale,onSelect}:{anchor:ObjectAnchor;scale:number;onSe
   const ref=useRef<Group>(null),head=useMemo(()=>new Vector3(),[]);
   useFrame(({camera})=>{
     // Rotate the sign for readability, but keep it attached to its sculpture.
-    camera.getWorldPosition(head);ref.current?.lookAt(head);
+    if(!ref.current)return;
+    camera.getWorldPosition(head);ref.current.lookAt(head);
+    const distance=head.distanceTo(ref.current.position);
+    ref.current.scale.setScalar(vrMarkerScale(distance));
+    ref.current.visible=distance>.15*scale;
   });
   return <group ref={ref} position={anchor.position} scale={scale}>
     <VRSurface title={`ⓘ ${OBJECT_INFO[anchor.id].title}`} width={.95} height={.16} onClick={onSelect}/>
