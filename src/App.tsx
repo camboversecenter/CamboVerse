@@ -34,7 +34,10 @@ const PanoramaTour = import.meta.env.DEV ? lazy(() => import('./components/Panor
 
 export function App() {
   const [panoramaOpen,setPanoramaOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(window.location.search).get('view') === '360-test');
-  const [spotId, setSpotId] = useState<string | null>(null);
+  const [spotId, setSpotId] = useState<string | null>(() => {
+    const requested=new URLSearchParams(window.location.search).get('site');
+    return SPOTS.some(spot=>spot.id===requested)?requested:null;
+  });
   const [provinceName, setProvinceName] = useState<string | null>(null);
   const [provinceSongsOpen, setProvinceSongsOpen] = useState(() => new URLSearchParams(window.location.search).get('view') === 'province-songs');
   const [toolsOpen, setToolsOpen] = useState(false);

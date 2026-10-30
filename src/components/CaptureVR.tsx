@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useFrame } from '@react-three/fiber';
 import { createXRStore, useXR } from '@react-three/xr';
-import { CanvasTexture, Group, Quaternion, SRGBColorSpace, Vector3 } from 'three';
+import { CanvasTexture, Group, Quaternion, REVISION, SRGBColorSpace, Vector3 } from 'three';
 import type { Poi } from '../spots';
 import { captureVRScale } from '../captureVR';
 import './CaptureVR.css';
-import {immersiveVRError,startImmersiveVR} from '../immersiveVR';
+import {checkImmersiveVR,immersiveVRError,immersiveVRFailure,startImmersiveVR} from '../immersiveVR';
 
 export interface CaptureVRTour {
   title:string;
@@ -28,22 +29,24 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
   const [open,setOpen]=useState(false),[supported,setSupported]=useState(false);
   const [active,setActive]=useState(false),[pending,setPending]=useState(false);
   const [message,setMessage]=useState('Checking headset support…');
+  const [checkCode,setCheckCode]=useState('checking'),[failure,setFailure]=useState('');
+  const titleId=useId();
   const dialog=useRef<HTMLDialogElement>(null),entry=useRef<HTMLButtonElement>(null);
   const requesting=useRef(false);
-  const check=async()=>{
-    if(!window.isSecureContext){setSupported(false);setMessage('Open this site over HTTPS in your headset browser. A plain HTTP address on your Wi-Fi network cannot start VR.');return;}
-    try{
-      const available=await navigator.xr?.isSessionSupported('immersive-vr')??false;
-      setSupported(available);
-      setMessage(available?'Headset ready. Press Enter VR to enter the scene.':'No VR headset detected here. Open this site in Meta Quest Browser, or connect a PC VR headset and check again.');
-    }catch{setSupported(false);setMessage('Could not check the headset. Check your connection and try again.');}
-  };
+  const check=useCallback(async()=>{
+    const policy=(document as Document & {permissionsPolicy?:{allowsFeature:(feature:string)=>boolean};featurePolicy?:{allowsFeature:(feature:string)=>boolean}});
+    const result=await checkImmersiveVR({secure:window.isSecureContext,xr:navigator.xr,
+      spatialTrackingAllowed:(policy.permissionsPolicy??policy.featurePolicy)?.allowsFeature('xr-spatial-tracking')});
+    setSupported(result.ready);setMessage(result.message);setCheckCode(result.code);
+  },[]);
   useEffect(()=>{
+    const refresh=()=>{if(document.visibilityState==='visible')void check();};
     void check();navigator.xr?.addEventListener('devicechange',check);
+    window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);
     setActive(store.getState().session!=null&&store.getState().mode==='immersive-vr');
     const unsubscribe=store.subscribe(s=>setActive(s.session!=null&&s.mode==='immersive-vr'));
-    return ()=>{navigator.xr?.removeEventListener('devicechange',check);unsubscribe();void store.getState().session?.end().catch(()=>{});};
-  },[store]);
+    return ()=>{navigator.xr?.removeEventListener('devicechange',check);window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh);unsubscribe();void store.getState().session?.end().catch(()=>{});};
+  },[store,check]);
   useEffect(()=>{
     if(open&&!dialog.current?.open)dialog.current?.showModal();
     else if(!open&&dialog.current?.open)dialog.current.close();
@@ -51,12 +54,13 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
   const enter=async()=>{
     if(requesting.current||!supported)return;
     requesting.current=true;
-    setPending(true);
+    setPending(true);setFailure('');
     try{
       onBeforeEnter?.();
       await startImmersiveVR(store);
       setOpen(false);
     }catch(error){
+      const failure=immersiveVRFailure(error);setFailure(`${failure.name}: ${failure.message}`);
       setMessage(immersiveVRError(error));setOpen(true);
     }finally{requesting.current=false;setPending(false);}
   };
@@ -64,25 +68,34 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
     try{await store.getState().session?.end();}
     catch{setMessage('Use the headset system menu to leave VR.');setOpen(true);}
   };
-  return <>
-    <button ref={entry} className={className} disabled={pending} onClick={()=>{
+  const entryButton=<button ref={entry} className={className} disabled={pending} onClick={()=>{
       if(active)void exit();else if(supported)void enter();else{setOpen(true);void check();}
-    }}>{pending?'Starting VR…':active?'Exit VR':'🥽 Enter VR'}</button>
-    <dialog ref={dialog} className="capture-vr-dialog" aria-labelledby="capture-vr-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);entry.current?.focus();}}>
-      <h2 id="capture-vr-title">{title} in VR</h2>
+    }}>{pending?'Starting VR…':active?'Exit VR':'🥽 Enter VR'}</button>;
+  return <>
+    {/* The fixed canvas creates a stacking context below the walk gesture layer.
+        Portal entry to body so walking and POI cards cannot swallow its clicks. */}
+    {className==='capture-vr-entry'?createPortal(<div className="capture-vr-launcher">
+      {entryButton}<button className="capture-vr-help" aria-label="VR help and headset status" onClick={()=>{setOpen(true);void check();}}>?</button>
+    </div>,document.body):entryButton}
+    {createPortal(<dialog ref={dialog} className="capture-vr-dialog" aria-labelledby={titleId} onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);entry.current?.focus();}}>
+      <h2 id={titleId}>{title} in VR</h2>
       <p>Enter the scene with headset tracking and separate views for both eyes. VR uses Ultra detail.</p>
       {tour&&<div className="capture-vr-stops" role="group" aria-label="VR capture">
         {tour.stops.map(stop=><button key={stop.id} aria-pressed={tour.activeId===stop.id} onClick={()=>tour.onSelect(stop.id)}>{stop.title}</button>)}
       </div>}
       <p role="status">{message}</p>
+      {failure&&<p role="alert">{failure}</p>}
       <p>{tour?'Left stick: walk. Right stick: snap turn. Point and press the trigger to choose a capture, reset your position, or exit.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
+      <details className="capture-vr-note"><summary>Headset check details</summary>
+        <p>WebXR: {checkCode} · Three.js r{REVISION}<br/>Session: {active?'immersive-vr':'not started'}<br/>VR entry: 2</p>
+      </details>
       <div className="capture-vr-actions">
         <button onClick={()=>void check()}>Check headset</button>
         <button disabled={!supported||pending} onClick={()=>void enter()}>{pending?'Starting VR…':'Enter VR'}</button>
         <button onClick={()=>setOpen(false)}>Close</button>
       </div>
-    </dialog>
+    </dialog>,document.body)}
   </>;
 }
 

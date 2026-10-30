@@ -172,6 +172,7 @@ export function MapView({
       >
         Places <span>{SPOTS.length}</span>
       </button>
+      <a className="map-vr-shortcut" href="?site=wat-phnom">🥽 Wat Phnom VR</a>
       {sitesOpen && (
         <nav id="map-sites-list" className="map-sites-list" aria-label="Heritage places">
           <div className="map-sites-heading">{selectedProvince ? "Places in this province" : "Province · featured places"}</div>

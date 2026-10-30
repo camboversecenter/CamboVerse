@@ -145,7 +145,7 @@ export function Viewer({
       {(heritageUltraUrl || capture) && !immersive && <div className="heritage-detail" role="group" aria-label="Scene detail">
         {(["normal", "ultra"] as const).map(tier => <button key={tier} aria-pressed={detail === tier} onClick={() => setDetail(tier)}>{tier === "normal" ? "Normal" : "Ultra"}</button>)}
       </div>}
-      {ultraModelUrl && <div style={{ position: "absolute", top: 18, right: 18, zIndex: 10, display: "flex", gap: 6 }} aria-label="Model detail">
+      {ultraModelUrl && <div style={{ position: "absolute", top: 70, right: 18, zIndex: 10, display: "flex", gap: 6 }} aria-label="Model detail">
         <button style={{ padding: "8px 12px", borderRadius: 18, background: "#18221c", color: "white", border: "1px solid #738175" }} aria-pressed={showParts} onClick={() => setShowParts(v => !v)}>{showParts ? "Hide parts" : "Show parts"}</button>
         {(["normal", "ultra"] as const).map((tier) => <button key={tier} style={{ position: "static", padding: "8px 12px", borderRadius: 18, border: "1px solid #738175", background: (detailed ? "ultra" : "normal") === tier ? "#324c36" : "#18221c", color: "white", cursor: "pointer" }} aria-pressed={(detailed ? "ultra" : "normal") === tier} disabled={immersive} onClick={() => setDetail(tier)}>{tier === "normal" ? "Normal" : "Ultra"}</button>)}
       </div>}

@@ -1,6 +1,6 @@
 import {describe,expect,it,vi} from 'vitest';
-import {IMMERSIVE_XR_OPTIONS,immersiveVRError,startImmersiveVR} from './immersiveVR';
-import {buildXRSessionInit} from '@pmndrs/xr/internals';
+import {IMMERSIVE_XR_OPTIONS,checkImmersiveVR,immersiveVRError,startImmersiveVR} from './immersiveVR';
+import {buildXRSessionInit,createXRStore} from '@pmndrs/xr/internals';
 
 describe('native headset entry',()=>{
   it('disables emulated sessions, automatic entry, and flat HTML overlays',()=>{
@@ -37,5 +37,49 @@ describe('native headset entry',()=>{
     const error=new Error('permission');error.name='NotAllowedError';
     await expect(startImmersiveVR({enterVR:()=>Promise.reject(error),getState:()=>({mode:null})})).rejects.toBe(error);
     expect(immersiveVRError(error)).toContain('Meta Quest Browser');
+  });
+  it('distinguishes HTTPS, policy, browser API, and headset failures',async()=>{
+    const xr={isSessionSupported:vi.fn(async()=>true)};
+    expect((await checkImmersiveVR({secure:false,xr})).code).toBe('https-required');
+    expect((await checkImmersiveVR({secure:true,xr,spatialTrackingAllowed:false})).code).toBe('policy-blocked');
+    expect((await checkImmersiveVR({secure:true})).code).toBe('webxr-missing');
+    expect(xr.isSessionSupported).not.toHaveBeenCalled();
+    expect((await checkImmersiveVR({secure:true,xr})).ready).toBe(true);
+    expect(xr.isSessionSupported).toHaveBeenCalledWith('immersive-vr');
+    xr.isSessionSupported.mockResolvedValue(false);
+    expect((await checkImmersiveVR({secure:true,xr})).code).toBe('headset-unavailable');
+    const denied=new Error('tracking denied');denied.name='SecurityError';
+    xr.isSessionSupported.mockRejectedValue(denied);
+    expect(await checkImmersiveVR({secure:true,xr})).toMatchObject({ready:false,code:'SecurityError'});
+  });
+  it('connects the installed XR store to the native request and Three sessionstart lifecycle',async()=>{
+    // Native hardware and GPU boundary only are faked; the installed XR store,
+    // session-init builder and our entry helper are exercised together.
+    const nativeSession=Object.assign(new EventTarget(),{
+      inputSources:[],environmentBlendMode:'opaque',visibilityState:'visible',
+      end:vi.fn(async()=>nativeSession.dispatchEvent(new Event('end'))),
+    }) as unknown as XRSession;
+    const requestSession=vi.fn(async()=>nativeSession);
+    vi.stubGlobal('navigator',{userAgent:'OculusBrowser',xr:{requestSession}});
+    vi.stubGlobal('Element',class Element {});
+    vi.stubGlobal('XRWebGLLayer',{getNativeFramebufferScaleFactor:()=>1});
+    const events=new EventTarget();
+    const manager={
+      addEventListener:events.addEventListener.bind(events),removeEventListener:events.removeEventListener.bind(events),
+      setReferenceSpaceType:vi.fn(),getSession:()=>nativeSession,
+      setSession:vi.fn(async()=>events.dispatchEvent(new Event('sessionstart'))),
+    };
+    const store=createXRStore(IMMERSIVE_XR_OPTIONS);
+    try{
+      store.setWebXRManager(manager as never);
+      const starting=startImmersiveVR(store);
+      expect(requestSession).toHaveBeenCalledWith('immersive-vr',expect.objectContaining({requiredFeatures:['local-floor']}));
+      expect(await starting).toBe(nativeSession);
+      expect(manager.setSession).toHaveBeenCalledWith(nativeSession);
+      expect(store.getState().mode).toBe('immersive-vr');
+      await nativeSession.end();
+      expect(store.getState().session).toBeUndefined();
+      expect(store.getState().mode).toBeNull();
+    }finally{store.destroy();vi.unstubAllGlobals();}
   });
 });

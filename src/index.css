@@ -1693,11 +1693,14 @@ body,
   .heritage-viewer:has(~ .poi-panel:not(.collapsed)) { height: 52%; }
   .heritage-viewer ~ .poi-panel:not(.collapsed) { max-height: 46%; overflow-y: auto; }
   .heritage-viewer:has(~ .poi-panel.collapsed) { height: 100%; }
-  .heritage-viewer .heritage-detail { top: 12px; }
-  .heritage-stops { top: 66px; }
+  .heritage-viewer .heritage-detail { top: 68px; }
+  .heritage-stops { top: 122px; }
 }
 .heritage-stops button:focus-visible, .heritage-detail button:focus-visible { outline: 3px solid #ebd694; outline-offset: 2px; }
 .map-hud { z-index: 15; }
+.map-vr-shortcut { position:fixed; right:calc(env(safe-area-inset-right,0px) + 14px); bottom:calc(env(safe-area-inset-bottom,0px) + 78px); z-index:25; padding:12px 16px; min-height:44px; border:1px solid #b1c69b; border-radius:24px; background:#17392ef5; color:#fff5df; text-decoration:none; font:600 14px system-ui; }
+.map-vr-shortcut:focus-visible { outline:3px solid #ead392; outline-offset:3px; }
+@media(max-width:600px) { .map-vr-shortcut { bottom:calc(env(safe-area-inset-bottom,0px) + 190px); } }
 .map-hud-actions { display: flex; gap: 8px; margin-top: 11px; pointer-events: auto; }
 .map-hud-actions button { min-height: 44px; padding: 8px 14px; border: 1px solid #83af78; border-radius: 10px; background: #446e3d; color: white; font: 700 13px system-ui, sans-serif; cursor: pointer; }
 .map-hud-actions button:first-child { flex: 1; min-width: 0; }

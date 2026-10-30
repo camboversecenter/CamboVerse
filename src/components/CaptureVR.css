@@ -1,10 +1,12 @@
-.capture-vr-entry { position:fixed; right:18px; bottom:calc(env(safe-area-inset-bottom,0px) + 18px); z-index:45; min-height:44px; padding:10px 16px; background:#17392eef; border:1px solid #b1c69b; border-radius:24px; color:#fff5df; font:600 14px system-ui; cursor:pointer; }
+.capture-vr-launcher { position:fixed; right:calc(env(safe-area-inset-right,0px) + 12px); top:calc(env(safe-area-inset-top,0px) + 12px); z-index:70; display:flex; gap:6px; }
+.capture-vr-entry,.capture-vr-help { position:static; min-height:44px; padding:10px 14px; background:#17392ef5; border:1px solid #b1c69b; border-radius:24px; color:#fff5df; font:600 14px system-ui; cursor:pointer; touch-action:manipulation; }
+.capture-vr-help { width:44px; padding:0; }
 .capture-vr-dialog { width:min(480px,calc(100vw - 32px)); max-height:calc(100dvh - 32px); box-sizing:border-box; padding:22px; overflow:auto; border:1px solid #9ab88e; border-radius:18px; background:#152e27; color:#fff5df; font:14px/1.55 system-ui; }
 .capture-vr-dialog::backdrop { background:#071510c9; }
 .capture-vr-dialog h2 { margin:0 0 10px; font-size:23px; }
 .capture-vr-dialog button { min-height:44px; padding:9px 13px; background:#24493a; color:#fff5df; border:1px solid #9ab88e; border-radius:12px; cursor:pointer; font:600 13px system-ui; }
 .capture-vr-dialog button[aria-pressed="true"] { background:#47683b; border-color:#e1df9e; }
 .capture-vr-dialog button:disabled { opacity:.5; cursor:default; }
-.capture-vr-dialog button:focus-visible,.capture-vr-entry:focus-visible { outline:3px solid #ead392; outline-offset:3px; }
+.capture-vr-dialog button:focus-visible,.capture-vr-entry:focus-visible,.capture-vr-help:focus-visible { outline:3px solid #ead392; outline-offset:3px; }
 .capture-vr-stops,.capture-vr-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .capture-vr-note { font-size:12px; color:#ced8c3; }

@@ -41,14 +41,36 @@ eye-independent order is approximate for very close transparent splats.
 
 ## Access and validation
 
+The map has a **Wat Phnom VR** shortcut. The direct link is
+[`?site=wat-phnom`](https://preview.camboverse.world/?site=wat-phnom).
+It opens the scene first; **Enter VR** still requires a separate user click so
+the browser can grant the immersive session. There is no auto-entry on navigation.
+
+Entry and help are portaled to `document.body`, above the fixed canvas's stacking
+context. Previously the full-screen `.walk-layer` sibling intercepted clicks on
+the entry inside `.viewer`, and POI panels could cover it. Entry now sits at the
+top right, outside those overlays. Buildings/Campus keep their header placement;
+their help dialog also uses the document's modal top layer.
+
+Help distinguishes insecure HTTP, blocked spatial-tracking policy, missing
+WebXR, unavailable immersive VR, and failed permission checks. Availability is
+checked again when the browser regains focus. Session failures show the browser's
+error name/message locally; no device report is uploaded. The expandable check
+details identify this revision as **VR entry: 2**.
+
 Use a WebXR headset browser over **HTTPS**, or a connected desktop headset.
 The desktop's `127.0.0.1` address cannot be opened from a separate headset as
 the desktop server. Plain HTTP over a LAN is not a WebXR secure context.
 VR remains optional; Normal/Ultra browser visits still work.
 
 Validation covers actual capture ground/scale/boundary calculations, each-eye
-uniform changes, type checking/build, and browser entry/help/capture switching.
+uniform changes, type checking/build, DOM entry/help interactions and the installed
+XR store's native request/Three session-start binding (with the hardware boundary
+mocked). React Three Fiber enables `gl.xr` and switches to the XR animation loop
+on Three's `sessionstart`; `XR` links that same manager to the shared store.
 Physical headset stereo appearance, controller interactions, comfort and frame
 rate must still be verified on a headset; a desktop browser cannot prove these.
 
 WebXR access requirements: [MDN session permissions and security](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API/Permissions_and_security).
+Implementation references: [Three.js VR](https://threejs.org/manual/pages/how-to-create-vr-content.html)
+and [Meta WebXR overview](https://developers.meta.com/vr/documentation/web/webxr-overview/).
