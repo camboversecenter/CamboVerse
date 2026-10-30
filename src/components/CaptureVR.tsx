@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useFrame } from '@react-three/fiber';
-import { createXRStore, useXR } from '@react-three/xr';
-import { CanvasTexture, Group, Quaternion, REVISION, SRGBColorSpace, Vector3 } from 'three';
+import { createXRStore, useXR, useXRStore } from '@react-three/xr';
+import { Group, REVISION, Vector3 } from 'three';
 import type { Poi } from '../spots';
 import { captureVRScale } from '../captureVR';
 import './CaptureVR.css';
 import {checkImmersiveVR,immersiveVRError,immersiveVRFailure,startImmersiveVR} from '../immersiveVR';
+import {worldPanelPose} from '../vrPresentation';
+import {VRSurface} from './VRSurface';
+import type {AmbienceControl} from './HeritageAmbience';
 
 export interface CaptureVRTour {
   title:string;
@@ -85,7 +88,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
       </div>}
       <p role="status">{message}</p>
       {failure&&<p role="alert">{failure}</p>}
-      <p>{tour?'Left stick: walk. Right stick: snap turn. Point and press the trigger to choose a capture, reset your position, or exit.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
+      <p>{tour?'Left stick: walk. Right stick: snap turn. Y on the left controller: open or hide the menu. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
       <details className="capture-vr-note"><summary>Headset check details</summary>
         <p>WebXR: {checkCode} · Three.js r{REVISION}<br/>Session: {active?'immersive-vr':'not started'}<br/>VR entry: 2</p>
@@ -99,41 +102,41 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
   </>;
 }
 
-function VRButton({label,onClick,active=false}:{label:string;onClick?:()=>void;active?:boolean}) {
-  const texture=useMemo(()=>{
-    const canvas=document.createElement('canvas');canvas.width=640;canvas.height=96;
-    const ctx=canvas.getContext('2d')!;
-    ctx.fillStyle=active?'#426137':'#163b33';ctx.fillRect(0,0,640,96);
-    ctx.strokeStyle='#c1d2a4';ctx.lineWidth=4;ctx.strokeRect(2,2,636,92);
-    ctx.fillStyle='#fff8df';ctx.font='600 32px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,320,48,600);
-    const map=new CanvasTexture(canvas);map.colorSpace=SRGBColorSpace;return map;
-  },[label,active]);
-  useEffect(()=>()=>texture.dispose(),[texture]);
-  return <mesh renderOrder={1000} onClick={onClick?e=>{e.stopPropagation();onClick();}:undefined}>
-    <planeGeometry args={[.72,.108]}/><meshBasicMaterial map={texture} depthTest={false} depthWrite={false} toneMapped={false}/>
-  </mesh>;
-}
-
-/** Real scene geometry, visible to both eyes and selectable by controller ray.
- * The compact panel follows the head below/left of the main view. */
-export function CaptureVRMenu({tour,onReset}:{tour:CaptureVRTour;onReset:()=>void}) {
+/** Menu stays in the world. Only opening with Y, switching capture or resetting
+ * takes a new pose; ordinary head movement never drags the panel around. */
+export function CaptureVRMenu({tour,onReset,resetKey,ambience}:{tour:CaptureVRTour;onReset:()=>void;resetKey:number;ambience:AmbienceControl}) {
   const session=useXR(s=>s.session),panel=useRef<Group>(null);
-  const [exitFailed,setExitFailed]=useState(false);
-  const helpers=useMemo(()=>({head:new Vector3(),offset:new Vector3(),rotation:new Quaternion()}),[]);
+  const store=useXRStore(),[open,setOpen]=useState(false),[exitFailed,setExitFailed]=useState(false);
+  const placement=useRef({pending:true,side:-.95}),pressed=useRef(false);
+  const helpers=useMemo(()=>({head:new Vector3(),forward:new Vector3()}),[]);
   const capture=tour.stops.find(s=>s.id===tour.activeId)?.capture;
   const scale=captureVRScale(capture);
+  useLayoutEffect(()=>{
+    placement.current={pending:true,side:-.95};pressed.current=false;setOpen(false);setExitFailed(false);
+    if(panel.current)panel.current.visible=false;
+  },[session,capture,resetKey]);
   useFrame(({camera})=>{
     if(!panel.current||!session)return;
-    camera.getWorldPosition(helpers.head);camera.getWorldQuaternion(helpers.rotation);
-    helpers.offset.set(-.48,-.35,-1.4).multiplyScalar(scale).applyQuaternion(helpers.rotation);
-    panel.current.position.copy(helpers.head).add(helpers.offset);panel.current.quaternion.copy(helpers.rotation);
-    panel.current.scale.setScalar(scale);
+    const left=store.getState().inputSourceStates.find(s=>s.type==='controller'&&s.inputSource.handedness==='left');
+    const down=left?.type==='controller'&&left.gamepad['y-button']?.state==='pressed';
+    if(down&&!pressed.current){if(!open)placement.current={pending:true,side:0};setOpen(!open);}
+    pressed.current=down;
+    if(!placement.current.pending)return;
+    camera.getWorldPosition(helpers.head);camera.getWorldDirection(helpers.forward);
+    const pose=worldPanelPose(helpers.head,helpers.forward,scale,placement.current.side);
+    panel.current.position.set(...pose.position);panel.current.rotation.set(0,pose.yaw,0);
+    panel.current.scale.setScalar(scale);panel.current.visible=true;placement.current.pending=false;
   });
   if(!session)return null;
-  return <group ref={panel}>
-    <group position={[0,.24,0]}><VRButton label="Wat Phnom · VR captures"/></group>
-    {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.10-i*.125,0]}><VRButton label={stop.title} active={stop.id===tour.activeId} onClick={()=>tour.onSelect(stop.id)}/></group>)}
-    <group position={[0,-.17,0]}><VRButton label="Reset position" onClick={onReset}/></group>
-    <group position={[0,-.295,0]}><VRButton label={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
+  const sound=ambience.state==='playing'?'Bird ambience · Mute':ambience.state==='loading'?'Loading birds…':ambience.state==='error'?'Retry bird ambience':'Bird ambience · Off';
+  return <group ref={panel} visible={false}>
+    {!open?<VRSurface title="Menu · Y" width={.48} onClick={()=>setOpen(true)}/>:<>
+      <group position={[0,.40,0]}><VRSurface title="Wat Phnom · Hide menu" onClick={()=>setOpen(false)}/></group>
+      {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={stop.title} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
+      <group position={[0,-.11,0]}><VRSurface title={sound} onClick={ambience.toggle}/></group>
+      <group position={[0,-.28,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
+      <group position={[0,-.45,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
+      <group position={[0,-.59,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>
+    </>}
   </group>;
 }

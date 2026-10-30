@@ -29,7 +29,8 @@ import { ObjectHotspotMarkers } from './ObjectHotspots';
 import { STAIRCASE_OBJECT_ANCHORS } from '../objectHotspots';
 import { CaptureVREntry, CaptureVRMenu, ImmersiveVREntry, type CaptureVRTour } from './CaptureVR';
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
-import { captureVRArrival } from '../captureVR';
+import { captureVRArrival,captureVRScale } from '../captureVR';
+import {HeritageAmbienceButton,useHeritageAmbience} from './HeritageAmbience';
 
 const ARTIFACT_OVERVIEW: Poi = { id: "overview", title: "Overview", info: "", target: [0, 1.08, 0], camera: [2.05, 1.72, 3.2] };
 
@@ -108,6 +109,7 @@ export function Viewer({
   // emulator is off (it pulls heavy room assets on localhost). The capture
   // tour waits for an explicit entry click rather than offering a session.
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
+  const ambience=useHeritageAmbience(!!vrTour,store);
   const [arSupported, setArSupported] = useState(false);
   const [detail, setDetail] = useState<"normal" | "ultra">(() => {
     const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
@@ -157,6 +159,7 @@ export function Viewer({
         )}
       </div>
       {vrTour?<CaptureVREntry store={store} tour={vrTour}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
+      {vrTour&&!immersive&&<HeritageAmbienceButton control={ambience}/>}
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={!detailed ? 1 : [1, 2]}
@@ -193,7 +196,7 @@ export function Viewer({
 
         {capture?.walkAround && <CaptureAreaGround area={capture.walkAround}/>}
 
-        {capture && onSelectCaptureObject && <ObjectHotspotMarkers anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject}/>}
+        {capture && onSelectCaptureObject && <ObjectHotspotMarkers key={vrReset} anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject} vrScale={captureVRScale(capture)}/>}
 
         {/* Points of interest to walk between or a single info hotspot. */}
         {capture || (ultraModelUrl && !showParts) ? null : pois && pois.length && onSelectPoi ? (
@@ -210,7 +213,7 @@ export function Viewer({
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
           capture={vrTour?capture:undefined} resetKey={vrReset}/>
-        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)}/>}
+        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
         <Nav
           pose={capturePose ?? activePoi ?? overview ?? (ultraModelUrl ? ARTIFACT_OVERVIEW : null)}

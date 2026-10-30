@@ -10,3 +10,10 @@
 .capture-vr-dialog button:focus-visible,.capture-vr-entry:focus-visible,.capture-vr-help:focus-visible { outline:3px solid #ead392; outline-offset:3px; }
 .capture-vr-stops,.capture-vr-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .capture-vr-note { font-size:12px; color:#ced8c3; }
+.heritage-ambience { position:fixed; z-index:65; right:12px; bottom:calc(env(safe-area-inset-bottom,0px) + 12px); color:#fff5df; font:12px system-ui; }
+.heritage-ambience button { min-height:44px; padding:10px 14px; background:#17392ef5; color:inherit; border:1px solid #b1c69b; border-radius:24px; font:600 13px system-ui; cursor:pointer; }
+.heritage-ambience details { text-align:right; margin-top:4px; }
+.heritage-ambience details[open] { width:min(270px,calc(100vw - 24px)); background:#14372f; padding:12px; border-radius:12px; }
+.heritage-ambience summary { cursor:pointer; min-height:24px; }
+.heritage-ambience a { color:#e5e6ab; }
+.heritage-ambience button:focus-visible { outline:3px solid #ead392; }

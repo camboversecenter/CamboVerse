@@ -19,7 +19,11 @@ VR uses the selected Clean/Full **Ultra** file, even if the browser was in Norma
 The browser's selected detail remains available after exiting. No extra download
 is required just to open the VR instructions. The headset view contains a real
 3D menu: switch capture, reset position, exit. Select it with a controller ray
-and trigger. Left stick moves; right stick snap-turns by 30°. The headset owns
+and trigger. The menu is collapsed at arrival, fixed in the world to the left of
+the initial view. It never follows head movement. Press **Y on the left controller**
+to open/hide it; opening with Y places it once in front of the current position.
+The world-space Menu button also opens it, and Hide menu collapses it. Capture
+changes/reset restore a collapsed menu at the new arrival. Left stick moves; right stick snap-turns by 30°. The headset owns
 look direction. Browser orbit/keyboard controls yield during an XR session.
 Capture movement reads each stick independently, discards small resting-stick
 noise, caps movement after stalled frames, and clears movement when sticks are
@@ -38,6 +42,29 @@ capture's start position and heading. Missing/blurred scan coverage remains.
 `SplatModel` updates Gaussian viewport/focal uniforms for each actual eye in
 Three's render callback. The existing shared depth sorter is retained; its
 eye-independent order is approximate for very close transparent splats.
+
+## Information and ambience
+
+The Naga balustrade and guardian lion use the same reviewed anchors and object
+notes in both browser and VR. In VR, actual textured meshes replace the HTML
+markers, which are not rendered by an immersive session. The labels remain at
+the sculptures and rotate for readability. Controller-ray selection opens a
+readable, world-anchored card with source credit, Close and optional Listen.
+Narration uses the existing browser speech API; text remains available if the
+headset has no usable voice. Closing/leaving a card stops its narration.
+
+VR labels, cards and menu render after the transparent splat pass. This avoids
+the captured image painting over the UI, which happened with the old opaque menu.
+The panels are deliberately readable over incomplete scan geometry; they are UI,
+not an assertion that the scan supplies solid surface depth.
+
+Wat Phnom has optional **Bird ambience** in the browser and VR menu. It is off
+initially, lazy-loaded on enable, quiet (maximum 18% gain), fades at loop boundaries,
+and ducks under browser narration. It pauses while the page/headset view is hidden
+and releases audio on leaving the site. Download/playback failures provide a retry.
+The 392 KiB CC0 recording is by L. Shyamal in **Siem Reap**, not Wat Phnom; its
+credit and provenance are retained in the interface and
+[`public/audio/ambience/README.md`](../public/audio/ambience/README.md).
 
 ## Access and validation
 
@@ -66,7 +93,8 @@ VR remains optional; Normal/Ultra browser visits still work.
 Validation covers actual capture ground/scale/boundary calculations, each-eye
 uniform changes, type checking/build, DOM entry/help interactions and the installed
 XR store's native request/Three session-start binding (with the hardware boundary
-mocked). React Three Fiber enables `gl.xr` and switches to the XR animation loop
+mocked), world-panel placement/text fit, and audio opt-in/pause/mute/ducking/races.
+React Three Fiber enables `gl.xr` and switches to the XR animation loop
 on Three's `sessionstart`; `XR` links that same manager to the shared store.
 Physical headset stereo appearance, controller interactions, comfort and frame
 rate must still be verified on a headset; a desktop browser cannot prove these.

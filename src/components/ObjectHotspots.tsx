@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import { OBJECT_INFO, type ObjectAnchor, type ObjectInfo } from '../objectHotspots';
 import { speak, stopSpeaking, ttsSupported } from '../lib/voice';
 import './ObjectHotspots.css';
+import {VRObjectHotspots} from './VRObjectHotspots';
 
 /** HTML markers sit above the walking gesture layer and follow world anchors. */
-export function ObjectHotspotMarkers({anchors,onSelect}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void}) {
+export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number}) {
   const immersive=useXR(s=>s.session!=null);
-  if(immersive)return null;
+  if(immersive)return <VRObjectHotspots anchors={anchors} scale={vrScale}/>;
   return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]}>
     <button className="object-hotspot-marker" aria-label={`Learn about ${OBJECT_INFO[anchor.id].title}`}
       onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSelect(anchor.id);}}>
