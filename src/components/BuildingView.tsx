@@ -3,6 +3,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ExploreControls as OrbitControls } from './ExploreControls';
 import { Sky } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
+import {ImmersiveVREntry} from './CaptureVR';
+import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
 import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
@@ -234,8 +236,7 @@ export function BuildingView({
    */
   backLabel?: string;
 }) {
-  const store = useMemo(() => createXRStore({ emulate: false }), []);
-  const [vrSupported, setVrSupported] = useState(false);
+  const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   // We initialize spin based on whether a room was pre-selected.
   const [spin, setSpin] = useState(!initialRoom);
@@ -252,11 +253,6 @@ export function BuildingView({
     _setRoom(r);
     onRoomChange?.(r);
   };
-
-  useEffect(() => {
-    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
-  }, []);
 
   // Frame from the footprint, not just the height a long low block needs far
   // more room than a tall narrow one. Keep the eye low so we read the facade
@@ -368,14 +364,7 @@ export function BuildingView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <button
-          className="vr-btn cls-vr"
-          style={!vrSupported ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
-          title={vrSupported ? "Enter VR works on Meta Quest 3 and any WebXR headset" : "VR not detected open this page on a Meta Quest browser or connect a headset via Air Link"}
-          onClick={() => { if (vrSupported) { setMode("ultra"); store.enterVR(); } }}
-        >
-          🥽 VR
-        </button>
+        <ImmersiveVREntry store={store} title={building.name} className="vr-btn cls-vr" onBeforeEnter={()=>setMode('ultra')}/>
       </div>
 
       <button className="bld-spin" onClick={() => setSpin((v) => !v)}>

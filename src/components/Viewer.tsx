@@ -27,7 +27,8 @@ import { captureWalkPosition } from '../captureWalk';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { ObjectHotspotMarkers } from './ObjectHotspots';
 import { STAIRCASE_OBJECT_ANCHORS } from '../objectHotspots';
-import { CaptureVREntry, CaptureVRMenu, type CaptureVRTour } from './CaptureVR';
+import { CaptureVREntry, CaptureVRMenu, ImmersiveVREntry, type CaptureVRTour } from './CaptureVR';
+import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
 import { captureVRArrival } from '../captureVR';
 
 const ARTIFACT_OVERVIEW: Poi = { id: "overview", title: "Overview", info: "", target: [0, 1.08, 0], camera: [2.05, 1.72, 3.2] };
@@ -106,8 +107,7 @@ export function Viewer({
   // One XR store per viewer session; drives the optional VR mode. The device
   // emulator is off (it pulls heavy room assets on localhost). The capture
   // tour waits for an explicit entry click rather than offering a session.
-  const store = useMemo(() => createXRStore({ emulate: false, offerSession:vrTour?false:undefined, enterGrantedSession:vrTour?false:undefined }), []);
-  const [vrSupported, setVrSupported] = useState(false);
+  const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [arSupported, setArSupported] = useState(false);
   const [detail, setDetail] = useState<"normal" | "ultra">(() => {
     const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
@@ -130,7 +130,6 @@ export function Viewer({
     : overview?.camera ?? (aerial ? [12, 22, 30] : ultraModelUrl ? [2.05, 1.72, 3.2] : [5, 2.8, 14]);
   useEffect(() => {
     const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
     xr?.isSessionSupported("immersive-ar").then(setArSupported).catch(() => setArSupported(false));
   }, []);
 
@@ -156,13 +155,8 @@ export function Viewer({
             👁️ Enter AR
           </button>
         )}
-        {vrSupported && !vrTour && (
-          <button className="vr-btn" onClick={() => store.enterVR()} style={{ background: "rgba(0,0,0,0.6)", color: "white", padding: "8px 16px", borderRadius: "20px", border: "1px solid white", cursor: "pointer" }}>
-            🥽 Enter VR
-          </button>
-        )}
       </div>
-      {vrTour&&<CaptureVREntry store={store} tour={vrTour}/>}
+      {vrTour?<CaptureVREntry store={store} tour={vrTour}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
         dpr={!detailed ? 1 : [1, 2]}

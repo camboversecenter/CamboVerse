@@ -10,6 +10,8 @@ import {
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
 import { VRRig } from "./VRRig";
+import {ImmersiveVREntry} from './CaptureVR';
+import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
 import {
   GreatHall, TeachingBlock, EntranceMonument, Shrine, ParkingCanopy, SportsField,
   ConstructionBlock, Props, MainGate, Pool,
@@ -227,19 +229,13 @@ export function BuildingsView({
   onBack: () => void;
   onOpenBuilding: (id: string, room?: string) => void;
 }) {
-  const store = useMemo(() => createXRStore({ emulate: false }), []);
-  const [vrSupported, setVrSupported] = useState(false);
+  const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
   const [place, setPlace] = useState<string | null>(null);
   const input = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const [start, setStart] = useState<[number, number, number]>(SITE_BUILDINGS[0].view.at);
   const [startYaw, setStartYaw] = useState(SITE_BUILDINGS[0].view.yaw);
-
-  useEffect(() => {
-    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
-  }, []);
 
   const selected = SITE_BUILDINGS.find((p) => p.id === place) ?? null;
   const goTo = (id: string) => {
@@ -299,14 +295,7 @@ export function BuildingsView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <button
-          className="vr-btn cls-vr"
-          style={!vrSupported ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
-          title={vrSupported ? "Enter VR works on Meta Quest 3 and any WebXR headset" : "VR not detected open this page on a Meta Quest browser or connect a headset via Air Link"}
-          onClick={() => { if (vrSupported) { setMode("ultra"); store.enterVR(); } }}
-        >
-          🥽 VR
-        </button>
+        <ImmersiveVREntry store={store} title={site.name} className="vr-btn cls-vr" onBeforeEnter={()=>setMode('ultra')}/>
       </div>
 
       {/* orbit ⇄ walk */}

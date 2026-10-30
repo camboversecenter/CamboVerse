@@ -2,10 +2,18 @@
 
 Wat Phnom has two imported 3DGS captures: **Naga Staircase** and **Flower Clock**.
 Campus Shrine remains in Buildings and is outside this tour. The VR tour button
-is visible on the Wat Phnom overview and on either capture. Its dialog lets a
-visitor select a capture, check headset availability and explicitly enter VR.
-No headset session starts automatically. Unsupported browsers show instructions;
-cancellation/startup failures remain recoverable in the dialog.
+is visible on the Wat Phnom overview and on either capture. On a supported headset,
+**Enter VR** requests `immersive-vr` directly from that click. Overview entry opens
+the staircase; entry from a capture keeps that capture. Locations can be switched
+with the menu inside VR. No session starts automatically. Unsupported browsers
+show instructions; cancellation/startup failures remain recoverable in the dialog.
+
+Wat Phnom, the general Viewer (including building captures), individual Buildings
+and the University Campus share the same entry control and native-session options.
+Emulation, automatic session offers and HTML DOM overlays are disabled. Detection
+alone never counts as entry: the returned session must be bound to Three's renderer
+as `immersive-vr` before the control reports an active session. Errors are shown
+instead of leaving an unhandled request rejection on a flat browser window.
 
 VR uses the selected Clean/Full **Ultra** file, even if the browser was in Normal.
 The browser's selected detail remains available after exiting. No extra download
@@ -35,9 +43,8 @@ eye-independent order is approximate for very close transparent splats.
 
 Use a WebXR headset browser over **HTTPS**, or a connected desktop headset.
 The desktop's `127.0.0.1` address cannot be opened from a separate headset as
-the desktop server. Plain HTTP over a LAN is not a WebXR secure context. This
-change does not publish the project, expose a development server, or configure
-device networking. VR remains optional; Normal/Ultra browser visits still work.
+the desktop server. Plain HTTP over a LAN is not a WebXR secure context.
+VR remains optional; Normal/Ultra browser visits still work.
 
 Validation covers actual capture ground/scale/boundary calculations, each-eye
 uniform changes, type checking/build, and browser entry/help/capture switching.

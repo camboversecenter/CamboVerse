@@ -5,6 +5,7 @@ import { CanvasTexture, Group, Quaternion, SRGBColorSpace, Vector3 } from 'three
 import type { Poi } from '../spots';
 import { captureVRScale } from '../captureVR';
 import './CaptureVR.css';
+import {immersiveVRError,startImmersiveVR} from '../immersiveVR';
 
 export interface CaptureVRTour {
   title:string;
@@ -16,21 +17,31 @@ export interface CaptureVRTour {
 /** Entry stays discoverable on desktop; unsupported devices get instructions,
  * never a fake headset session or a hidden button. Session starts on a click. */
 export function CaptureVREntry({store,tour}:{store:ReturnType<typeof createXRStore>;tour:CaptureVRTour}) {
+  return <ImmersiveVREntry store={store} title={tour.title} onBeforeEnter={()=>{
+    if(!tour.activeId&&tour.stops[0])tour.onSelect(tour.stops[0].id);
+  }} tour={tour}/>;
+}
+
+export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capture-vr-entry'}:{
+  store:ReturnType<typeof createXRStore>;title:string;tour?:CaptureVRTour;onBeforeEnter?:()=>void;className?:string;
+}) {
   const [open,setOpen]=useState(false),[supported,setSupported]=useState(false);
   const [active,setActive]=useState(false),[pending,setPending]=useState(false);
   const [message,setMessage]=useState('Checking headset support…');
   const dialog=useRef<HTMLDialogElement>(null),entry=useRef<HTMLButtonElement>(null);
+  const requesting=useRef(false);
   const check=async()=>{
     if(!window.isSecureContext){setSupported(false);setMessage('Open this site over HTTPS in your headset browser. A plain HTTP address on your Wi-Fi network cannot start VR.');return;}
     try{
       const available=await navigator.xr?.isSessionSupported('immersive-vr')??false;
       setSupported(available);
-      setMessage(available?'Headset ready. Choose a capture, then enter VR.':'No VR headset detected here. Open this site in a WebXR headset browser, or connect a PC VR headset and check again.');
+      setMessage(available?'Headset ready. Press Enter VR to enter the scene.':'No VR headset detected here. Open this site in Meta Quest Browser, or connect a PC VR headset and check again.');
     }catch{setSupported(false);setMessage('Could not check the headset. Check your connection and try again.');}
   };
   useEffect(()=>{
     void check();navigator.xr?.addEventListener('devicechange',check);
-    const unsubscribe=store.subscribe(s=>setActive(s.session!=null));
+    setActive(store.getState().session!=null&&store.getState().mode==='immersive-vr');
+    const unsubscribe=store.subscribe(s=>setActive(s.session!=null&&s.mode==='immersive-vr'));
     return ()=>{navigator.xr?.removeEventListener('devicechange',check);unsubscribe();void store.getState().session?.end().catch(()=>{});};
   },[store]);
   useEffect(()=>{
@@ -38,34 +49,37 @@ export function CaptureVREntry({store,tour}:{store:ReturnType<typeof createXRSto
     else if(!open&&dialog.current?.open)dialog.current.close();
   },[open]);
   const enter=async()=>{
-    if(pending||!supported)return;
+    if(requesting.current||!supported)return;
+    requesting.current=true;
     setPending(true);
     try{
-      const session=await store.enterVR();
-      if(session)setOpen(false);
-      else setMessage('VR did not start. Check your headset and try again.');
+      onBeforeEnter?.();
+      await startImmersiveVR(store);
+      setOpen(false);
     }catch(error){
-      setMessage(error instanceof Error&&error.name==='NotAllowedError'?'VR permission was declined. You can try again.':'VR could not start. Check your headset connection and try again.');
-    }finally{setPending(false);}
+      setMessage(immersiveVRError(error));setOpen(true);
+    }finally{requesting.current=false;setPending(false);}
   };
   const exit=async()=>{
     try{await store.getState().session?.end();}
     catch{setMessage('Use the headset system menu to leave VR.');setOpen(true);}
   };
   return <>
-    <button ref={entry} className="capture-vr-entry" onClick={()=>{if(active)void exit();else{setOpen(true);void check();}}}>{active?'Exit VR':'🥽 VR tour'}</button>
+    <button ref={entry} className={className} disabled={pending} onClick={()=>{
+      if(active)void exit();else if(supported)void enter();else{setOpen(true);void check();}
+    }}>{pending?'Starting VR…':active?'Exit VR':'🥽 Enter VR'}</button>
     <dialog ref={dialog} className="capture-vr-dialog" aria-labelledby="capture-vr-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);entry.current?.focus();}}>
-      <h2 id="capture-vr-title">{tour.title} in VR</h2>
-      <p>Visit the real captures at eye level. VR uses Ultra detail.</p>
-      <div className="capture-vr-stops" role="group" aria-label="VR capture">
+      <h2 id="capture-vr-title">{title} in VR</h2>
+      <p>Enter the scene with headset tracking and separate views for both eyes. VR uses Ultra detail.</p>
+      {tour&&<div className="capture-vr-stops" role="group" aria-label="VR capture">
         {tour.stops.map(stop=><button key={stop.id} aria-pressed={tour.activeId===stop.id} onClick={()=>tour.onSelect(stop.id)}>{stop.title}</button>)}
-      </div>
+      </div>}
       <p role="status">{message}</p>
-      <p>Left stick: walk. Right stick: snap turn. Point and press the trigger to choose a capture, reset your position, or exit.</p>
+      <p>{tour?'Left stick: walk. Right stick: snap turn. Point and press the trigger to choose a capture, reset your position, or exit.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
       <div className="capture-vr-actions">
         <button onClick={()=>void check()}>Check headset</button>
-        <button disabled={!supported||pending||!tour.activeId} onClick={()=>void enter()}>{pending?'Starting VR…':'Enter VR'}</button>
+        <button disabled={!supported||pending} onClick={()=>void enter()}>{pending?'Starting VR…':'Enter VR'}</button>
         <button onClick={()=>setOpen(false)}>Close</button>
       </div>
     </dialog>
