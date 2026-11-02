@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { askGuide, type GuideReply } from '../lib/guide';
 import { locationGuideContext, type GuideExperience } from '../locationGuide';
+import {CAMPUS_GUIDE_NAME_KM} from '../campusGuide';
 import { GuideMascot } from './GuideMascot';
 import './LocationGuide.css';
 import {listenOnce,sttSupported} from '../lib/voice';
@@ -24,9 +25,10 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   const [listening,setListening]=useState(false),[voiceError,setVoiceError]=useState('');
   const {language:chosenLanguage,choose}=useGuideLanguage();
   const stopListen=useRef<null|(()=>void)>(null);
-  const isPenh=experienceId==='wat-phnom'||experienceId==='staircase-3dgs'||experienceId==='clock-3dgs',name=isPenh?'Penh':'Kiri';
-  const language=isPenh?chosenLanguage:guideLanguage('en');
-  const km=language.code==='km',displayName=km?KHMER_GUIDE.name:name;
+  const isCampus=experienceId==='campus';
+  const isPenh=experienceId==='wat-phnom'||experienceId==='staircase-3dgs'||experienceId==='clock-3dgs',name=isCampus?'Campus guide':isPenh?'Penh':'Kiri';
+  const language=isPenh||isCampus?chosenLanguage:guideLanguage('en');
+  const km=language.code==='km',displayName=km?(isCampus?CAMPUS_GUIDE_NAME_KM:KHMER_GUIDE.name):name;
   const pending = useRef<AbortController|null>(null);
   const latestAnswer = useRef<HTMLElement>(null);
   const contextKey = `${experienceId}/${locationId}/${objectId??''}`;
@@ -36,6 +38,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     return ()=>{ const previous=pending.current; pending.current=null; previous?.abort(); narrator.dispose();stopListen.current?.();stopListen.current=null; };
   },[contextKey]);
   useEffect(()=>{if(openRequest>0)setOpen(true);},[openRequest]);
+  useEffect(()=>{onOpenChange?.(open&&!hidden);return()=>onOpenChange?.(false);},[open,hidden,onOpenChange]);
   useEffect(()=>{if(hidden){const previous=pending.current;pending.current=null;previous?.abort();setLoading(false);narrator.stop();stopListen.current?.();stopListen.current=null;setListening(false);}},[hidden,narrator]);
   // Only reveal new answers. Opening an empty guide must not scroll past its
   // questions, and an embedded guide shares its parent's scroll container.
@@ -44,7 +47,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
 
   const toggle = (next:boolean) => {
     if (!next) { const previous=pending.current; pending.current=null; previous?.abort(); setLoading(false); narrator.stop();stopListen.current?.();stopListen.current=null;setListening(false); }
-    setOpen(next); onOpenChange?.(next);
+    setOpen(next);
   };
   const narrate=(text:string,index:number,lang:LangCode)=>{
     if((speech==='speaking'||speech==='loading')&&speechIndex===index){narrator.stop();setSpeechIndex(null);return;}
@@ -82,16 +85,16 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   };
   return <div className={`location-guide-host ${experienceId}${embedded?' location-guide-embedded':''}`}>
     {!open ? <button className="location-guide-launcher" onClick={()=>toggle(true)} aria-label={km?`${KHMER_GUIDE.ask} ${displayName}`:`Ask ${name} about this location`}>
-      {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={42} state="idle"/>}<span>{km?KHMER_GUIDE.ask:'Ask'} {displayName}</span>
+      {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:isCampus?<span className="campus-guide-icon" aria-hidden="true">🏛</span>:<GuideMascot size={42} state="idle"/>}<span>{km?KHMER_GUIDE.ask:'Ask'} {displayName}</span>
     </button> : <aside className="location-guide-panel" aria-label={km?`${displayName} · មគ្គុទ្ទេសក៍`:`${name} location guide`} lang={language.bcp}>
       <header className="location-guide-header">
-        {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={54} state={loading?'talking':'idle'}/>}
+        {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:isCampus?<span className="campus-guide-icon" aria-hidden="true">🏛</span>:<GuideMascot size={54} state={loading?'talking':'idle'}/>}
         <div><strong>{km?KHMER_GUIDE.ask:'Ask'} {displayName}</strong><p>{km?khmerGuideTitle(context):objectId?context.title.split(' · ').slice(-1)[0]:context.title.replace(/^Wat Phnom · /,'')}</p></div>
         <button className="location-guide-close" onClick={()=>toggle(false)} aria-label={km?KHMER_GUIDE.minimize:`Minimize ${name} guide`}>−</button>
       </header>
-      {isPenh&&<label className="location-guide-language">{km?KHMER_GUIDE.language:'Language / ភាសា'} <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);setVoiceError('');setMessages([]);setQuestion('');choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{km?KHMER_LANGUAGE_NAMES[option.code]:option.name}</option>)}</select></label>}
+      {(isPenh||isCampus)&&<label className="location-guide-language">{km?KHMER_GUIDE.language:'Language / ភាសា'} <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);setVoiceError('');setMessages([]);setQuestion('');choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{km?KHMER_LANGUAGE_NAMES[option.code]:option.name}</option>)}</select></label>}
       <div className="location-guide-scroll">
-        {!embedded&&<p className="location-guide-intro">{km?KHMER_GUIDE.introduction:context.introduction}</p>}
+        {!embedded&&<p className="location-guide-intro">{km?(context.introductionKhmer??KHMER_GUIDE.introduction):context.introduction}</p>}
         <div className="location-guide-suggestions" aria-label={km?KHMER_GUIDE.suggested:'Suggested questions'}>
           {context.facts.slice(0,3).map(f=><button key={f.question} disabled={loading} onClick={()=>void ask(km?khmerGuideQuestion(f.question):f.question)}>{km?khmerGuideQuestion(f.question):f.question}</button>)}
         </div>
@@ -119,8 +122,8 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
           <button type="submit" disabled={loading||!question.trim()}>{km?KHMER_GUIDE.ask:'Ask'}</button></div>
         {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||(km?KHMER_GUIDE.narrationUnavailable:'Narration is unavailable in this browser.')}</p>}
       </form>
-      <details className="location-guide-about"><summary>{km?KHMER_GUIDE.about:`About ${name} · AI guide`}</summary>
-        <p className="location-guide-footnote">{km?KHMER_GUIDE.disclosure:<>{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</>}</p>
+      <details className="location-guide-about"><summary>{km?(isCampus?`អំពី${CAMPUS_GUIDE_NAME_KM}`:KHMER_GUIDE.about):`About ${name} · AI guide`}</summary>
+        <p className="location-guide-footnote">{km?(isCampus?`${KHMER_GUIDE.privacy}។ ${KHMER_GUIDE.voicePrivacy}។`:KHMER_GUIDE.disclosure):<>{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</>}</p>
       </details>
     </aside>}
   </div>;

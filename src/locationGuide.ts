@@ -1,12 +1,14 @@
 /** Reviewed context for the two local guide previews. No image uploads or
  * inferred room history. The server resolves these IDs itself. */
 import { objectInfoFor } from './objectHotspots';
-export type GuideExperience = 'wat-phnom' | 'staircase-3dgs' | 'clock-3dgs' | 'room-360';
+import {campusGuideContext} from './campusGuide';
+export type GuideExperience = 'wat-phnom' | 'staircase-3dgs' | 'clock-3dgs' | 'room-360' | 'campus';
 export type GuideSource = { title: string; url?: string };
-export type LocationFact = { question: string; keywords: string[]; text: string; sources: GuideSource[] };
+export type LocationFact = { question: string; keywords: string[]; text: string; textKhmer?:string; sources: GuideSource[] };
 export type LocationContext = {
   experienceId: GuideExperience; locationId: string; title: string;
   objectId?: string;
+  titleKhmer?:string; introductionKhmer?:string;
   introduction: string; facts: LocationFact[];
 };
 
@@ -28,6 +30,7 @@ const roomTitles = [
 ];
 
 function baseLocationGuideContext(experienceId: string, locationId: string): LocationContext | null {
+  if(experienceId==='campus')return campusGuideContext(locationId);
   if(experienceId==='wat-phnom'&&locationId==='wat-phnom'){
     const staircase=baseLocationGuideContext('staircase-3dgs','naga-staircase')!;
     return {...staircase,experienceId:'wat-phnom',locationId:'wat-phnom',title:'Wat Phnom',

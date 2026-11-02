@@ -17,6 +17,15 @@ afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAl
 function button(label:string){return [...host.querySelectorAll('button')].find(el=>el.textContent?.includes(label))!;}
 
 describe('immersive location guide',()=>{
+  it('offers the campus notes and narration in the headset board',async()=>{
+    mocked.ask.mockResolvedValue(null);
+    await act(async()=>root.render(createElement(VRCaptureGuide,{experience:'campus',locationId:'teaching',scale:1,onClose:vi.fn()})));
+    expect(host.textContent).toContain('Campus guide');expect(host.textContent).not.toContain('Penh');
+    await act(async()=>button('What is this place?').click());
+    expect(button('Campus guide · Saved notes').textContent).toContain('Teaching Block');
+    await act(async()=>button('Listen').click());
+    expect(mocked.speak).toHaveBeenCalledWith(expect.stringContaining('Teaching Block'),'en-US',expect.any(Object));
+  });
   it.each([['naga-staircase','Tell me about the history','staircase-3dgs'],['flower-clock','What is the flower clock?','clock-3dgs']])
   ('asks the correct location and narrates saved answers for %s',async(locationId,question,experienceId)=>{
     mocked.ask.mockResolvedValue({text:'A verified answer about this location.',fallback:true,sources:[]});

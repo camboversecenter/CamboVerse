@@ -50,3 +50,13 @@
   .location-guide-panel { right:12px; left:12px; bottom:82px; width:auto; max-height:calc(100dvh - 170px); }
   .pano-tour:has(.location-guide-panel) .pano-look { visibility:hidden; }
 }
+
+/* Campus panels keep one scroll area and an opaque, readable guide surface. */
+.campus-guide-icon { display:grid; place-items:center; width:38px; height:38px; flex:none; border-radius:50%; background:#d9dba1; color:#16362b; font-size:24px; }
+.campus-card { max-height:calc(100dvh - 280px); overflow-y:auto; overscroll-behavior:contain; }
+.campus .location-guide-host:not(.location-guide-embedded) { top:155px; }
+.campus-card:has(.location-guide-panel),.bld-panel:has(.location-guide-panel) { z-index:50; }
+.bld-panel:has(.location-guide-panel) { max-height:70dvh; }
+.campus-card .location-guide-panel,.bld-panel .location-guide-panel { padding:12px; border-radius:14px; background:#102b25; box-sizing:border-box; }
+.campus-card .location-guide-question { margin:0 0 6px 16px; }
+.bld-panel--hidden { visibility:hidden; }

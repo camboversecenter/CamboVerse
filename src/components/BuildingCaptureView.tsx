@@ -3,6 +3,7 @@ import type { Building } from '../buildings';
 import type { PoiCapture } from '../spots';
 import { Viewer } from './Viewer';
 import { WalkControls } from './WalkControls';
+import {LocationGuide} from './LocationGuide';
 import {WalkActions} from './WalkActions';
 import type { WalkInput } from './FirstPersonControls';
 import { CaptureFlightButtons } from './CaptureFlightButtons';
@@ -17,16 +18,17 @@ export function BuildingCaptureView({building,capture,backLabel,onBack,onModel}:
   const [clean,setClean]=useState(true),[info,setInfo]=useState(false);
   const [walking,setWalking]=useState(false);
   const [immersive,setImmersive]=useState(false);
+  const [guideOpen,setGuideOpen]=useState(false);
   const [flightMode,setFlightMode]=useState<CaptureFlightMode>('walking');
   const input=useRef<WalkInput>({move:{x:0,y:0},look:{dx:0,dy:0}});
   const toggleWalking=()=>{
     input.current={move:{x:0,y:0},look:{dx:0,dy:0}};
-    setInfo(false);setFlightMode('walking');setWalking(v=>!v);
+    setInfo(false);setGuideOpen(false);setFlightMode('walking');setWalking(v=>!v);
   };
   return <main className="building building-capture">
     <Viewer modelUrl="" capture={capture} cleanCapture={clean} blurb={building.name}
-      mode={walking?'walk':'orbit'} walkInput={input} onCaptureFlightChange={setFlightMode} buildingMovement onImmersiveChange={setImmersive}/>
-    {walking&&!immersive&&<WalkControls input={input} hint=""/>}
+      mode={walking?'walk':'orbit'} walkInput={input} onCaptureFlightChange={setFlightMode} buildingMovement buildingGuideId={building.id} walkPaused={info&&guideOpen} onImmersiveChange={setImmersive}/>
+    {walking&&!immersive&&!(info&&guideOpen)&&<WalkControls input={input} hint=""/>}
     <header className="building-capture-header">
       <button onClick={onBack}>{backLabel}</button>
       <strong>{building.name}<small>Photo capture</small></strong>
@@ -34,7 +36,7 @@ export function BuildingCaptureView({building,capture,backLabel,onBack,onModel}:
     {capture.walkAround&&<button className="building-capture-walk" aria-pressed={walking} onClick={toggleWalking}>
       {walking?'⟳ Inspect capture':'🚶 Walk around'}
     </button>}
-    {walking&&!immersive&&<div className={`capture-step-nav${flightMode==='flying'?' flight-active':''}`}>
+    {walking&&!immersive&&!(info&&guideOpen)&&<div className={`capture-step-nav${flightMode==='flying'?' flight-active':''}`}>
       {flightMode==='walking'&&<WalkActions input={input} inline/>}
       <CaptureFlightButtons input={input} mode={flightMode}/>
     </div>}
@@ -46,9 +48,10 @@ export function BuildingCaptureView({building,capture,backLabel,onBack,onModel}:
       <button onClick={onModel}>Illustrative model</button>
       <button aria-expanded={info} aria-controls="building-capture-notes" onClick={()=>setInfo(v=>!v)}>{info?'Hide information':'About capture'}</button>
     </div>
-    {info&&<aside className="building-capture-notes" id="building-capture-notes">
+    {info&&!immersive&&<aside className="building-capture-notes" id="building-capture-notes">
       <h2>{building.name}</h2>
-      <p>{walking?'WASD or the joystick to walk; drag to look. Hold Shift or select Run to move faster. Space or Jump jumps. Double Space toggles flying; while flying, Space rises and Shift descends. In VR, hold the left grip to run and press right A to jump.':'Drag to rotate, scroll to zoom, and right-drag or use two fingers to move the view. Choose Walk around to explore at eye level.'}</p>
+      <LocationGuide experienceId="campus" locationId={building.id} embedded onOpenChange={setGuideOpen}/>
+      <p>{walking?'WASD or the joystick to walk; drag to look. Hold Shift or select Run to move faster. Space or Jump jumps; press again in the air for a second jump. Select Fly to fly; while flying, Space rises and Shift descends. In VR, hold the left grip to run, press right A for each jump, and left Y for the campus guide.':'Drag to rotate, scroll to zoom, and right-drag or use two fingers to move the view. Choose Walk around to explore at eye level.'}</p>
       <p>Some surroundings and unphotographed angles are incomplete. Clean view reduces background fragments; Full scan preserves the wider export.</p>
       <a href="https://www.kaggle.com/code/camboversecenter/conference-hall-step2b-train-splat/output" target="_blank" rel="noreferrer">CamboVerse · capture source</a>
     </aside>}

@@ -23,6 +23,16 @@ beforeEach(async()=>{
 });
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 describe('Buildings Quest controller mapping',()=>{
+  it('accepts a second A press while airborne but not a third',()=>{
+    stick.yAxis=0;jump.state='pressed';tick();jump.state='default';tick();
+    for(let i=0;i<10;i++)tick();
+    const before=origin.position.y;jump.state='pressed';tick();jump.state='default';tick();
+    expect(origin.position.y-before).toBeGreaterThan(.09);
+    for(let i=0;i<10;i++)tick();
+    const third=origin.position.y;jump.state='pressed';tick();
+    expect(origin.position.y-third).toBeLessThan(.025);
+    for(let i=0;i<180;i++)tick();expect(origin.position.y).toBe(0);
+  });
   it('uses the left grip for running and stops when controllers disconnect',()=>{
     tick();const walk=-origin.position.z;grip.state='pressed';const before=origin.position.z;tick();
     expect(before-origin.position.z).toBeCloseTo(walk*RUN_MULTIPLIER);

@@ -14,6 +14,17 @@ beforeEach(()=>{localStorage.clear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',tr
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 const button=(text:string)=>[...host.querySelectorAll('button')].find(element=>element.textContent?.includes(text))!;
 describe('Penh language selection',()=>{
+  it('embeds the campus guide and narrates building notes without the Penh persona',async()=>{
+    mocked.ask.mockResolvedValue(null);
+    await act(async()=>root.render(createElement(LocationGuide,{embedded:true,experienceId:'campus',locationId:'hall'})));
+    await act(async()=>button('Ask Campus guide').click());
+    expect(host.textContent).toContain('The Great Hall');expect(host.textContent).not.toContain('Penh');
+    expect(host.querySelector('select')).toBeTruthy();
+    await act(async()=>button('What is this place?').click());
+    expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({experienceId:'campus',locationId:'hall'}),expect.any(AbortSignal));
+    await act(async()=>button('Listen').click());
+    expect(mocked.narrate).toHaveBeenCalledWith(expect.stringContaining('The Great Hall'),'en-US',undefined);
+  });
   it('opens and minimizes within its containing information panel',async()=>{
     await act(async()=>root.render(createElement('section',{'aria-label':'Location information'},createElement(LocationGuide,{embedded:true,experienceId:'wat-phnom',locationId:'central-stupa'}))));
     await act(async()=>button('Ask Penh').click());

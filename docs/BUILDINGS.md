@@ -344,3 +344,26 @@ You are the contributor, not the model. The spec goes in under your name.
 - [`AGENTS.md`](../AGENTS.md) the three view modes and the hard constraints
 - [`GROVE_INTEGRATION.md`](../GROVE_INTEGRATION.md) how the twin connects to
   real-world records on CSB
+
+
+## Campus movement and guide
+
+- Desktop: hold Shift to run. Space jumps; release and press again while airborne
+  for one extra jump. Landing resets both jumps.
+- Mobile: Run toggles speed; tap Jump again in the air for the second jump.
+- Quest: left grip runs, right A jumps (press again for the extra jump), and
+  left Y opens/closes the campus guide. The board also has a Close button.
+- Campus captures keep the explicit Fly/Land buttons; double Space now performs
+  the extra jump in Buildings. Wat Phnom flight shortcuts are unchanged.
+- Campus guide is available on the campus overview, in landmark information,
+  on every building page, and in the Campus Shrine capture notes. Movement
+  pauses while its reading board is open.
+- Answers resolve the building ID against the server's registry. Gemini uses
+  these notes only; no verified building dates, live room schedules or current
+  access permissions are available. Missing AI returns labelled saved notes.
+- English, Khmer, French and Chinese share the existing Q&A and narration
+  services. Campus guide has its own identity and uses the generic narration
+  voice, not Penh's voice. Khmer fallback copy is a draft for native review.
+- Validate with the movement, campusGuide, LocationGuide, VRCaptureGuide and
+  VRBuildingGuide tests, then check the information panel on a phone and Y/A
+  with physical Quest controllers.

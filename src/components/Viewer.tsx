@@ -32,6 +32,7 @@ import {IMMERSIVE_XR_OPTIONS,vrSimulationEnabled} from '../immersiveVR';
 import { captureVRArrival,captureVRScale } from '../captureVR';
 import {HeritageAmbienceButton,useHeritageAmbience} from './HeritageAmbience';
 import {VRCaptureGuide} from './VRCaptureGuide';
+import {VRBuildingGuide} from './VRBuildingGuide';
 import {BUILDING_VR_HELP} from '../buildingMovement';
 
 const ARTIFACT_OVERVIEW: Poi = { id: "overview", title: "Overview", info: "", target: [0, 1.08, 0], camera: [2.05, 1.72, 3.2] };
@@ -59,6 +60,8 @@ export function Viewer({
   onCaptureFlightChange,
   vrTour,
   buildingMovement=false,
+  buildingGuideId,
+  walkPaused=false,
   onImmersiveChange,
   pois,
   activePoi = null,
@@ -90,6 +93,8 @@ export function Viewer({
   onCaptureFlightChange?: (mode:CaptureFlightMode)=>void;
   vrTour?:CaptureVRTour;
   buildingMovement?:boolean;
+  buildingGuideId?:string;
+  walkPaused?:boolean;
   onImmersiveChange?:(active:boolean)=>void;
   pois?: Poi[];
   activePoi?: Poi | null;
@@ -120,6 +125,7 @@ export function Viewer({
     const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
     return navigator.hardwareConcurrency <= 4 || memory <= 3 || Math.min(screen.width, screen.height) < 500 ? "normal" : "ultra";
   });
+  const [buildingGuideOpen,setBuildingGuideOpen]=useState(false);
   const [immersive, setImmersive] = useState(false);
   useEffect(()=>{onImmersiveChange?.(immersive);},[immersive,onImmersiveChange]);
   const [showParts, setShowParts] = useState(false);
@@ -223,7 +229,8 @@ export function Viewer({
 
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
-          capture={vrTour||buildingMovement?capture:undefined} resetKey={vrReset} buildingMovement={buildingMovement}/>
+          capture={vrTour||buildingMovement?capture:undefined} resetKey={vrReset} buildingMovement={buildingMovement} paused={buildingGuideOpen}/>
+        {buildingGuideId&&<VRBuildingGuide locationId={buildingGuideId} scale={capture?captureVRScale(capture):1} onOpenChange={setBuildingGuideOpen}/>}
         {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)} onOpenChange={onVRMenuChange}/>}
         {vrTour&&capture&&immersive&&vrGuideOpen&&vrTour.activeId&&<VRCaptureGuide key={vrTour.activeId} locationId={vrTour.activeId} scale={captureVRScale(capture)} onClose={()=>setVRGuideOpen(false)}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
@@ -239,6 +246,7 @@ export function Viewer({
           capture={capture}
           onFlightChange={onCaptureFlightChange}
           allowSprint={buildingMovement}
+          paused={walkPaused}
           lookLimits={cleanCaptureActive ? capture?.cleanup?.lookLimits : undefined}
         />
         </XR>
@@ -327,6 +335,7 @@ function Nav({
   lookLimits,
   onFlightChange,
   allowSprint=false,
+  paused=false,
 }: {
   pose: Poi | null;
   fitRegion: boolean;
@@ -340,6 +349,7 @@ function Nav({
   lookLimits?: NonNullable<PoiCapture['cleanup']>['lookLimits'];
   onFlightChange?: (mode:CaptureFlightMode)=>void;
   allowSprint?:boolean;
+  paused?:boolean;
 }) {
   const inXR = useXR((s) => s.session != null);
   const size = useThree(s => s.size);
@@ -347,7 +357,7 @@ function Nav({
   const orbitLimit = pose ? viewpointOrbitLimit(fitRegion ? regionalOverviewCamera(pose, size.width / Math.max(1, size.height)) : pose.camera, pose.target, baseline) : baseline;
   if (inXR) return null;
   return mode === "walk" && walkInput ? (
-    capture?.walkAround ? <CaptureAreaControls area={capture.walkAround} input={walkInput} onFlightChange={onFlightChange} allowSprint={allowSprint}/> : capture?.walk ? (
+    capture?.walkAround ? <CaptureAreaControls area={capture.walkAround} input={walkInput} onFlightChange={onFlightChange} allowSprint={allowSprint} allowDoubleJump={allowSprint} enabled={!paused}/> : capture?.walk ? (
       <CaptureWalkControls
         input={walkInput}
         path={capture.walk}

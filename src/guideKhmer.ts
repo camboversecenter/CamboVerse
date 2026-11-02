@@ -28,13 +28,17 @@ const titles:Record<string,string>={
   'naga-balustrade':'បង្កាន់ដៃនាគ','guardian-lion':'រូបសំណាកតោ','central-stupa':'ព្រះចេតិយ',
   'main-vihara':'ព្រះវិហារ','city-overlook':'ទិដ្ឋភាពរាជធានី',
 };
-export function khmerGuideTitle(context:LocationContext){return titles[context.objectId??context.locationId]??'ទីតាំងនេះ';}
+export function khmerGuideTitle(context:LocationContext){return context.titleKhmer??titles[context.objectId??context.locationId]??'ទីតាំងនេះ';}
 export function khmerObjectTitle(id:string){return titles[id]??'ព័ត៌មាន';}
 export function khmerSourceTitle(source?:GuideSource){
   return source?.url?.includes('cambodiamuseum.info')?'សារមន្ទីរជាតិកម្ពុជា · ប្រវត្តិវត្តភ្នំ':'កំណត់ត្រាទីតាំងរបស់មជ្ឈមណ្ឌលខេមបូវើស';
 }
 
 const questions:Record<string,string>={
+  'What is this place?':'តើទីនេះជាអ្វី?',
+  'What can I explore here?':'តើខ្ញុំអាចទស្សនាអ្វីខ្លះនៅទីនេះ?',
+  'How do I move and jump?':'តើខ្ញុំអាចដើរ និងលោតដូចម្តេច?',
+  'What is its history?':'តើទីនេះមានប្រវត្តិដូចម្តេច?',
   'Tell me about the history':'សូមប្រាប់អំពីប្រវត្តិ',
   'Tell me about Wat Phnom history':'សូមប្រាប់អំពីប្រវត្តិវត្តភ្នំ',
   'What am I looking at?':'តើខ្ញុំកំពុងមើលអ្វី?',
@@ -64,6 +68,7 @@ export function savedKhmerLocationAnswer(context:LocationContext,question=''):{t
   else if(/អ្វី|នាគ|តោ|នាឡិកា/.test(query))query='What am I looking at?';
   const saved=savedLocationAnswer(context,query);
   const fact=context.facts.find(item=>item.text===saved.text);
+  if(context.experienceId==='campus')return {text:!question.trim()?context.introductionKhmer!:fact?.textKhmer??unknown,sources:fact?.textKhmer?fact.sources:[]};
   if(!fact)return {text:question.trim()?unknown:KHMER_GUIDE.introduction,sources:[]};
   if(context.objectId&&fact===context.facts[0])return {text:context.objectId==='guardian-lion'?lion:naga,sources:fact.sources};
   let text=unknown;

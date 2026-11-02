@@ -20,6 +20,20 @@ beforeEach(async()=>{
 });
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 describe('building keyboard and touch walking',()=>{
+  it('allows one extra airborne jump, blocks a third, and resets on landing',async()=>{
+    await act(async()=>root.render(createElement(FirstPersonControls,{input,start:[0,1.25,0],allowDoubleJump:true})));tick();
+    key('keydown','Space',' ');tick();key('keyup','Space',' ');
+    for(let i=0;i<15;i++)tick();
+    const before=camera.position.y;key('keydown','Space',' ');tick();key('keyup','Space',' ');
+    const secondRise=camera.position.y-before;expect(secondRise).toBeGreaterThan(.06);
+    for(let i=0;i<10;i++)tick();
+    const third=camera.position.y;key('keydown','Space',' ');tick();key('keyup','Space',' ');
+    expect(camera.position.y-third).toBeLessThan(secondRise-.02);
+    for(let i=0;i<180;i++)tick();expect(camera.position.y).toBe(1.25);
+    input.current.jump=true;tick();expect(camera.position.y).toBeGreaterThan(1.25);
+    for(let i=0;i<15;i++)tick();const touch=camera.position.y;input.current.jump=true;tick();
+    expect(camera.position.y-touch).toBeGreaterThan(.06);
+  });
   it('speeds up with Shift or Run and restores normal speed on release',()=>{
     key('keydown','KeyW');tick();const normal=-camera.position.z;
     key('keydown','ShiftLeft','Shift');const before=camera.position.z;tick();expect(before-camera.position.z).toBeCloseTo(normal*RUN_MULTIPLIER);

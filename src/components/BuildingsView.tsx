@@ -11,6 +11,8 @@ import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
 import {WalkActions} from './WalkActions';
 import {BUILDING_VR_HELP} from '../buildingMovement';
+import {LocationGuide} from './LocationGuide';
+import {VRBuildingGuide} from './VRBuildingGuide';
 import { VRRig } from "./VRRig";
 import {ImmersiveVREntry} from './CaptureVR';
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
@@ -233,6 +235,7 @@ export function BuildingsView({
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [immersive,setImmersive]=useState(false);
+  const [guideOpen,setGuideOpen]=useState(false),[vrGuideOpen,setVRGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
@@ -241,6 +244,7 @@ export function BuildingsView({
   const [start, setStart] = useState<[number, number, number]>(SITE_BUILDINGS[0].view.at);
   const [startYaw, setStartYaw] = useState(SITE_BUILDINGS[0].view.yaw);
 
+  useEffect(()=>setGuideOpen(false),[place,immersive]);
   const selected = SITE_BUILDINGS.find((p) => p.id === place) ?? null;
   const goTo = (id: string) => {
     const p = SITE_BUILDINGS.find((x) => x.id === id);
@@ -268,11 +272,12 @@ export function BuildingsView({
           {/* VR locomotion rig: left stick = walk, right stick = snap-turn 30°.
               Spawns at the campus entrance facing the monument. Works on any
               WebXR device; optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, 96]} buildingMovement/>
+          <VRRig position={[0, 0, 96]} buildingMovement paused={vrGuideOpen}/>
+          <VRBuildingGuide locationId={selected?.id??site.id} onOpenChange={setVRGuideOpen}/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
             <FirstPersonControls 
-              input={input} 
+              input={input} allowDoubleJump enabled={!guideOpen}
               start={start} 
               startYaw={startYaw} 
             />
@@ -326,23 +331,25 @@ export function BuildingsView({
         ))}
       </div>
 
-      {selected && (
+      {selected && !immersive && (
         <div className="campus-card">
           <div className="campus-card-head">
             <b>{selected.name}</b> <span className="khmer">{selected.khmer}</span>
             <button className="grove-x" onClick={() => setPlace(null)}>✕</button>
           </div>
           <p>{selected.english}</p>
+          <LocationGuide key={selected.id} experienceId="campus" locationId={selected.id} embedded onOpenChange={setGuideOpen}/>
           <button className="campus-open" onClick={() => onOpenBuilding(selected.id)}>
             Open building page →
           </button>
         </div>
       )}
 
-      {nav === "walk" && !immersive && <><WalkControls input={input} hint=""/><WalkActions input={input}/></>}
+      {!selected&&<LocationGuide experienceId="campus" locationId={site.id} hidden={immersive} onOpenChange={setGuideOpen}/>}
+      {nav === "walk" && !immersive && !guideOpen && <><WalkControls input={input} hint=""/><WalkActions input={input}/></>}
       {nav === "walk" && !immersive && (
         <div className="campus-hint">
-          WASD / joystick · Shift to run · Space to jump · Quest: left grip to run, A to jump
+          WASD / joystick · Shift to run · Space to jump, press again for a second jump · Quest: left grip to run, A to jump, Y for guide
         </div>
       )}
     </div>

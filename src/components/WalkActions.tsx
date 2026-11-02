@@ -15,6 +15,6 @@ export function WalkActions({input,inline=false}:{input:MutableRefObject<WalkInp
   return <div className={`walk-actions${inline?' walk-actions-inline':''}`} role="group" aria-label="Walking actions"
     onPointerDown={e=>{e.stopPropagation();e.preventDefault();}} onPointerUp={e=>e.stopPropagation()}>
     <button type="button" aria-pressed={running} title="Run (hold Shift on keyboard)" onClick={e=>{e.stopPropagation();const next=!running;input.current.sprint=next;setRunning(next);}}>{running?'Run · On':'Run'}</button>
-    <button type="button" title="Jump (Space)" onClick={e=>{e.stopPropagation();input.current.jump=true;}}>↑ Jump</button>
+    <button type="button" title="Jump (Space). Press again in the air for a second jump." onClick={e=>{e.stopPropagation();input.current.jump=true;}}>↑ Jump</button>
   </div>;
 }

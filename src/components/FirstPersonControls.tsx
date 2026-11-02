@@ -31,6 +31,7 @@ export function FirstPersonControls({
   terrainWalking = false,
   enabled = true,
   allowJump = true,
+  allowDoubleJump = false,
   onStep,
 }: {
   input: MutableRefObject<WalkInput>;
@@ -52,6 +53,7 @@ export function FirstPersonControls({
   /** Pause movement while a scene's reading panel has focus. */
   enabled?: boolean;
   allowJump?: boolean;
+  allowDoubleJump?: boolean;
   onStep?: () => void;
 }) {
   const camera = useThree((s) => s.camera);
@@ -70,6 +72,7 @@ export function FirstPersonControls({
   const keys = useRef({ w: false, a: false, s: false, d: false, shift: false, space: false });
   const velY = useRef(0);
   const isGrounded = useRef(false);
+  const jumpsUsed = useRef(0);
   const bobPhase = useRef(0);
   const bobAmount = useRef(0);
 
@@ -84,7 +87,7 @@ export function FirstPersonControls({
     yaw.current = startYaw;
     pitch.current = startPitch;
     velY.current = 0;
-    isGrounded.current=false;bobAmount.current=0;
+    isGrounded.current=false;jumpsUsed.current=0;bobAmount.current=0;
   }, [camera, gl, sx, sy, sz, startYaw, startPitch]);
 
   useEffect(() => {
@@ -188,7 +191,9 @@ export function FirstPersonControls({
     }
 
     // Jump & Gravity
-    if (allowJump && isGrounded.current && inp.jump) {
+    if (isGrounded.current) jumpsUsed.current=0;
+    if (allowJump && inp.jump && (isGrounded.current || (allowDoubleJump && jumpsUsed.current<2))) {
+      jumpsUsed.current=isGrounded.current?1:Math.max(1,jumpsUsed.current)+1;
       velY.current = 4.5;
       isGrounded.current = false;
     }

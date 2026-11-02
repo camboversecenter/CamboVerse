@@ -14,6 +14,8 @@ import {
 import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
 import { Palm } from "./Palm";
+import {LocationGuide} from './LocationGuide';
+import {VRBuildingGuide} from './VRBuildingGuide';
 import { VRRig } from "./VRRig";
 import {FirstPersonControls,type WalkInput} from './FirstPersonControls';
 import {WalkControls} from './WalkControls';
@@ -242,6 +244,7 @@ export function BuildingView({
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [immersive,setImmersive]=useState(false);
+  const [guideOpen,setGuideOpen]=useState(false),[vrGuideOpen,setVRGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   // We initialize spin based on whether a room was pre-selected.
@@ -252,7 +255,8 @@ export function BuildingView({
   const [info, setInfo] = useState(true);
   const [walking,setWalking]=useState(false);
   const walkInput=useRef<WalkInput>({move:{x:0,y:0},look:{dx:0,dy:0}});
-  useEffect(()=>setWalking(false),[building.id]);
+  useEffect(()=>{setWalking(false);setGuideOpen(false);},[building.id]);
+  useEffect(()=>{if(!info||immersive)setGuideOpen(false);},[info,immersive]);
   const captureAvailable=!!building.capture&&(import.meta.env.DEV||!building.capture.normal.includes('/local/'));
   const [captureOpen,setCaptureOpen]=useState(captureAvailable);
   const [room, _setRoom] = useState<string | null>(initialRoom);
@@ -339,9 +343,10 @@ export function BuildingView({
           {/* VR locomotion: left thumbstick walks, right thumbstick snap-turns.
               XROrigin starts behind the building so you face it on entry.
               Works on any WebXR device, optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, dist * 0.8]} buildingMovement/>
+          <VRRig position={[0, 0, dist * 0.8]} buildingMovement paused={vrGuideOpen}/>
+          <VRBuildingGuide locationId={building.id} onOpenChange={setVRGuideOpen}/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
-          {walking?<FirstPersonControls input={walkInput} start={[0,1.6,Math.max(10,building.spanM*.6)]} eyeHeight={1.6}/>:<OrbitControls
+          {walking?<FirstPersonControls input={walkInput} allowDoubleJump enabled={!guideOpen} start={[0,1.6,Math.max(10,building.spanM*.6)]} eyeHeight={1.6}/>:<OrbitControls
             resetKey={`${building.id}:${room ?? 'overview'}`}
             makeDefault
             enablePan
@@ -377,7 +382,7 @@ export function BuildingView({
       </div>
 
       <button className="building-walk-toggle campus-mode" aria-pressed={walking} onPointerDown={e=>e.preventDefault()} onClick={()=>{setWalking(v=>!v);setInfo(false);setSpin(false);setRoom(null);}}>{walking?'Overview':'Walk around'}</button>
-      {walking&&!immersive&&<><WalkControls input={walkInput} hint="WASD / joystick · Shift to run · Space to jump"/><WalkActions input={walkInput}/></>}
+      {walking&&!immersive&&!guideOpen&&<><WalkControls input={walkInput} hint="WASD / joystick · Shift to run · Space to jump, press again for a second jump"/><WalkActions input={walkInput}/></>}
       {!walking&&<button className="bld-spin" onClick={() => setSpin((v) => !v)}>
         {spin ? "⏸ Stop turning" : "▶ Turn"}
       </button>}
@@ -408,6 +413,7 @@ export function BuildingView({
         {building.about.map((p) => (
           <p key={p.slice(0, 24)} className="bld-about">{p}</p>
         ))}
+        <LocationGuide key={building.id} experienceId="campus" locationId={building.id} hidden={!info||immersive} embedded onOpenChange={setGuideOpen}/>
         <ul className="bld-facts">
           {building.facts.map((f) => (
             <li key={f.label}><span>{f.label}</span><b>{f.value}</b></li>
