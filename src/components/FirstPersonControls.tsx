@@ -2,14 +2,16 @@ import { useEffect, useRef, type MutableRefObject } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Raycaster, Vector3, MathUtils, type Object3D, type Intersection } from "three";
 import { isTerrainFloor, isWalkingSurface } from '../terrainWalk';
+import {RUN_MULTIPLIER} from '../buildingMovement';
 
 export interface WalkInput {
   move: { x: number; y: number }; // joystick, [-1..1]; y<0 = forward
   look: { dx: number; dy: number }; // accumulated drag delta (px)
   /** Discrete capture-viewpoint request; positive moves forward, negative back. */
   step?: number;
-  /** One-shot jump request for capture walking (keyboard or touch button). */
+  /** One-shot jump request for keyboard or touch walking. */
   jump?: boolean;
+  sprint?: boolean;
   /** Optional capture flight controls; consumed only by the clock area. */
   flyToggle?: boolean;
   flyVertical?: number;
@@ -82,17 +84,23 @@ export function FirstPersonControls({
     yaw.current = startYaw;
     pitch.current = startPitch;
     velY.current = 0;
+    isGrounded.current=false;bobAmount.current=0;
   }, [camera, gl, sx, sy, sz, startYaw, startPitch]);
 
   useEffect(() => {
     const onDown = (e: KeyboardEvent) => {
-      if (!enabled || (e.target instanceof HTMLElement && (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)))) return;
+      if (!enabled || gl.xr.isPresenting || (e.target instanceof HTMLElement && (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)))) return;
       if (e.code === "KeyW" || e.code === "ArrowUp") keys.current.w = true;
       if (e.code === "KeyA" || e.code === "ArrowLeft") keys.current.a = true;
       if (e.code === "KeyS" || e.code === "ArrowDown") keys.current.s = true;
       if (e.code === "KeyD" || e.code === "ArrowRight") keys.current.d = true;
       if (e.key === "Shift") keys.current.shift = true;
-      if (e.code === "Space") keys.current.space = true;
+      if (e.code === "Space") {
+        if(e.target instanceof HTMLElement&&e.target.closest('button,a,[role="button"]'))return;
+        e.preventDefault();
+        if(!e.repeat&&!keys.current.space)input.current.jump=true;
+        keys.current.space = true;
+      }
     };
     const onUp = (e: KeyboardEvent) => {
       if (e.code === "KeyW" || e.code === "ArrowUp") keys.current.w = false;
@@ -104,7 +112,7 @@ export function FirstPersonControls({
     };
     window.addEventListener("keydown", onDown);
     window.addEventListener("keyup", onUp);
-    const clear = () => { keys.current = { w:false, a:false, s:false, d:false, shift:false, space:false }; input.current.move.x = input.current.move.y = 0; input.current.look.dx = input.current.look.dy = 0; };
+    const clear = () => { keys.current = { w:false, a:false, s:false, d:false, shift:false, space:false }; input.current.move.x = input.current.move.y = 0; input.current.look.dx = input.current.look.dy = 0; input.current.jump=false;input.current.sprint=false; };
     const hidden = () => { if (document.hidden) clear(); };
     const focus = (event:FocusEvent) => { if (event.target instanceof HTMLElement && event.target.closest('input,textarea,select,button,a,[contenteditable="true"],[role="button"]')) clear(); };
     window.addEventListener('blur', clear);
@@ -116,18 +124,20 @@ export function FirstPersonControls({
       window.removeEventListener("keydown", onDown);
       window.removeEventListener("keyup", onUp);
     };
-  }, [enabled, input]);
+  }, [enabled, input, gl]);
 
   useFrame((_, dt) => {
     // Headset tracking owns the camera while immersive; discard stale desktop input.
     if (gl.xr.isPresenting || !enabled) {
       input.current.move.x = input.current.move.y = 0;
       input.current.look.dx = input.current.look.dy = 0;
+      input.current.jump=false;input.current.sprint=false;
       keys.current = { w: false, a: false, s: false, d: false, shift: false, space: false };
       return;
     }
     dt = Math.min(dt, .05);
     const inp = input.current;
+    const running=keys.current.shift||!!inp.sprint;
     const root = collision?.current ?? null;
     const cast = (r: Raycaster): Intersection[] =>
       (root ? r.intersectObject(root, true) : r.intersectObjects(scene.children, true)).filter(isWalkingSurface);
@@ -156,7 +166,7 @@ export function FirstPersonControls({
       dir.current.set(0, 0, 0).addScaledVector(fwd.current, -my).addScaledVector(rgt.current, mx);
       if (dir.current.lengthSq() > 0) {
         dir.current.normalize();
-        const activeSpeed = keys.current.shift ? speed * 2.5 : speed;
+        const activeSpeed = running ? speed * RUN_MULTIPLIER : speed;
         const step = activeSpeed * dt * mag;
 
         // Wall collision: cast at waist height (0.8m) to catch walls/furniture
@@ -178,10 +188,11 @@ export function FirstPersonControls({
     }
 
     // Jump & Gravity
-    if (allowJump && isGrounded.current && keys.current.space) {
+    if (allowJump && isGrounded.current && inp.jump) {
       velY.current = 4.5;
       isGrounded.current = false;
     }
+    inp.jump=false;
     velY.current -= 12.0 * dt;
     camera.position.y += velY.current * dt;
 
@@ -237,11 +248,11 @@ export function FirstPersonControls({
     // frame - so this stays a visual offset and never accumulates.
     if (headBob) {
       const walking = mag > 0.02 && isGrounded.current;
-      const target = walking ? (keys.current.shift ? 1.5 : 1) : 0;
+      const target = walking ? (running ? 1.5 : 1) : 0;
       bobAmount.current += (target - bobAmount.current) * Math.min(1, dt * 8);
       if (walking) {
         const prev = bobPhase.current;
-        bobPhase.current += dt * (keys.current.shift ? 13 : 8.5) * mag;
+        bobPhase.current += dt * (running ? 13 : 8.5) * mag;
         if (onStep && Math.floor(bobPhase.current / Math.PI) !== Math.floor(prev / Math.PI)) onStep();
       }
       const a = bobAmount.current;

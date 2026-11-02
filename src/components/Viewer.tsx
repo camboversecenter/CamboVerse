@@ -32,6 +32,7 @@ import {IMMERSIVE_XR_OPTIONS,vrSimulationEnabled} from '../immersiveVR';
 import { captureVRArrival,captureVRScale } from '../captureVR';
 import {HeritageAmbienceButton,useHeritageAmbience} from './HeritageAmbience';
 import {VRCaptureGuide} from './VRCaptureGuide';
+import {BUILDING_VR_HELP} from '../buildingMovement';
 
 const ARTIFACT_OVERVIEW: Poi = { id: "overview", title: "Overview", info: "", target: [0, 1.08, 0], camera: [2.05, 1.72, 3.2] };
 
@@ -57,6 +58,8 @@ export function Viewer({
   onSelectCaptureObject,
   onCaptureFlightChange,
   vrTour,
+  buildingMovement=false,
+  onImmersiveChange,
   pois,
   activePoi = null,
   onSelectPoi,
@@ -86,6 +89,8 @@ export function Viewer({
   onSelectCaptureObject?: (id:string)=>void;
   onCaptureFlightChange?: (mode:CaptureFlightMode)=>void;
   vrTour?:CaptureVRTour;
+  buildingMovement?:boolean;
+  onImmersiveChange?:(active:boolean)=>void;
   pois?: Poi[];
   activePoi?: Poi | null;
   onSelectPoi?: (id: string) => void;
@@ -116,6 +121,7 @@ export function Viewer({
     return navigator.hardwareConcurrency <= 4 || memory <= 3 || Math.min(screen.width, screen.height) < 500 ? "normal" : "ultra";
   });
   const [immersive, setImmersive] = useState(false);
+  useEffect(()=>{onImmersiveChange?.(immersive);},[immersive,onImmersiveChange]);
   const [showParts, setShowParts] = useState(false);
   const [vrReset,setVRReset]=useState(0);
   const [vrGuideOpen,setVRGuideOpen]=useState(false);
@@ -162,7 +168,7 @@ export function Viewer({
           </button>
         )}
       </div>
-      {vrTour?<CaptureVREntry store={store} tour={vrTour} onStartAmbience={ambience.start}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
+      {vrTour?<CaptureVREntry store={store} tour={vrTour} onStartAmbience={ambience.start}/>:<ImmersiveVREntry store={store} title="Explore in VR" movementHelp={buildingMovement?BUILDING_VR_HELP:undefined}/>}
       {simulation&&!immersive&&<div role="status" style={{position:'fixed',top:70,left:14,zIndex:80,padding:'8px 12px',borderRadius:10,background:'#513918',color:'#fff'}}>Local VR test mode · simulator loads if no headset is available. Press Enter VR and use the emulator controls.</div>}
       {vrTour&&!immersive&&<HeritageAmbienceButton control={ambience}/>}
       <Canvas
@@ -217,7 +223,7 @@ export function Viewer({
 
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
-          capture={vrTour?capture:undefined} resetKey={vrReset}/>
+          capture={vrTour||buildingMovement?capture:undefined} resetKey={vrReset} buildingMovement={buildingMovement}/>
         {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)} onOpenChange={onVRMenuChange}/>}
         {vrTour&&capture&&immersive&&vrGuideOpen&&vrTour.activeId&&<VRCaptureGuide key={vrTour.activeId} locationId={vrTour.activeId} scale={captureVRScale(capture)} onClose={()=>setVRGuideOpen(false)}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
@@ -232,6 +238,7 @@ export function Viewer({
           aerial={aerial}
           capture={capture}
           onFlightChange={onCaptureFlightChange}
+          allowSprint={buildingMovement}
           lookLimits={cleanCaptureActive ? capture?.cleanup?.lookLimits : undefined}
         />
         </XR>
@@ -319,6 +326,7 @@ function Nav({
   capture,
   lookLimits,
   onFlightChange,
+  allowSprint=false,
 }: {
   pose: Poi | null;
   fitRegion: boolean;
@@ -331,6 +339,7 @@ function Nav({
   capture?: PoiCapture;
   lookLimits?: NonNullable<PoiCapture['cleanup']>['lookLimits'];
   onFlightChange?: (mode:CaptureFlightMode)=>void;
+  allowSprint?:boolean;
 }) {
   const inXR = useXR((s) => s.session != null);
   const size = useThree(s => s.size);
@@ -338,7 +347,7 @@ function Nav({
   const orbitLimit = pose ? viewpointOrbitLimit(fitRegion ? regionalOverviewCamera(pose, size.width / Math.max(1, size.height)) : pose.camera, pose.target, baseline) : baseline;
   if (inXR) return null;
   return mode === "walk" && walkInput ? (
-    capture?.walkAround ? <CaptureAreaControls area={capture.walkAround} input={walkInput} onFlightChange={onFlightChange}/> : capture?.walk ? (
+    capture?.walkAround ? <CaptureAreaControls area={capture.walkAround} input={walkInput} onFlightChange={onFlightChange} allowSprint={allowSprint}/> : capture?.walk ? (
       <CaptureWalkControls
         input={walkInput}
         path={capture.walk}

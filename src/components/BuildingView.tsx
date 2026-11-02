@@ -15,6 +15,10 @@ import { useGLTF } from "@react-three/drei";
 import { PalmPlant, type PlantLook } from "./GrovePlants";
 import { Palm } from "./Palm";
 import { VRRig } from "./VRRig";
+import {FirstPersonControls,type WalkInput} from './FirstPersonControls';
+import {WalkControls} from './WalkControls';
+import {WalkActions} from './WalkActions';
+import {BUILDING_VR_HELP} from '../buildingMovement';
 import { grassTexture, metresRepeat } from "../lib/groundTexture";
 import { paveTexture } from "../lib/campusTexture";
 import type { Building } from "../buildings";
@@ -237,6 +241,8 @@ export function BuildingView({
   backLabel?: string;
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
+  const [immersive,setImmersive]=useState(false);
+  useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   // We initialize spin based on whether a room was pre-selected.
   const [spin, setSpin] = useState(!initialRoom);
@@ -244,6 +250,9 @@ export function BuildingView({
   // the page. It opens by default you arrive wanting to know what this is  
   // but it has to get out of the way in one tap.
   const [info, setInfo] = useState(true);
+  const [walking,setWalking]=useState(false);
+  const walkInput=useRef<WalkInput>({move:{x:0,y:0},look:{dx:0,dy:0}});
+  useEffect(()=>setWalking(false),[building.id]);
   const captureAvailable=!!building.capture&&(import.meta.env.DEV||!building.capture.normal.includes('/local/'));
   const [captureOpen,setCaptureOpen]=useState(captureAvailable);
   const [room, _setRoom] = useState<string | null>(initialRoom);
@@ -285,7 +294,7 @@ export function BuildingView({
     <div className="building">
       <Canvas
         dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [dist * 0.5, eye, dist], fov: 45, near: 0.5, far: 900 }}
+        camera={{ position: [dist * 0.5, eye, dist], fov: 45, near: walking ? .05 : .5, far: 900 }}
         gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
         shadows={mode === "ultra"}
         onCreated={({ gl }) => {
@@ -313,7 +322,7 @@ export function BuildingView({
           />
           <Ground />
           <TheBuilding id={building.id} model={building.model} onRoomClick={(r) => { setRoom(r); setSpin(false); }} />
-          <CameraAnimator room={room} aim={aim} dist={dist} eye={eye} />
+          {!walking&&<CameraAnimator room={room} aim={aim} dist={dist} eye={eye} />}
           {/* a pair of palms for scale, hidden for teaching block, hall, and
               field to avoid clipping, and for the monument which has its own
               dedicated flanking palms below. */}
@@ -330,9 +339,9 @@ export function BuildingView({
           {/* VR locomotion: left thumbstick walks, right thumbstick snap-turns.
               XROrigin starts behind the building so you face it on entry.
               Works on any WebXR device, optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, dist * 0.8]} />
+          <VRRig position={[0, 0, dist * 0.8]} buildingMovement/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
-          <OrbitControls
+          {walking?<FirstPersonControls input={walkInput} start={[0,1.6,Math.max(10,building.spanM*.6)]} eyeHeight={1.6}/>:<OrbitControls
             resetKey={`${building.id}:${room ?? 'overview'}`}
             makeDefault
             enablePan
@@ -342,7 +351,7 @@ export function BuildingView({
             enableDamping
             autoRotate={spin}
             autoRotateSpeed={0.5}
-          />
+          />}
         </XR>
       </Canvas>
 
@@ -364,12 +373,14 @@ export function BuildingView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <ImmersiveVREntry store={store} title={building.name} className="vr-btn cls-vr" onBeforeEnter={()=>setMode('ultra')}/>
+        <ImmersiveVREntry store={store} title={building.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP} onBeforeEnter={()=>setMode('ultra')}/>
       </div>
 
-      <button className="bld-spin" onClick={() => setSpin((v) => !v)}>
+      <button className="building-walk-toggle campus-mode" aria-pressed={walking} onPointerDown={e=>e.preventDefault()} onClick={()=>{setWalking(v=>!v);setInfo(false);setSpin(false);setRoom(null);}}>{walking?'Overview':'Walk around'}</button>
+      {walking&&!immersive&&<><WalkControls input={walkInput} hint="WASD / joystick · Shift to run · Space to jump"/><WalkActions input={walkInput}/></>}
+      {!walking&&<button className="bld-spin" onClick={() => setSpin((v) => !v)}>
         {spin ? "⏸ Stop turning" : "▶ Turn"}
-      </button>
+      </button>}
       {captureAvailable&&<button className="bld-capture-open" onClick={()=>setCaptureOpen(true)}>◍ Real 3D capture</button>}
 
       {!info && (

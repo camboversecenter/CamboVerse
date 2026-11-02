@@ -6,6 +6,7 @@ import type { Poi, CaptureWalkArea, PoiCapture } from "../spots";
 import { areaGroundHeight, constrainAreaPosition } from '../captureAreaWalk';
 import { captureVRArrival, captureVRFloor, captureVRScale, captureVRInputStep, captureVRJump } from '../captureVR';
 import type {CaptureJumpState} from '../captureWalk';
+import {buildingVRJump,RUN_MULTIPLIER} from '../buildingMovement';
 
 /**
  * The VR player. Places the visitor standing in the scene and drives them with
@@ -13,23 +14,25 @@ import type {CaptureJumpState} from '../captureWalk';
  * Selecting a point of interest (with the controller ray) glides them there.
  * Harmless outside a VR session (the hooks simply do nothing).
  */
-export function VRRig({ position, poi, elevatedStops = false, area, capture, resetKey=0 }: { position: [number, number, number]; poi?: Poi | null; elevatedStops?: boolean; area?:CaptureWalkArea;capture?:PoiCapture;resetKey?:number }) {
+export function VRRig({ position, poi, elevatedStops = false, area, capture, resetKey=0,buildingMovement=false }: { position: [number, number, number]; poi?: Poi | null; elevatedStops?: boolean; area?:CaptureWalkArea;capture?:PoiCapture;resetKey?:number;buildingMovement?:boolean }) {
   const ref = useRef<Group>(null);
   // Captures handle their calibrated input below. A no-op target also avoids
   // the legacy hook applying a retained vector while its options are false.
-  useXRControllerLocomotion(capture?()=>{}:ref, capture?false:{ speed: area?.speed ?? 2.6 }, capture?false:{ type: "snap", degrees: 30 });
+  const manual=!!capture||buildingMovement;
+  useXRControllerLocomotion(manual?()=>{}:ref, manual?false:{ speed: area?.speed ?? 2.6 }, manual?false:{ type: "snap", degrees: 30 });
   const store=useXRStore(),canTurn=useRef(true);
   const jump=useRef<CaptureJumpState>({y:0,velocity:0,grounded:true}),jumpHeld=useRef(false);
   const presenting = useXR((s) => s.session != null);
   const head=useMemo(()=>new Vector3(),[]);
   const direction=useMemo(()=>new Vector3(),[]),beforeTurn=useMemo(()=>new Vector3(),[]);
   const scale=presenting&&capture?captureVRScale(capture):1;
+  const [px,py,pz]=position;
   useLayoutEffect(()=>{
-    if(!presenting||!capture||!ref.current)return;
-    const arrival=captureVRArrival(capture);
-    ref.current.position.set(...arrival.position);ref.current.rotation.set(0,arrival.yaw,0);
     canTurn.current=true;jump.current={y:0,velocity:0,grounded:true};jumpHeld.current=false;
-  },[presenting,capture,resetKey]);
+    if(!presenting||!ref.current)return;
+    if(capture){const arrival=captureVRArrival(capture);ref.current.position.set(...arrival.position);ref.current.rotation.set(0,arrival.yaw,0);}
+    else if(buildingMovement){ref.current.position.set(px,py,pz);ref.current.rotation.set(0,0,0);}
+  },[presenting,capture,resetKey,buildingMovement,px,py,pz]);
 
   // Glide the origin to the POI's vantage (at floor level) when one is picked.
   // Hill-site viewing stops must not teleport the origin underneath the hill.
@@ -42,16 +45,19 @@ export function VRRig({ position, poi, elevatedStops = false, area, capture, res
   useEffect(()=>{if(presenting&&area&&!capture&&ref.current)ref.current.position.set(area.start[0],areaGroundHeight(area,...area.start),area.start[1]);},[presenting,area,capture]);
   useFrame(({camera},delta) => {
     const g = ref.current;
-    if(presenting&&capture&&g){
+    if(presenting&&manual&&g){
       const sources=store.getState().inputSourceStates;
       const left=sources.find(s=>s.type==='controller'&&s.inputSource.handedness==='left');
       const right=sources.find(s=>s.type==='controller'&&s.inputSource.handedness==='right');
       const move=left?.type==='controller'?left.gamepad['xr-standard-thumbstick']:undefined;
       const turn=right?.type==='controller'?right.gamepad['xr-standard-thumbstick']:undefined;
       const jumpDown=right?.type==='controller'&&right.gamepad['a-button']?.state==='pressed';
+      if(store.getState().session?.visibilityState==='hidden'||store.getState().session?.visibilityState==='visible-blurred'){jumpHeld.current=!!jumpDown;return;}
+      const running=buildingMovement&&left?.type==='controller'&&left.gamepad['xr-standard-squeeze']?.state==='pressed';
       g.updateWorldMatrix(true,true);camera.getWorldDirection(direction);
       const yaw=Math.atan2(-direction.x,-direction.z);
-      const step=captureVRInputStep(move?.xAxis??0,-(move?.yAxis??0),turn?.xAxis??0,yaw,capture.walk ? .45 : capture.walkAround?.speed??1.4,delta,canTurn.current);
+      const speed=capture?(capture.walk ? .45 : capture.walkAround?.speed??1.4):2.6;
+      const step=captureVRInputStep(move?.xAxis??0,-(move?.yAxis??0),turn?.xAxis??0,yaw,speed*(running?RUN_MULTIPLIER:1),delta,canTurn.current);
       canTurn.current=step.canTurn;
       if(step.angle){
         // Pivot around the visitor's head, not a distant room-scale origin.
@@ -62,8 +68,8 @@ export function VRRig({ position, poi, elevatedStops = false, area, capture, res
       g.position.x+=step.dx;g.position.z+=step.dz;
       // Include room-scale head offsets in the same boundary as thumbsticks.
       g.updateWorldMatrix(true,true);camera.getWorldPosition(head);
-      const [x,y,z]=captureVRFloor(capture,head.x,head.z);
-      const nextJump=captureVRJump(jump.current,jumpHeld.current,!!jumpDown,delta);jump.current=nextJump.state;jumpHeld.current=nextJump.held;
+      const [x,y,z]=capture?captureVRFloor(capture,head.x,head.z):[head.x,py,head.z];
+      const nextJump=(buildingMovement?buildingVRJump:captureVRJump)(jump.current,jumpHeld.current,!!jumpDown,delta);jump.current=nextJump.state;jumpHeld.current=nextJump.held;
       g.position.x+=x-head.x;g.position.z+=z-head.z;g.position.y=y+jump.current.y*scale;return;
     }
     if(presenting&&area&&g){

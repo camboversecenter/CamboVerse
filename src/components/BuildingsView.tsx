@@ -9,6 +9,8 @@ import {
 } from "three";
 import { FirstPersonControls, type WalkInput } from "./FirstPersonControls";
 import { WalkControls } from "./WalkControls";
+import {WalkActions} from './WalkActions';
+import {BUILDING_VR_HELP} from '../buildingMovement';
 import { VRRig } from "./VRRig";
 import {ImmersiveVREntry} from './CaptureVR';
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
@@ -230,6 +232,8 @@ export function BuildingsView({
   onOpenBuilding: (id: string, room?: string) => void;
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
+  const [immersive,setImmersive]=useState(false);
+  useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
   const [place, setPlace] = useState<string | null>(null);
@@ -264,7 +268,7 @@ export function BuildingsView({
           {/* VR locomotion rig: left stick = walk, right stick = snap-turn 30°.
               Spawns at the campus entrance facing the monument. Works on any
               WebXR device; optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, 96]} />
+          <VRRig position={[0, 0, 96]} buildingMovement/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
             <FirstPersonControls 
@@ -295,7 +299,7 @@ export function BuildingsView({
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <ImmersiveVREntry store={store} title={site.name} className="vr-btn cls-vr" onBeforeEnter={()=>setMode('ultra')}/>
+        <ImmersiveVREntry store={store} title={site.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP} onBeforeEnter={()=>setMode('ultra')}/>
       </div>
 
       {/* orbit ⇄ walk */}
@@ -303,7 +307,7 @@ export function BuildingsView({
         <button className={nav === "orbit" ? "campus-mode on" : "campus-mode"} onClick={() => setNav("orbit")}>
           🛰️ Overview
         </button>
-        <button className={nav === "walk" ? "campus-mode on" : "campus-mode"} onClick={() => setNav("walk")}>
+        <button className={nav === "walk" ? "campus-mode on" : "campus-mode"} onPointerDown={e=>e.preventDefault()} onClick={() => setNav("walk")}>
           🚶 Walk
         </button>
       </div>
@@ -314,6 +318,7 @@ export function BuildingsView({
           <button
             key={p.id}
             className={place === p.id ? "campus-place on" : "campus-place"}
+            onPointerDown={e=>e.preventDefault()}
             onClick={() => goTo(p.id)}
           >
             {p.name}
@@ -334,10 +339,10 @@ export function BuildingsView({
         </div>
       )}
 
-      {nav === "walk" && <WalkControls input={input} />}
-      {nav === "walk" && (
+      {nav === "walk" && !immersive && <><WalkControls input={input} hint=""/><WalkActions input={input}/></>}
+      {nav === "walk" && !immersive && (
         <div className="campus-hint">
-          Drag to look · use the stick to walk · tap space to jump
+          WASD / joystick · Shift to run · Space to jump · Quest: left grip to run, A to jump
         </div>
       )}
     </div>

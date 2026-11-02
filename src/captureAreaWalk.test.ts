@@ -8,6 +8,14 @@ const area=capture.walkAround!;
 const radius=(p:[number,number])=>Math.hypot(p[0]-area.center[0],p[1]-area.center[1]);
 
 describe('walking around the flower clock',()=>{
+  it('runs faster when requested while retaining the same protected boundary',()=>{
+    const normal=advanceAreaWalk(area,...area.start,0,-1,0,.01);
+    const run=advanceAreaWalk(area,...area.start,0,-1,0,.01,2.5);
+    expect(Math.hypot(run[0]-area.start[0],run[1]-area.start[1])).toBeCloseTo(2.5*Math.hypot(normal[0]-area.start[0],normal[1]-area.start[1]));
+    let p:[number,number]=[...area.start];
+    for(let i=0;i<500;i++)p=advanceAreaWalk(area,...p,0,1,0,.05,2.5);
+    expect(radius(p)).toBeCloseTo(area.innerRadius);
+  });
   it('starts outside the protected clock at the authored eye height',()=>{
     const p=areaEyePosition(area);
     expect(radius([p[0],p[2]])).toBeGreaterThan(area.innerRadius);

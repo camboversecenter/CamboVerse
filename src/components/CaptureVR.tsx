@@ -29,8 +29,8 @@ export function CaptureVREntry({store,tour,onStartAmbience}:{store:ReturnType<ty
   }} onSessionRequested={onStartAmbience} tour={tour}/>;
 }
 
-export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionRequested,className='capture-vr-entry'}:{
-  store:ReturnType<typeof createXRStore>;title:string;tour?:CaptureVRTour;onBeforeEnter?:()=>void;onSessionRequested?:()=>void;className?:string;
+export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionRequested,className='capture-vr-entry',movementHelp}:{
+  store:ReturnType<typeof createXRStore>;title:string;tour?:CaptureVRTour;onBeforeEnter?:()=>void;onSessionRequested?:()=>void;className?:string;movementHelp?:string;
 }) {
   const [open,setOpen]=useState(false),[supported,setSupported]=useState(false);
   const [active,setActive]=useState(false),[pending,setPending]=useState(false);
@@ -93,7 +93,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
       </div>}
       <p role="status">{message}</p>
       {failure&&<p role="alert">{failure}</p>}
-      <p>{tour?'Left stick: walk. Right stick: snap turn. A on the right controller: jump. Press Y on the left controller to open the menu; press Y again or select Hide menu to dismiss it completely. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
+      <p>{movementHelp??(tour?'Left stick: walk. Right stick: snap turn. A on the right controller: jump. Press Y on the left controller to open the menu; press Y again or select Hide menu to dismiss it completely. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.')}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
       <details className="capture-vr-note"><summary>Headset check details</summary>
         <p>WebXR: {checkCode} · Three.js r{REVISION}<br/>Session: {active?'immersive-vr':'not started'}<br/>VR entry: 2</p>

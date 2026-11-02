@@ -6,8 +6,9 @@ import type { WalkInput } from './FirstPersonControls';
 import { advanceAreaWalk, areaEyePosition } from '../captureAreaWalk';
 import { advanceCaptureJump, type CaptureJumpState } from '../captureWalk';
 import { advanceCaptureFlight, captureSpacePress, toggleCaptureFlight, type CaptureFlightMode, type CaptureFlightState } from '../captureFlight';
+import {RUN_MULTIPLIER} from '../buildingMovement';
 
-export function CaptureAreaControls({area,input,onFlightChange}:{area:CaptureWalkArea;input:MutableRefObject<WalkInput>;onFlightChange?:(mode:CaptureFlightMode)=>void}) {
+export function CaptureAreaControls({area,input,onFlightChange,allowSprint=false}:{area:CaptureWalkArea;input:MutableRefObject<WalkInput>;onFlightChange?:(mode:CaptureFlightMode)=>void;allowSprint?:boolean}) {
   const {camera,gl}=useThree();
   const position=useRef<[number,number]>(area.start);
   const yaw=useRef(area.startYaw),pitch=useRef(area.startPitch);
@@ -69,7 +70,8 @@ export function CaptureAreaControls({area,input,onFlightChange}:{area:CaptureWal
       const [x,y,z]=flight.current.position;position.current=[x,z];camera.position.set(x,y,z);
       if(flight.current.mode==='walking'){jump.current={y,velocity:0,grounded:true};velocity.current={forward:0,side:0};}
     }else{
-      position.current=advanceAreaWalk(area,...position.current,yaw.current,velocity.current.forward,velocity.current.side,dt);
+      const running=allowSprint&&(input.current.sprint||keys.current.has('ShiftLeft')||keys.current.has('ShiftRight'));
+      position.current=advanceAreaWalk(area,...position.current,yaw.current,velocity.current.forward,velocity.current.side,dt,running?RUN_MULTIPLIER:1);
       const [x,y,z]=areaEyePosition(area,...position.current);
       jump.current=advanceCaptureJump(jump.current??{y,velocity:0,grounded:true},y,input.current.jump??false,dt);
       camera.position.set(x,jump.current.y,z);flight.current.position=[x,jump.current.y,z];

@@ -20,8 +20,8 @@ export function areaEyePosition(area:CaptureWalkArea,x=area.start[0],z=area.star
   return [px,areaGroundHeight(area,px,pz)+area.eyeHeight,pz];
 }
 
-export function advanceAreaWalk(area:CaptureWalkArea,x:number,z:number,yaw:number,forward:number,side:number,delta:number):[number,number] {
-  const distance=area.speed*Math.max(0,Math.min(delta,.05))/Math.max(1,Math.hypot(forward,side));
+export function advanceAreaWalk(area:CaptureWalkArea,x:number,z:number,yaw:number,forward:number,side:number,delta:number,speedMultiplier=1):[number,number] {
+  const distance=area.speed*speedMultiplier*Math.max(0,Math.min(delta,.05))/Math.max(1,Math.hypot(forward,side));
   return constrainAreaPosition(area,
     x+(-Math.sin(yaw)*forward+Math.cos(yaw)*side)*distance,
     z+(-Math.cos(yaw)*forward-Math.sin(yaw)*side)*distance);

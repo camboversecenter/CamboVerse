@@ -449,6 +449,12 @@ body,
 }
 
 .walk-layer.viewpoint-mode { cursor: crosshair; }
+.walk-actions { position:fixed; right:calc(env(safe-area-inset-right, 0px) + 18px); bottom:calc(env(safe-area-inset-bottom, 0px) + 88px); z-index:32; display:flex; gap:10px; }
+.walk-actions button { min-width:72px; min-height:52px; padding:10px 16px; border:1px solid #b6c899; border-radius:18px; background:#17372eef; color:#fff7df; font:700 14px system-ui,sans-serif; touch-action:manipulation; cursor:pointer; }
+.walk-actions button[aria-pressed="true"] { background:#d9ce86; color:#17372e; }
+.walk-actions button:focus-visible { outline:3px solid #ffe49a; outline-offset:3px; }
+.walk-actions.walk-actions-inline { position:static; }
+.building-walk-toggle { position:fixed; z-index:26; top:calc(env(safe-area-inset-top, 0px) + 52px); right:12px; }
 
 .joystick {
   position: absolute;
