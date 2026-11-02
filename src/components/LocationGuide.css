@@ -1,20 +1,22 @@
 .location-guide-host { position:fixed; z-index:60; left:16px; top:78px; color:#f4f4e9; font-family:system-ui,sans-serif; }
 .penh-avatar { width:48px; height:48px; object-fit:cover; border-radius:50%; border:2px solid #d1d69c; }
 .location-guide-host .location-guide-launcher { position:static; display:flex; align-items:center; gap:7px; min-height:48px; padding:3px 15px 3px 4px; border:1px solid #b3c99c; border-radius:999px; background:#14362dee; color:#f4f4e9; font:700 14px system-ui,sans-serif; box-shadow:0 4px 20px #0004; cursor:pointer; }
-.location-guide-panel { position:fixed; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); max-height:min(610px,calc(100dvh - 180px)); display:flex; flex-direction:column; border:1px solid #839f80; border-radius:20px; background:#102b25f5; box-shadow:0 12px 50px #0006; overflow:hidden; }
+.location-guide-panel { position:fixed; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); max-height:min(610px,calc(100dvh - 180px)); display:block; border:1px solid #839f80; border-radius:18px; background:#102b25f5; box-shadow:0 12px 50px #0006; overflow-y:auto; overscroll-behavior:contain; }
 .location-guide-header { display:flex; align-items:center; gap:9px; padding:12px 14px; border-bottom:1px solid #a5bf8233; flex-shrink:0; }
+.location-guide-host:not(.location-guide-embedded) .location-guide-header { position:sticky; top:0; z-index:1; background:#102b25; }
 .location-guide-header>div { flex:1; min-width:0; }
+.location-guide-panel .penh-avatar { width:38px; height:38px; flex:none; }
 .location-guide-header strong { font-size:17px; color:#dcebbb; }
-.location-guide-header p { margin:3px 0 0; font-size:12px; line-height:1.4; color:#c4d5c6; }
+.location-guide-host .location-guide-header p { margin:3px 0 0; font-size:12px; line-height:1.4; color:#c4d5c6; }
 .location-guide-language { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 15px; font-size:12px; color:#d2dfcc; }
 .location-guide-language select { min-height:40px; max-width:65%; padding:6px 10px; border:1px solid #8fa779; border-radius:9px; background:#1a3b31; color:white; font:14px system-ui,sans-serif; }
 .location-guide-host button { touch-action:manipulation; }
 .location-guide-host .location-guide-close { position:static; border:1px solid #9eb8a1; border-radius:50%; width:44px; height:44px; min-height:44px; padding:0; flex-shrink:0; background:#23463a; color:white; font:700 24px system-ui; cursor:pointer; }
-.location-guide-scroll { padding:0 15px 10px; min-height:0; overflow:auto; overscroll-behavior:contain; }
+.location-guide-scroll { padding:12px 15px; overflow:visible; }
 .location-guide-intro { font-size:14px; line-height:1.55; margin:13px 0; }
 .location-guide-suggestions { display:flex; flex-wrap:wrap; gap:7px; }
 .location-guide-host .location-guide-suggestions button { position:static; min-height:44px; padding:7px 10px; border:1px solid #8fa779; border-radius:11px; background:#244837; color:#ecf0dc; font:600 12px system-ui; cursor:pointer; text-align:left; }
-.location-guide-messages article { margin-top:14px; font-size:14px; line-height:1.55; }
+.location-guide-messages article { margin-top:14px; font-size:14px; line-height:1.55; scroll-margin-top:90px; }
 .location-guide-question { margin:0 0 6px 28px; padding:9px 12px; border-radius:13px 13px 2px 13px; background:#42613b; }
 .location-guide-answer { padding:11px 12px; border-radius:2px 13px 13px 13px; background:#1a3b31; }
 .location-guide-answer>p { margin:6px 0; white-space:pre-wrap; }
@@ -29,9 +31,16 @@
 .location-guide-host .location-guide-form button { position:static; min-height:44px; padding:8px 15px; border:1px solid #afcb84; border-radius:11px; background:#4a6c37; color:white; font:700 13px system-ui; cursor:pointer; }
 .location-guide-host button:disabled { opacity:.55; cursor:wait; }
 .location-guide-host button:focus-visible,.location-guide-form input:focus-visible { outline:3px solid #efd395; outline-offset:2px; }
-.location-guide-footnote { margin:8px 15px 12px; font-size:10px; line-height:1.4; color:#b5c6b8; flex-shrink:0; }
-.location-guide-host.location-guide-embedded { position:static; margin:12px 0; pointer-events:auto; }
-.location-guide-embedded .location-guide-panel { position:static; width:100%; max-height:min(430px,55dvh); }
+.location-guide-about { margin:10px 15px 12px; color:#b5c6b8; font-size:11px; line-height:1.5; }
+.location-guide-about summary { cursor:pointer; min-height:44px; padding:12px 0; }
+.location-guide-host .location-guide-footnote { margin:4px 0 0; font-size:11px; line-height:1.5; color:#b5c6b8; }
+.location-guide-host.location-guide-embedded { position:static; margin:16px 0 0; pointer-events:auto; }
+.location-guide-embedded .location-guide-panel { position:static; width:100%; max-height:none; overflow:visible; border:0; border-top:1px solid #839f8055; border-radius:0; box-shadow:none; background:transparent; }
+.location-guide-embedded .location-guide-header { padding:12px 0 8px; border:0; }
+.location-guide-embedded .location-guide-language { padding:4px 0 10px; }
+.location-guide-embedded .location-guide-scroll { padding:0 0 12px; }
+.location-guide-embedded .location-guide-form { padding:10px 0 0; }
+.location-guide-embedded .location-guide-about { margin:10px 0 0; }
 .hud:has(.location-guide-embedded .location-guide-panel),.poi-panel:has(.location-guide-embedded .location-guide-panel) { max-height:75dvh; overflow-y:auto; pointer-events:auto; }
 .hud:has(.location-guide-embedded .location-guide-panel) { background:#102b25ef; border-radius:16px 16px 0 0; }
 .pano-tour:has(.location-guide-panel) .pano-look { right:438px; }

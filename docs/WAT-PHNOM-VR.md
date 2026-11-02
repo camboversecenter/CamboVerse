@@ -66,6 +66,9 @@ On desktop and mobile, the minimizable guide is embedded in Wat Phnom's overview
 each place detail panel, and the Naga and lion information cards. The Great Stupa,
 Vihara and City Overlook use limited illustrative-model notes, not invented
 historical details. In capture walking the separate guide button remains available.
+Embedded guides share the information panel's scroll container; their content
+must never be capped into a second flex scroll area. Object descriptions are
+shown once, and detailed guide/voice disclosures are available under About Penh.
 
 In either capture, the right controller's A button requests a short jump;
 release the button before jumping again. This moves the virtual view vertically

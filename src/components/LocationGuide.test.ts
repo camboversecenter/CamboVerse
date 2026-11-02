@@ -40,4 +40,18 @@ describe('Penh language selection',()=>{
     expect(host.textContent).toContain('Saved location notes · English');
     await act(async()=>button('Listen').click());expect(mocked.narrate).toHaveBeenCalledWith(expect.any(String),'en-US','penh');
   });
+  it('keeps the embedded object guide compact and its conversation usable',async()=>{
+    mocked.ask.mockResolvedValue({text:'The naga forms the staircase railing.',fallback:false,sources:[]});
+    await act(async()=>root.render(createElement(LocationGuide,{embedded:true,experienceId:'staircase-3dgs',locationId:'naga-staircase',objectId:'naga-balustrade'})));
+    await act(async()=>button('Ask Penh').click());
+    expect(host.querySelector('.location-guide-header p')?.textContent).toBe('Naga balustrade');
+    expect(host.querySelector('.location-guide-intro')).toBeNull();
+    expect(host.querySelector('details')?.open).toBe(false);
+    expect(host.querySelector('input')).toBeTruthy();
+    await act(async()=>button('Tell me about Naga balustrade').click());
+    expect(host.querySelector('[role="log"]')?.textContent).toContain('The naga forms the staircase railing.');
+    expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({objectId:'naga-balustrade'}),expect.any(AbortSignal));
+    await act(async()=>button('Listen').click());
+    expect(mocked.narrate).toHaveBeenCalledWith('The naga forms the staircase railing.','en-US','penh');
+  });
 });

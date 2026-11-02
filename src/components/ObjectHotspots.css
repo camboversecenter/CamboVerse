@@ -6,6 +6,7 @@
 .object-hotspot-marker:focus-visible { outline:3px solid #ffe49a; outline-offset:3px; }
 .object-info-card { position:fixed; z-index:70; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); box-sizing:border-box; padding:18px; border:1px solid #d9c987; border-top:4px solid #e9d388; border-radius:18px; background:#102f28fa; color:#f5f2df; box-shadow:0 12px 44px #0009; font-family:system-ui,sans-serif; max-height:calc(100dvh - 180px); overflow:auto; overscroll-behavior:contain; }
 .object-info-card header { display:flex; gap:12px; justify-content:space-between; align-items:center; }
+.object-info-card>header { position:sticky; top:-18px; z-index:1; padding:10px 0; background:#102f28; }
 .object-info-card small { color:#c6d7a5; font-size:10px; letter-spacing:.1em; }
 .object-info-card h2 { margin:5px 0 0; font-size:20px; }
 .object-info-card>p { font-size:14px; line-height:1.65; margin:14px 0; }

@@ -25,7 +25,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   const isPenh=experienceId==='wat-phnom'||experienceId==='staircase-3dgs'||experienceId==='clock-3dgs',name=isPenh?'Penh':'Kiri';
   const language=isPenh?chosenLanguage:guideLanguage('en');
   const pending = useRef<AbortController|null>(null);
-  const log = useRef<HTMLDivElement>(null);
+  const latestAnswer = useRef<HTMLElement>(null);
   const contextKey = `${experienceId}/${locationId}/${objectId??''}`;
   useLayoutEffect(()=>{
     const previous=pending.current; pending.current=null; previous?.abort();
@@ -34,7 +34,9 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   },[contextKey]);
   useEffect(()=>{if(openRequest>0)setOpen(true);},[openRequest]);
   useEffect(()=>{if(hidden){const previous=pending.current;pending.current=null;previous?.abort();setLoading(false);narrator.stop();stopListen.current?.();stopListen.current=null;setListening(false);}},[hidden,narrator]);
-  useEffect(()=>{ if(log.current)log.current.scrollTop=log.current.scrollHeight; },[messages,loading,open]);
+  // Only reveal new answers. Opening an empty guide must not scroll past its
+  // questions, and an embedded guide shares its parent's scroll container.
+  useEffect(()=>{if(messages.length)latestAnswer.current?.scrollIntoView?.({block:'nearest'});},[messages]);
   if (!context||hidden) return null;
 
   const toggle = (next:boolean) => {
@@ -81,17 +83,17 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     </button> : <aside className="location-guide-panel" aria-label={`${name} location guide`}>
       <header className="location-guide-header">
         {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={54} state={loading?'talking':'idle'}/>}
-        <div><strong>Ask {name}</strong><p>{context.title}{isPenh?' · Fictional AI guide':''}</p></div>
+        <div><strong>Ask {name}</strong><p>{objectId?context.title.split(' · ').slice(-1)[0]:context.title.replace(/^Wat Phnom · /,'')}</p></div>
         <button className="location-guide-close" onClick={()=>toggle(false)} aria-label={`Minimize ${name} guide`}>−</button>
       </header>
       {isPenh&&<label className="location-guide-language">Language / ភាសា <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{option.name}</option>)}</select></label>}
-      <div className="location-guide-scroll" ref={log}>
-        <p className="location-guide-intro">{context.introduction}</p>
+      <div className="location-guide-scroll">
+        {!embedded&&<p className="location-guide-intro">{context.introduction}</p>}
         <div className="location-guide-suggestions" aria-label="Suggested questions">
           {context.facts.slice(0,3).map(f=><button key={f.question} disabled={loading} onClick={()=>void ask(f.question)}>{f.question}</button>)}
         </div>
         <div className="location-guide-messages" role="log" aria-live="polite" aria-relevant="additions">
-          {messages.map((message,index)=><article key={`${contextKey}/${index}`}>
+          {messages.map((message,index)=><article key={`${contextKey}/${index}`} ref={index===messages.length-1?latestAnswer:undefined}>
             <p className="location-guide-question">{message.question}</p>
             <div className="location-guide-answer">
               <small>{message.fallback?'Saved location notes · English':`${name} · AI answer · ${guideLanguage(message.lang).name}`}</small>
@@ -114,7 +116,9 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
           <button type="submit" disabled={loading||!question.trim()}>Ask</button></div>
         {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||'Narration is unavailable in this browser.'}</p>}
       </form>
-      <p className="location-guide-footnote">{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</p>
+      <details className="location-guide-about"><summary>About {name} · AI guide</summary>
+        <p className="location-guide-footnote">{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</p>
+      </details>
     </aside>}
   </div>;
 }
