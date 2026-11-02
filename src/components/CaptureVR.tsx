@@ -92,7 +92,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
       </div>}
       <p role="status">{message}</p>
       {failure&&<p role="alert">{failure}</p>}
-      <p>{tour?'Left stick: walk. Right stick: snap turn. A on the right controller: jump. Y on the left controller: open or hide the menu. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
+      <p>{tour?'Left stick: walk. Right stick: snap turn. A on the right controller: jump. Press Y on the left controller to open the menu; press Y again or select Hide menu to dismiss it completely. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
       <details className="capture-vr-note"><summary>Headset check details</summary>
         <p>WebXR: {checkCode} · Three.js r{REVISION}<br/>Session: {active?'immersive-vr':'not started'}<br/>VR entry: 2</p>
@@ -106,36 +106,37 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
   </>;
 }
 
-/** Menu stays in the world. Only opening with Y, switching capture or resetting
- * takes a new pose; ordinary head movement never drags the panel around. */
+/** Fully hidden until Y opens it. Snapshot its world pose on each open;
+ * ordinary head movement never drags the panel around. */
 export function CaptureVRMenu({tour,onReset,resetKey,ambience,onGuide}:{tour:CaptureVRTour;onReset:()=>void;resetKey:number;ambience:AmbienceControl;onGuide:()=>void}) {
   const {language}=useGuideLanguage();const km=language.code==='km';
   const session=useXR(s=>s.session),panel=useRef<Group>(null);
   const store=useXRStore(),[open,setOpen]=useState(false),[exitFailed,setExitFailed]=useState(false);
-  const placement=useRef({pending:true,side:-.95}),pressed=useRef(false);
+  const placement=useRef({pending:true}),pressed=useRef(false);
   const helpers=useMemo(()=>({head:new Vector3(),forward:new Vector3()}),[]);
   const capture=tour.stops.find(s=>s.id===tour.activeId)?.capture;
   const scale=captureVRScale(capture);
   useLayoutEffect(()=>{
-    placement.current={pending:true,side:-.95};pressed.current=false;setOpen(false);setExitFailed(false);
+    placement.current={pending:true};pressed.current=false;setOpen(false);setExitFailed(false);
     if(panel.current)panel.current.visible=false;
   },[session,capture,resetKey]);
   useFrame(({camera})=>{
     if(!panel.current||!session)return;
     const left=store.getState().inputSourceStates.find(s=>s.type==='controller'&&s.inputSource.handedness==='left');
     const down=left?.type==='controller'&&left.gamepad['y-button']?.state==='pressed';
-    if(down&&!pressed.current){if(!open)placement.current={pending:true,side:0};setOpen(!open);}
+    if(down&&!pressed.current){if(!open)placement.current={pending:true};setOpen(!open);}
     pressed.current=down;
+    if(!open){panel.current.visible=false;return;}
     if(!placement.current.pending)return;
     camera.getWorldPosition(helpers.head);camera.getWorldDirection(helpers.forward);
-    const pose=worldPanelPose(helpers.head,helpers.forward,scale,placement.current.side);
+    const pose=worldPanelPose(helpers.head,helpers.forward,scale);
     panel.current.position.set(...pose.position);panel.current.rotation.set(0,pose.yaw,0);
     panel.current.scale.setScalar(scale);panel.current.visible=true;placement.current.pending=false;
   });
   if(!session)return null;
   const sound=km?(ambience.state==='playing'?'សំឡេងបក្សី · បញ្ឈប់':ambience.state==='loading'?KHMER_GUIDE.loadingVoice:ambience.state==='error'?KHMER_GUIDE.retryVoice:'សំឡេងបក្សី · បើក'):ambience.state==='playing'?'Bird ambience · Mute':ambience.state==='loading'?'Loading birds…':ambience.state==='error'?'Retry bird ambience':'Bird ambience · Off';
-  return <group ref={panel} visible={false}>
-    {!open?<VRSurface title={km?'ម៉ឺនុយ':'Menu · Y'} width={.48} onClick={()=>setOpen(true)}/>:<>
+  return <group ref={panel} visible={open}>
+    {open&&<>
       <group position={[0,.40,0]}><VRSurface title={km?'វត្តភ្នំ · បិទម៉ឺនុយ':'Wat Phnom · Hide menu'} onClick={()=>setOpen(false)}/></group>
       {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={km?khmerObjectTitle(stop.id):stop.title} height={.16} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
       <group position={[0,-.11,0]}><VRSurface title={sound} height={.16} onClick={ambience.toggle}/></group>

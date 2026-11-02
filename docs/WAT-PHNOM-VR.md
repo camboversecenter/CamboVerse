@@ -19,11 +19,13 @@ VR uses the selected Clean/Full **Ultra** file, even if the browser was in Norma
 The browser's selected detail remains available after exiting. No extra download
 is required just to open the VR instructions. The headset view contains a real
 3D menu: switch capture, reset position, exit. Select it with a controller ray
-and trigger. The menu is collapsed at arrival, fixed in the world to the left of
-the initial view. It never follows head movement. Press **Y on the left controller**
+and trigger. The menu is hidden at arrival and never follows head movement.
+Press **Y on the left controller**
 to open/hide it; opening with Y places it once in front of the current position.
-The world-space Menu button also opens it, and Hide menu collapses it. Capture
-changes/reset restore a collapsed menu at the new arrival. Left stick moves; right stick snap-turns by 30°. The headset owns
+The menu is completely absent while closed; no floating Menu/Y tab remains.
+Pressing Y again or selecting Hide menu dismisses it. Instructions are available
+in the VR help panel before entering. Capture changes/reset hide the menu again.
+Left stick moves; right stick snap-turns by 30°. The headset owns
 look direction. Browser orbit/keyboard controls yield during an XR session.
 Capture movement reads each stick independently, discards small resting-stick
 noise, caps movement after stalled frames, and clears movement when sticks are
