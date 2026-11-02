@@ -1,7 +1,7 @@
 import type {CaptureJumpState} from './captureWalk';
 
 export const RUN_MULTIPLIER=2.5;
-export const BUILDING_VR_HELP='Left stick: walk. Hold the left grip to run. Press right A to jump, then press again in the air for a second jump. Right stick: snap turn. Press left Y to open or close the campus guide. Use the headset system menu to leave VR.';
+export const BUILDING_VR_HELP='Left stick: move. Hold the left grip to speed up. On foot, press right A to jump, then press again in the air for a second jump. Press right B to fly; hold A to rise or left X to descend. Press B again to land. Right stick: snap turn. Left Y opens or closes the campus guide. Movement stays available while reading; point and press a trigger to select guide buttons. Use the headset system menu to leave VR.';
 
 /** At most two presses per flight; holding A never repeats. Floor-relative metres. */
 export function buildingVRJump(state:CaptureJumpState,held:boolean,pressed:boolean,delta:number,jumpsUsed=0){

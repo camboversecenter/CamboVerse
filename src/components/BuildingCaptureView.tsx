@@ -51,7 +51,7 @@ export function BuildingCaptureView({building,capture,backLabel,onBack,onModel}:
     {info&&!immersive&&<aside className="building-capture-notes" id="building-capture-notes">
       <h2>{building.name}</h2>
       <LocationGuide experienceId="campus" locationId={building.id} embedded onOpenChange={setGuideOpen}/>
-      <p>{walking?'WASD or the joystick to walk; drag to look. Hold Shift or select Run to move faster. Space or Jump jumps; press again in the air for a second jump. Select Fly to fly; while flying, Space rises and Shift descends. In VR, hold the left grip to run, press right A for each jump, and left Y for the campus guide.':'Drag to rotate, scroll to zoom, and right-drag or use two fingers to move the view. Choose Walk around to explore at eye level.'}</p>
+      <p>{walking?'WASD or the joystick to walk; drag to look. Hold Shift or select Run to move faster. Space or Jump jumps; press again in the air for a second jump. Select Fly to fly; while flying, Space rises and Shift descends. In VR, hold the left grip to run, press right A for each jump, and left Y for the campus guide. Right B toggles flying and landing; hold A to rise or left X to descend while flying. Movement remains available with the VR guide open.':'Drag to rotate, scroll to zoom, and right-drag or use two fingers to move the view. Choose Walk around to explore at eye level.'}</p>
       <p>Some surroundings and unphotographed angles are incomplete. Clean view reduces background fragments; Full scan preserves the wider export.</p>
       <a href="https://www.kaggle.com/code/camboversecenter/conference-hall-step2b-train-splat/output" target="_blank" rel="noreferrer">CamboVerse · capture source</a>
     </aside>}

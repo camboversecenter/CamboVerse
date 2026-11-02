@@ -25,7 +25,7 @@ import { paveTexture, roadTexture } from "../lib/campusTexture";
 import { buildingsOfSite, NUM_SITE, type Site } from "../buildings";
 import {
   CAMPUS_BUILDINGS, CAMPUS_POOLS, CAMPUS_ROADS, CAMPUS_WALLS,
-  sizeOf, type LayoutRect, type LayoutSegment,
+  sizeOf, campusEntranceSpawn, type LayoutRect, type LayoutSegment,
 } from "../campusLayout";
 import { MangoForest, type MangoDef } from "./MangoTree";
 import { BananaForest, type BananaDef } from "./BananaTree";
@@ -68,6 +68,7 @@ function detectViewMode(): ViewMode {
  * what it shares with this one is the directory, not the geometry.
  */
 const SITE_BUILDINGS = buildingsOfSite(NUM_SITE);
+const CAMPUS_ENTRY=campusEntranceSpawn();
 
 /**
  * The ground is a stack of flat surfaces that overlap in plan lawn, roads, car
@@ -235,14 +236,14 @@ export function BuildingsView({
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [immersive,setImmersive]=useState(false);
-  const [guideOpen,setGuideOpen]=useState(false),[vrGuideOpen,setVRGuideOpen]=useState(false);
+  const [guideOpen,setGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
   const [place, setPlace] = useState<string | null>(null);
   const input = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
-  const [start, setStart] = useState<[number, number, number]>(SITE_BUILDINGS[0].view.at);
-  const [startYaw, setStartYaw] = useState(SITE_BUILDINGS[0].view.yaw);
+  const [start, setStart] = useState<[number, number, number]>(CAMPUS_ENTRY.eye);
+  const [startYaw, setStartYaw] = useState(CAMPUS_ENTRY.yaw);
 
   useEffect(()=>setGuideOpen(false),[place,immersive]);
   const selected = SITE_BUILDINGS.find((p) => p.id === place) ?? null;
@@ -270,10 +271,10 @@ export function BuildingsView({
         <XR store={store}>
           <CampusWorld mode={mode} onOpenBuilding={onOpenBuilding} />
           {/* VR locomotion rig: left stick = walk, right stick = snap-turn 30°.
-              Spawns at the campus entrance facing the monument. Works on any
+              Spawns outside the main gate, facing into the campus. Works on any
               WebXR device; optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, 96]} buildingMovement paused={vrGuideOpen}/>
-          <VRBuildingGuide locationId={selected?.id??site.id} onOpenChange={setVRGuideOpen}/>
+          <VRRig position={CAMPUS_ENTRY.floor} startYaw={CAMPUS_ENTRY.yaw} buildingMovement/>
+          <VRBuildingGuide locationId={selected?.id??site.id}/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
             <FirstPersonControls 

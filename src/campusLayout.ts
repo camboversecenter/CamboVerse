@@ -203,3 +203,10 @@ export function viewpointFor(id: string): { at: [number, number, number]; yaw: n
     default: return { at: [bb.cx, y, bb.maxZ + gap], yaw: 0 };
   }
 }
+
+/** Shared gate arrival for walking and VR; XR supplies the visitor's eye height. */
+export function campusEntranceSpawn(){
+  const gate=bboxOf('gate');
+  const floor:[number,number,number]=[gate.cx,0,gate.maxZ+12];
+  return {eye:[floor[0],EYE_HEIGHT_M,floor[2]] as [number,number,number],floor,yaw:0};
+}

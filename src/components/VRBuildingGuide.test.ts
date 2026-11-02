@@ -10,13 +10,13 @@ vi.mock('./VRCaptureGuide',()=>({VRCaptureGuide:({locationId,onClose}:{locationI
 let root:Root,host:HTMLDivElement;
 beforeEach(()=>{vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);mock.button.state='default';mock.visibilityState='visible';host=document.createElement('div');document.body.append(host);root=createRoot(host);});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
-it('toggles only on each Y press, pauses locomotion, and closes from its board',async()=>{
-  const change=vi.fn();await act(async()=>root.render(createElement(VRBuildingGuide,{locationId:'hall',onOpenChange:change})));
+it('toggles only on each Y press and closes from its board',async()=>{
+  await act(async()=>root.render(createElement(VRBuildingGuide,{locationId:'hall'})));
   expect(host.textContent).toBe('');
-  await act(async()=>{mock.button.state='pressed';mock.frame();});expect(host.textContent).toContain('hall');expect(change).toHaveBeenLastCalledWith(true);
+  await act(async()=>{mock.button.state='pressed';mock.frame();});expect(host.textContent).toContain('hall');
   await act(async()=>mock.frame());expect(host.textContent).toContain('hall');
   await act(async()=>{mock.button.state='default';mock.frame();mock.button.state='pressed';mock.frame();});
-  expect(host.textContent).toBe('');expect(change).toHaveBeenLastCalledWith(false);
+  expect(host.textContent).toBe('');
   await act(async()=>{mock.button.state='default';mock.frame();mock.button.state='pressed';mock.frame();});
-  await act(async()=>host.querySelector('button')!.click());expect(host.textContent).toBe('');expect(change).toHaveBeenLastCalledWith(false);
+  await act(async()=>host.querySelector('button')!.click());expect(host.textContent).toBe('');
 });

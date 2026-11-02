@@ -4,11 +4,10 @@ import {useXR,useXRStore} from '@react-three/xr';
 import {VRCaptureGuide} from './VRCaptureGuide';
 
 /** World-anchored board, opened only on demand. Y and Close both dismiss it. */
-export function VRBuildingGuide({locationId,scale=1,onOpenChange}:{locationId:string;scale?:number;onOpenChange:(open:boolean)=>void}){
+export function VRBuildingGuide({locationId,scale=1}:{locationId:string;scale?:number}){
   const store=useXRStore(),active=useXR(s=>s.session!=null);
   const [open,setOpen]=useState(false),held=useRef(false);
   useEffect(()=>{setOpen(false);held.current=false;},[active,locationId]);
-  useEffect(()=>{onOpenChange(open);return()=>onOpenChange(false);},[open,onOpenChange]);
   useFrame(()=>{
     if(!active)return;
     const state=store.getState();

@@ -244,7 +244,7 @@ export function BuildingView({
 }) {
   const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
   const [immersive,setImmersive]=useState(false);
-  const [guideOpen,setGuideOpen]=useState(false),[vrGuideOpen,setVRGuideOpen]=useState(false);
+  const [guideOpen,setGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
   // We initialize spin based on whether a room was pre-selected.
@@ -343,8 +343,8 @@ export function BuildingView({
           {/* VR locomotion: left thumbstick walks, right thumbstick snap-turns.
               XROrigin starts behind the building so you face it on entry.
               Works on any WebXR device, optimised for Meta Quest 3. */}
-          <VRRig position={[0, 0, dist * 0.8]} buildingMovement paused={vrGuideOpen}/>
-          <VRBuildingGuide locationId={building.id} onOpenChange={setVRGuideOpen}/>
+          <VRRig position={[0, 0, dist * 0.8]} buildingMovement/>
+          <VRBuildingGuide locationId={building.id}/>
           <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {walking?<FirstPersonControls input={walkInput} allowDoubleJump enabled={!guideOpen} start={[0,1.6,Math.max(10,building.spanM*.6)]} eyeHeight={1.6}/>:<OrbitControls
             resetKey={`${building.id}:${room ?? 'overview'}`}

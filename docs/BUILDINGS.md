@@ -353,11 +353,17 @@ You are the contributor, not the model. The spec goes in under your name.
 - Mobile: Run toggles speed; tap Jump again in the air for the second jump.
 - Quest: left grip runs, right A jumps (press again for the extra jump), and
   left Y opens/closes the campus guide. The board also has a Close button.
+  Right B toggles flying/landing; while flying hold A to rise or left X to
+  descend. Hold the left grip to fly faster. Landing returns smoothly to the
+  authored floor; headset focus loss suspends movement.
 - Campus captures keep the explicit Fly/Land buttons; double Space now performs
   the extra jump in Buildings. Wat Phnom flight shortcuts are unchanged.
 - Campus guide is available on the campus overview, in landmark information,
   on every building page, and in the Campus Shrine capture notes. Movement
-  pauses while its reading board is open.
+  pauses while reading on desktop/mobile. In VR, sticks, flight and controller
+  trigger interactions remain available with the board open.
+- Campus walking and VR start twelve metres outside the main gate footprint,
+  facing into the campus. The spawn is derived from the shared campus layout.
 - Answers resolve the building ID against the server's registry. Gemini uses
   these notes only; no verified building dates, live room schedules or current
   access permissions are available. Missing AI returns labelled saved notes.

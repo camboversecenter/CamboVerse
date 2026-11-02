@@ -125,7 +125,6 @@ export function Viewer({
     const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
     return navigator.hardwareConcurrency <= 4 || memory <= 3 || Math.min(screen.width, screen.height) < 500 ? "normal" : "ultra";
   });
-  const [buildingGuideOpen,setBuildingGuideOpen]=useState(false);
   const [immersive, setImmersive] = useState(false);
   useEffect(()=>{onImmersiveChange?.(immersive);},[immersive,onImmersiveChange]);
   const [showParts, setShowParts] = useState(false);
@@ -229,8 +228,8 @@ export function Viewer({
 
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
-          capture={vrTour||buildingMovement?capture:undefined} resetKey={vrReset} buildingMovement={buildingMovement} paused={buildingGuideOpen}/>
-        {buildingGuideId&&<VRBuildingGuide locationId={buildingGuideId} scale={capture?captureVRScale(capture):1} onOpenChange={setBuildingGuideOpen}/>}
+          capture={vrTour||buildingMovement?capture:undefined} resetKey={vrReset} buildingMovement={buildingMovement}/>
+        {buildingGuideId&&<VRBuildingGuide locationId={buildingGuideId} scale={capture?captureVRScale(capture):1}/>}
         {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)} onOpenChange={onVRMenuChange}/>}
         {vrTour&&capture&&immersive&&vrGuideOpen&&vrTour.activeId&&<VRCaptureGuide key={vrTour.activeId} locationId={vrTour.activeId} scale={captureVRScale(capture)} onClose={()=>setVRGuideOpen(false)}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
