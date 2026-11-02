@@ -1,4 +1,5 @@
 .location-guide-host { position:fixed; z-index:60; left:16px; top:78px; color:#f4f4e9; font-family:system-ui,sans-serif; }
+.penh-avatar { width:48px; height:48px; object-fit:cover; border-radius:50%; border:2px solid #d1d69c; }
 .location-guide-host .location-guide-launcher { position:static; display:flex; align-items:center; gap:7px; min-height:48px; padding:3px 15px 3px 4px; border:1px solid #b3c99c; border-radius:999px; background:#14362dee; color:#f4f4e9; font:700 14px system-ui,sans-serif; box-shadow:0 4px 20px #0004; cursor:pointer; }
 .location-guide-panel { position:fixed; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); max-height:min(610px,calc(100dvh - 180px)); display:flex; flex-direction:column; border:1px solid #839f80; border-radius:20px; background:#102b25f5; box-shadow:0 12px 50px #0006; overflow:hidden; }
 .location-guide-header { display:flex; align-items:center; gap:9px; padding:12px 14px; border-bottom:1px solid #a5bf8233; flex-shrink:0; }

@@ -24,7 +24,7 @@ describe('optional heritage ambience',()=>{
     expect(Audio).not.toHaveBeenCalled();
     await controller.setEnabled(true);vi.advanceTimersByTime(4000);
     expect(media.preload).toBe('none');expect(media.loop).toBe(true);
-    expect(media.volume).toBeCloseTo(.18,3);expect(state).toHaveBeenLastCalledWith('playing');
+    expect(media.volume).toBeCloseTo(.28,3);expect(state).toHaveBeenLastCalledWith('playing');
     await controller.setEnabled(false);expect(media.pause).toHaveBeenCalled();
     expect(vi.getTimerCount()).toBe(0);expect(state).toHaveBeenLastCalledWith('off');
     controller.dispose();expect(media.removeAttribute).toHaveBeenCalledWith('src');
@@ -32,11 +32,11 @@ describe('optional heritage ambience',()=>{
   it('ducks under narration and fades both ends of the loop',async()=>{
     const {controller}=player();await controller.setEnabled(true);vi.advanceTimersByTime(4000);
     window.speechSynthesis.speaking=true;vi.advanceTimersByTime(4000);
-    expect(media.volume).toBeCloseTo(.18*.22,3);
+    expect(media.volume).toBeCloseTo(.28*.22,3);
     window.speechSynthesis.speaking=false;media.currentTime=38.9;vi.advanceTimersByTime(4000);
-    expect(media.volume).toBeCloseTo(.18*.125,3);
+    expect(media.volume).toBeCloseTo(.28*.125,3);
     media.currentTime=.1;vi.advanceTimersByTime(4000);
-    expect(media.volume).toBeCloseTo(.18*.125,3);
+    expect(media.volume).toBeCloseTo(.28*.125,3);
   });
   it('pauses while hidden and surfaces a playback failure for retry',async()=>{
     const {controller,state}=player();await controller.setEnabled(true);

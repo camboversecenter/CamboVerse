@@ -1,3 +1,4 @@
+import {guideNarrationActive} from './guideNarrator';
 export const HERITAGE_AMBIENCE={
   url:'/audio/ambience/cambodia-birds.ogg',
   credit:'Cambodia birds · L. Shyamal · CC0',
@@ -37,8 +38,8 @@ export class HeritageAmbience {
         if(!this.audio)return;
         const start=Math.min(1,this.audio.currentTime/.8);
         const end=Number.isFinite(this.audio.duration)?Math.min(1,Math.max(0,(this.audio.duration-this.audio.currentTime)/.8)):1;
-        const speaking=typeof window!=='undefined'&&window.speechSynthesis?.speaking;
-        const target=.18*Math.max(0,Math.min(start,end))*(speaking? .22:1);
+        const speaking=guideNarrationActive()||(typeof window!=='undefined'&&window.speechSynthesis?.speaking);
+        const target=.28*Math.max(0,Math.min(start,end))*(speaking? .22:1);
         this.audio.volume+=(target-this.audio.volume)*.25;
       },100);
     }catch{

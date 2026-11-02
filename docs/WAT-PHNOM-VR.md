@@ -52,7 +52,24 @@ priority over scene interactions; the cursor appears on actual targets.
 
 ## Information and ambience
 
-Both Wat Phnom captures expose **Ask Kiri** in the browser and, from the VR Y
+Wat Phnom's fictional AI guide is **Penh**, the approved Phnom Penh character;
+her thumbnail is credited to CamboVerse Center (CC BY 4.0). The separate room
+and non-Wat-Phnom guides continue using their own identities.
+
+Pressing Listen requests Gemini-generated WAV narration from the Worker; the
+key remains server-side and the visitor's answer text is sent to Gemini. A
+browser Web Audio context is unlocked on the click so asynchronous speech can
+play in an immersive session. If the provider fails, the browser voice is used
+where available; otherwise the readable answer and retry remain available.
+Generated speech and music/bird tracks are cleaned up when the guide or site is
+closed; both ambience layers duck while guide narration is playing.
+
+Birds and music now have separate controls in desktop/mobile and the VR menu.
+The bird recording is louder; the new music is a lightweight original synthesized
+instrumental pattern, not a recording of Cambodian traditional music. Both layers
+may start on VR entry, depending on browser audio permission, and can be muted.
+
+Both Wat Phnom captures expose **Ask Penh** in the browser and, from the VR Y
 menu, as a controller-selectable in-world guide. Browser visitors can type a
 question and optionally dictate it if speech recognition is available; VR
 visitors can select suggested questions or dictate where the headset browser
@@ -87,8 +104,8 @@ not an assertion that the scan supplies solid surface depth.
 Wat Phnom has **Bird ambience** in the browser and VR menu. It is off initially
 in the browser, and starts when the visitor presses Enter VR (if the browser
 allows playback), for both Naga and Clock. The visitor can mute it and the choice
-is retained while the site remains open. Playback is lazy-loaded, quiet (maximum 18% gain), fades at loop boundaries,
-and ducks under browser narration. It pauses while the active page/headset view is hidden
+is retained while the site remains open. Playback is lazy-loaded, fades at loop boundaries,
+and ducks under guide narration. It pauses while the active page/headset view is hidden
 and releases audio on leaving the site. Download/playback failures provide a retry.
 The 392 KiB CC0 recording is by L. Shyamal in **Siem Reap**, not Wat Phnom; its
 credit and provenance are retained in the interface and

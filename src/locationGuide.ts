@@ -1,7 +1,7 @@
 /** Reviewed context for the two local guide previews. No image uploads or
  * inferred room history. The server resolves these IDs itself. */
 import { objectInfoFor } from './objectHotspots';
-export type GuideExperience = 'staircase-3dgs' | 'clock-3dgs' | 'room-360';
+export type GuideExperience = 'wat-phnom' | 'staircase-3dgs' | 'clock-3dgs' | 'room-360';
 export type GuideSource = { title: string; url?: string };
 export type LocationFact = { question: string; keywords: string[]; text: string; sources: GuideSource[] };
 export type LocationContext = {
@@ -28,6 +28,12 @@ const roomTitles = [
 ];
 
 function baseLocationGuideContext(experienceId: string, locationId: string): LocationContext | null {
+  if(experienceId==='wat-phnom'&&locationId==='wat-phnom'){
+    const staircase=baseLocationGuideContext('staircase-3dgs','naga-staircase')!;
+    return {...staircase,experienceId:'wat-phnom',locationId:'wat-phnom',title:'Wat Phnom',
+      introduction:'Welcome to Wat Phnom in Phnom Penh. Ask about the site and the photographed staircase.',
+      facts:staircase.facts.slice(0,2)};
+  }
   if (experienceId === 'clock-3dgs' && locationId === 'flower-clock') return {
     experienceId, locationId, title: 'Wat Phnom · Flower Clock',
     introduction: 'You are exploring the photographed flower clock near Wat Phnom in Phnom Penh. Ask about the clock, the site, or this capture.',

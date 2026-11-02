@@ -191,6 +191,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
 
       {capture && selectedObject && objectInfoFor('staircase-3dgs','naga-staircase',selectedObject) && <ObjectInfoCard
         key={selectedObject} object={objectInfoFor('staircase-3dgs','naga-staircase',selectedObject)!}
+        guideName="Penh"
         onClose={()=>setSelectedObject(null)} onAsk={()=>{setGuideObject(selectedObject);setGuideRequest(n=>n+1);setSelectedObject(null);}}
       />}
 
@@ -220,12 +221,13 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
 
 
       {/* Kiri the monkey guide tap to open the AI tour guide. */}
-      {!walking && spot.live && !guideOpen && !activePoi && (
+      {!walking && spot.live && !guideOpen && !activePoi && spot.id!=='wat-phnom' && (
         <button className="guide-fab" onClick={() => setGuideOpen(true)} aria-label="Ask Kiri, the tour guide">
           <GuideMascot state="idle" size={56} />
           <span>Ask Kiri</span>
         </button>
       )}
+      {!walking && !capture && spot.id==='wat-phnom' && !activePoi && <LocationGuide experienceId="wat-phnom" locationId="wat-phnom"/>}
 
       {!walking && guideOpen && (
         <TourGuide

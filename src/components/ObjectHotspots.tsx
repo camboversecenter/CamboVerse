@@ -18,7 +18,7 @@ export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1}:{anchors:Objec
   </Html>)}</>;
 }
 
-export function ObjectInfoCard({object,onClose,onAsk}:{object:ObjectInfo;onClose:()=>void;onAsk:()=>void}) {
+export function ObjectInfoCard({object,onClose,onAsk,guideName='Kiri'}:{object:ObjectInfo;onClose:()=>void;onAsk:()=>void;guideName?:string}) {
   const [speech,setSpeech]=useState<'idle'|'loading'|'speaking'|'unavailable'>('idle');
   const generation=useRef(0);
   useEffect(()=>()=>{generation.current++;stopSpeaking();},[]);
@@ -42,7 +42,7 @@ export function ObjectInfoCard({object,onClose,onAsk}:{object:ObjectInfo;onClose
       <button onClick={listen} disabled={!ttsSupported()} aria-pressed={speech==='loading'||speech==='speaking'}>
         {speech==='loading'||speech==='speaking'?'■ Stop narration':'▶ Listen'}
       </button>
-      <button onClick={()=>{stop();onAsk();}}>Ask Kiri about this</button>
+      <button onClick={()=>{stop();onAsk();}}>Ask {guideName} about this</button>
     </div>
     {(!ttsSupported()||speech==='unavailable')&&<p className="object-info-audio-note" role="status">Narration is unavailable in this browser. You can still read the information above.</p>}
     {speech==='loading'&&<p className="object-info-audio-note" role="status">Starting narration…</p>}

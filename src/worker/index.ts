@@ -16,6 +16,7 @@ import { ERAS } from "../history";
 import { fulfillmentFor } from "../lib/economy";
 import { handleRails } from "./rails";
 import { handleLocationGuide } from './locationGuide';
+import { handleGuideVoice } from './guideVoice';
 
 interface Env {
   ASSETS: Fetcher;
@@ -53,6 +54,9 @@ export default {
 
     if (url.pathname === "/api/guide" && request.method === "POST") {
       return handleGuide(request, env);
+    }
+    if (url.pathname === '/api/guide-voice' && request.method === 'POST') {
+      return handleGuideVoice(request,env);
     }
 
     // Digital economy: visitor's country (for geo-aware fulfillment) + orders.
