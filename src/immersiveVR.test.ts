@@ -1,8 +1,15 @@
 import {describe,expect,it,vi} from 'vitest';
-import {IMMERSIVE_XR_OPTIONS,checkImmersiveVR,immersiveVRError,startImmersiveVR} from './immersiveVR';
+import {IMMERSIVE_XR_OPTIONS,checkImmersiveVR,immersiveVRError,startImmersiveVR,vrSimulationEnabled} from './immersiveVR';
 import {buildXRSessionInit,createXRStore} from '@pmndrs/xr/internals';
 
 describe('native headset entry',()=>{
+  it('allows opt-in simulation only on a local development server',()=>{
+    expect(vrSimulationEnabled(true,'127.0.0.1','?site=wat-phnom&vr-sim=1')).toBe(true);
+    expect(vrSimulationEnabled(true,'localhost','?vr-sim=1')).toBe(true);
+    expect(vrSimulationEnabled(false,'localhost','?vr-sim=1')).toBe(false);
+    expect(vrSimulationEnabled(true,'preview.camboverse.world','?vr-sim=1')).toBe(false);
+    expect(vrSimulationEnabled(true,'127.0.0.1','?site=wat-phnom')).toBe(false);
+  });
   it('disables emulated sessions, automatic entry, and flat HTML overlays',()=>{
     expect(IMMERSIVE_XR_OPTIONS).toMatchObject({emulate:false,offerSession:false,enterGrantedSession:false,domOverlay:false});
   });

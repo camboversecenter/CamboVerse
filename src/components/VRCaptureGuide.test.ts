@@ -44,4 +44,10 @@ describe('immersive location guide',()=>{
     await act(async()=>button('Listen').click());
     expect(mocked.speak).toHaveBeenCalledWith('Bonjour et bienvenue.','fr-FR',expect.any(Object));
   });
+  it('uses the selected sculpture as the guide context',async()=>{
+    mocked.ask.mockResolvedValue({text:'The naga forms the staircase railing.',fallback:false,sources:[]});
+    await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'naga-staircase',objectId:'naga-balustrade',scale:1,embedded:true,onClose:vi.fn()})));
+    await act(async()=>button('Tell me about Naga balustrade').click());
+    expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({locationId:'naga-staircase',objectId:'naga-balustrade'}),expect.any(AbortSignal));
+  });
 });

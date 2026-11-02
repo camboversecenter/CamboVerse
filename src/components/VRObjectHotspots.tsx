@@ -3,8 +3,9 @@ import {useFrame} from '@react-three/fiber';
 import {Group,Vector3} from 'three';
 import {OBJECT_INFO,type ObjectAnchor,type ObjectInfo} from '../objectHotspots';
 import {worldPanelPose,vrMarkerScale} from '../vrPresentation';
-import {speak,stopSpeaking,ttsSupported} from '../lib/voice';
+import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import {VRSurface} from './VRSurface';
+import {VRCaptureGuide} from './VRCaptureGuide';
 
 function VRMarker({anchor,scale,onSelect}:{anchor:ObjectAnchor;scale:number;onSelect:()=>void}) {
   const ref=useRef<Group>(null),head=useMemo(()=>new Vector3(),[]);
@@ -21,12 +22,13 @@ function VRMarker({anchor,scale,onSelect}:{anchor:ObjectAnchor;scale:number;onSe
   </group>;
 }
 
-function VRObjectCard({object,scale,onClose}:{object:ObjectInfo;scale:number;onClose:()=>void}) {
-  const ref=useRef<Group>(null),place=useRef(true),generation=useRef(0);
+function VRObjectCard({object,scale,onClose,penhGuide}:{object:ObjectInfo;scale:number;onClose:()=>void;penhGuide:boolean}) {
+  const ref=useRef<Group>(null),place=useRef(true);
   const helpers=useMemo(()=>({head:new Vector3(),forward:new Vector3()}),[]);
-  const [speech,setSpeech]=useState<'idle'|'speaking'|'unavailable'>('idle');
+  const [speech,setSpeech]=useState<NarrationStatus>('idle'),[guideOpen,setGuideOpen]=useState(false);
+  const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
   useLayoutEffect(()=>{place.current=true;},[object.id]);
-  useEffect(()=>()=>{generation.current++;stopSpeaking();},[]);
+  useEffect(()=>()=>narrator.dispose(),[narrator]);
   useFrame(({camera})=>{
     if(!ref.current||!place.current)return;
     camera.getWorldPosition(helpers.head);camera.getWorldDirection(helpers.forward);
@@ -35,26 +37,23 @@ function VRObjectCard({object,scale,onClose}:{object:ObjectInfo;scale:number;onC
     ref.current.visible=true;place.current=false;
   });
   const listen=()=>{
-    const token=++generation.current;
-    if(speech==='speaking'){stopSpeaking();setSpeech('idle');return;}
-    setSpeech('speaking');
-    const ok=speak(`${object.title}. ${object.text}`,'en-US',{
-      onEnd:()=>{if(token===generation.current)setSpeech('idle');},
-      onError:()=>{if(token===generation.current)setSpeech('unavailable');},
-    });
-    if(!ok)setSpeech('unavailable');
+    if(speech==='speaking'||speech==='loading'){narrator.stop();return;}
+    void narrator.start(`${object.title}. ${object.text}`,'en-US');
   };
   return <group ref={ref} scale={scale} visible={false}>
-    <VRSurface title={object.title} body={object.text} footer={object.source.title} width={1.28} height={.96}/>
-    <group position={[-.33,-.59,.002]}><VRSurface title={!ttsSupported()||speech==='unavailable'?'Narration unavailable':speech==='speaking'?'Stop narration':'Listen'} width={.62} height={.14} onClick={listen}/></group>
-    <group position={[.33,-.59,.002]}><VRSurface title="Close information" width={.62} height={.14} onClick={onClose}/></group>
+    {guideOpen?<VRCaptureGuide embedded locationId="naga-staircase" objectId={object.id} scale={1} onClose={()=>setGuideOpen(false)}/>:<>
+      <VRSurface title={object.title} body={object.text} footer={object.source.title} width={1.28} height={.96}/>
+      <group position={[penhGuide ? -.43 : -.33,-.59,.002]}><VRSurface title={speech==='loading'?'Loading…':speech==='unavailable'?'Retry voice':speech==='speaking'?'Stop':'Listen'} width={penhGuide ? .4 : .62} height={.14} onClick={listen}/></group>
+      {penhGuide&&<group position={[0,-.59,.002]}><VRSurface title="Ask Penh" width={.4} height={.14} onClick={()=>{narrator.stop();setGuideOpen(true);}}/></group>}
+      <group position={[penhGuide ? .43 : .33,-.59,.002]}><VRSurface title="Close" width={penhGuide ? .4 : .62} height={.14} onClick={onClose}/></group>
+    </>}
   </group>;
 }
 
-export function VRObjectHotspots({anchors,scale}:{anchors:ObjectAnchor[];scale:number}) {
+export function VRObjectHotspots({anchors,scale,penhGuide=false}:{anchors:ObjectAnchor[];scale:number;penhGuide?:boolean}) {
   const [selected,setSelected]=useState<string|null>(null);
   return <>
     {!selected&&anchors.map(anchor=><VRMarker key={anchor.id} anchor={anchor} scale={scale} onSelect={()=>setSelected(anchor.id)}/>)}
-    {selected&&<VRObjectCard key={selected} object={OBJECT_INFO[selected]} scale={scale} onClose={()=>setSelected(null)}/>}
+    {selected&&<VRObjectCard key={selected} object={OBJECT_INFO[selected]} scale={scale} penhGuide={penhGuide} onClose={()=>setSelected(null)}/>}
   </>;
 }

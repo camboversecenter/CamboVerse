@@ -28,7 +28,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { ObjectHotspotMarkers } from './ObjectHotspots';
 import { STAIRCASE_OBJECT_ANCHORS } from '../objectHotspots';
 import { CaptureVREntry, CaptureVRMenu, ImmersiveVREntry, type CaptureVRTour } from './CaptureVR';
-import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
+import {IMMERSIVE_XR_OPTIONS,vrSimulationEnabled} from '../immersiveVR';
 import { captureVRArrival,captureVRScale } from '../captureVR';
 import {HeritageAmbienceButton,useHeritageAmbience} from './HeritageAmbience';
 import {VRCaptureGuide} from './VRCaptureGuide';
@@ -106,10 +106,9 @@ export function Viewer({
   /** Floating micro-animation (used for artifacts). */
   float?: boolean;
 }) {
-  // One XR store per viewer session; drives the optional VR mode. The device
-  // emulator is off (it pulls heavy room assets on localhost). The capture
-  // tour waits for an explicit entry click rather than offering a session.
-  const store = useMemo(() => createXRStore(IMMERSIVE_XR_OPTIONS), []);
+  // The opt-in simulator is only available on the local development server.
+  const simulation=!!vrTour&&vrSimulationEnabled(import.meta.env.DEV,window.location.hostname,window.location.search);
+  const store = useMemo(() => createXRStore({...IMMERSIVE_XR_OPTIONS,emulate:simulation?{type:'metaQuest3',inject:true,syntheticEnvironment:false}:false}), [simulation]);
   const ambience=useHeritageAmbience(!!vrTour,store);
   const [arSupported, setArSupported] = useState(false);
   const [detail, setDetail] = useState<"normal" | "ultra">(() => {
@@ -162,6 +161,7 @@ export function Viewer({
         )}
       </div>
       {vrTour?<CaptureVREntry store={store} tour={vrTour} onStartAmbience={ambience.start}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
+      {simulation&&!immersive&&<div role="status" style={{position:'fixed',top:70,left:14,zIndex:80,padding:'8px 12px',borderRadius:10,background:'#513918',color:'#fff'}}>Local VR test mode · simulator loads if no headset is available. Press Enter VR and use the emulator controls.</div>}
       {vrTour&&!immersive&&<HeritageAmbienceButton control={ambience}/>}
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.
@@ -199,7 +199,7 @@ export function Viewer({
 
         {capture?.walkAround && <CaptureAreaGround area={capture.walkAround}/>}
 
-        {capture && onSelectCaptureObject && <ObjectHotspotMarkers key={vrReset} anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject} vrScale={captureVRScale(capture)}/>}
+        {capture && onSelectCaptureObject && <ObjectHotspotMarkers key={vrReset} anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject} vrScale={captureVRScale(capture)} vrPenhGuide/>}
 
         {/* Points of interest to walk between or a single info hotspot. */}
         {capture || (ultraModelUrl && !showParts) ? null : pois && pois.length && onSelectPoi ? (

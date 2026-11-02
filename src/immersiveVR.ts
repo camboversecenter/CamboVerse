@@ -17,6 +17,11 @@ export const IMMERSIVE_XR_OPTIONS={
     cursorModel:{color:'#ffdc75',opacity:1,size:.08,cursorOffset:.001,renderOrder:3001,materialClass:HeritageCursorMaterial}}},
 } as const;
 
+/** Explicit local development switch. Never emulate on a deployed site. */
+export function vrSimulationEnabled(dev:boolean,hostname:string,search:string):boolean {
+  return dev && (hostname==='localhost'||hostname==='127.0.0.1'||hostname==='[::1]') && new URLSearchParams(search).get('vr-sim')==='1';
+}
+
 export type VRSupport = {ready:boolean; code:string; message:string};
 
 /** DOMException (and exceptions from another realm) need not be instanceof Error. */

@@ -7,9 +7,9 @@ import './ObjectHotspots.css';
 import {VRObjectHotspots} from './VRObjectHotspots';
 
 /** HTML markers sit above the walking gesture layer and follow world anchors. */
-export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number}) {
+export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1,vrPenhGuide=false}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number;vrPenhGuide?:boolean}) {
   const immersive=useXR(s=>s.session!=null);
-  if(immersive)return <VRObjectHotspots anchors={anchors} scale={vrScale}/>;
+  if(immersive)return <VRObjectHotspots anchors={anchors} scale={vrScale} penhGuide={vrPenhGuide}/>;
   return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]}>
     <button className="object-hotspot-marker" aria-label={`Learn about ${OBJECT_INFO[anchor.id].title}`}
       onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSelect(anchor.id);}}>

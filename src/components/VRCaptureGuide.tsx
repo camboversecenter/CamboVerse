@@ -16,9 +16,9 @@ function PenhPortrait(){
 
 /** Controller-selectable guide. Suggested questions work without a microphone;
  * free-form voice input is offered only when the headset browser supports it. */
-export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;scale:number;onClose:()=>void}) {
+export function VRCaptureGuide({locationId,objectId,scale,onClose,embedded=false}:{locationId:string;objectId?:string;scale:number;onClose:()=>void;embedded?:boolean}) {
   const experienceId:GuideExperience=locationId==='flower-clock'?'clock-3dgs':'staircase-3dgs';
-  const context=locationGuideContext(experienceId,locationId);
+  const context=locationGuideContext(experienceId,locationId,objectId);
   const [reply,setReply]=useState<GuideReply|null>(null),[page,setPage]=useState(0),[loading,setLoading]=useState(false);
   const [listening,setListening]=useState(false),[speech,setSpeech]=useState<NarrationStatus>('idle'),[error,setError]=useState('');
   const {language,choose}=useGuideLanguage();
@@ -27,7 +27,7 @@ export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;sca
   const pending=useRef<AbortController|null>(null),stopListen=useRef<null|(()=>void)>(null);
   const panel=useRef<Group>(null),placed=useRef(false),vectors=useMemo(()=>({head:new Vector3(),direction:new Vector3()}),[]);
   useFrame(({camera})=>{
-    if(!panel.current||placed.current)return;
+    if(embedded||!panel.current||placed.current)return;
     camera.getWorldPosition(vectors.head);camera.getWorldDirection(vectors.direction);
     const pose=worldPanelPose(vectors.head,vectors.direction,scale);
     panel.current.position.set(...pose.position);panel.current.rotation.set(0,pose.yaw,0);panel.current.visible=true;placed.current=true;
@@ -40,7 +40,7 @@ export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;sca
     pending.current?.abort();const controller=new AbortController();pending.current=controller;
     setLoading(true);setReply(null);setError('');setPage(0);narrator.stop();
     const timer=setTimeout(()=>controller.abort(),15000);
-    const result=await askGuide({experienceId,locationId,question,lang:language.code},controller.signal);
+    const result=await askGuide({experienceId,locationId,objectId,question,lang:language.code},controller.signal);
     clearTimeout(timer);
     if(pending.current!==controller)return;
     setReply(result?.text?.trim()?result:{...savedLocationAnswer(context,question),fallback:true});
@@ -60,10 +60,10 @@ export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;sca
     void narrator.start(reply.text,guideLanguage(replyLang).bcp);
   };
   const reset=()=>{narrator.stop();setReply(null);setPage(0);setError('');};
-  return <group ref={panel} scale={scale} visible={false}>
+  return <group ref={panel} scale={scale} visible={embedded}>
     {!reply?<>
       <Suspense fallback={null}><PenhPortrait/></Suspense>
-      <group position={[0,.48,0]}><VRSurface title={`Ask Penh · ${locationId==='flower-clock'?'Flower Clock':'Naga Staircase'}`} /></group>
+      <group position={[0,.48,0]}><VRSurface title={`Ask Penh · ${objectId?context.title:locationId==='flower-clock'?'Flower Clock':'Naga Staircase'}`} /></group>
       <group position={[0,.39,0]}><VRSurface title="Fictional AI · CamboVerse Center · CC BY 4.0" height={.07}/></group>
       {context.facts.slice(0,3).map((fact,i)=><group key={fact.question} position={[0,.28-i*.17,0]}>
         <VRSurface title={fact.question} height={.16} onClick={()=>void ask(fact.question)}/></group>)}
@@ -72,7 +72,7 @@ export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;sca
       <group position={[0,-.53,0]}><VRSurface title="Questions and narration sent to Gemini" height={.07}/></group>
       {sttSupported()&&<group position={[0,-.61,0]}><VRSurface title="Voice may use browser speech service" height={.09}/></group>}
       {error&&<group position={[0,-.70,0]}><VRSurface title={error}/></group>}
-      <group position={[0,-.82,0]}><VRSurface title="Close guide" onClick={onClose}/></group>
+      <group position={[0,-.82,0]}><VRSurface title={embedded?'Back to information':'Close guide'} onClick={onClose}/></group>
     </>:<>
       <VRSurface title={reply.fallback?'Penh · Saved notes (English)':`Penh · ${guideLanguage(replyLang).name} · AI answer`} body={pages[page]??reply.text} footer={`Page ${page+1}/${pages.length} · ${reply.sources?.[0]?.title??'Location guide'}`} width={1.28} height={.96}/>
       <group position={[-.45,-.59,0]}><VRSurface title="Previous" width={.42} onClick={()=>setPage(p=>Math.max(0,p-1))}/></group>

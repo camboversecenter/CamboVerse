@@ -71,6 +71,18 @@ In either capture, the right controller's A button requests a short jump;
 release the button before jumping again. This moves the virtual view vertically
 and should be tested for comfort on the actual headset.
 
+In the Naga Staircase capture, select either the Naga balustrade or guardian
+lion information label, then select **Ask Penh** within that card. The guide
+uses the selected sculpture's notes; **Back to information** returns to its card.
+The card's Listen action uses the same generated-voice path as the guide.
+
+For local development, run `npm run dev -- --host 127.0.0.1` and open
+`http://127.0.0.1:5173/?site=wat-phnom&vr-sim=1`. This explicitly enables the
+experimental Meta Quest 3 emulator on the local development server only; select
+Enter VR and use the emulator's controls. It is a simulation, not a substitute
+for testing controller targeting, comfort, speech, or rendering in a headset.
+The flag is ignored in production and real headset VR remains the default.
+
 Pressing Listen requests Gemini-generated WAV narration from the Worker; the
 key remains server-side and the visitor's answer text is sent to Gemini. A
 browser Web Audio context is unlocked on the click so asynchronous speech can

@@ -47,7 +47,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
     void check();navigator.xr?.addEventListener('devicechange',check);
     window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);
     setActive(store.getState().session!=null&&store.getState().mode==='immersive-vr');
-    const unsubscribe=store.subscribe(s=>setActive(s.session!=null&&s.mode==='immersive-vr'));
+    const unsubscribe=store.subscribe((s,previous)=>{setActive(s.session!=null&&s.mode==='immersive-vr');if(s.emulator&&!previous.emulator)void check();});
     return ()=>{navigator.xr?.removeEventListener('devicechange',check);window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh);unsubscribe();void store.getState().session?.end().catch(()=>{});};
   },[store,check]);
   useEffect(()=>{
