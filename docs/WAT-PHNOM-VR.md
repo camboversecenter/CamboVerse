@@ -75,6 +75,10 @@ In the Naga Staircase capture, select either the Naga balustrade or guardian
 lion information label, then select **Ask Penh** within that card. The guide
 uses the selected sculpture's notes; **Back to information** returns to its card.
 The card's Listen action uses the same generated-voice path as the guide.
+VR labels include a point-and-select instruction and the information board has
+larger Listen, Ask Penh and Close targets. On desktop and mobile, capture labels
+are projected into the page overlay above the walking gesture layer so that a
+tap can reach the label rather than being intercepted by walk controls.
 
 For local development, run `npm run dev -- --host 127.0.0.1` and open
 `http://127.0.0.1:5173/?site=wat-phnom&vr-sim=1`. This explicitly enables the

@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei';
 import { useXR } from '@react-three/xr';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { OBJECT_INFO, type ObjectAnchor, type ObjectInfo } from '../objectHotspots';
 import { speak, stopSpeaking, ttsSupported } from '../lib/voice';
 import './ObjectHotspots.css';
@@ -9,11 +9,15 @@ import {VRObjectHotspots} from './VRObjectHotspots';
 /** HTML markers sit above the walking gesture layer and follow world anchors. */
 export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1,vrPenhGuide=false}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number;vrPenhGuide?:boolean}) {
   const immersive=useXR(s=>s.session!=null);
+  // A fixed-position viewer is a stacking context: a high z-index inside it
+  // cannot rise above the separate walking overlay. The capture fills the
+  // viewport, so its projected labels can be placed directly in the body.
+  const overlay=useMemo(()=>typeof document==='undefined'?undefined:{current:document.body},[]);
   if(immersive)return <VRObjectHotspots anchors={anchors} scale={vrScale} penhGuide={vrPenhGuide}/>;
-  return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]}>
+  return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]} portal={vrPenhGuide?overlay:undefined}>
     <button className="object-hotspot-marker" aria-label={`Learn about ${OBJECT_INFO[anchor.id].title}`}
       onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSelect(anchor.id);}}>
-      <span aria-hidden="true">i</span>{OBJECT_INFO[anchor.id].title}
+      <span aria-hidden="true">i</span><span className="object-marker-copy"><strong>{OBJECT_INFO[anchor.id].title}</strong><small>View details</small></span><span className="object-marker-arrow" aria-hidden="true">›</span>
     </button>
   </Html>)}</>;
 }

@@ -18,7 +18,7 @@ function VRMarker({anchor,scale,onSelect}:{anchor:ObjectAnchor;scale:number;onSe
     ref.current.visible=distance>.15*scale;
   });
   return <group ref={ref} position={anchor.position} scale={scale}>
-    <VRSurface title={`ⓘ ${OBJECT_INFO[anchor.id].title}`} width={.95} height={.16} onClick={onSelect}/>
+    <VRSurface variant="marker" title={`ⓘ ${OBJECT_INFO[anchor.id].title}`} width={1.05} height={.23} onClick={onSelect}/>
   </group>;
 }
 
@@ -42,10 +42,10 @@ function VRObjectCard({object,scale,onClose,penhGuide}:{object:ObjectInfo;scale:
   };
   return <group ref={ref} scale={scale} visible={false}>
     {guideOpen?<VRCaptureGuide embedded locationId="naga-staircase" objectId={object.id} scale={1} onClose={()=>setGuideOpen(false)}/>:<>
-      <VRSurface title={object.title} body={object.text} footer={object.source.title} width={1.28} height={.96}/>
-      <group position={[penhGuide ? -.43 : -.33,-.59,.002]}><VRSurface title={speech==='loading'?'Loading…':speech==='unavailable'?'Retry voice':speech==='speaking'?'Stop':'Listen'} width={penhGuide ? .4 : .62} height={.14} onClick={listen}/></group>
-      {penhGuide&&<group position={[0,-.59,.002]}><VRSurface title="Ask Penh" width={.4} height={.14} onClick={()=>{narrator.stop();setGuideOpen(true);}}/></group>}
-      <group position={[penhGuide ? .43 : .33,-.59,.002]}><VRSurface title="Close" width={penhGuide ? .4 : .62} height={.14} onClick={onClose}/></group>
+      <VRSurface variant="board" title={object.title} body={object.text} footer={object.source.title} width={1.46} height={1.04}/>
+      <group position={[penhGuide ? -.49 : -.37,-.66,.002]}><VRSurface variant="action" title={speech==='loading'?'Loading…':speech==='unavailable'?'Retry voice':speech==='speaking'?'Stop':'▶ Listen'} width={penhGuide ? .46 : .68} height={.18} onClick={listen}/></group>
+      {penhGuide&&<group position={[0,-.66,.002]}><VRSurface variant="action" title="✦ Ask Penh" width={.46} height={.18} onClick={()=>{narrator.stop();setGuideOpen(true);}}/></group>}
+      <group position={[penhGuide ? .49 : .37,-.66,.002]}><VRSurface variant="action" title="✕ Close" width={penhGuide ? .46 : .68} height={.18} onClick={onClose}/></group>
     </>}
   </group>;
 }
