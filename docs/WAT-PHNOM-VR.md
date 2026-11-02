@@ -63,10 +63,10 @@ Switching location or closing the guide stops narration and cancels requests.
 
 The same server endpoint resolves location notes for both modes. Its response is
 marked **AI answer** only if the model actually returns one; network, provider,
-or server configuration failures instead display **Saved notes**. A live preview
-request returned saved notes on 2 November 2026; this does not establish whether
-the API credential is absent or the upstream service failed. A working server-side
-`ANTHROPIC_API_KEY` and provider access are needed for live generated answers.
+or server configuration failures instead display **Saved notes**. The location
+guide uses Gemini 3.5 Flash-Lite via a server-side `GEMINI_API_KEY`; a valid key
+and provider access are needed for live generated answers. The older general
+site guide retains its separate Anthropic configuration.
 Do not put credentials in client files, Git, or chat. Device speech recognition
 may send audio to a browser-managed speech service; it is an optional user action.
 

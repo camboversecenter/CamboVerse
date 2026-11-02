@@ -49,16 +49,26 @@ describe('location-grounded guide previews',()=>{
     expect((await handleLocationGuide({experienceId:'room-360',locationId:'050',question:'x'.repeat(501)},{})).status).toBe(400);
   });
   it('uses server-owned notes for AI and falls back transparently on failure',async()=>{
-    const fetch=vi.fn().mockResolvedValueOnce(Response.json({content:[{type:'text',text:'This is a meeting-room display.'}]}))
+    const fetch=vi.fn().mockResolvedValueOnce(Response.json({candidates:[{content:{parts:[{text:'internal reasoning',thought:true},{text:'This is a meeting-room display.'}]}}]}))
       .mockResolvedValueOnce(new Response('',{status:503}));
     vi.stubGlobal('fetch',fetch);
     const request={experienceId:'room-360',locationId:'058',question:'Describe this spot',lang:'en'};
-    const result=await (await handleLocationGuide(request,{ANTHROPIC_API_KEY:'test-only'})).json();
+    const result=await (await handleLocationGuide(request,{GEMINI_API_KEY:'test-only'})).json();
     expect(result.fallback).toBe(false);
     const sent=JSON.parse(fetch.mock.calls[0][1].body);
-    expect(sent.system).toContain('Meeting room · In front of the screen');
-    expect(sent.system).toContain('Do not invent');
-    expect(sent.system).not.toContain('1372');
-    expect((await (await handleLocationGuide(request,{ANTHROPIC_API_KEY:'test-only'})).json()).fallback).toBe(true);
+    expect(fetch.mock.calls[0][0]).toContain('generativelanguage.googleapis.com');
+    expect(fetch.mock.calls[0][1].headers['x-goog-api-key']).toBe('test-only');
+    expect(sent.systemInstruction.parts[0].text).toContain('Meeting room · In front of the screen');
+    expect(sent.systemInstruction.parts[0].text).toContain('Do not invent');
+    expect(sent.systemInstruction.parts[0].text).not.toContain('1372');
+    expect(result.text).toBe('This is a meeting-room display.');
+    expect((await (await handleLocationGuide(request,{GEMINI_API_KEY:'test-only'})).json()).fallback).toBe(true);
+  });
+  it('does not expose the Gemini key and falls back when the provider returns no answer',async()=>{
+    const fetch=vi.fn().mockResolvedValue(Response.json({candidates:[]}));vi.stubGlobal('fetch',fetch);
+    const secret='test-key-private';
+    const response=await handleLocationGuide({experienceId:'clock-3dgs',locationId:'flower-clock',question:'What is the flower clock?'},{GEMINI_API_KEY:secret});
+    const text=await response.text();expect(text).not.toContain(secret);
+    const result=JSON.parse(text);expect(result.fallback).toBe(true);expect(result.text).toContain('clock face');
   });
 });

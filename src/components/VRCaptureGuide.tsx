@@ -55,6 +55,7 @@ export function VRCaptureGuide({locationId,scale,onClose}:{locationId:string;sca
   return <group ref={panel} scale={scale} visible={false}>
     {!reply?<>
       <group position={[0,.48,0]}><VRSurface title={`Ask Kiri · ${locationId==='flower-clock'?'Flower Clock':'Naga Staircase'}`} /></group>
+      <group position={[0,.39,0]}><VRSurface title="Questions sent to Gemini when available" height={.07}/></group>
       {context.facts.slice(0,3).map((fact,i)=><group key={fact.question} position={[0,.28-i*.17,0]}>
         <VRSurface title={fact.question} height={.16} onClick={()=>void ask(fact.question)}/></group>)}
       <group position={[0,-.25,0]}><VRSurface title={loading?'Checking notes…':listening?'Listening… select to stop':sttSupported()?'Ask by voice':'Voice unavailable · choose a question'} onClick={!loading&&sttSupported()?voice:undefined}/></group>

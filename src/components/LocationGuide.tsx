@@ -106,7 +106,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
           <button type="submit" disabled={loading||!question.trim()}>Ask</button></div>
         {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||'Narration is unavailable in this browser.'}</p>}
       </form>
-      <p className="location-guide-footnote">Answers use this spot’s notes. Missing history stays unknown. Optional voice input may use your browser’s speech service.</p>
+      <p className="location-guide-footnote">Questions are sent to Gemini when available. Optional voice input may use your browser’s speech service. Missing history stays unknown.</p>
     </aside>}
   </div>;
 }

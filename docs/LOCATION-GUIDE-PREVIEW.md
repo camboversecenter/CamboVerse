@@ -60,9 +60,9 @@ Worker resolves these IDs from the fixed registry and rejects unknown locations.
 The browser does not submit authoritative context or upload photos to the model.
 The existing legacy site/era guide requests continue through their old handler.
 
-With the existing server-side `ANTHROPIC_API_KEY` connection configured, the new
-handler uses the project's existing provider/model to answer from the selected
-location's notes. Client-side keys are never used. Without that connection, or
+With the server-side `GEMINI_API_KEY` connection configured, the location
+handler uses Gemini to answer from the selected location's notes. The separate
+legacy site/era guide retains its existing provider. Client-side keys are never used. Without that connection, or
 when the endpoint/provider fails, the UI uses bounded local FAQ answers and
 labels each response **Saved location notes**. A live answer is labeled
 **Kiri · AI answer**. An unsupported saved-note question receives an unknown
