@@ -1,5 +1,5 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
-import {HeritageAmbience} from './heritageAmbience';
+import {HeritageAmbience,ambienceShouldSuspend} from './heritageAmbience';
 
 let media:{play:ReturnType<typeof vi.fn>;pause:ReturnType<typeof vi.fn>;load:ReturnType<typeof vi.fn>;removeAttribute:ReturnType<typeof vi.fn>;volume:number;currentTime:number;duration:number;loop:boolean;preload:string;onerror:(()=>void)|null};
 const controllers:HeritageAmbience[]=[];
@@ -13,6 +13,12 @@ afterEach(()=>{controllers.forEach(c=>c.dispose());controllers.length=0;vi.unstu
 function player(){const state=vi.fn();const controller=new HeritageAmbience(state);controllers.push(controller);return {controller,state};}
 
 describe('optional heritage ambience',()=>{
+  it('keeps playing in a visible headset even when the flat document is hidden',()=>{
+    expect(ambienceShouldSuspend(true,'visible')).toBe(false);
+    expect(ambienceShouldSuspend(false,'hidden')).toBe(true);
+    expect(ambienceShouldSuspend(false,'visible-blurred')).toBe(true);
+    expect(ambienceShouldSuspend(true)).toBe(true);
+  });
   it('does not create media before opt-in and mutes/disposes all resources',async()=>{
     const {controller,state}=player();
     expect(Audio).not.toHaveBeenCalled();

@@ -1,18 +1,21 @@
-import {useEffect,useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {createXRStore} from '@react-three/xr';
-import {HERITAGE_AMBIENCE,HeritageAmbience,type AmbienceState} from '../lib/heritageAmbience';
+import {HERITAGE_AMBIENCE,HeritageAmbience,ambienceShouldSuspend,type AmbienceState} from '../lib/heritageAmbience';
 
-export type AmbienceControl={state:AmbienceState;toggle:()=>void};
+export type AmbienceControl={state:AmbienceState;toggle:()=>void;start:()=>void};
 
 /** Shared by the browser button and the actual in-headset menu. */
 export function useHeritageAmbience(enabled:boolean,store:ReturnType<typeof createXRStore>):AmbienceControl {
   const [state,setState]=useState<AmbienceState>('off');
   const player=useMemo(()=>new HeritageAmbience(setState),[]);
+  const mutedByVisitor=useRef(false);
   useEffect(()=>{
     if(!enabled)return;
     let session=store.getState().session;
-    const visibility=()=>player.setSuspended(document.hidden||!!session&&session.visibilityState!=='visible');
+    // During immersive presentation a browser may hide the 2D document even
+    // while the headset session itself is visible.
+    const visibility=()=>player.setSuspended(ambienceShouldSuspend(document.hidden,session?.visibilityState));
     session?.addEventListener('visibilitychange',visibility);
     const unsubscribe=store.subscribe(next=>{
       if(next.session===session)return;
@@ -22,7 +25,8 @@ export function useHeritageAmbience(enabled:boolean,store:ReturnType<typeof crea
     document.addEventListener('visibilitychange',visibility);visibility();
     return ()=>{unsubscribe();session?.removeEventListener('visibilitychange',visibility);document.removeEventListener('visibilitychange',visibility);player.dispose();};
   },[enabled,player,store]);
-  return {state,toggle:()=>{if(enabled)void player.setEnabled(!player.enabled);}};
+  return {state,toggle:()=>{if(enabled){mutedByVisitor.current=player.enabled;void player.setEnabled(!player.enabled);}},
+    start:()=>{if(enabled&&!mutedByVisitor.current&&!player.enabled)void player.setEnabled(true);}};
 }
 
 export function HeritageAmbienceButton({control}:{control:AmbienceControl}) {

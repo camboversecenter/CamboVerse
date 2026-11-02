@@ -20,14 +20,14 @@ export interface CaptureVRTour {
 
 /** Entry stays discoverable on desktop; unsupported devices get instructions,
  * never a fake headset session or a hidden button. Session starts on a click. */
-export function CaptureVREntry({store,tour}:{store:ReturnType<typeof createXRStore>;tour:CaptureVRTour}) {
+export function CaptureVREntry({store,tour,onStartAmbience}:{store:ReturnType<typeof createXRStore>;tour:CaptureVRTour;onStartAmbience?:()=>void}) {
   return <ImmersiveVREntry store={store} title={tour.title} onBeforeEnter={()=>{
     if(!tour.activeId&&tour.stops[0])tour.onSelect(tour.stops[0].id);
-  }} tour={tour}/>;
+  }} onSessionRequested={onStartAmbience} tour={tour}/>;
 }
 
-export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capture-vr-entry'}:{
-  store:ReturnType<typeof createXRStore>;title:string;tour?:CaptureVRTour;onBeforeEnter?:()=>void;className?:string;
+export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionRequested,className='capture-vr-entry'}:{
+  store:ReturnType<typeof createXRStore>;title:string;tour?:CaptureVRTour;onBeforeEnter?:()=>void;onSessionRequested?:()=>void;className?:string;
 }) {
   const [open,setOpen]=useState(false),[supported,setSupported]=useState(false);
   const [active,setActive]=useState(false),[pending,setPending]=useState(false);
@@ -60,7 +60,9 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,className='capt
     setPending(true);setFailure('');
     try{
       onBeforeEnter?.();
-      await startImmersiveVR(store);
+      const starting=startImmersiveVR(store);
+      onSessionRequested?.();
+      await starting;
       setOpen(false);
     }catch(error){
       const failure=immersiveVRFailure(error);setFailure(`${failure.name}: ${failure.message}`);
@@ -132,8 +134,8 @@ export function CaptureVRMenu({tour,onReset,resetKey,ambience}:{tour:CaptureVRTo
   return <group ref={panel} visible={false}>
     {!open?<VRSurface title="Menu · Y" width={.48} onClick={()=>setOpen(true)}/>:<>
       <group position={[0,.40,0]}><VRSurface title="Wat Phnom · Hide menu" onClick={()=>setOpen(false)}/></group>
-      {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={stop.title} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
-      <group position={[0,-.11,0]}><VRSurface title={sound} onClick={ambience.toggle}/></group>
+      {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={stop.title} height={.16} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
+      <group position={[0,-.11,0]}><VRSurface title={sound} height={.16} onClick={ambience.toggle}/></group>
       <group position={[0,-.28,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
       <group position={[0,-.45,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
       <group position={[0,-.59,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>

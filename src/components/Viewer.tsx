@@ -158,7 +158,7 @@ export function Viewer({
           </button>
         )}
       </div>
-      {vrTour?<CaptureVREntry store={store} tour={vrTour}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
+      {vrTour?<CaptureVREntry store={store} tour={vrTour} onStartAmbience={ambience.start}/>:<ImmersiveVREntry store={store} title="Explore in VR"/>}
       {vrTour&&!immersive&&<HeritageAmbienceButton control={ambience}/>}
       <Canvas
         // Cap DPR so we don't over-render on high-density phone screens.

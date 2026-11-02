@@ -5,6 +5,9 @@ export const HERITAGE_AMBIENCE={
   location:'Recorded in Siem Reap; used as background ambience.',
 };
 export type AmbienceState='off'|'loading'|'playing'|'paused'|'error';
+export function ambienceShouldSuspend(documentHidden:boolean,sessionVisibility?:XRVisibilityState):boolean {
+  return sessionVisibility===undefined?documentHidden:sessionVisibility!=='visible';
+}
 
 /** Quiet opt-in audio. Creating the controller never creates/downloads audio. */
 export class HeritageAmbience {

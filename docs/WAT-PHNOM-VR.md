@@ -43,6 +43,13 @@ capture's start position and heading. Missing/blurred scan coverage remains.
 Three's render callback. The existing shared depth sorter is retained; its
 eye-independent order is approximate for very close transparent splats.
 
+Both Quest controllers have a visible gold ray and cursor; point at a button
+and press/release the trigger. Hover highlights the button. The normal XR ray
+minimum distance rejected nearby panels at the staircase's small scene scale,
+so it is zero here; ray and cursor also render above the transparent scan. A
+longer press threshold helps deliberate trigger use. Pointer ordering gives UI
+priority over scene interactions; the cursor appears on actual targets.
+
 ## Information and ambience
 
 The Naga balustrade and guardian lion use the same reviewed anchors and object
@@ -59,9 +66,11 @@ the captured image painting over the UI, which happened with the old opaque menu
 The panels are deliberately readable over incomplete scan geometry; they are UI,
 not an assertion that the scan supplies solid surface depth.
 
-Wat Phnom has optional **Bird ambience** in the browser and VR menu. It is off
-initially, lazy-loaded on enable, quiet (maximum 18% gain), fades at loop boundaries,
-and ducks under browser narration. It pauses while the page/headset view is hidden
+Wat Phnom has **Bird ambience** in the browser and VR menu. It is off initially
+in the browser, and starts when the visitor presses Enter VR (if the browser
+allows playback), for both Naga and Clock. The visitor can mute it and the choice
+is retained while the site remains open. Playback is lazy-loaded, quiet (maximum 18% gain), fades at loop boundaries,
+and ducks under browser narration. It pauses while the active page/headset view is hidden
 and releases audio on leaving the site. Download/playback failures provide a retry.
 The 392 KiB CC0 recording is by L. Shyamal in **Siem Reap**, not Wat Phnom; its
 credit and provenance are retained in the interface and

@@ -1,7 +1,20 @@
+import {PointerRayMaterial,PointerCursorMaterial} from '@pmndrs/xr/internals';
+
+/** Always draw the controller's ray and endpoint over the photogrammetry UI. */
+export class HeritageRayMaterial extends PointerRayMaterial {
+  constructor(){super();this.depthTest=false;this.depthWrite=false;}
+}
+export class HeritageCursorMaterial extends PointerCursorMaterial {
+  constructor(){super();this.depthTest=false;this.depthWrite=false;}
+}
+
 /** Shared native headset configuration. Never offer inline or emulated VR. */
 export const IMMERSIVE_XR_OPTIONS={
   emulate:false,offerSession:false,enterGrantedSession:false,
   domOverlay:false,anchors:false,hitTest:false,planeDetection:false,meshDetection:false,
+  controller:{grabPointer:false,rayPointer:{minDistance:0,clickThresholdMs:1200,
+    rayModel:{color:'#ffe49a',opacity:.9,size:.009,maxLength:25,renderOrder:3000,materialClass:HeritageRayMaterial},
+    cursorModel:{color:'#ffdc75',opacity:1,size:.08,cursorOffset:.001,renderOrder:3001,materialClass:HeritageCursorMaterial}}},
 } as const;
 
 export type VRSupport = {ready:boolean; code:string; message:string};

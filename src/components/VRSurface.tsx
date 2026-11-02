@@ -1,4 +1,4 @@
-import {useEffect,useMemo} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import {CanvasTexture,SRGBColorSpace} from 'three';
 import {wrapVRText} from '../vrPresentation';
 
@@ -7,10 +7,11 @@ import {wrapVRText} from '../vrPresentation';
 export function VRSurface({title,body,footer,onClick,active=false,width=.92,height=.14}:{
   title:string;body?:string;footer?:string;onClick?:()=>void;active?:boolean;width?:number;height?:number;
 }) {
+  const [hovered,setHovered]=useState(false);
   const texture=useMemo(()=>{
     const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=body?768:156;
     const ctx=canvas.getContext('2d')!;
-    ctx.fillStyle=active?'#426137':'#14372f';ctx.beginPath();ctx.roundRect(3,3,1018,canvas.height-6,28);ctx.fill();
+    ctx.fillStyle=hovered?'#678c43':active?'#426137':'#14372f';ctx.beginPath();ctx.roundRect(3,3,1018,canvas.height-6,28);ctx.fill();
     ctx.strokeStyle='#b8cba0';ctx.lineWidth=4;ctx.stroke();
     ctx.fillStyle='#fff8df';ctx.textBaseline='middle';
     if(body){
@@ -23,9 +24,12 @@ export function VRSurface({title,body,footer,onClick,active=false,width=.92,heig
       ctx.textAlign='center';ctx.font='600 42px sans-serif';ctx.fillText(title,512,78,940);
     }
     const map=new CanvasTexture(canvas);map.colorSpace=SRGBColorSpace;return map;
-  },[title,body,footer,active]);
+  },[title,body,footer,active,hovered]);
   useEffect(()=>()=>texture.dispose(),[texture]);
-  return <mesh renderOrder={2000} onClick={onClick?e=>{e.stopPropagation();onClick();}:undefined}>
+  return <mesh renderOrder={2000} pointerEventsOrder={onClick?100:0}
+    onPointerOver={onClick?e=>{e.stopPropagation();setHovered(true);}:undefined}
+    onPointerOut={onClick?()=>setHovered(false):undefined}
+    onClick={onClick?e=>{e.stopPropagation();onClick();}:undefined}>
     <planeGeometry args={[width,height]}/>
     <meshBasicMaterial map={texture} transparent alphaTest={.01} depthTest={false} depthWrite={false} toneMapped={false}/>
   </mesh>;
