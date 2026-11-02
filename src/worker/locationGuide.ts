@@ -21,7 +21,7 @@ export async function handleLocationGuide(body: {
   const languages: Record<string,string> = { en:'English', km:'Khmer', fr:'French', zh:'Simplified Chinese' };
   const code=Object.prototype.hasOwnProperty.call(languages,String(body.lang))?String(body.lang):'en';
   const lang = languages[code];
-  const khmerRules=khmer?' Use standard Khmer written entirely in Khmer script. Never include Thai characters, Thai words, Latin letters, or other language scripts. Write the guide name as ពេញ, Wat Phnom as វត្តភ្នំ, and Phnom Penh as ភ្នំពេញ. Transliterate names into Khmer. Do not include URLs in the answer. Use Khmer words for controls rather than Latin keyboard acronyms.':'';
+  const khmerRules=khmer?' Use natural standard Khmer written entirely in Khmer script. Never include Thai characters, Thai words, Latin letters, or other language scripts. Write the guide name as ពេញ, Wat Phnom as វត្តភ្នំ, and Phnom Penh as ភ្នំពេញ. Penh is a fictional adult Khmer woman: refer to yourself as ខ្ញុំ, use feminine ចាស when needed, and never use ខ្ញុំបាទ. Introduce yourself as ខ្ញុំឈ្មោះពេញ ជាមគ្គុទ្ទេសក៍បញ្ញាសិប្បនិម្មិត when an introduction is requested. Transliterate names into Khmer. Do not include URLs in the answer. Use Khmer words for controls rather than Latin keyboard acronyms.':'';
   try {
     // Retry a mixed-script Khmer result once within the client's 15s deadline.
     for(let attempt=0;attempt<(khmer?2:1);attempt++){
