@@ -1,4 +1,5 @@
 import {speak,stopSpeaking} from './voice';
+import {isKhmerGuideText} from '../guideKhmer';
 
 let activeNarrations=0;
 export function guideNarrationActive(){return activeNarrations>0;}
@@ -21,7 +22,9 @@ export class GuideNarrator {
   }
   dispose(){this.stop();if(this.context){void this.context.close().catch(()=>{});this.context=undefined;}}
   async start(text:string,bcp='en-US',persona?:'penh'){
-    this.stop();const id=++this.generation;this.mark(true);this.status('loading');
+    this.stop();
+    if(bcp.startsWith('km')&&!isKhmerGuideText(text)){this.status('unavailable');return;}
+    const id=++this.generation;this.mark(true);this.status('loading');
     try{
       const AudioCtor=window.AudioContext||(window as unknown as {webkitAudioContext:typeof AudioContext}).webkitAudioContext;
       if(!AudioCtor)throw new Error('Audio unavailable');
@@ -29,7 +32,7 @@ export class GuideNarrator {
       // Begin resume synchronously while the controller trigger is still active.
       const resumed=this.context.resume();
       const request=new AbortController();this.request=request;
-      const [response]=await Promise.all([fetch('/api/guide-voice',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text,persona}),signal:request.signal}),resumed]);
+      const [response]=await Promise.all([fetch('/api/guide-voice',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text,persona,lang:bcp.startsWith('km')?'km':undefined}),signal:request.signal}),resumed]);
       if(!response.ok)throw new Error('Voice service unavailable');
       const bytes=await response.arrayBuffer();
       const decoded=await this.context.decodeAudioData(bytes);

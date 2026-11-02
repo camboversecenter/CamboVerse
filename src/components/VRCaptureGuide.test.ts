@@ -3,13 +3,14 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {act,createElement} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
 import {VRCaptureGuide} from './VRCaptureGuide';
+import {KHMER_GUIDE,isKhmerGuideText,khmerGuideQuestion} from '../guideKhmer';
 
 const mocked=vi.hoisted(()=>({ask:vi.fn(),speak:vi.fn(()=>true),stop:vi.fn()}));
 vi.mock('@react-three/fiber',()=>({useFrame:()=>{},useLoader:()=>({})}));
 vi.mock('../lib/guide',()=>({askGuide:mocked.ask}));
 vi.mock('../lib/voice',()=>({LANGS:[{code:'en',name:'English',bcp:'en-US'},{code:'km',name:'ខ្មែរ',bcp:'km-KH'},{code:'fr',name:'Français',bcp:'fr-FR'},{code:'zh',name:'中文',bcp:'zh-CN'}],speak:mocked.speak,stopSpeaking:mocked.stop,ttsSupported:()=>true,sttSupported:()=>false,listenOnce:()=>null}));
 vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(text:string,bcp:string){mocked.speak(text,bcp,{});} stop(){mocked.stop();} dispose(){mocked.stop();}}}));
-vi.mock('./VRSurface',()=>({VRSurface:({title,onClick,body}:{title:string;onClick?:()=>void;body?:string})=>createElement('button',{onClick},`${title} ${body??''}`)}));
+vi.mock('./VRSurface',()=>({VRSurface:({title,onClick,body,footer}:{title:string;onClick?:()=>void;body?:string;footer?:string})=>createElement('button',{onClick},`${title} ${body??''} ${footer??''}`)}));
 let root:Root,host:HTMLDivElement;
 beforeEach(()=>{localStorage.clear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');document.body.append(host);root=createRoot(host);mocked.ask.mockReset();mocked.speak.mockClear();mocked.stop.mockClear();});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
@@ -38,7 +39,7 @@ describe('immersive location guide',()=>{
     mocked.ask.mockResolvedValue({text:'Bonjour et bienvenue.',fallback:false,sources:[]});
     await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'flower-clock',scale:1,onClose:vi.fn()})));
     await act(async()=>button('Language: English').click());
-    await act(async()=>button('Language: ខ្មែរ').click());
+    await act(async()=>button('ភាសា: ខ្មែរ').click());
     await act(async()=>button('What is the flower clock?').click());
     expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({lang:'fr'}),expect.any(AbortSignal));
     await act(async()=>button('Listen').click());
@@ -49,5 +50,15 @@ describe('immersive location guide',()=>{
     await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'naga-staircase',objectId:'naga-balustrade',scale:1,embedded:true,onClose:vi.fn()})));
     await act(async()=>button('Tell me about Naga balustrade').click());
     expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({locationId:'naga-staircase',objectId:'naga-balustrade'}),expect.any(AbortSignal));
+  });
+  it('keeps the VR guide, saved reply and narration in Khmer after mixed output',async()=>{
+    localStorage.setItem('camboverse-penh-language','km');mocked.ask.mockResolvedValue({text:'សួស្តី ครับ',fallback:false});
+    await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'flower-clock',scale:1,onClose:vi.fn()})));
+    expect(isKhmerGuideText(host.textContent!)).toBe(true);
+    await act(async()=>button(khmerGuideQuestion('What is the flower clock?')).click());
+    expect(host.textContent).not.toContain('ครับ');expect(isKhmerGuideText(host.textContent!)).toBe(true);
+    await act(async()=>button(KHMER_GUIDE.listen).click());
+    expect(isKhmerGuideText(mocked.speak.mock.calls[0][0])).toBe(true);
+    expect(mocked.speak.mock.calls[0][1]).toBe('km-KH');
   });
 });

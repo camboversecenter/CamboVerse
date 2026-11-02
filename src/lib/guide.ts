@@ -9,6 +9,7 @@ import type { GuideExperience, GuideSource } from '../locationGuide';
  */
 export interface GuideReply {
   text: string;
+  lang?: LangCode;
   /** True when the server returned static facts instead of a model answer. */
   fallback?: boolean;
   sources?: GuideSource[];

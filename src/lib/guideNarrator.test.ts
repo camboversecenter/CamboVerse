@@ -18,4 +18,10 @@ describe('guide narration playback',()=>{
     vi.stubGlobal('window',{});const status=vi.fn(),narrator=new GuideNarrator(status);
     await narrator.start('Hello');expect(status).toHaveBeenLastCalledWith('unavailable');expect(guideNarrationActive()).toBe(false);narrator.dispose();
   });
+  it('does not send or speak mixed-script Khmer narration',async()=>{
+    const fetch=vi.fn();vi.stubGlobal('fetch',fetch);
+    const status=vi.fn(),narrator=new GuideNarrator(status);
+    await narrator.start('សួស្តី ครับ','km-KH','penh');
+    expect(fetch).not.toHaveBeenCalled();expect(status).toHaveBeenLastCalledWith('unavailable');
+  });
 });

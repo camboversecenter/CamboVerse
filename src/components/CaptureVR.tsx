@@ -10,6 +10,8 @@ import {checkImmersiveVR,immersiveVRError,immersiveVRFailure,startImmersiveVR} f
 import {worldPanelPose} from '../vrPresentation';
 import {VRSurface} from './VRSurface';
 import type {AmbienceControl} from './HeritageAmbience';
+import {useGuideLanguage} from '../lib/guideLanguage';
+import {KHMER_GUIDE,khmerObjectTitle} from '../guideKhmer';
 
 export interface CaptureVRTour {
   title:string;
@@ -107,6 +109,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
 /** Menu stays in the world. Only opening with Y, switching capture or resetting
  * takes a new pose; ordinary head movement never drags the panel around. */
 export function CaptureVRMenu({tour,onReset,resetKey,ambience,onGuide}:{tour:CaptureVRTour;onReset:()=>void;resetKey:number;ambience:AmbienceControl;onGuide:()=>void}) {
+  const {language}=useGuideLanguage();const km=language.code==='km';
   const session=useXR(s=>s.session),panel=useRef<Group>(null);
   const store=useXRStore(),[open,setOpen]=useState(false),[exitFailed,setExitFailed]=useState(false);
   const placement=useRef({pending:true,side:-.95}),pressed=useRef(false);
@@ -130,18 +133,18 @@ export function CaptureVRMenu({tour,onReset,resetKey,ambience,onGuide}:{tour:Cap
     panel.current.scale.setScalar(scale);panel.current.visible=true;placement.current.pending=false;
   });
   if(!session)return null;
-  const sound=ambience.state==='playing'?'Bird ambience · Mute':ambience.state==='loading'?'Loading birds…':ambience.state==='error'?'Retry bird ambience':'Bird ambience · Off';
+  const sound=km?(ambience.state==='playing'?'សំឡេងបក្សី · បញ្ឈប់':ambience.state==='loading'?KHMER_GUIDE.loadingVoice:ambience.state==='error'?KHMER_GUIDE.retryVoice:'សំឡេងបក្សី · បើក'):ambience.state==='playing'?'Bird ambience · Mute':ambience.state==='loading'?'Loading birds…':ambience.state==='error'?'Retry bird ambience':'Bird ambience · Off';
   return <group ref={panel} visible={false}>
-    {!open?<VRSurface title="Menu · Y" width={.48} onClick={()=>setOpen(true)}/>:<>
-      <group position={[0,.40,0]}><VRSurface title="Wat Phnom · Hide menu" onClick={()=>setOpen(false)}/></group>
-      {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={stop.title} height={.16} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
+    {!open?<VRSurface title={km?'ម៉ឺនុយ':'Menu · Y'} width={.48} onClick={()=>setOpen(true)}/>:<>
+      <group position={[0,.40,0]}><VRSurface title={km?'វត្តភ្នំ · បិទម៉ឺនុយ':'Wat Phnom · Hide menu'} onClick={()=>setOpen(false)}/></group>
+      {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={km?khmerObjectTitle(stop.id):stop.title} height={.16} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
       <group position={[0,-.11,0]}><VRSurface title={sound} height={.16} onClick={ambience.toggle}/></group>
-      <group position={[0,-.28,0]}><VRSurface title={ambience.musicState==='playing'?'Music · Mute':ambience.musicState==='error'?'Retry music':'Background music · Off'} onClick={ambience.toggleMusic}/></group>
-      <group position={[0,-.45,0]}><VRSurface title="Ask Penh · AI guide" onClick={()=>{setOpen(false);onGuide();}}/></group>
-      <group position={[0,-.62,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
-      <group position={[0,-.79,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
-      <group position={[0,-.93,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>
-      <group position={[0,-1.02,0]}><VRSurface title="Right A · Jump" height={.09}/></group>
+      <group position={[0,-.28,0]}><VRSurface title={km?(ambience.musicState==='playing'?'តន្ត្រី · បញ្ឈប់':ambience.musicState==='error'?KHMER_GUIDE.retryVoice:'តន្ត្រី · បើក'):ambience.musicState==='playing'?'Music · Mute':ambience.musicState==='error'?'Retry music':'Background music · Off'} onClick={ambience.toggleMusic}/></group>
+      <group position={[0,-.45,0]}><VRSurface title={km?`${KHMER_GUIDE.ask} ${KHMER_GUIDE.name}`:'Ask Penh · AI guide'} onClick={()=>{setOpen(false);onGuide();}}/></group>
+      <group position={[0,-.62,0]}><VRSurface title={km?'ត្រឡប់ទៅទីតាំងដើម':'Reset position'} onClick={onReset}/></group>
+      <group position={[0,-.79,0]}><VRSurface title={km?(exitFailed?'ប្រើម៉ឺនុយឧបករណ៍ដើម្បីចាកចេញ':'ចាកចេញ'):exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
+      <group position={[0,-.93,0]}><VRSurface title={km?'សំឡេងបក្សី · សៀមរាប':'Birds: Siem Reap · L. Shyamal · CC0'} height={.09}/></group>
+      <group position={[0,-1.02,0]}><VRSurface title={km?'លោត · ប៊ូតុងក្រោមខាងស្តាំ':'Right A · Jump'} height={.09}/></group>
     </>}
   </group>;
 }

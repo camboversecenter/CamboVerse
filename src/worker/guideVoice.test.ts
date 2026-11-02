@@ -13,6 +13,7 @@ describe('guide speech service',()=>{
     expect(JSON.parse(options.body).contents[0].parts[0].text).toBe('Welcome to Wat Phnom.');
   });
   it('rejects long inputs, missing keys, failed providers and non-WAV output',async()=>{
+    expect((await handleGuideVoice(request({text:'សួស្តី ครับ',lang:'km'}),{})).status).toBe(400);
     expect((await handleGuideVoice(request({text:'a'.repeat(1501)}),{})).status).toBe(400);
     expect((await handleGuideVoice(request({text:'hello'}),{})).status).toBe(503);
     vi.stubGlobal('fetch',vi.fn().mockResolvedValue(Response.json({candidates:[{content:{parts:[{inlineData:{data:btoa('not audio')}}]}}]})));

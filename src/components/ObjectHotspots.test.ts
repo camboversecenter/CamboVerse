@@ -5,6 +5,7 @@ import {createPortal} from 'react-dom';
 import {createRoot,type Root} from 'react-dom/client';
 import {ObjectHotspotMarkers,ObjectInfoCard} from './ObjectHotspots';
 import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from '../objectHotspots';
+import {isKhmerGuideText,KHMER_GUIDE} from '../guideKhmer';
 
 const mocks=vi.hoisted(()=>({start:vi.fn(),stop:vi.fn(),dispose:vi.fn()}));
 vi.mock('@react-three/xr',()=>({useXR:()=>false}));
@@ -15,7 +16,7 @@ vi.mock('@react-three/drei',()=>({Html:({children,portal,zIndexRange}:{children:
 vi.mock('./VRObjectHotspots',()=>({VRObjectHotspots:()=>null}));
 vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(...args:unknown[]){mocks.start(...args);} stop(){mocks.stop();} dispose(){mocks.dispose();}}}));
 let root:Root,host:HTMLDivElement;
-beforeEach(()=>{vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');host.className='viewer';document.body.append(host);root=createRoot(host);});
+beforeEach(()=>{localStorage.clear();mocks.start.mockClear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');host.className='viewer';document.body.append(host);root=createRoot(host);});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 describe('capture information labels',()=>{
   it('places clickable labels above the separate walking layer',async()=>{
@@ -34,5 +35,12 @@ describe('capture information labels',()=>{
     const listen=[...host.querySelectorAll('button')].find(button=>button.textContent?.includes('Listen'))!;
     await act(async()=>listen.click());
     expect(mocks.start).toHaveBeenCalledWith(expect.stringContaining('Naga balustrade.'),'en-US','penh');
+  });
+  it('renders and narrates the Khmer object information in Khmer',async()=>{
+    localStorage.setItem('camboverse-penh-language','km');
+    await act(async()=>root.render(createElement(ObjectInfoCard,{object:OBJECT_INFO['naga-balustrade'],guideName:'Penh',onClose:vi.fn()})));
+    expect(isKhmerGuideText(host.textContent!)).toBe(true);
+    await act(async()=>[...host.querySelectorAll('button')].find(button=>button.textContent===KHMER_GUIDE.listen)!.click());
+    expect(isKhmerGuideText(mocks.start.mock.calls[0][0])).toBe(true);expect(mocks.start.mock.calls[0][1]).toBe('km-KH');
   });
 });

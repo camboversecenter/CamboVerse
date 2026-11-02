@@ -1,12 +1,14 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { askGuide, type GuideReply } from '../lib/guide';
-import { locationGuideContext, savedLocationAnswer, type GuideExperience } from '../locationGuide';
+import { locationGuideContext, type GuideExperience } from '../locationGuide';
 import { GuideMascot } from './GuideMascot';
 import './LocationGuide.css';
 import {listenOnce,sttSupported} from '../lib/voice';
 import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import {LANGS,type LangCode} from '../lib/voice';
 import {guideLanguage,useGuideLanguage} from '../lib/guideLanguage';
+import {locationGuideReply} from '../lib/locationGuideReply';
+import {KHMER_GUIDE,KHMER_LANGUAGE_NAMES,khmerGuideTitle,khmerGuideQuestion,khmerSourceTitle} from '../guideKhmer';
 
 type Message = GuideReply & { question?: string; lang:LangCode };
 
@@ -24,6 +26,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   const stopListen=useRef<null|(()=>void)>(null);
   const isPenh=experienceId==='wat-phnom'||experienceId==='staircase-3dgs'||experienceId==='clock-3dgs',name=isPenh?'Penh':'Kiri';
   const language=isPenh?chosenLanguage:guideLanguage('en');
+  const km=language.code==='km',displayName=km?KHMER_GUIDE.name:name;
   const pending = useRef<AbortController|null>(null);
   const latestAnswer = useRef<HTMLElement>(null);
   const contextKey = `${experienceId}/${locationId}/${objectId??''}`;
@@ -50,9 +53,10 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   const listen=()=>{
     if(listening){stopListen.current?.();stopListen.current=null;setListening(false);return;}
     setVoiceError('');setListening(true);
-    try{stopListen.current=listenOnce(language.bcp,text=>{stopListen.current=null;setListening(false);setQuestion(text);},()=>{stopListen.current=null;setListening(false);setVoiceError('Voice input unavailable. Please type your question.');});
-      if(!stopListen.current){setListening(false);setVoiceError('Voice input unavailable. Please type your question.');}}
-    catch{setListening(false);setVoiceError('Voice input unavailable. Please type your question.');}
+    const unavailable=km?KHMER_GUIDE.voiceUnavailable:'Voice input unavailable. Please type your question.';
+    try{stopListen.current=listenOnce(language.bcp,text=>{stopListen.current=null;setListening(false);setQuestion(text);},()=>{stopListen.current=null;setListening(false);setVoiceError(unavailable);});
+      if(!stopListen.current){setListening(false);setVoiceError(unavailable);}}
+    catch{setListening(false);setVoiceError(unavailable);}
   };
   const ask = async (value:string) => {
     const query=value.trim(); if (!query || loading) return;
@@ -65,59 +69,58 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     clearTimeout(timeout);
     if (pending.current!==controller || controller.signal.aborted) {
       if(pending.current===controller && controller.signal.aborted) {
-        setMessages(items=>[...items.slice(-7),{question:query,...savedLocationAnswer(context,query),fallback:true,lang:'en'}]);
+        setMessages(items=>[...items.slice(-7),{question:query,...locationGuideReply(context,query,null,language.code)}]);
         setLoading(false);
         pending.current=null;
       }
       return;
     }
-    const valid=reply && typeof reply.text==='string' && reply.text.trim();
-    const answer=valid?reply:{...savedLocationAnswer(context,query),fallback:true};
-    setMessages(items=>[...items.slice(-7),{question:query,...answer,lang:answer.fallback?'en':language.code}]);
+    const answer=locationGuideReply(context,query,reply,language.code);
+    setMessages(items=>[...items.slice(-7),{question:query,...answer}]);
     setLoading(false);
     pending.current=null;
   };
   return <div className={`location-guide-host ${experienceId}${embedded?' location-guide-embedded':''}`}>
-    {!open ? <button className="location-guide-launcher" onClick={()=>toggle(true)} aria-label={`Ask ${name} about this location`}>
-      {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={42} state="idle"/>}<span>Ask {name}</span>
-    </button> : <aside className="location-guide-panel" aria-label={`${name} location guide`}>
+    {!open ? <button className="location-guide-launcher" onClick={()=>toggle(true)} aria-label={km?`${KHMER_GUIDE.ask} ${displayName}`:`Ask ${name} about this location`}>
+      {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={42} state="idle"/>}<span>{km?KHMER_GUIDE.ask:'Ask'} {displayName}</span>
+    </button> : <aside className="location-guide-panel" aria-label={km?`${displayName} · មគ្គុទ្ទេសក៍`:`${name} location guide`} lang={language.bcp}>
       <header className="location-guide-header">
         {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={54} state={loading?'talking':'idle'}/>}
-        <div><strong>Ask {name}</strong><p>{objectId?context.title.split(' · ').slice(-1)[0]:context.title.replace(/^Wat Phnom · /,'')}</p></div>
-        <button className="location-guide-close" onClick={()=>toggle(false)} aria-label={`Minimize ${name} guide`}>−</button>
+        <div><strong>{km?KHMER_GUIDE.ask:'Ask'} {displayName}</strong><p>{km?khmerGuideTitle(context):objectId?context.title.split(' · ').slice(-1)[0]:context.title.replace(/^Wat Phnom · /,'')}</p></div>
+        <button className="location-guide-close" onClick={()=>toggle(false)} aria-label={km?KHMER_GUIDE.minimize:`Minimize ${name} guide`}>−</button>
       </header>
-      {isPenh&&<label className="location-guide-language">Language / ភាសា <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{option.name}</option>)}</select></label>}
+      {isPenh&&<label className="location-guide-language">{km?KHMER_GUIDE.language:'Language / ភាសា'} <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);setVoiceError('');setMessages([]);setQuestion('');choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{km?KHMER_LANGUAGE_NAMES[option.code]:option.name}</option>)}</select></label>}
       <div className="location-guide-scroll">
-        {!embedded&&<p className="location-guide-intro">{context.introduction}</p>}
-        <div className="location-guide-suggestions" aria-label="Suggested questions">
-          {context.facts.slice(0,3).map(f=><button key={f.question} disabled={loading} onClick={()=>void ask(f.question)}>{f.question}</button>)}
+        {!embedded&&<p className="location-guide-intro">{km?KHMER_GUIDE.introduction:context.introduction}</p>}
+        <div className="location-guide-suggestions" aria-label={km?KHMER_GUIDE.suggested:'Suggested questions'}>
+          {context.facts.slice(0,3).map(f=><button key={f.question} disabled={loading} onClick={()=>void ask(km?khmerGuideQuestion(f.question):f.question)}>{km?khmerGuideQuestion(f.question):f.question}</button>)}
         </div>
         <div className="location-guide-messages" role="log" aria-live="polite" aria-relevant="additions">
           {messages.map((message,index)=><article key={`${contextKey}/${index}`} ref={index===messages.length-1?latestAnswer:undefined}>
             <p className="location-guide-question">{message.question}</p>
             <div className="location-guide-answer">
-              <small>{message.fallback?'Saved location notes · English':`${name} · AI answer · ${guideLanguage(message.lang).name}`}</small>
+              <small>{km?(message.fallback?KHMER_GUIDE.saved:`${displayName} · ${KHMER_GUIDE.answer}`):message.fallback?'Saved location notes · English':`${name} · AI answer · ${guideLanguage(message.lang).name}`}</small>
               <p>{message.text}</p>
-              <button type="button" onClick={()=>narrate(message.text,index,message.lang)}>{speechIndex===index&&speech==='loading'?'■ Loading voice…':speechIndex===index&&speech==='speaking'?'■ Stop narration':'▶ Listen'}</button>
+              <button type="button" onClick={()=>narrate(message.text,index,message.lang)}>{speechIndex===index&&speech==='loading'?(km?KHMER_GUIDE.loadingVoice:'■ Loading voice…'):speechIndex===index&&speech==='speaking'?(km?KHMER_GUIDE.stop:'■ Stop narration'):(km?`▶ ${KHMER_GUIDE.listen}`:'▶ Listen')}</button>
               {!!message.sources?.length && <div className="location-guide-sources">
                 {message.sources.map(source=>source.url
-                  ? <a key={source.title} href={source.url} target="_blank" rel="noreferrer">↗ {source.title}</a>
-                  : <span key={source.title}>{source.title}</span>)}
+                  ? <a key={source.title} href={source.url} target="_blank" rel="noreferrer">↗ {km?khmerSourceTitle(source):source.title}</a>
+                  : <span key={source.title}>{km?khmerSourceTitle(source):source.title}</span>)}
               </div>}
             </div>
           </article>)}
-          {loading && <p role="status">{name} is checking this location’s notes…</p>}
+          {loading && <p role="status">{km?KHMER_GUIDE.checking:`${name} is checking this location’s notes…`}</p>}
         </div>
       </div>
       <form className="location-guide-form" onSubmit={e=>{e.preventDefault();void ask(question);}}>
-        <label className="location-guide-label" htmlFor={`kiri-${experienceId}`}>Ask about this location</label>
-        <div><input id={`kiri-${experienceId}`} value={question} onChange={e=>setQuestion(e.target.value)} maxLength={500} placeholder="Ask about history or this spot…" disabled={loading}/>
-          {sttSupported()&&<button type="button" onClick={listen} aria-pressed={listening}>{listening?'Stop':'🎤'}</button>}
-          <button type="submit" disabled={loading||!question.trim()}>Ask</button></div>
-        {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||'Narration is unavailable in this browser.'}</p>}
+        <label className="location-guide-label" htmlFor={`kiri-${experienceId}`}>{km?KHMER_GUIDE.questionLabel:'Ask about this location'}</label>
+        <div><input id={`kiri-${experienceId}`} value={question} onChange={e=>setQuestion(e.target.value)} maxLength={500} placeholder={km?KHMER_GUIDE.placeholder:'Ask about history or this spot…'} disabled={loading}/>
+          {sttSupported()&&<button type="button" onClick={listen} aria-label={km?KHMER_GUIDE.voice:'Ask by voice'} aria-pressed={listening}>{listening?(km?KHMER_GUIDE.stop:'Stop'):'🎤'}</button>}
+          <button type="submit" disabled={loading||!question.trim()}>{km?KHMER_GUIDE.ask:'Ask'}</button></div>
+        {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||(km?KHMER_GUIDE.narrationUnavailable:'Narration is unavailable in this browser.')}</p>}
       </form>
-      <details className="location-guide-about"><summary>About {name} · AI guide</summary>
-        <p className="location-guide-footnote">{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</p>
+      <details className="location-guide-about"><summary>{km?KHMER_GUIDE.about:`About ${name} · AI guide`}</summary>
+        <p className="location-guide-footnote">{km?KHMER_GUIDE.disclosure:<>{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</>}</p>
       </details>
     </aside>}
   </div>;

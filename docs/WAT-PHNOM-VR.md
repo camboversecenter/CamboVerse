@@ -58,9 +58,14 @@ and non-Wat-Phnom guides continue using their own identities.
 
 Penh can answer and narrate in English, Khmer, French, or Simplified Chinese.
 The language selector is available in the browser guide and as a cycling
-controller-selectable button in VR. If Gemini cannot answer, the saved notes
-are identified as English rather than presented as a translation. Khmer output
-and pronunciation require native-speaker review. Optional voice input depends
+controller-selectable button in VR. Khmer mode rejects replies containing Thai,
+Latin letters, or other non-Khmer letter scripts. The Worker retries mixed-script
+output once, then uses Khmer saved notes. The browser, VR and narration paths
+also enforce this check. Khmer guide controls, object cards and VR labels share
+the language choice, and VR textures load the bundled Siemreap font. Other
+languages retain explicitly labelled English saved notes on provider failure.
+Khmer wording and pronunciation require native-speaker review; script checks
+cannot establish linguistic quality. Optional voice input depends
 on the headset or browser's speech recognition support for the chosen language.
 On desktop and mobile, the minimizable guide is embedded in Wat Phnom's overview,
 each place detail panel, and the Naga and lion information cards. The Great Stupa,

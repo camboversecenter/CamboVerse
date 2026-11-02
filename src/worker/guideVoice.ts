@@ -1,8 +1,10 @@
+import {isKhmerGuideText} from '../guideKhmer';
 /** A short, user-requested narration. Credentials never leave the Worker. */
 export async function handleGuideVoice(request:Request,env:{GEMINI_API_KEY?:string;PENH_VOICE_ID?:string}):Promise<Response> {
-  let body:{text?:unknown;persona?:unknown};
+  let body:{text?:unknown;persona?:unknown;lang?:unknown};
   try{body=await request.json() as typeof body;}catch{return new Response('Invalid request',{status:400});}
   if(!body||typeof body.text!=='string'||!body.text.trim()||body.text.length>1500||(body.persona!==undefined&&body.persona!=='penh'))return new Response('Invalid text',{status:400});
+  if(body.lang==='km'&&!isKhmerGuideText(body.text))return new Response('Invalid Khmer text',{status:400});
   if(!env.GEMINI_API_KEY)return new Response('Narration unavailable',{status:503});
   // The song contains an AI-generated voice, not a reusable Gemini voice ID.
   // Its documented spoken delivery is a provisional style, not a voice clone.

@@ -3,6 +3,7 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {act,createElement} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
 import {LocationGuide} from './LocationGuide';
+import {KHMER_GUIDE,isKhmerGuideText,khmerGuideQuestion} from '../guideKhmer';
 
 const mocked=vi.hoisted(()=>({ask:vi.fn(),narrate:vi.fn()}));
 vi.mock('../lib/guide',()=>({askGuide:mocked.ask}));
@@ -31,14 +32,22 @@ describe('Penh language selection',()=>{
     await act(async()=>button('Listen').click());
     expect(mocked.narrate).toHaveBeenCalledWith('Bonjour et bienvenue.','fr-FR','penh');
   });
-  it('labels untranslated saved notes as English when the AI is unavailable',async()=>{
+  it('keeps saved answers and controls in Khmer when the AI is unavailable',async()=>{
     mocked.ask.mockResolvedValue(null);
     await act(async()=>root.render(createElement(LocationGuide,{experienceId:'clock-3dgs',locationId:'flower-clock'})));
     await act(async()=>button('Ask Penh').click());
     const select=host.querySelector('select')!;act(()=>{select.value='km';select.dispatchEvent(new Event('change',{bubbles:true}));});
-    await act(async()=>button('What is the flower clock?').click());
-    expect(host.textContent).toContain('Saved location notes · English');
-    await act(async()=>button('Listen').click());expect(mocked.narrate).toHaveBeenCalledWith(expect.any(String),'en-US','penh');
+    await act(async()=>button(khmerGuideQuestion('What is the flower clock?')).click());
+    expect(host.textContent).toContain(KHMER_GUIDE.saved);expect(isKhmerGuideText(host.textContent!)).toBe(true);
+    await act(async()=>button(KHMER_GUIDE.listen).click());expect(mocked.narrate).toHaveBeenCalledWith(expect.any(String),'km-KH','penh');
+  });
+  it('never displays or narrates a mixed Thai/Khmer reply',async()=>{
+    localStorage.setItem('camboverse-penh-language','km');mocked.ask.mockResolvedValue({text:'សួស្តី Penh ครับ',fallback:false});
+    await act(async()=>root.render(createElement(LocationGuide,{experienceId:'clock-3dgs',locationId:'flower-clock'})));
+    await act(async()=>button(`${KHMER_GUIDE.ask} ${KHMER_GUIDE.name}`).click());
+    await act(async()=>button(khmerGuideQuestion('What is the flower clock?')).click());
+    expect(host.textContent).not.toContain('ครับ');expect(isKhmerGuideText(host.textContent!)).toBe(true);
+    await act(async()=>button(KHMER_GUIDE.listen).click());expect(isKhmerGuideText(mocked.narrate.mock.calls[0][0])).toBe(true);
   });
   it('keeps the embedded object guide compact and its conversation usable',async()=>{
     mocked.ask.mockResolvedValue({text:'The naga forms the staircase railing.',fallback:false,sources:[]});
