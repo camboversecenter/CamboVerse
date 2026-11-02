@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei';
 import { useXR } from '@react-three/xr';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { OBJECT_INFO, type ObjectAnchor, type ObjectInfo } from '../objectHotspots';
 import { speak, stopSpeaking, ttsSupported } from '../lib/voice';
 import './ObjectHotspots.css';
@@ -18,7 +18,7 @@ export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1}:{anchors:Objec
   </Html>)}</>;
 }
 
-export function ObjectInfoCard({object,onClose,onAsk,guideName='Kiri'}:{object:ObjectInfo;onClose:()=>void;onAsk:()=>void;guideName?:string}) {
+export function ObjectInfoCard({object,onClose,onAsk,guideName='Kiri',children}:{object:ObjectInfo;onClose:()=>void;onAsk?:()=>void;guideName?:string;children?:ReactNode}) {
   const [speech,setSpeech]=useState<'idle'|'loading'|'speaking'|'unavailable'>('idle');
   const generation=useRef(0);
   useEffect(()=>()=>{generation.current++;stopSpeaking();},[]);
@@ -42,8 +42,9 @@ export function ObjectInfoCard({object,onClose,onAsk,guideName='Kiri'}:{object:O
       <button onClick={listen} disabled={!ttsSupported()} aria-pressed={speech==='loading'||speech==='speaking'}>
         {speech==='loading'||speech==='speaking'?'■ Stop narration':'▶ Listen'}
       </button>
-      <button onClick={()=>{stop();onAsk();}}>Ask {guideName} about this</button>
+      {onAsk&&<button onClick={()=>{stop();onAsk();}}>Ask {guideName} about this</button>}
     </div>
+    {children}
     {(!ttsSupported()||speech==='unavailable')&&<p className="object-info-audio-note" role="status">Narration is unavailable in this browser. You can still read the information above.</p>}
     {speech==='loading'&&<p className="object-info-audio-note" role="status">Starting narration…</p>}
   </aside>;

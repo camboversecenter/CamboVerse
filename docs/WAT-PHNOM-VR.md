@@ -62,6 +62,10 @@ controller-selectable button in VR. If Gemini cannot answer, the saved notes
 are identified as English rather than presented as a translation. Khmer output
 and pronunciation require native-speaker review. Optional voice input depends
 on the headset or browser's speech recognition support for the chosen language.
+On desktop and mobile, the minimizable guide is embedded in Wat Phnom's overview,
+each place detail panel, and the Naga and lion information cards. The Great Stupa,
+Vihara and City Overlook use limited illustrative-model notes, not invented
+historical details. In capture walking the separate guide button remains available.
 
 In either capture, the right controller's A button requests a short jump;
 release the button before jumping again. This moves the virtual view vertically

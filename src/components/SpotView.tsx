@@ -39,8 +39,6 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
   const [cleanCapture, setCleanCapture] = useState(true);
   const [flightMode,setFlightMode]=useState<CaptureFlightMode>('walking');
   const [selectedObject,setSelectedObject]=useState<string|null>(null);
-  const [guideObject,setGuideObject]=useState<string|undefined>();
-  const [guideRequest,setGuideRequest]=useState(0);
   const [poiCollapsed, setPoiCollapsed] = useState(false);
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const requestedVRCapture=useRef<string|null>(null);
@@ -57,7 +55,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
     if(requested){setMode('walk');setCleanCapture(true);}
     setPoiCollapsed(false);
     setFlightMode('walking');
-    setSelectedObject(null);setGuideObject(undefined);
+    setSelectedObject(null);
   }, [poiId]);
   const selectVRCapture=(id:string)=>{
     if(!pois?.some(p=>p.id===id&&p.capture))return;
@@ -86,7 +84,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
   const closeCapture = () => {
     setMode("orbit");
     setCaptureOpen(false);
-    setSelectedObject(null);setGuideObject(undefined);
+    setSelectedObject(null);
     walkInput.current.move = { x: 0, y: 0 };
     walkInput.current.look = { dx: 0, dy: 0 };
     walkInput.current.jump = false;
@@ -183,17 +181,17 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
         <button aria-pressed={!cleanCapture} title="Original capture with unrestricted looking, including incomplete areas" onClick={() => setCleanCapture(false)}>Full scan</button>
       </div>}
 
-      {capture && (activePoi?.id === 'naga-staircase' || activePoi?.id === 'flower-clock') && <LocationGuide
+      {capture && walking && (activePoi?.id === 'naga-staircase' || activePoi?.id === 'flower-clock') && <LocationGuide
         experienceId={activePoi.id==='flower-clock'?'clock-3dgs':'staircase-3dgs'} locationId={activePoi.id}
-        objectId={guideObject} openRequest={guideRequest} hidden={!!selectedObject}
+        hidden={!!selectedObject}
         onOpenChange={open => { if(open) { walkInput.current.move={x:0,y:0}; walkInput.current.look={dx:0,dy:0}; } }}
       />}
 
       {capture && selectedObject && objectInfoFor('staircase-3dgs','naga-staircase',selectedObject) && <ObjectInfoCard
         key={selectedObject} object={objectInfoFor('staircase-3dgs','naga-staircase',selectedObject)!}
-        guideName="Penh"
-        onClose={()=>setSelectedObject(null)} onAsk={()=>{setGuideObject(selectedObject);setGuideRequest(n=>n+1);setSelectedObject(null);}}
-      />}
+        guideName="Penh" onClose={()=>setSelectedObject(null)}>
+        <LocationGuide embedded experienceId="staircase-3dgs" locationId="naga-staircase" objectId={selectedObject}/>
+      </ObjectInfoCard>}
 
       <button className="backbtn" onClick={capture ? closeCapture : onBack}>
         {capture ? "← Temple model" : backLabel}
@@ -227,7 +225,6 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
           <span>Ask Kiri</span>
         </button>
       )}
-      {!walking && !capture && spot.id==='wat-phnom' && !activePoi && <LocationGuide experienceId="wat-phnom" locationId="wat-phnom"/>}
 
       {!walking && guideOpen && (
         <TourGuide
@@ -320,6 +317,8 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
             {activePoi.capture && <button className="capture-action" onClick={capture ? closeCapture : enterCapture}>
               {capture ? '← Back to temple model' : activePoi.capture.walkAround ? '🚶 Walk around the real clock' : activePoi.capture.walk ? '🚶 Walk the real staircase' : 'View 3D capture'}
             </button>}
+            {spot.id==='wat-phnom'&&<LocationGuide key={activePoi.id} embedded
+              experienceId={activePoi.id==='flower-clock'?'clock-3dgs':activePoi.id==='naga-staircase'?'staircase-3dgs':'wat-phnom'} locationId={activePoi.id}/>}
             <div className="poi-nav">
               <button onClick={() => step(-1)}>◂ Prev</button>
               <button onClick={() => step(1)}>Next ▸</button>
@@ -337,6 +336,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
             <p>
               {spot.province} · {spot.blurb}
             </p>
+            {spot.id==='wat-phnom'&&<LocationGuide embedded experienceId="wat-phnom" locationId="wat-phnom"/>}
             <button className="credits-link" onClick={() => setCreditsOpen(true)}>
               ⓘ Credits &amp; licence
             </button>

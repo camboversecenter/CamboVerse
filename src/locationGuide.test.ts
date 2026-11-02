@@ -4,6 +4,15 @@ import { handleLocationGuide } from './worker/locationGuide';
 
 afterEach(()=>vi.unstubAllGlobals());
 describe('location-grounded guide previews',()=>{
+  it('provides location-specific, cautious context for all Wat Phnom details',async()=>{
+    for(const [id,title] of [['central-stupa','Great Stupa'],['main-vihara','Vihara'],['city-overlook','City Overlook']]){
+      const context=locationGuideContext('wat-phnom',id)!;
+      expect(context.title).toContain(title);expect(context.introduction).toContain('illustrative');
+      const result=await (await handleLocationGuide({experienceId:'wat-phnom',locationId:id,question:'What am I looking at?'},{})).json();
+      expect(result.text).toBe(context.introduction);expect(result.fallback).toBe(true);
+    }
+    expect(locationGuideContext('wat-phnom','unknown')).toBeNull();
+  });
   it('keeps all 27 room stops distinct and rejects unknown locations',()=>{
     for(let n=50;n<=76;n++) {
       const context=locationGuideContext('room-360',String(n).padStart(3,'0'))!;

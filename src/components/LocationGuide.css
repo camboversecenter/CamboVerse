@@ -30,6 +30,10 @@
 .location-guide-host button:disabled { opacity:.55; cursor:wait; }
 .location-guide-host button:focus-visible,.location-guide-form input:focus-visible { outline:3px solid #efd395; outline-offset:2px; }
 .location-guide-footnote { margin:8px 15px 12px; font-size:10px; line-height:1.4; color:#b5c6b8; flex-shrink:0; }
+.location-guide-host.location-guide-embedded { position:static; margin:12px 0; pointer-events:auto; }
+.location-guide-embedded .location-guide-panel { position:static; width:100%; max-height:min(430px,55dvh); }
+.hud:has(.location-guide-embedded .location-guide-panel),.poi-panel:has(.location-guide-embedded .location-guide-panel) { max-height:75dvh; overflow-y:auto; pointer-events:auto; }
+.hud:has(.location-guide-embedded .location-guide-panel) { background:#102b25ef; border-radius:16px 16px 0 0; }
 .pano-tour:has(.location-guide-panel) .pano-look { right:438px; }
 @media(max-width:640px) {
   .location-guide-host { left:12px; top:120px; }

@@ -34,6 +34,22 @@ function baseLocationGuideContext(experienceId: string, locationId: string): Loc
       introduction:'Welcome to Wat Phnom in Phnom Penh. Ask about the site and the photographed staircase.',
       facts:staircase.facts.slice(0,2)};
   }
+  if(experienceId==='wat-phnom'){
+    const details:Record<string,{title:string;description:string}>={
+      'central-stupa':{title:'The Great Stupa',description:'This is an illustrative view of the Great Stupa at Wat Phnom. The model is simplified; detailed historical claims about this monument have not yet been verified in these guide notes.'},
+      'main-vihara':{title:'The Vihara',description:'This is an illustrative view of the vihara, the sanctuary hall at Wat Phnom. The model is simplified; detailed historical claims about the hall have not yet been verified in these guide notes.'},
+      'city-overlook':{title:'City Overlook',description:'This illustrative viewpoint looks out from Wat Phnom toward Phnom Penh. The surrounding landscape and skyline are simplified.'},
+    };
+    const detail=details[locationId];
+    if(detail){
+      const history=baseLocationGuideContext('staircase-3dgs','naga-staircase')!.facts[0];
+      return {experienceId:'wat-phnom',locationId,title:`Wat Phnom · ${detail.title}`,
+        introduction:detail.description,facts:[
+          {question:'What am I looking at?',keywords:['looking','see','view','location','place','building','stupa','vihara','overlook'],text:detail.description,sources:[{title:'CamboVerse · illustrative Wat Phnom model notes'}]},
+          {...history,text:'Wat Phnom’s traditional founding is dated to 1372 and linked to Daun Penh’s discovery of Buddha images. The National Museum of Cambodia records that the vihara was rebuilt several times, including in 1926. This founding story does not establish when this particular feature was built.'},
+        ]};
+    }
+  }
   if (experienceId === 'clock-3dgs' && locationId === 'flower-clock') return {
     experienceId, locationId, title: 'Wat Phnom · Flower Clock',
     introduction: 'You are exploring the photographed flower clock near Wat Phnom in Phnom Penh. Ask about the clock, the site, or this capture.',

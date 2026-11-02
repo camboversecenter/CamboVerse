@@ -11,8 +11,8 @@ import {guideLanguage,useGuideLanguage} from '../lib/guideLanguage';
 type Message = GuideReply & { question?: string; lang:LangCode };
 
 /** Non-modal, text-first guide shared by the capture and photo-tour previews. */
-export function LocationGuide({ experienceId, locationId, objectId, openRequest=0, hidden=false, onOpenChange }: {
-  experienceId: GuideExperience; locationId: string; objectId?: string; openRequest?:number; hidden?:boolean; onOpenChange?: (open:boolean)=>void;
+export function LocationGuide({ experienceId, locationId, objectId, openRequest=0, hidden=false, embedded=false, onOpenChange }: {
+  experienceId: GuideExperience; locationId: string; objectId?: string; openRequest?:number; hidden?:boolean; embedded?:boolean; onOpenChange?: (open:boolean)=>void;
 }) {
   const context = locationGuideContext(experienceId, locationId,objectId);
   const [open,setOpen] = useState(false), [question,setQuestion] = useState('');
@@ -75,7 +75,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     setLoading(false);
     pending.current=null;
   };
-  return <div className={`location-guide-host ${experienceId}`}>
+  return <div className={`location-guide-host ${experienceId}${embedded?' location-guide-embedded':''}`}>
     {!open ? <button className="location-guide-launcher" onClick={()=>toggle(true)} aria-label={`Ask ${name} about this location`}>
       {isPenh?<img className="penh-avatar" src="/province-thumbnails/01-phnom-penh.webp" alt=""/>:<GuideMascot size={42} state="idle"/>}<span>Ask {name}</span>
     </button> : <aside className="location-guide-panel" aria-label={`${name} location guide`}>

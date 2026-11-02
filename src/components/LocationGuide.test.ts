@@ -13,6 +13,14 @@ beforeEach(()=>{localStorage.clear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',tr
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 const button=(text:string)=>[...host.querySelectorAll('button')].find(element=>element.textContent?.includes(text))!;
 describe('Penh language selection',()=>{
+  it('opens and minimizes within its containing information panel',async()=>{
+    await act(async()=>root.render(createElement('section',{'aria-label':'Location information'},createElement(LocationGuide,{embedded:true,experienceId:'wat-phnom',locationId:'central-stupa'}))));
+    await act(async()=>button('Ask Penh').click());
+    const parent=host.querySelector('section')!;
+    expect(parent.querySelector('.location-guide-embedded .location-guide-panel')).toBeTruthy();
+    expect(parent.textContent).toContain('The Great Stupa');
+    await act(async()=>button('−').click());expect(parent.querySelector('.location-guide-panel')).toBeNull();
+  });
   it('requests the selected language and narrates the answer with its locale',async()=>{
     mocked.ask.mockResolvedValue({text:'Bonjour et bienvenue.',fallback:false,sources:[]});
     await act(async()=>root.render(createElement(LocationGuide,{experienceId:'clock-3dgs',locationId:'flower-clock'})));
