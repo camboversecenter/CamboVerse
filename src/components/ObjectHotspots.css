@@ -1,8 +1,7 @@
-.object-hotspot-marker,.pano-tour .object-hotspot-marker { position:static; display:flex; align-items:center; gap:9px; min-height:48px; width:max-content; padding:5px 12px 5px 6px; border:1px solid #ead99d; border-radius:14px; background:#102f28f5; color:#fff9e7; font:700 13px system-ui,sans-serif; text-align:left; box-shadow:0 4px 16px #0009; cursor:pointer; touch-action:manipulation; white-space:nowrap; }
-.object-hotspot-marker>span:first-child { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#e9d388; color:#14362d; font:bold 20px Georgia,serif; }
-.object-marker-copy { display:grid; gap:1px; }
-.object-marker-copy small { color:#d9e9cc; font:500 10px system-ui,sans-serif; }
-.object-marker-arrow { font:600 23px system-ui,sans-serif; color:#e9d388; line-height:1; }
+.object-hotspot-marker,.pano-tour .object-hotspot-marker { position:static; display:flex; align-items:center; gap:8px; min-height:44px; width:max-content; max-width:calc(100vw - 24px); padding:4px 12px 4px 5px; border:1px solid #ddcb8e; border-radius:999px; background:#12372fec; color:#fff9e7; font:700 13px system-ui,sans-serif; text-align:left; box-shadow:0 3px 12px #0008; cursor:pointer; touch-action:manipulation; white-space:nowrap; }
+.object-hotspot-marker .object-marker-icon { display:grid; place-items:center; width:32px; height:32px; flex:none; border-radius:50%; background:#e9d388; color:#14362d; font:bold 20px Georgia,serif; }
+.object-marker-copy { overflow:hidden; text-overflow:ellipsis; }
+.object-marker-arrow { font:600 20px system-ui,sans-serif; color:#e9d388; line-height:1; }
 .object-hotspot-marker:hover,.pano-tour .object-hotspot-marker:hover { background:#396343; }
 .object-hotspot-marker:focus-visible { outline:3px solid #ffe49a; outline-offset:3px; }
 .object-info-card { position:fixed; z-index:70; right:16px; bottom:86px; width:min(410px,calc(100vw - 32px)); box-sizing:border-box; padding:18px; border:1px solid #d9c987; border-top:4px solid #e9d388; border-radius:18px; background:#102f28fa; color:#f5f2df; box-shadow:0 12px 44px #0009; font-family:system-ui,sans-serif; max-height:calc(100dvh - 180px); overflow:auto; overscroll-behavior:contain; }

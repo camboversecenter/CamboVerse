@@ -6,7 +6,7 @@ import {LocationGuide} from './LocationGuide';
 
 const mocked=vi.hoisted(()=>({ask:vi.fn(),narrate:vi.fn()}));
 vi.mock('../lib/guide',()=>({askGuide:mocked.ask}));
-vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(text:string,lang:string){mocked.narrate(text,lang);} stop(){} dispose(){}}}));
+vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(text:string,lang:string,persona?:string){mocked.narrate(text,lang,persona);} stop(){} dispose(){}}}));
 vi.mock('./GuideMascot',()=>({GuideMascot:()=>null}));
 let root:Root,host:HTMLDivElement;
 beforeEach(()=>{localStorage.clear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');document.body.append(host);root=createRoot(host);mocked.ask.mockReset();mocked.narrate.mockReset();});
@@ -29,7 +29,7 @@ describe('Penh language selection',()=>{
     await act(async()=>button('What is the flower clock?').click());
     expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({lang:'fr'}),expect.any(AbortSignal));
     await act(async()=>button('Listen').click());
-    expect(mocked.narrate).toHaveBeenCalledWith('Bonjour et bienvenue.','fr-FR');
+    expect(mocked.narrate).toHaveBeenCalledWith('Bonjour et bienvenue.','fr-FR','penh');
   });
   it('labels untranslated saved notes as English when the AI is unavailable',async()=>{
     mocked.ask.mockResolvedValue(null);
@@ -38,6 +38,6 @@ describe('Penh language selection',()=>{
     const select=host.querySelector('select')!;act(()=>{select.value='km';select.dispatchEvent(new Event('change',{bubbles:true}));});
     await act(async()=>button('What is the flower clock?').click());
     expect(host.textContent).toContain('Saved location notes · English');
-    await act(async()=>button('Listen').click());expect(mocked.narrate).toHaveBeenCalledWith(expect.any(String),'en-US');
+    await act(async()=>button('Listen').click());expect(mocked.narrate).toHaveBeenCalledWith(expect.any(String),'en-US','penh');
   });
 });

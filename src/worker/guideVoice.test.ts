@@ -19,4 +19,19 @@ describe('guide speech service',()=>{
     const response=await handleGuideVoice(request({text:'hello'}),{GEMINI_API_KEY:'test-private-key'});
     expect(response.status).toBe(502);expect(await response.text()).not.toContain('test-private-key');
   });
+  it('uses an approved server-configured voice and gentle delivery only for Penh',async()=>{
+    const fetch=vi.fn().mockResolvedValue(Response.json({candidates:[{content:{parts:[{inlineData:{data:btoa('RIFFxxxxWAVE1234')}}]}}]}));vi.stubGlobal('fetch',fetch);
+    const env={GEMINI_API_KEY:'test-private-key',PENH_VOICE_ID:'voice_approved123'};
+    const response=await handleGuideVoice(request({text:'Welcome.',persona:'penh'}),env);
+    expect(response.status).toBe(200);
+    const sent=JSON.parse(fetch.mock.calls[0][1].body);
+    expect(sent.generationConfig.speechConfig.voiceConfig.voice).toBe('voice_approved123');
+    expect(sent.contents[0].parts[0].speech_metadata.style).toContain('gently');
+    expect(await response.text()).not.toContain(env.PENH_VOICE_ID);
+    await handleGuideVoice(request({text:'Hello.'}),env);
+    const other=JSON.parse(fetch.mock.calls[1][1].body);
+    expect(other.generationConfig.speechConfig.voiceConfig.voice).toBe('Kore');
+    expect(other.contents[0].parts[0]).not.toHaveProperty('speech_metadata');
+    expect((await handleGuideVoice(request({text:'hello',persona:'unknown'}),env)).status).toBe(400);
+  });
 });

@@ -75,8 +75,8 @@ In the Naga Staircase capture, select either the Naga balustrade or guardian
 lion information label, then select **Ask Penh** within that card. The guide
 uses the selected sculpture's notes; **Back to information** returns to its card.
 The card's Listen action uses the same generated-voice path as the guide.
-VR labels include a point-and-select instruction and the information board has
-larger Listen, Ask Penh and Close targets. On desktop and mobile, capture labels
+VR labels have a compact information icon and the information board has larger
+Listen, Ask Penh and Close targets. On desktop and mobile, capture labels
 are projected into the page overlay above the walking gesture layer so that a
 tap can reach the label rather than being intercepted by walk controls.
 
@@ -92,6 +92,12 @@ key remains server-side and the visitor's answer text is sent to Gemini. A
 browser Web Audio context is unlocked on the click so asynchronous speech can
 play in an immersive session. If the provider fails, the browser voice is used
 where available; otherwise the readable answer and retry remain available.
+The current voice is a provisional Gemini voice with the gentle spoken style
+described in Penh's song materials. It is not the voice from the recording.
+An approved Gemini custom voice can be supplied as the Worker environment
+variable `PENH_VOICE_ID`; no voice ID is bundled with the project. Google's
+voice replication requires a real speaker's reference and consent recordings,
+so the AI-generated song cannot by itself satisfy that workflow.
 Generated speech and music/bird tracks are cleaned up when the guide or site is
 closed; both ambience layers duck while guide narration is playing.
 

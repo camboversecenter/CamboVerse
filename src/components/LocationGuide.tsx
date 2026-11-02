@@ -43,7 +43,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   };
   const narrate=(text:string,index:number,lang:LangCode)=>{
     if((speech==='speaking'||speech==='loading')&&speechIndex===index){narrator.stop();setSpeechIndex(null);return;}
-    setSpeechIndex(index);void narrator.start(text,guideLanguage(lang).bcp);
+    setSpeechIndex(index);void narrator.start(text,guideLanguage(lang).bcp,isPenh?'penh':undefined);
   };
   const listen=()=>{
     if(listening){stopListen.current?.();stopListen.current=null;setListening(false);return;}
@@ -114,7 +114,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
           <button type="submit" disabled={loading||!question.trim()}>Ask</button></div>
         {(voiceError||speech==='unavailable')&&<p role="status">{voiceError||'Narration is unavailable in this browser.'}</p>}
       </form>
-      <p className="location-guide-footnote">{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</p>
+      <p className="location-guide-footnote">{isPenh?'Penh is a fictional AI character · CamboVerse Center, CC BY 4.0. Her current voice is an approximation. ':''}Questions and requested narration are sent to Gemini when available. Optional voice input may use your browser’s speech service.</p>
     </aside>}
   </div>;
 }

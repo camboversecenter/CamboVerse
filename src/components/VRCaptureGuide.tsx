@@ -57,7 +57,7 @@ export function VRCaptureGuide({locationId,objectId,scale,onClose,embedded=false
   const narrate=()=>{
     if(!reply)return;
     if(speech==='speaking'||speech==='loading'){narrator.stop();return;}
-    void narrator.start(reply.text,guideLanguage(replyLang).bcp);
+    void narrator.start(reply.text,guideLanguage(replyLang).bcp,'penh');
   };
   const reset=()=>{narrator.stop();setReply(null);setPage(0);setError('');};
   return <group ref={panel} scale={scale} visible={embedded}>

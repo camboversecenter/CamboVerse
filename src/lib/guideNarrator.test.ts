@@ -8,8 +8,9 @@ describe('guide narration playback',()=>{
     vi.stubGlobal('window',{AudioContext:class {constructor(){return ctx;}},speechSynthesis:{cancel:vi.fn()}});
     const fetch=vi.fn(async()=>new Response(new Uint8Array([1,2])));vi.stubGlobal('fetch',fetch);
     const status=vi.fn(),narrator=new GuideNarrator(status);
-    const pending=narrator.start('Hello visitor');expect(ctx.resume).toHaveBeenCalledOnce();expect(guideNarrationActive()).toBe(true);
+    const pending=narrator.start('Hello visitor','en-US','penh');expect(ctx.resume).toHaveBeenCalledOnce();expect(guideNarrationActive()).toBe(true);
     await pending;expect(source.start).toHaveBeenCalledOnce();expect(status).toHaveBeenLastCalledWith('speaking');
+    expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({text:'Hello visitor',persona:'penh'});
     narrator.stop();expect(source.stop).toHaveBeenCalledOnce();expect(guideNarrationActive()).toBe(false);
     narrator.dispose();expect(ctx.close).toHaveBeenCalledOnce();
   });

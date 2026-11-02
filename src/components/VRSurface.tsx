@@ -9,7 +9,7 @@ export function VRSurface({title,body,footer,onClick,active=false,width=.92,heig
 }) {
   const [hovered,setHovered]=useState(false);
   const texture=useMemo(()=>{
-    const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=body?768:variant==='marker'?220:156;
+    const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=body?768:156;
     const ctx=canvas.getContext('2d')!;
     ctx.fillStyle=hovered?'#365f49':active?'#426137':variant==='board'?'#0c2923':'#14372f';ctx.beginPath();ctx.roundRect(3,3,1018,canvas.height-6,28);ctx.fill();
     ctx.strokeStyle=variant==='default'?'#b8cba0':'#e5ce85';ctx.lineWidth=variant==='default'?4:7;ctx.stroke();
@@ -26,10 +26,10 @@ export function VRSurface({title,body,footer,onClick,active=false,width=.92,heig
       ctx.fillStyle='#c9d8bd';ctx.font='26px sans-serif';
       if(footer)wrapVRText(footer,928,t=>ctx.measureText(t).width).forEach((line,i)=>ctx.fillText(line,48,650+i*32));
     }else if(variant==='marker'){
-      ctx.fillStyle='#e5ce85';ctx.beginPath();ctx.roundRect(20,22,158,176,25);ctx.fill();
-      ctx.fillStyle='#12352b';ctx.textAlign='center';ctx.font='bold 112px Georgia,serif';ctx.fillText('i',99,112);
-      ctx.textAlign='left';ctx.fillStyle='#fff8df';ctx.font='700 48px sans-serif';ctx.fillText(title.replace(/^ⓘ\s*/,''),205,81,770);
-      ctx.fillStyle='#d4e5c4';ctx.font='600 30px sans-serif';ctx.fillText('POINT AND SELECT  →',205,151,770);
+      ctx.fillStyle='#e5ce85';ctx.beginPath();ctx.arc(82,78,58,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#12352b';ctx.textAlign='center';ctx.font='bold 78px Georgia,serif';ctx.fillText('i',82,79);
+      ctx.textAlign='left';ctx.fillStyle='#fff8df';ctx.font='700 49px sans-serif';ctx.fillText(title.replace(/^ⓘ\s*/,''),170,78,720);
+      ctx.textAlign='center';ctx.fillStyle='#e5ce85';ctx.font='600 75px sans-serif';ctx.fillText('›',948,76);
     }else{
       ctx.textAlign='center';ctx.font='600 42px sans-serif';ctx.fillText(title,512,78,940);
     }

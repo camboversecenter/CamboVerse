@@ -22,6 +22,7 @@ interface Env {
   ASSETS: Fetcher;
   ANTHROPIC_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  PENH_VOICE_ID?: string;
   /** Optional D1 database for order persistence (see DIGITAL_ECONOMY.md). */
   DB?: D1Database;
 }

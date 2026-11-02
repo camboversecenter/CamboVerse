@@ -3,15 +3,17 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {act,createElement,type ReactNode,type RefObject} from 'react';
 import {createPortal} from 'react-dom';
 import {createRoot,type Root} from 'react-dom/client';
-import {ObjectHotspotMarkers} from './ObjectHotspots';
-import {STAIRCASE_OBJECT_ANCHORS} from '../objectHotspots';
+import {ObjectHotspotMarkers,ObjectInfoCard} from './ObjectHotspots';
+import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from '../objectHotspots';
 
+const mocks=vi.hoisted(()=>({start:vi.fn(),stop:vi.fn(),dispose:vi.fn()}));
 vi.mock('@react-three/xr',()=>({useXR:()=>false}));
 vi.mock('@react-three/drei',()=>({Html:({children,portal,zIndexRange}:{children:ReactNode;portal?:RefObject<HTMLElement>;zIndexRange:number[]})=>{
   const marker=createElement('div',{'data-testid':'projected-marker',style:{position:'absolute',zIndex:zIndexRange[1]}},children);
   return portal?.current?createPortal(marker,portal.current):marker;
 }}));
 vi.mock('./VRObjectHotspots',()=>({VRObjectHotspots:()=>null}));
+vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(...args:unknown[]){mocks.start(...args);} stop(){mocks.stop();} dispose(){mocks.dispose();}}}));
 let root:Root,host:HTMLDivElement;
 beforeEach(()=>{vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');host.className='viewer';document.body.append(host);root=createRoot(host);});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
@@ -26,5 +28,11 @@ describe('capture information labels',()=>{
     await act(async()=>markers[0].querySelector('button')!.click());expect(select).toHaveBeenCalledWith('naga-balustrade');
     await act(async()=>markers[1].querySelector('button')!.click());expect(select).toHaveBeenCalledWith('guardian-lion');
     walk.remove();
+  });
+  it('uses Penh narration for the object card even without a browser voice',async()=>{
+    await act(async()=>root.render(createElement(ObjectInfoCard,{object:OBJECT_INFO['naga-balustrade'],guideName:'Penh',onClose:vi.fn()})));
+    const listen=[...host.querySelectorAll('button')].find(button=>button.textContent?.includes('Listen'))!;
+    await act(async()=>listen.click());
+    expect(mocks.start).toHaveBeenCalledWith(expect.stringContaining('Naga balustrade.'),'en-US','penh');
   });
 });

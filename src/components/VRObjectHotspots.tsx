@@ -18,7 +18,7 @@ function VRMarker({anchor,scale,onSelect}:{anchor:ObjectAnchor;scale:number;onSe
     ref.current.visible=distance>.15*scale;
   });
   return <group ref={ref} position={anchor.position} scale={scale}>
-    <VRSurface variant="marker" title={`ⓘ ${OBJECT_INFO[anchor.id].title}`} width={1.05} height={.23} onClick={onSelect}/>
+    <VRSurface variant="marker" title={`ⓘ ${OBJECT_INFO[anchor.id].title}`} width={.95} height={.18} onClick={onSelect}/>
   </group>;
 }
 
@@ -38,7 +38,7 @@ function VRObjectCard({object,scale,onClose,penhGuide}:{object:ObjectInfo;scale:
   });
   const listen=()=>{
     if(speech==='speaking'||speech==='loading'){narrator.stop();return;}
-    void narrator.start(`${object.title}. ${object.text}`,'en-US');
+    void narrator.start(`${object.title}. ${object.text}`,'en-US',penhGuide?'penh':undefined);
   };
   return <group ref={ref} scale={scale} visible={false}>
     {guideOpen?<VRCaptureGuide embedded locationId="naga-staircase" objectId={object.id} scale={1} onClose={()=>setGuideOpen(false)}/>:<>
