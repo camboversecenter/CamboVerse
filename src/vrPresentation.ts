@@ -24,3 +24,14 @@ export function wrapVRText(text:string,maxWidth:number,measure:(text:string)=>nu
   }
   return lines;
 }
+
+/** Split long answers into readable cards without dropping words or newlines. */
+export function guideAnswerPages(text:string,limit=300):string[] {
+  const pages:string[]=[];let current='';
+  for(const word of text.trim().split(/\s+/).filter(Boolean)){
+    if(current&&(current.length+1+word.length>limit)){pages.push(current);current='';}
+    current=current?`${current} ${word}`:word;
+  }
+  if(current)pages.push(current);
+  return pages;
+}

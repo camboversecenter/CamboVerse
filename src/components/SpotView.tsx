@@ -183,8 +183,8 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
         <button aria-pressed={!cleanCapture} title="Original capture with unrestricted looking, including incomplete areas" onClick={() => setCleanCapture(false)}>Full scan</button>
       </div>}
 
-      {capture && activePoi?.id === 'naga-staircase' && <LocationGuide
-        experienceId="staircase-3dgs" locationId={activePoi.id}
+      {capture && (activePoi?.id === 'naga-staircase' || activePoi?.id === 'flower-clock') && <LocationGuide
+        experienceId={activePoi.id==='flower-clock'?'clock-3dgs':'staircase-3dgs'} locationId={activePoi.id}
         objectId={guideObject} openRequest={guideRequest} hidden={!!selectedObject}
         onOpenChange={open => { if(open) { walkInput.current.move={x:0,y:0}; walkInput.current.look={dx:0,dy:0}; } }}
       />}

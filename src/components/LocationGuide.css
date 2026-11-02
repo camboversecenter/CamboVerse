@@ -15,6 +15,7 @@
 .location-guide-question { margin:0 0 6px 28px; padding:9px 12px; border-radius:13px 13px 2px 13px; background:#42613b; }
 .location-guide-answer { padding:11px 12px; border-radius:2px 13px 13px 13px; background:#1a3b31; }
 .location-guide-answer>p { margin:6px 0; white-space:pre-wrap; }
+.location-guide-answer button { min-height:44px; padding:8px 14px; border:1px solid #afcb84; border-radius:11px; background:#315a3f; color:#fff; font:600 13px system-ui; cursor:pointer; }
 .location-guide-answer small { font-size:10px; letter-spacing:.04em; color:#cadca7; text-transform:uppercase; }
 .location-guide-sources { display:grid; gap:5px; margin-top:9px; font-size:11px; line-height:1.5; color:#b8c9ba; }
 .location-guide-sources a { color:#d2e8af; text-decoration:underline; }

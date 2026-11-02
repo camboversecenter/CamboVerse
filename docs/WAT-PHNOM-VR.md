@@ -52,6 +52,24 @@ priority over scene interactions; the cursor appears on actual targets.
 
 ## Information and ambience
 
+Both Wat Phnom captures expose **Ask Kiri** in the browser and, from the VR Y
+menu, as a controller-selectable in-world guide. Browser visitors can type a
+question and optionally dictate it if speech recognition is available; VR
+visitors can select suggested questions or dictate where the headset browser
+supports it. Microphone permission is requested only when voice is selected.
+Each answer has a Listen/Stop control; text remains available if the device
+does not provide speech synthesis. VR answers are divided into readable pages.
+Switching location or closing the guide stops narration and cancels requests.
+
+The same server endpoint resolves location notes for both modes. Its response is
+marked **AI answer** only if the model actually returns one; network, provider,
+or server configuration failures instead display **Saved notes**. A live preview
+request returned saved notes on 2 November 2026; this does not establish whether
+the API credential is absent or the upstream service failed. A working server-side
+`ANTHROPIC_API_KEY` and provider access are needed for live generated answers.
+Do not put credentials in client files, Git, or chat. Device speech recognition
+may send audio to a browser-managed speech service; it is an optional user action.
+
 The Naga balustrade and guardian lion use the same reviewed anchors and object
 notes in both browser and VR. In VR, actual textured meshes replace the HTML
 markers, which are not rendered by an immersive session. The labels remain at

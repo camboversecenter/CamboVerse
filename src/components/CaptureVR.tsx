@@ -106,7 +106,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
 
 /** Menu stays in the world. Only opening with Y, switching capture or resetting
  * takes a new pose; ordinary head movement never drags the panel around. */
-export function CaptureVRMenu({tour,onReset,resetKey,ambience}:{tour:CaptureVRTour;onReset:()=>void;resetKey:number;ambience:AmbienceControl}) {
+export function CaptureVRMenu({tour,onReset,resetKey,ambience,onGuide}:{tour:CaptureVRTour;onReset:()=>void;resetKey:number;ambience:AmbienceControl;onGuide:()=>void}) {
   const session=useXR(s=>s.session),panel=useRef<Group>(null);
   const store=useXRStore(),[open,setOpen]=useState(false),[exitFailed,setExitFailed]=useState(false);
   const placement=useRef({pending:true,side:-.95}),pressed=useRef(false);
@@ -136,9 +136,10 @@ export function CaptureVRMenu({tour,onReset,resetKey,ambience}:{tour:CaptureVRTo
       <group position={[0,.40,0]}><VRSurface title="Wat Phnom · Hide menu" onClick={()=>setOpen(false)}/></group>
       {tour.stops.map((stop,i)=><group key={stop.id} position={[0,.23-i*.17,0]}><VRSurface title={stop.title} height={.16} active={stop.id===tour.activeId} onClick={()=>{tour.onSelect(stop.id);setOpen(false);}}/></group>)}
       <group position={[0,-.11,0]}><VRSurface title={sound} height={.16} onClick={ambience.toggle}/></group>
-      <group position={[0,-.28,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
-      <group position={[0,-.45,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
-      <group position={[0,-.59,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>
+      <group position={[0,-.28,0]}><VRSurface title="Ask Kiri · Guide" onClick={()=>{setOpen(false);onGuide();}}/></group>
+      <group position={[0,-.45,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
+      <group position={[0,-.62,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
+      <group position={[0,-.76,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>
     </>}
   </group>;
 }

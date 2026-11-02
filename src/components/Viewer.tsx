@@ -31,6 +31,7 @@ import { CaptureVREntry, CaptureVRMenu, ImmersiveVREntry, type CaptureVRTour } f
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
 import { captureVRArrival,captureVRScale } from '../captureVR';
 import {HeritageAmbienceButton,useHeritageAmbience} from './HeritageAmbience';
+import {VRCaptureGuide} from './VRCaptureGuide';
 
 const ARTIFACT_OVERVIEW: Poi = { id: "overview", title: "Overview", info: "", target: [0, 1.08, 0], camera: [2.05, 1.72, 3.2] };
 
@@ -118,6 +119,8 @@ export function Viewer({
   const [immersive, setImmersive] = useState(false);
   const [showParts, setShowParts] = useState(false);
   const [vrReset,setVRReset]=useState(0);
+  const [vrGuideOpen,setVRGuideOpen]=useState(false);
+  useEffect(()=>{setVRGuideOpen(false);},[capture,immersive,vrReset]);
   const detailed = immersive || detail === "ultra";
   const capturePose = useMemo<Poi | null>(() => capture ? {
     id: 'capture-view', title: '3D capture', info: '',
@@ -213,7 +216,8 @@ export function Viewer({
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
           capture={vrTour?capture:undefined} resetKey={vrReset}/>
-        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience}/>}
+        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)}/>}
+        {vrTour&&capture&&immersive&&vrGuideOpen&&vrTour.activeId&&<VRCaptureGuide key={vrTour.activeId} locationId={vrTour.activeId} scale={captureVRScale(capture)} onClose={()=>setVRGuideOpen(false)}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
         <Nav
           pose={capturePose ?? activePoi ?? overview ?? (ultraModelUrl ? ARTIFACT_OVERVIEW : null)}

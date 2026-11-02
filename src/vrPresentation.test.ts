@@ -1,8 +1,15 @@
 import {describe,expect,it} from 'vitest';
-import {worldPanelPose,wrapVRText,vrMarkerScale} from './vrPresentation';
+import {worldPanelPose,wrapVRText,vrMarkerScale,guideAnswerPages} from './vrPresentation';
 import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from './objectHotspots';
 
 describe('world-anchored VR information',()=>{
+  it('paginates long and multiline guide answers without losing words',()=>{
+    const answer=('A factual answer about Wat Phnom.\nAnother line. ').repeat(50);
+    const pages=guideAnswerPages(answer);
+    expect(pages.length).toBeGreaterThan(1);
+    expect(pages.join(' ')).toBe(answer.trim().replace(/\s+/g,' '));
+    expect(pages.every(page=>page.length<=300)).toBe(true);
+  });
   it('keeps distant object labels readable at a consistent angular width',()=>{
     for(const distance of [.1,.5,1,4,12])expect(.95*vrMarkerScale(distance)/distance).toBeCloseTo(.26);
     expect(Number.isFinite(vrMarkerScale(0))).toBe(true);

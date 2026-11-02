@@ -15,6 +15,15 @@ describe('location-grounded guide previews',()=>{
     expect(locationGuideContext('room-360','999')).toBeNull();
     expect(locationGuideContext('staircase-3dgs','050')).toBeNull();
   });
+  it('uses clock-specific notes and does not invent its installation date',async()=>{
+    const clock=locationGuideContext('clock-3dgs','flower-clock')!;
+    expect(clock.title).toContain('Flower Clock');
+    expect(savedLocationAnswer(clock,'What is the flower clock?').text).toContain('clock face');
+    expect(savedLocationAnswer(clock,'When was it built?').text).toContain('does not date the flower clock');
+    expect(locationGuideContext('clock-3dgs','naga-staircase')).toBeNull();
+    const answer=await (await handleLocationGuide({experienceId:'clock-3dgs',locationId:'flower-clock',question:'What is the flower clock?'},{})).json();
+    expect(answer.fallback).toBe(true);expect(answer.text).toContain('clock face');
+  });
   it('never borrows temple history for a meeting room or invents room dates',()=>{
     const room=locationGuideContext('room-360','050')!;
     for(const question of ['What is the room history?','Who built this room?','When was this built?','How old is it?']) {

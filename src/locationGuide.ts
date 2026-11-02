@@ -1,7 +1,7 @@
 /** Reviewed context for the two local guide previews. No image uploads or
  * inferred room history. The server resolves these IDs itself. */
 import { objectInfoFor } from './objectHotspots';
-export type GuideExperience = 'staircase-3dgs' | 'room-360';
+export type GuideExperience = 'staircase-3dgs' | 'clock-3dgs' | 'room-360';
 export type GuideSource = { title: string; url?: string };
 export type LocationFact = { question: string; keywords: string[]; text: string; sources: GuideSource[] };
 export type LocationContext = {
@@ -28,6 +28,16 @@ const roomTitles = [
 ];
 
 function baseLocationGuideContext(experienceId: string, locationId: string): LocationContext | null {
+  if (experienceId === 'clock-3dgs' && locationId === 'flower-clock') return {
+    experienceId, locationId, title: 'Wat Phnom · Flower Clock',
+    introduction: 'You are exploring the photographed flower clock near Wat Phnom in Phnom Penh. Ask about the clock, the site, or this capture.',
+    facts: [
+      {question:'What is the flower clock?',keywords:['clock','flower','face','hands','looking','see','feature'],text:'The capture shows a large clock face set into greenery near Wat Phnom. Its visible numerals and hands form the clock display. Verified details of this particular clock’s installation, designer and current operation have not been provided.',sources:[{title:'CamboVerse · flower clock capture notes'}]},
+      {question:'Tell me about Wat Phnom history',keywords:['history','historic','built','when','old','date','founded'],text:'Wat Phnom’s traditional founding is dated to 1372 and linked to Daun Penh’s discovery of Buddha images. The National Museum of Cambodia records that the vihara was rebuilt several times, including in 1926. This founding story does not date the flower clock.',sources:[museum]},
+      {question:'Why are some areas blurry?',keywords:['blur','blurry','missing','capture','scan','photo','quality'],text:'The clock is a reconstructed photo capture. Some views and surfaces are incomplete or blurred; clearer, overlapping photographs may help a future reconstruction.',sources:[{title:'CamboVerse · flower clock capture notes'}]},
+      {question:'How do I explore?',keywords:['move','walk','explore','control','turn','navigate'],text:'Walk around the outside of the clock and turn to look at it from different angles. In VR, use the left stick to move and the right stick to turn.',sources:[{title:'CamboVerse · flower clock capture notes'}]},
+    ],
+  };
   if (experienceId === 'staircase-3dgs' && locationId === 'naga-staircase') return {
     experienceId, locationId, title: 'Wat Phnom · Naga Staircase',
     introduction: 'You are exploring the photographed staircase at Wat Phnom in Phnom Penh. Ask me about the site’s history, the staircase, or this capture.',
