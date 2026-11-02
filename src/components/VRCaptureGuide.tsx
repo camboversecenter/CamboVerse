@@ -6,14 +6,15 @@ import {askGuide,type GuideReply} from '../lib/guide';
 import {LANGS,listenOnce,sttSupported,type LangCode} from '../lib/voice';
 import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import {guideLanguage,useGuideLanguage} from '../lib/guideLanguage';
-import {guideAnswerPages,worldPanelPose} from '../vrPresentation';
+import {worldPanelPose} from '../vrPresentation';
 import {VRSurface} from './VRSurface';
+import {VRPanelFrame,VRPageControls} from './VRPanel';
 import {locationGuideReply} from '../lib/locationGuideReply';
 import {KHMER_GUIDE,khmerGuideTitle,khmerGuideQuestion,khmerSourceTitle} from '../guideKhmer';
 
 function PenhPortrait(){
   const texture=useLoader(TextureLoader,'/province-thumbnails/01-phnom-penh.webp');texture.colorSpace=SRGBColorSpace;
-  return <mesh position={[-.62,.42,.01]} renderOrder={2001}><planeGeometry args={[.18,.18]}/><meshBasicMaterial map={texture} transparent depthTest={false} depthWrite={false} toneMapped={false}/></mesh>;
+  return <mesh position={[-.56,.59,.01]} renderOrder={2001}><planeGeometry args={[.14,.14]}/><meshBasicMaterial map={texture} transparent depthTest={false} depthWrite={false} toneMapped={false}/></mesh>;
 }
 
 /** Controller-selectable guide. Suggested questions work without a microphone;
@@ -25,6 +26,8 @@ export function VRCaptureGuide({locationId,objectId,scale,onClose,embedded=false
   const [listening,setListening]=useState(false),[speech,setSpeech]=useState<NarrationStatus>('idle'),[error,setError]=useState('');
   const {language,choose}=useGuideLanguage();
   const km=language.code==='km';
+  const [pages,setPages]=useState(1);
+  useEffect(()=>{setPage(p=>Math.min(p,pages-1));},[pages]);
   const [replyLang,setReplyLang]=useState<LangCode>('en');
   const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
   const pending=useRef<AbortController|null>(null),stopListen=useRef<null|(()=>void)>(null);
@@ -37,7 +40,7 @@ export function VRCaptureGuide({locationId,objectId,scale,onClose,embedded=false
   });
   useEffect(()=>()=>{const request=pending.current;pending.current=null;request?.abort();stopListen.current?.();narrator.dispose();},[narrator]);
   if(!context)return null;
-  const pages=reply?guideAnswerPages(reply.text):[];
+
   const ask=async(question:string)=>{
     if(loading)return;
     pending.current?.abort();const controller=new AbortController();pending.current=controller;
@@ -64,27 +67,26 @@ export function VRCaptureGuide({locationId,objectId,scale,onClose,embedded=false
     void narrator.start(reply.text,guideLanguage(replyLang).bcp,'penh');
   };
   const reset=()=>{narrator.stop();setReply(null);setPage(0);setError('');};
+  const closeLabel=km?(embedded?KHMER_GUIDE.back:KHMER_GUIDE.close):embedded?'Back to information':'Close guide';
   return <group ref={panel} scale={scale} visible={embedded}>
+    <VRPanelFrame height={1.64}/>
     {!reply?<>
       <Suspense fallback={null}><PenhPortrait/></Suspense>
-      <group position={[0,.48,0]}><VRSurface title={km?`${KHMER_GUIDE.ask} ${KHMER_GUIDE.name} · ${khmerGuideTitle(context)}`:`Ask Penh · ${objectId?context.title:locationId==='flower-clock'?'Flower Clock':'Naga Staircase'}`} /></group>
-      <group position={[0,.39,0]}><VRSurface title={km?KHMER_GUIDE.credit:'Fictional AI · CamboVerse Center · CC BY 4.0'} height={.07}/></group>
-      {context.facts.slice(0,3).map((fact,i)=><group key={fact.question} position={[0,.28-i*.17,0]}>
-        <VRSurface title={km?khmerGuideQuestion(fact.question):fact.question} height={.16} onClick={()=>void ask(km?khmerGuideQuestion(fact.question):fact.question)}/></group>)}
-      <group position={[0,-.25,0]}><VRSurface title={loading?(km?KHMER_GUIDE.checking:'Checking notes…'):listening?(km?KHMER_GUIDE.listening:'Listening… select to stop'):sttSupported()?(km?KHMER_GUIDE.voice:'Ask by voice'):(km?KHMER_GUIDE.voiceUnavailable:'Voice unavailable · choose a question')} onClick={!loading&&sttSupported()?voice:undefined}/></group>
-      <group position={[0,-.42,0]}><VRSurface title={km?`${KHMER_GUIDE.language}: ខ្មែរ · ${KHMER_GUIDE.changeLanguage}`:`Language: ${language.name} · Select to change`} onClick={!loading?()=>{stopListen.current?.();setListening(false);choose(LANGS[(LANGS.findIndex(l=>l.code===language.code)+1)%LANGS.length].code);}:undefined}/></group>
-      <group position={[0,-.53,0]}><VRSurface title={km?KHMER_GUIDE.privacy:'Questions and narration sent to Gemini'} height={.07}/></group>
-      {sttSupported()&&<group position={[0,-.61,0]}><VRSurface title={km?KHMER_GUIDE.voicePrivacy:'Voice may use browser speech service'} height={.09}/></group>}
-      {error&&<group position={[0,-.70,0]}><VRSurface title={error}/></group>}
-      <group position={[0,-.82,0]}><VRSurface title={km?(embedded?KHMER_GUIDE.back:KHMER_GUIDE.close):embedded?'Back to information':'Close guide'} onClick={onClose}/></group>
+      <group position={[.08,.60,0]}><VRSurface variant="heading" title={km?KHMER_GUIDE.ask+' '+KHMER_GUIDE.name:'Ask Penh'} width={1.02} height={.14}/></group>
+      <group position={[0,.44,0]}><VRSurface variant="text" title={km?khmerGuideTitle(context):objectId?context.title:locationId==='flower-clock'?'Flower Clock':'Naga Staircase'} width={1.32} height={.12}/></group>
+      {context.facts.slice(0,3).map((fact,i)=><group key={fact.question} position={[0,.28-i*.18,0]}>
+        <VRSurface title={km?khmerGuideQuestion(fact.question):fact.question} width={1.32} height={.16} disabled={loading||listening} onClick={()=>void ask(km?khmerGuideQuestion(fact.question):fact.question)}/></group>)}
+      <group position={[-.34,-.27,0]}><VRSurface title={loading?(km?KHMER_GUIDE.checking:'Checking notes…'):listening?(km?KHMER_GUIDE.listening:'Listening… select to stop'):sttSupported()?(km?KHMER_GUIDE.voice:'Ask by voice'):(km?'សូមជ្រើសរើសសំណួរ':'Choose a question above')} width={.64} height={.17} disabled={loading||!sttSupported()} onClick={voice}/></group>
+      <group position={[.34,-.27,0]}><VRSurface title={km?KHMER_GUIDE.language+': ខ្មែរ · '+KHMER_GUIDE.changeLanguage:'Language: '+language.name+' · Select to change'} width={.64} height={.17} disabled={loading} onClick={()=>{stopListen.current?.();setListening(false);choose(LANGS[(LANGS.findIndex(l=>l.code===language.code)+1)%LANGS.length].code);}}/></group>
+      <group position={[0,-.43,0]}><VRSurface variant="text" title={error||(km?KHMER_GUIDE.credit:'Fictional AI · CamboVerse Center · CC BY 4.0')} width={1.32} height={.10}/></group>
+      <group position={[0,-.55,0]}><VRSurface variant="text" title={(km?KHMER_GUIDE.privacy:'Questions and narration sent to Gemini')+(sttSupported()?' · '+(km?KHMER_GUIDE.voicePrivacy:'Voice may use browser speech service'):'')} width={1.32} height={.13}/></group>
+      <group position={[0,-.71,0]}><VRSurface title={closeLabel} width={1.32} height={.14} onClick={onClose}/></group>
     </>:<>
-      <VRSurface title={km?`${KHMER_GUIDE.name} · ${reply.fallback?KHMER_GUIDE.saved:KHMER_GUIDE.answer}`:reply.fallback?'Penh · Saved notes (English)':`Penh · ${guideLanguage(replyLang).name} · AI answer`} body={pages[page]??reply.text} footer={km?`${KHMER_GUIDE.page} ${page+1}/${pages.length} · ${khmerSourceTitle(reply.sources?.[0])}`:`Page ${page+1}/${pages.length} · ${reply.sources?.[0]?.title??'Location guide'}`} width={1.28} height={.96}/>
-      <group position={[-.45,-.59,0]}><VRSurface title={km?KHMER_GUIDE.previous:'Previous'} width={.42} onClick={()=>setPage(p=>Math.max(0,p-1))}/></group>
-      <group position={[0,-.59,0]}><VRSurface title={km?KHMER_GUIDE.next:'Next'} width={.42} onClick={()=>setPage(p=>Math.min(pages.length-1,p+1))}/></group>
-      <group position={[.45,-.59,0]}><VRSurface title={speech==='loading'?(km?KHMER_GUIDE.loadingVoice:'Loading…'):speech==='speaking'?(km?KHMER_GUIDE.stop:'Stop'):speech==='unavailable'?(km?KHMER_GUIDE.retryVoice:'Retry voice'):(km?KHMER_GUIDE.listen:'Listen')} width={.42} onClick={narrate}/></group>
-      <group position={[-.33,-.76,0]}><VRSurface title={km?KHMER_GUIDE.another:'Ask another'} width={.62} onClick={reset}/></group>
-      <group position={[.33,-.76,0]}><VRSurface title={km?KHMER_GUIDE.close:'Close guide'} width={.62} onClick={onClose}/></group>
-      {error&&<group position={[0,-.92,0]}><VRSurface title={error}/></group>}
+      <group position={[0,.18,0]}><VRSurface variant="board" eyebrow={km?khmerGuideTitle(context):context.title} title={km?KHMER_GUIDE.name+' · '+(reply.fallback?KHMER_GUIDE.saved:KHMER_GUIDE.answer):reply.fallback?'Penh · Saved notes (English)':'Penh · '+guideLanguage(replyLang).name+' · AI answer'} body={reply.text} page={page} onPages={setPages} footer={km?khmerSourceTitle(reply.sources?.[0]):reply.sources?.[0]?.title??'Location guide'} width={1.34} height={1.08}/></group>
+      <group position={[0,-.46,0]}><VRPageControls page={page} pages={pages} onPage={setPage} km={km}/></group>
+      <group position={[-.46,-.69,0]}><VRSurface active title={speech==='loading'?(km?KHMER_GUIDE.loadingVoice:'Loading…'):speech==='speaking'?(km?KHMER_GUIDE.stop:'Stop'):speech==='unavailable'?(km?KHMER_GUIDE.retryVoice:'Retry voice'):(km?KHMER_GUIDE.listen:'Listen')} width={.42} height={.17} onClick={narrate}/></group>
+      <group position={[0,-.69,0]}><VRSurface title={km?KHMER_GUIDE.another:'Ask another'} width={.42} height={.17} onClick={reset}/></group>
+      <group position={[.46,-.69,0]}><VRSurface title={closeLabel} width={.42} height={.17} onClick={onClose}/></group>
     </>}
   </group>;
 }

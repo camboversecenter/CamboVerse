@@ -5,18 +5,19 @@ import {OBJECT_INFO,type ObjectAnchor,type ObjectInfo} from '../objectHotspots';
 import {worldPanelPose,vrMarkerScale} from '../vrPresentation';
 import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import {VRSurface} from './VRSurface';
+import {VRPanelFrame,VRPageControls} from './VRPanel';
 import {VRCaptureGuide} from './VRCaptureGuide';
 import {useGuideLanguage} from '../lib/guideLanguage';
 import {KHMER_GUIDE,khmerObjectTitle,khmerSourceTitle,savedKhmerLocationAnswer} from '../guideKhmer';
 import {locationGuideContext} from '../locationGuide';
 
 function VRMarker({anchor,scale,onSelect,km}:{anchor:ObjectAnchor;scale:number;onSelect:()=>void;km:boolean}) {
-  const ref=useRef<Group>(null),head=useMemo(()=>new Vector3(),[]);
+  const ref=useRef<Group>(null),head=useMemo(()=>new Vector3(),[]),anchorWorld=useMemo(()=>new Vector3(),[]);
   useFrame(({camera})=>{
     // Rotate the sign for readability, but keep it attached to its sculpture.
     if(!ref.current)return;
     camera.getWorldPosition(head);ref.current.lookAt(head);
-    const distance=head.distanceTo(ref.current.position);
+    const distance=head.distanceTo(ref.current.getWorldPosition(anchorWorld));
     ref.current.scale.setScalar(vrMarkerScale(distance));
     ref.current.visible=distance>.15*scale;
   });
@@ -29,10 +30,13 @@ function VRObjectCard({object,scale,onClose,penhGuide,km}:{object:ObjectInfo;sca
   const ref=useRef<Group>(null),place=useRef(true);
   const helpers=useMemo(()=>({head:new Vector3(),forward:new Vector3()}),[]);
   const [speech,setSpeech]=useState<NarrationStatus>('idle'),[guideOpen,setGuideOpen]=useState(false);
+  const [page,setPage]=useState(0),[pages,setPages]=useState(1);
+  useEffect(()=>{setPage(p=>Math.min(p,pages-1));},[pages]);
   const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
   const context=km?locationGuideContext('staircase-3dgs','naga-staircase',object.id):null;
   const title=km?khmerObjectTitle(object.id):object.title,text=km&&context?savedKhmerLocationAnswer(context).text:object.text;
   useLayoutEffect(()=>{place.current=true;},[object.id]);
+  useEffect(()=>{setPage(0);narrator.stop();},[km,narrator]);
   useEffect(()=>()=>narrator.dispose(),[narrator]);
   useFrame(({camera})=>{
     if(!ref.current||!place.current)return;
@@ -47,10 +51,12 @@ function VRObjectCard({object,scale,onClose,penhGuide,km}:{object:ObjectInfo;sca
   };
   return <group ref={ref} scale={scale} visible={false}>
     {guideOpen?<VRCaptureGuide embedded locationId="naga-staircase" objectId={object.id} scale={1} onClose={()=>setGuideOpen(false)}/>:<>
-      <VRSurface variant="board" title={title} body={text} footer={km?khmerSourceTitle(object.source):object.source.title} eyebrow={km?'វត្តភ្នំ · ព័ត៌មាន':undefined} width={1.46} height={1.04}/>
-      <group position={[penhGuide ? -.49 : -.37,-.66,.002]}><VRSurface variant="action" title={speech==='loading'?(km?KHMER_GUIDE.loadingVoice:'Loading…'):speech==='unavailable'?(km?KHMER_GUIDE.retryVoice:'Retry voice'):speech==='speaking'?(km?KHMER_GUIDE.stop:'Stop'):(km?KHMER_GUIDE.listen:'▶ Listen')} width={penhGuide ? .46 : .68} height={.18} onClick={listen}/></group>
-      {penhGuide&&<group position={[0,-.66,.002]}><VRSurface variant="action" title={km?`${KHMER_GUIDE.ask} ${KHMER_GUIDE.name}`:'✦ Ask Penh'} width={.46} height={.18} onClick={()=>{narrator.stop();setGuideOpen(true);}}/></group>}
-      <group position={[penhGuide ? .49 : .37,-.66,.002]}><VRSurface variant="action" title={km?'បិទ':'✕ Close'} width={penhGuide ? .46 : .68} height={.18} onClick={onClose}/></group>
+      <VRPanelFrame/>
+      <group position={[0,.17,0]}><VRSurface variant="board" title={title} body={text} page={page} onPages={setPages} footer={km?khmerSourceTitle(object.source):object.source.title} eyebrow={km?'វត្តភ្នំ · ព័ត៌មាន':'WAT PHNOM · ABOUT THIS OBJECT'} width={1.34} height={1.02}/></group>
+      <group position={[0,-.44,0]}><VRPageControls page={page} pages={pages} onPage={setPage} km={km}/></group>
+      <group position={[penhGuide ? -.46 : -.34,-.65,.002]}><VRSurface variant="action" active title={speech==='loading'?(km?KHMER_GUIDE.loadingVoice:'Loading…'):speech==='unavailable'?(km?KHMER_GUIDE.retryVoice:'Retry voice'):speech==='speaking'?(km?KHMER_GUIDE.stop:'Stop'):(km?KHMER_GUIDE.listen:'▶ Listen')} width={penhGuide ? .42 : .62} height={.17} onClick={listen}/></group>
+      {penhGuide&&<group position={[0,-.65,.002]}><VRSurface variant="action" title={km?`${KHMER_GUIDE.ask} ${KHMER_GUIDE.name}`:'Ask Penh'} width={.42} height={.17} onClick={()=>{narrator.stop();setGuideOpen(true);}}/></group>}
+      <group position={[penhGuide ? .46 : .34,-.65,.002]}><VRSurface variant="action" title={km?'បិទ':'Close'} width={penhGuide ? .42 : .62} height={.17} onClick={onClose}/></group>
     </>}
   </group>;
 }

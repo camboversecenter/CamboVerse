@@ -2,7 +2,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ExploreControls as OrbitControls } from './ExploreControls';
 import { Html } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Group, Vector3 } from "three";
 import { HeritageModel } from "./HeritageModel";
 import { HeritagePlaceholder } from "./HeritagePlaceholder";
@@ -119,6 +119,8 @@ export function Viewer({
   const [showParts, setShowParts] = useState(false);
   const [vrReset,setVRReset]=useState(0);
   const [vrGuideOpen,setVRGuideOpen]=useState(false);
+  const [vrMenuOpen,setVRMenuOpen]=useState(false);
+  const onVRMenuChange=useCallback((open:boolean)=>{setVRMenuOpen(open);if(open)setVRGuideOpen(false);},[]);
   useEffect(()=>{setVRGuideOpen(false);},[capture,immersive,vrReset]);
   const detailed = immersive || detail === "ultra";
   const capturePose = useMemo<Poi | null>(() => capture ? {
@@ -199,7 +201,7 @@ export function Viewer({
 
         {capture?.walkAround && <CaptureAreaGround area={capture.walkAround}/>}
 
-        {capture && onSelectCaptureObject && <ObjectHotspotMarkers key={vrReset} anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject} vrScale={captureVRScale(capture)} vrPenhGuide/>}
+        {capture && onSelectCaptureObject && <ObjectHotspotMarkers key={vrReset} anchors={STAIRCASE_OBJECT_ANCHORS} onSelect={onSelectCaptureObject} vrScale={captureVRScale(capture)} vrPenhGuide vrHidden={vrMenuOpen||vrGuideOpen}/>}
 
         {/* Points of interest to walk between or a single info hotspot. */}
         {capture || (ultraModelUrl && !showParts) ? null : pois && pois.length && onSelectPoi ? (
@@ -216,7 +218,7 @@ export function Viewer({
         {/* VR player (thumbstick locomotion + glide-to-POI); harmless outside a session. */}
         <VRRig position={vrStart} poi={capturePose ?? activePoi} elevatedStops={terrainWalking || overviewOnly} area={capture?.walkAround}
           capture={vrTour?capture:undefined} resetKey={vrReset}/>
-        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)}/>}
+        {vrTour&&<CaptureVRMenu tour={vrTour} onReset={()=>setVRReset(v=>v+1)} resetKey={vrReset} ambience={ambience} onGuide={()=>setVRGuideOpen(true)} onOpenChange={onVRMenuChange}/>}
         {vrTour&&capture&&immersive&&vrGuideOpen&&vrTour.activeId&&<VRCaptureGuide key={vrTour.activeId} locationId={vrTour.activeId} scale={captureVRScale(capture)} onClose={()=>setVRGuideOpen(false)}/>}
         {/* Desktop/mobile controls suppressed while in a VR session. */}
         <Nav

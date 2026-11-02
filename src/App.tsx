@@ -31,6 +31,7 @@ import { SPOTS } from "./spots";
 
 const ProvinceSongs = lazy(() => import('./components/ProvinceSongs'));
 const PanoramaTour = import.meta.env.DEV ? lazy(() => import('./components/PanoramaTour')) : null;
+const VRInterfacePreview = import.meta.env.DEV ? lazy(() => import('./components/VRInterfacePreview')) : null;
 
 export function App() {
   const [panoramaOpen,setPanoramaOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(window.location.search).get('view') === '360-test');
@@ -111,6 +112,7 @@ export function App() {
   const go = (next: string | null) => warp(() => setSpotId(next));
   const goProvince = (next: string | null) => warp(() => setProvinceName(next));
 
+  if(VRInterfacePreview&&new URLSearchParams(window.location.search).get('view')==='vr-ui')return <Suspense fallback={<p>Loading VR interface…</p>}><VRInterfacePreview/></Suspense>;
   return (
     <>
       {panoramaOpen && PanoramaTour ? (

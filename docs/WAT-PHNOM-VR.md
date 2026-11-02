@@ -90,12 +90,30 @@ Listen, Ask Penh and Close targets. On desktop and mobile, capture labels
 are projected into the page overlay above the walking gesture layer so that a
 tap can reach the label rather than being intercepted by walk controls.
 
+The VR information card, Penh guide and Y menu share a rounded green frame with
+a restrained gold edge. Textures are generated at the same pixel density and
+aspect ratio as their physical surfaces, so narrow buttons no longer squash
+letters. Body text is wrapped using measured glyph widths and paginated by
+available lines (including Khmer after the bundled font loads). Previous/Next
+controls disable at the first/last page. Title, source and actions have separate
+space. Decorative backgrounds/text do not intercept controller rays. Opening
+the Y menu closes other information/guide panels; hidden panels have no targets.
+These are lightweight Three.js meshes with dynamic text, not Blender assets.
+
 For local development, run `npm run dev -- --host 127.0.0.1` and open
 `http://127.0.0.1:5173/?site=wat-phnom&vr-sim=1`. This explicitly enables the
 experimental Meta Quest 3 emulator on the local development server only; select
 Enter VR and use the emulator's controls. It is a simulation, not a substitute
 for testing controller targeting, comfort, speech, or rendering in a headset.
 The flag is ignored in production and real headset VR remains the default.
+
+For a fast UI-only review, open `http://127.0.0.1:5173/?view=vr-ui`.
+This development-only scene uses the actual object labels, information cards and
+Penh components with mouse interaction, language selection and no scan download.
+Add `&vr-sim=1` to enable the local Quest emulator; the full-scene simulator above
+also includes the Y menu, locomotion and capture switching. Neither review mode
+is a claim of physical Quest testing. Browser automation was unavailable during
+this interface update because local browser use was disabled in Work settings.
 
 Pressing Listen requests Gemini-generated WAV narration from the Worker; the
 key remains server-side and the visitor's answer text is sent to Gemini. A

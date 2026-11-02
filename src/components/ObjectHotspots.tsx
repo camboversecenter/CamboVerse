@@ -10,14 +10,14 @@ import {KHMER_GUIDE,khmerObjectTitle,khmerSourceTitle,savedKhmerLocationAnswer} 
 import {locationGuideContext} from '../locationGuide';
 
 /** HTML markers sit above the walking gesture layer and follow world anchors. */
-export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1,vrPenhGuide=false}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number;vrPenhGuide?:boolean}) {
+export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1,vrPenhGuide=false,vrHidden=false}:{anchors:ObjectAnchor[];onSelect:(id:string)=>void;vrScale?:number;vrPenhGuide?:boolean;vrHidden?:boolean}) {
   const immersive=useXR(s=>s.session!=null);
   const {language}=useGuideLanguage();const km=vrPenhGuide&&language.code==='km';
   // A fixed-position viewer is a stacking context: a high z-index inside it
   // cannot rise above the separate walking overlay. The capture fills the
   // viewport, so its projected labels can be placed directly in the body.
   const overlay=useMemo(()=>typeof document==='undefined'?undefined:{current:document.body},[]);
-  if(immersive)return <VRObjectHotspots anchors={anchors} scale={vrScale} penhGuide={vrPenhGuide}/>;
+  if(immersive)return vrHidden?null:<VRObjectHotspots anchors={anchors} scale={vrScale} penhGuide={vrPenhGuide}/>;
   return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]} portal={vrPenhGuide?overlay:undefined}>
     <button className="object-hotspot-marker" aria-label={km?`ស្វែងយល់អំពី${khmerObjectTitle(anchor.id)}`:`Learn about ${OBJECT_INFO[anchor.id].title}`}
       onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSelect(anchor.id);}}>

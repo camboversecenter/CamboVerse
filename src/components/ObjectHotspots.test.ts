@@ -7,18 +7,28 @@ import {ObjectHotspotMarkers,ObjectInfoCard} from './ObjectHotspots';
 import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from '../objectHotspots';
 import {isKhmerGuideText,KHMER_GUIDE} from '../guideKhmer';
 
-const mocks=vi.hoisted(()=>({start:vi.fn(),stop:vi.fn(),dispose:vi.fn()}));
-vi.mock('@react-three/xr',()=>({useXR:()=>false}));
+const mocks=vi.hoisted(()=>({start:vi.fn(),stop:vi.fn(),dispose:vi.fn(),immersive:false}));
+vi.mock('@react-three/xr',()=>({useXR:()=>mocks.immersive}));
 vi.mock('@react-three/drei',()=>({Html:({children,portal,zIndexRange}:{children:ReactNode;portal?:RefObject<HTMLElement>;zIndexRange:number[]})=>{
   const marker=createElement('div',{'data-testid':'projected-marker',style:{position:'absolute',zIndex:zIndexRange[1]}},children);
   return portal?.current?createPortal(marker,portal.current):marker;
 }}));
-vi.mock('./VRObjectHotspots',()=>({VRObjectHotspots:()=>null}));
+vi.mock('./VRObjectHotspots',()=>({VRObjectHotspots:()=>createElement('button',{},'VR information label')}));
 vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(...args:unknown[]){mocks.start(...args);} stop(){mocks.stop();} dispose(){mocks.dispose();}}}));
 let root:Root,host:HTMLDivElement;
-beforeEach(()=>{localStorage.clear();mocks.start.mockClear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');host.className='viewer';document.body.append(host);root=createRoot(host);});
+beforeEach(()=>{localStorage.clear();mocks.immersive=false;mocks.start.mockClear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');host.className='viewer';document.body.append(host);root=createRoot(host);});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 describe('capture information labels',()=>{
+  it('removes VR information targets while the menu or standalone guide is open',async()=>{
+    mocks.immersive=true;
+    const props={anchors:STAIRCASE_OBJECT_ANCHORS,onSelect:vi.fn(),vrPenhGuide:true};
+    await act(async()=>root.render(createElement(ObjectHotspotMarkers,props)));
+    expect(host.textContent).toContain('VR information label');
+    await act(async()=>root.render(createElement(ObjectHotspotMarkers,{...props,vrHidden:true})));
+    expect(host.querySelector('button')).toBeNull();
+    await act(async()=>root.render(createElement(ObjectHotspotMarkers,props)));
+    expect(host.textContent).toContain('VR information label');
+  });
   it('places clickable labels above the separate walking layer',async()=>{
     const select=vi.fn();
     const walk=document.createElement('div');walk.className='walk-layer';walk.style.zIndex='15';document.body.append(walk);
