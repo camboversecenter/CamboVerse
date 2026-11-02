@@ -91,15 +91,18 @@ export function CaptureWalkControls({
     };
     const onUp = (event: KeyboardEvent) => { keys.current.delete(event.code); };
     const onVisibility = () => { if (document.hidden) reset(); };
+    const onFocus = (event: FocusEvent) => { if (event.target instanceof HTMLElement && event.target.closest('input,textarea,select,button,a,[contenteditable="true"],[role="button"]')) reset(); };
     window.addEventListener("keydown", onDown);
     window.addEventListener("keyup", onUp);
     window.addEventListener("blur", reset);
     document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener('focusin', onFocus);
     return () => {
       window.removeEventListener("keydown", onDown);
       window.removeEventListener("keyup", onUp);
       window.removeEventListener("blur", reset);
       document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener('focusin', onFocus);
       reset();
     };
   }, [input]);

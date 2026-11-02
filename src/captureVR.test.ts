@@ -1,6 +1,6 @@
 import { describe,expect,it } from 'vitest';
 import { SPOTS } from './spots';
-import { captureVRArrival,captureVRFloor,captureVRScale,captureVRInputStep } from './captureVR';
+import { captureVRArrival,captureVRFloor,captureVRScale,captureVRInputStep,captureVRJump } from './captureVR';
 import { areaGroundHeight } from './captureAreaWalk';
 import { captureWalkGroundHeight,captureWalkPosition } from './captureWalk';
 
@@ -9,6 +9,13 @@ const stair=stops.find(p=>p.id==='naga-staircase')!.capture!;
 const clock=stops.find(p=>p.id==='flower-clock')!.capture!;
 
 describe('Wat Phnom VR navigation',()=>{
+  it('jumps once for an A-button press and requires release before the next jump',()=>{
+    let state={y:0,velocity:0,grounded:true},held=false;
+    for(let i=0;i<120;i++){const next=captureVRJump(state,held,true,1/60);state=next.state;held=next.held;if(i===0)expect(state.y).toBeGreaterThan(0);}
+    expect(state.grounded).toBe(true);expect(state.y).toBe(0);
+    let next=captureVRJump(state,held,false,1/60);next=captureVRJump(next.state,next.held,true,1/60);
+    expect(next.state.y).toBeGreaterThan(0);
+  });
   it('moves in the head heading and snaps without carrying stale walking velocity',()=>{
     const walk=captureVRInputStep(0,1,0,0,1.4,1/60,true);
     expect(walk.dx).toBe(0);expect(walk.dz).toBeCloseTo(-1.4/60);

@@ -1,6 +1,11 @@
 import type { PoiCapture } from './spots';
 import { areaGroundHeight, constrainAreaPosition } from './captureAreaWalk';
-import { captureWalkGroundHeight, captureWalkPosition } from './captureWalk';
+import { advanceCaptureJump, captureWalkGroundHeight, captureWalkPosition, type CaptureJumpState } from './captureWalk';
+
+/** A single right-controller A press makes one short jump; holding it never repeats. */
+export function captureVRJump(state:CaptureJumpState,held:boolean,pressed:boolean,delta:number) {
+  return {state:advanceCaptureJump(state,0,pressed&&!held,delta),held:pressed};
+}
 
 /** Capture units are visually calibrated, not metres. Scale tracked head and
  * controller offsets together so the headset eye height matches the route. */

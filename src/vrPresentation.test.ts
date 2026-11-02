@@ -3,6 +3,12 @@ import {worldPanelPose,wrapVRText,vrMarkerScale,guideAnswerPages} from './vrPres
 import {OBJECT_INFO,STAIRCASE_OBJECT_ANCHORS} from './objectHotspots';
 
 describe('world-anchored VR information',()=>{
+  it('wraps and paginates long Khmer and Chinese runs without dropping text',()=>{
+    const text='ភាសាខ្មែរ'.repeat(80)+'中文'.repeat(100);
+    const lines=wrapVRText(text,12,s=>Array.from(s).length);
+    expect(lines.join('')).toBe(text);expect(lines.every(line=>Array.from(line).length<=12)).toBe(true);
+    expect(guideAnswerPages(text,80).join('')).toBe(text);
+  });
   it('paginates long and multiline guide answers without losing words',()=>{
     const answer=('A factual answer about Wat Phnom.\nAnother line. ').repeat(50);
     const pages=guideAnswerPages(answer);

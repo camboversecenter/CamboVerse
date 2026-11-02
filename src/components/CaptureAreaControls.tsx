@@ -46,8 +46,10 @@ export function CaptureAreaControls({area,input,onFlightChange}:{area:CaptureWal
     };
     const up=(e:KeyboardEvent)=>keys.current.delete(e.code);
     const hidden=()=>{if(document.hidden)reset();};
+    const focus=(e:FocusEvent)=>{if(e.target instanceof HTMLElement&&e.target.closest('input,textarea,select,button,a,[contenteditable="true"],[role="button"]'))reset();};
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',reset);document.addEventListener('visibilitychange',hidden);
-    return ()=>{reset();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hidden);};
+    document.addEventListener('focusin',focus);
+    return ()=>{reset();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hidden);document.removeEventListener('focusin',focus);};
   },[input]);
   useFrame((_,delta)=>{
     if(gl.xr.isPresenting)return;

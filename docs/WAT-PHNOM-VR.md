@@ -56,6 +56,17 @@ Wat Phnom's fictional AI guide is **Penh**, the approved Phnom Penh character;
 her thumbnail is credited to CamboVerse Center (CC BY 4.0). The separate room
 and non-Wat-Phnom guides continue using their own identities.
 
+Penh can answer and narrate in English, Khmer, French, or Simplified Chinese.
+The language selector is available in the browser guide and as a cycling
+controller-selectable button in VR. If Gemini cannot answer, the saved notes
+are identified as English rather than presented as a translation. Khmer output
+and pronunciation require native-speaker review. Optional voice input depends
+on the headset or browser's speech recognition support for the chosen language.
+
+In either capture, the right controller's A button requests a short jump;
+release the button before jumping again. This moves the virtual view vertically
+and should be tested for comfort on the actual headset.
+
 Pressing Listen requests Gemini-generated WAV narration from the Worker; the
 key remains server-side and the visitor's answer text is sent to Gemini. A
 browser Web Audio context is unlocked on the click so asynchronous speech can

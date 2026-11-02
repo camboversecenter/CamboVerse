@@ -7,11 +7,11 @@ import {VRCaptureGuide} from './VRCaptureGuide';
 const mocked=vi.hoisted(()=>({ask:vi.fn(),speak:vi.fn(()=>true),stop:vi.fn()}));
 vi.mock('@react-three/fiber',()=>({useFrame:()=>{},useLoader:()=>({})}));
 vi.mock('../lib/guide',()=>({askGuide:mocked.ask}));
-vi.mock('../lib/voice',()=>({speak:mocked.speak,stopSpeaking:mocked.stop,ttsSupported:()=>true,sttSupported:()=>false,listenOnce:()=>null}));
-vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(text:string){mocked.speak(text,'en-US',{});} stop(){mocked.stop();} dispose(){mocked.stop();}}}));
+vi.mock('../lib/voice',()=>({LANGS:[{code:'en',name:'English',bcp:'en-US'},{code:'km',name:'ខ្មែរ',bcp:'km-KH'},{code:'fr',name:'Français',bcp:'fr-FR'},{code:'zh',name:'中文',bcp:'zh-CN'}],speak:mocked.speak,stopSpeaking:mocked.stop,ttsSupported:()=>true,sttSupported:()=>false,listenOnce:()=>null}));
+vi.mock('../lib/guideNarrator',()=>({GuideNarrator:class {start(text:string,bcp:string){mocked.speak(text,bcp,{});} stop(){mocked.stop();} dispose(){mocked.stop();}}}));
 vi.mock('./VRSurface',()=>({VRSurface:({title,onClick,body}:{title:string;onClick?:()=>void;body?:string})=>createElement('button',{onClick},`${title} ${body??''}`)}));
 let root:Root,host:HTMLDivElement;
-beforeEach(()=>{vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');document.body.append(host);root=createRoot(host);mocked.ask.mockReset();mocked.speak.mockClear();mocked.stop.mockClear();});
+beforeEach(()=>{localStorage.clear();vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT',true);host=document.createElement('div');document.body.append(host);root=createRoot(host);mocked.ask.mockReset();mocked.speak.mockClear();mocked.stop.mockClear();});
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 function button(label:string){return [...host.querySelectorAll('button')].find(el=>el.textContent?.includes(label))!;}
 
@@ -33,5 +33,15 @@ describe('immersive location guide',()=>{
     await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'flower-clock',scale:1,onClose:vi.fn()})));
     await act(async()=>button('What is the flower clock?').click());
     expect(button('Penh · Saved notes').textContent).toContain('clock face');
+  });
+  it('requests and narrates in the selected language',async()=>{
+    mocked.ask.mockResolvedValue({text:'Bonjour et bienvenue.',fallback:false,sources:[]});
+    await act(async()=>root.render(createElement(VRCaptureGuide,{locationId:'flower-clock',scale:1,onClose:vi.fn()})));
+    await act(async()=>button('Language: English').click());
+    await act(async()=>button('Language: ខ្មែរ').click());
+    await act(async()=>button('What is the flower clock?').click());
+    expect(mocked.ask).toHaveBeenCalledWith(expect.objectContaining({lang:'fr'}),expect.any(AbortSignal));
+    await act(async()=>button('Listen').click());
+    expect(mocked.speak).toHaveBeenCalledWith('Bonjour et bienvenue.','fr-FR',expect.any(Object));
   });
 });

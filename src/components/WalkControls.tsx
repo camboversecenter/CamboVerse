@@ -1,4 +1,4 @@
-import { useRef, type MutableRefObject, type PointerEvent as RPointerEvent } from "react";
+import { useEffect, useRef, type MutableRefObject, type PointerEvent as RPointerEvent } from "react";
 import type { WalkInput } from "./FirstPersonControls";
 
 /**
@@ -28,11 +28,27 @@ export function WalkControls({
   const lastTap = useRef({ time: -Infinity, x: 0, y: 0 });
   const R = 52;
 
+  useEffect(() => {
+    const clear = () => {
+      joyId.current = null; lookId.current = null;
+      input.current.move = { x: 0, y: 0 };
+      input.current.look = { dx: 0, dy: 0 };
+      if (knobRef.current) knobRef.current.style.transform = 'translate(0,0)';
+    };
+    const hidden = () => { if (document.hidden) clear(); };
+    const focus = (event: FocusEvent) => {
+      if (event.target instanceof HTMLElement && event.target.closest('input,textarea,select,button,a,[contenteditable="true"],[role="button"]')) clear();
+    };
+    window.addEventListener('blur', clear); document.addEventListener('visibilitychange', hidden);
+    document.addEventListener('focusin', focus);
+    return () => { clear(); window.removeEventListener('blur', clear); document.removeEventListener('visibilitychange', hidden); document.removeEventListener('focusin', focus); };
+  }, [input]);
+
   const setJoy = (x: number, y: number) => {
     let dx = x - center.current.x;
     let dy = y - center.current.y;
     const d = Math.hypot(dx, dy) || 1;
-    const m = Math.min(1, d / R);
+    const m = d < 8 ? 0 : Math.min(1, (d - 8) / (R - 8));
     dx = (dx / d) * m;
     dy = (dy / d) * m;
     input.current.move = { x: dx, y: dy };
@@ -44,7 +60,7 @@ export function WalkControls({
     const jr = joyRef.current?.getBoundingClientRect();
     const cx = jr ? jr.left + jr.width / 2 : 0;
     const cy = jr ? jr.top + jr.height / 2 : 0;
-    const near = showJoystick && Math.hypot(e.clientX - cx, e.clientY - cy) < R * 1.7;
+    const near = showJoystick && Math.hypot(e.clientX - cx, e.clientY - cy) <= R;
     e.currentTarget.setPointerCapture(e.pointerId);
     if (near && joyId.current === null) {
       joyId.current = e.pointerId;

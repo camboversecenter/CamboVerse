@@ -18,7 +18,14 @@ export function wrapVRText(text:string,maxWidth:number,measure:(text:string)=>nu
     let line='';
     for(const word of paragraph.split(/\s+/).filter(Boolean)){
       const next=line?`${line} ${word}`:word;
-      if(line&&measure(next)>maxWidth){lines.push(line);line=word;}else line=next;
+      if(line&&measure(next)>maxWidth){lines.push(line);line='';}
+      if(measure(word)>maxWidth){
+        // Khmer and Chinese may not contain spaces at line boundaries. Split
+        // long runs by grapheme so combining marks stay with their letters.
+        const Segmenter=(Intl as unknown as {Segmenter?:new(locales?:string,options?:{granularity:'grapheme'})=>{segment:(s:string)=>Iterable<{segment:string}>}}).Segmenter;
+        const chars=Segmenter?Array.from(new Segmenter(undefined,{granularity:'grapheme'}).segment(word),s=>s.segment):Array.from(word);
+        for(const char of chars){if(line&&measure(line+char)>maxWidth){lines.push(line);line='';}line+=char;}
+      }else line=line?`${line} ${word}`:word;
     }
     lines.push(line);
   }
@@ -30,6 +37,12 @@ export function guideAnswerPages(text:string,limit=300):string[] {
   const pages:string[]=[];let current='';
   for(const word of text.trim().split(/\s+/).filter(Boolean)){
     if(current&&(current.length+1+word.length>limit)){pages.push(current);current='';}
+    if(word.length>limit){
+      const Segmenter=(Intl as unknown as {Segmenter?:new(locales?:string,options?:{granularity:'grapheme'})=>{segment:(s:string)=>Iterable<{segment:string}>}}).Segmenter;
+      const chars=Segmenter?Array.from(new Segmenter(undefined,{granularity:'grapheme'}).segment(word),s=>s.segment):Array.from(word);
+      for(const char of chars){if(current&&current.length+char.length>limit){pages.push(current);current='';}current+=char;}
+      continue;
+    }
     current=current?`${current} ${word}`:word;
   }
   if(current)pages.push(current);

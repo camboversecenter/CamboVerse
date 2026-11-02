@@ -90,7 +90,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
       </div>}
       <p role="status">{message}</p>
       {failure&&<p role="alert">{failure}</p>}
-      <p>{tour?'Left stick: walk. Right stick: snap turn. Y on the left controller: open or hide the menu. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
+      <p>{tour?'Left stick: walk. Right stick: snap turn. A on the right controller: jump. Y on the left controller: open or hide the menu. Point and press the trigger on an information label to read or listen.':'Left stick: walk. Right stick: snap turn. Use the headset system menu to leave VR.'}</p>
       <p className="capture-vr-note">Open the same site on your headset using HTTPS. This computer’s 127.0.0.1 address is only local to this computer.</p>
       <details className="capture-vr-note"><summary>Headset check details</summary>
         <p>WebXR: {checkCode} · Three.js r{REVISION}<br/>Session: {active?'immersive-vr':'not started'}<br/>VR entry: 2</p>
@@ -141,6 +141,7 @@ export function CaptureVRMenu({tour,onReset,resetKey,ambience,onGuide}:{tour:Cap
       <group position={[0,-.62,0]}><VRSurface title="Reset position" onClick={onReset}/></group>
       <group position={[0,-.79,0]}><VRSurface title={exitFailed?'Use headset menu to exit':'Exit VR'} onClick={()=>{void session.end().catch(()=>setExitFailed(true));}}/></group>
       <group position={[0,-.93,0]}><VRSurface title="Birds: Siem Reap · L. Shyamal · CC0" height={.09}/></group>
+      <group position={[0,-1.02,0]}><VRSurface title="Right A · Jump" height={.09}/></group>
     </>}
   </group>;
 }

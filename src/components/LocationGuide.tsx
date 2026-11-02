@@ -5,8 +5,10 @@ import { GuideMascot } from './GuideMascot';
 import './LocationGuide.css';
 import {listenOnce,sttSupported} from '../lib/voice';
 import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
+import {LANGS,type LangCode} from '../lib/voice';
+import {guideLanguage,useGuideLanguage} from '../lib/guideLanguage';
 
-type Message = GuideReply & { question?: string };
+type Message = GuideReply & { question?: string; lang:LangCode };
 
 /** Non-modal, text-first guide shared by the capture and photo-tour previews. */
 export function LocationGuide({ experienceId, locationId, objectId, openRequest=0, hidden=false, onOpenChange }: {
@@ -18,8 +20,10 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
   const [speech,setSpeech]=useState<NarrationStatus>('idle'),[speechIndex,setSpeechIndex]=useState<number|null>(null);
   const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
   const [listening,setListening]=useState(false),[voiceError,setVoiceError]=useState('');
+  const {language:chosenLanguage,choose}=useGuideLanguage();
   const stopListen=useRef<null|(()=>void)>(null);
   const isPenh=experienceId==='wat-phnom'||experienceId==='staircase-3dgs'||experienceId==='clock-3dgs',name=isPenh?'Penh':'Kiri';
+  const language=isPenh?chosenLanguage:guideLanguage('en');
   const pending = useRef<AbortController|null>(null);
   const log = useRef<HTMLDivElement>(null);
   const contextKey = `${experienceId}/${locationId}/${objectId??''}`;
@@ -37,14 +41,14 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     if (!next) { const previous=pending.current; pending.current=null; previous?.abort(); setLoading(false); narrator.stop();stopListen.current?.();stopListen.current=null;setListening(false); }
     setOpen(next); onOpenChange?.(next);
   };
-  const narrate=(text:string,index:number)=>{
+  const narrate=(text:string,index:number,lang:LangCode)=>{
     if((speech==='speaking'||speech==='loading')&&speechIndex===index){narrator.stop();setSpeechIndex(null);return;}
-    setSpeechIndex(index);void narrator.start(text);
+    setSpeechIndex(index);void narrator.start(text,guideLanguage(lang).bcp);
   };
   const listen=()=>{
     if(listening){stopListen.current?.();stopListen.current=null;setListening(false);return;}
     setVoiceError('');setListening(true);
-    try{stopListen.current=listenOnce('en-US',text=>{stopListen.current=null;setListening(false);setQuestion(text);},()=>{stopListen.current=null;setListening(false);setVoiceError('Voice input unavailable. Please type your question.');});
+    try{stopListen.current=listenOnce(language.bcp,text=>{stopListen.current=null;setListening(false);setQuestion(text);},()=>{stopListen.current=null;setListening(false);setVoiceError('Voice input unavailable. Please type your question.');});
       if(!stopListen.current){setListening(false);setVoiceError('Voice input unavailable. Please type your question.');}}
     catch{setListening(false);setVoiceError('Voice input unavailable. Please type your question.');}
   };
@@ -55,18 +59,19 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
     setLoading(true); setQuestion('');
     // A missing endpoint is an explicit saved-note preview, never a fake AI answer.
     const timeout=setTimeout(()=>controller.abort(),15_000);
-    const reply=await askGuide({experienceId,locationId,objectId,lang:'en',question:query},controller.signal);
+    const reply=await askGuide({experienceId,locationId,objectId,lang:language.code,question:query},controller.signal);
     clearTimeout(timeout);
     if (pending.current!==controller || controller.signal.aborted) {
       if(pending.current===controller && controller.signal.aborted) {
-        setMessages(items=>[...items.slice(-7),{question:query,...savedLocationAnswer(context,query),fallback:true}]);
+        setMessages(items=>[...items.slice(-7),{question:query,...savedLocationAnswer(context,query),fallback:true,lang:'en'}]);
         setLoading(false);
         pending.current=null;
       }
       return;
     }
     const valid=reply && typeof reply.text==='string' && reply.text.trim();
-    setMessages(items=>[...items.slice(-7),{question:query,...(valid?reply:{...savedLocationAnswer(context,query),fallback:true})}]);
+    const answer=valid?reply:{...savedLocationAnswer(context,query),fallback:true};
+    setMessages(items=>[...items.slice(-7),{question:query,...answer,lang:answer.fallback?'en':language.code}]);
     setLoading(false);
     pending.current=null;
   };
@@ -79,6 +84,7 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
         <div><strong>Ask {name}</strong><p>{context.title}{isPenh?' · Fictional AI guide':''}</p></div>
         <button className="location-guide-close" onClick={()=>toggle(false)} aria-label={`Minimize ${name} guide`}>−</button>
       </header>
+      {isPenh&&<label className="location-guide-language">Language / ភាសា <select value={language.code} disabled={loading} onChange={e=>{narrator.stop();stopListen.current?.();setListening(false);choose(e.target.value as LangCode);}}>{LANGS.map(option=><option key={option.code} value={option.code}>{option.name}</option>)}</select></label>}
       <div className="location-guide-scroll" ref={log}>
         <p className="location-guide-intro">{context.introduction}</p>
         <div className="location-guide-suggestions" aria-label="Suggested questions">
@@ -88,9 +94,9 @@ export function LocationGuide({ experienceId, locationId, objectId, openRequest=
           {messages.map((message,index)=><article key={`${contextKey}/${index}`}>
             <p className="location-guide-question">{message.question}</p>
             <div className="location-guide-answer">
-              <small>{message.fallback?'Saved location notes':`${name} · AI answer`}</small>
+              <small>{message.fallback?'Saved location notes · English':`${name} · AI answer · ${guideLanguage(message.lang).name}`}</small>
               <p>{message.text}</p>
-              <button type="button" onClick={()=>narrate(message.text,index)}>{speechIndex===index&&speech==='loading'?'■ Loading voice…':speechIndex===index&&speech==='speaking'?'■ Stop narration':'▶ Listen'}</button>
+              <button type="button" onClick={()=>narrate(message.text,index,message.lang)}>{speechIndex===index&&speech==='loading'?'■ Loading voice…':speechIndex===index&&speech==='speaking'?'■ Stop narration':'▶ Listen'}</button>
               {!!message.sources?.length && <div className="location-guide-sources">
                 {message.sources.map(source=>source.url
                   ? <a key={source.title} href={source.url} target="_blank" rel="noreferrer">↗ {source.title}</a>

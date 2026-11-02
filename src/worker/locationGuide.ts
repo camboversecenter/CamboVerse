@@ -16,7 +16,7 @@ export async function handleLocationGuide(body: {
   const fallback = () => Response.json({ ...saved, fallback: true });
   if (!env.GEMINI_API_KEY) return fallback();
   const sources = [...new Map(context.facts.flatMap(f=>f.sources).map(s=>[s.title,s])).values()];
-  const languages: Record<string,string> = { en:'English', km:'Khmer', fr:'French', zh:'Chinese' };
+  const languages: Record<string,string> = { en:'English', km:'Khmer', fr:'French', zh:'Simplified Chinese' };
   const lang = languages[String(body.lang)] ?? 'English';
   try {
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent', {

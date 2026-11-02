@@ -105,10 +105,14 @@ export function FirstPersonControls({
     window.addEventListener("keydown", onDown);
     window.addEventListener("keyup", onUp);
     const clear = () => { keys.current = { w:false, a:false, s:false, d:false, shift:false, space:false }; input.current.move.x = input.current.move.y = 0; input.current.look.dx = input.current.look.dy = 0; };
+    const hidden = () => { if (document.hidden) clear(); };
+    const focus = (event:FocusEvent) => { if (event.target instanceof HTMLElement && event.target.closest('input,textarea,select,button,a,[contenteditable="true"],[role="button"]')) clear(); };
     window.addEventListener('blur', clear);
+    document.addEventListener('visibilitychange', hidden); document.addEventListener('focusin', focus);
     return () => {
       clear();
       window.removeEventListener('blur', clear);
+      document.removeEventListener('visibilitychange', hidden); document.removeEventListener('focusin', focus);
       window.removeEventListener("keydown", onDown);
       window.removeEventListener("keyup", onUp);
     };

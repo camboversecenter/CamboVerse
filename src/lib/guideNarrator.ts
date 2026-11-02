@@ -20,7 +20,7 @@ export class GuideNarrator {
     stopSpeaking();this.mark(false);this.status('idle');
   }
   dispose(){this.stop();if(this.context){void this.context.close().catch(()=>{});this.context=undefined;}}
-  async start(text:string){
+  async start(text:string,bcp='en-US'){
     this.stop();const id=++this.generation;this.mark(true);this.status('loading');
     try{
       const AudioCtor=window.AudioContext||(window as unknown as {webkitAudioContext:typeof AudioContext}).webkitAudioContext;
@@ -39,7 +39,7 @@ export class GuideNarrator {
       source.start();this.status('speaking');
     }catch{
       if(id!==this.generation)return;
-      const ok=speak(text,'en-US',{onStart:()=>{if(id===this.generation)this.status('speaking');},onEnd:()=>{if(id===this.generation){this.mark(false);this.status('idle');}},onError:()=>{if(id===this.generation){this.mark(false);this.status('unavailable');}}});
+      const ok=speak(text,bcp,{onStart:()=>{if(id===this.generation)this.status('speaking');},onEnd:()=>{if(id===this.generation){this.mark(false);this.status('idle');}},onError:()=>{if(id===this.generation){this.mark(false);this.status('unavailable');}}});
       if(!ok){this.mark(false);this.status('unavailable');}
     }
   }
