@@ -13,7 +13,7 @@ Date: 2026-11-03. Source baseline: `2fb76ec`.
 | Physics | Projectile controls/launch, pendulum grab/length, circuit presets and bulb | Shared manipulation coverage; build/types. Visual timing and model layout unverified | Pending |
 | Earth & Sky | Planet/layer samples, Earth rotation, Moon phases, seasons, tides | Shared manipulation; opposing ideal tidal bulges. Visual lighting/layout unverified | Pending |
 
-Full project suite: **438 tests passed in 88 files**. Production build and
+Full project suite: **439 tests passed in 89 files**. Production build and
 TypeScript passed. Vite still warns about large chunks; a passing build is not a
 low-end Android or headset performance measurement.
 
@@ -29,6 +29,9 @@ in [LEARNING-LAB-VR.md](LEARNING-LAB-VR.md#activity-trials).
 
 - Existing PC/mobile controls and calculations remain; no new engine or binary
   asset dependency. VR uses Ultra and restores prior quality through shared entry.
+- Detailed specimens retain an interactive procedural fallback if an asset
+  fails; this fallback is covered by a render/interaction test. Their section
+  planes follow the held exhibit transform and private materials are disposed.
 - Dosing is a bounded teaching interaction, not a fluid simulator. Unknown mixes
   explicitly say no modeled reaction. Reversed reagent selection now maps amounts
   to recipe order in both PC and VR.

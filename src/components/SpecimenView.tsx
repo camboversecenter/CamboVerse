@@ -1,10 +1,11 @@
-import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { ExploreControls as OrbitControls } from './ExploreControls';
 import { Html } from "@react-three/drei";
 import { XR, useXR } from "@react-three/xr";
 import {useLabVR, LabVRButton, LabVRRig} from './LabVR';
 import {LabInteractionProvider, LabMovable} from './LabInteraction';
+import {AnatomyAssetBoundary} from './AnatomyAssetBoundary';
 import { ACESFilmicToneMapping } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Detail } from "./LabOrgans";
@@ -210,7 +211,7 @@ export function SpecimenView({
 
           <LabMovable position={vr.active ? [0, 1.2 - centre * .85 / Math.max(specimen.sizeU, specimen.spanU), -1.2] : [0,0,0]}
             scale={vr.active ? .85 / Math.max(specimen.sizeU, specimen.spanU) : 1} resetKey={`${specimen.id}:${vr.active}`}>
-            {real ? <Suspense fallback={<StagedExhibit
+            {real ? <AnatomyAssetBoundary url={real.url} fallback={<StagedExhibit
               stage={!vr.active}
               key={specimen.id}
               specimen={specimen}
@@ -226,7 +227,7 @@ export function SpecimenView({
             />}>
               <RealSpecimen model={real} specimen={specimen} layer={layer}
                 onPick={pickPart} selected={picked} extracted={extracted} onAnchors={onAnchors} />
-            </Suspense> : <StagedExhibit
+            </AnatomyAssetBoundary> : <StagedExhibit
               stage={!vr.active}
               key={specimen.id} specimen={specimen} id={specimen.id}
               organOf={specimen.organOf} layer={layer} detail={detail}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import {
@@ -236,6 +236,8 @@ export function RealSpecimen({
   const { scene } = useGLTF(model.url, false, true);
   const gl = useThree((s) => s.gl);
   const rules = model.behaviour;
+  const transform = useRef<Group>(null);
+  const section = useMemo(() => SECTION.clone(), []);
 
   /**
    * A private copy (the loader's cache is shared and these materials are
@@ -293,6 +295,7 @@ export function RealSpecimen({
     const anchors = (top.userData.anchors ?? {}) as Anchors;
     return { root, pieces, pivots, scale, mid, lift, toWorld, toModel, anchors };
   }, [scene, specimen.sizeU, specimen.spanU, specimen.centreU]);
+  useEffect(() => () => built.pieces.forEach(piece => piece.mat.dispose()), [built]);
 
   // Label anchors in page space: points on each part's actual surface,
   // written by the build script.
@@ -342,18 +345,23 @@ export function RealSpecimen({
       // front, where two sides would only sort against each other. Cut open,
       // the inside surfaces are the point.
       mat.side = cut || opacity >= 1 ? DoubleSide : FrontSide;
-      mat.clippingPlanes = cut ? [SECTION] : [];
+      mat.clippingPlanes = cut ? [section] : [];
       mat.clipShadows = cut;
       mesh.castShadow = opacity >= 1;
       mat.needsUpdate = true;
     }
-  }, [built, rules, layer, selected, extracted]);
+  }, [built, rules, layer, selected, extracted, section]);
 
   // Pulling a part out: it eases to the stage beside the body, grows, and
   // turns slowly so every side is seen without dragging. Frame-rate
   // independent, so it feels the same at 30 fps and at 90 in VR.
   const stage = useMemo(() => built.toModel(BODY_STAGE), [built]);
   useFrame((_, dt) => {
+    // SECTION is in exhibit coordinates. Moving/scaling the exhibit in VR must
+    // move its cutaway too; keep the plane private to this model instance.
+    const exhibit = transform.current?.parent;
+    section.copy(SECTION);
+    if (exhibit) {exhibit.updateWorldMatrix(true, false); section.applyMatrix4(exhibit.matrixWorld);}
     if (!rules.extract) return;
     const k = 1 - Math.exp(-dt * 7);
     for (const [part, { pivot, home }] of built.pivots) {
@@ -376,6 +384,7 @@ export function RealSpecimen({
 
   return (
     <group
+      ref={transform}
       position={[-built.mid.x * built.scale, -built.mid.y * built.scale + built.lift, -built.mid.z * built.scale]}
       scale={built.scale}
     >

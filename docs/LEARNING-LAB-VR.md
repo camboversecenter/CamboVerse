@@ -87,10 +87,11 @@ Otherwise use the HTTPS preview. A plain HTTP Wi-Fi address cannot start WebXR.
 ## Validation (2026-11-03)
 
 - TypeScript and production build pass.
-- Full suite: 438 tests across 88 files pass. New coverage includes native
+- Full suite: 439 tests across 89 files pass. New coverage includes native
   target-ray/grip pose conversion, transformed parents, independent controllers,
   cancellation and sprint ownership, slider bounds, reagent quantity ordering,
-  dose eligibility and live result panels. Existing Buildings checks pass.
+  dose eligibility, live result panels and a usable detailed-model failure
+  fallback. Existing Buildings checks pass.
 - The built-in browser reported disabled during this run; interactive browser
   and physical Quest 3 visual/performance review remain pending.
 
