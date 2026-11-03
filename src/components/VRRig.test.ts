@@ -26,6 +26,21 @@ beforeEach(async()=>{
 });
 afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.unstubAllGlobals();});
 describe('Buildings Quest controller mapping',()=>{
+  it('keeps indoor flight and jumps below the ceiling and tracked eyes inside walls',async()=>{
+    await act(async()=>root.render(createElement(VRRig,{position:[0,0,0],buildingMovement:true,roomBounds:[-2,2,-2,2],ceiling:3.6,moveSpeed:1.4})));
+    camera.position.x=.4;stick.xAxis=1;stick.yAxis=-1;grip.state='pressed';fly.state='pressed';jump.state='pressed';
+    for(let i=0;i<240;i++)tick();
+    expect(origin.position.x+camera.position.x).toBeCloseTo(2);
+    expect(origin.position.z+camera.position.z).toBeCloseTo(-2);
+    expect(origin.position.y+camera.position.y).toBeCloseTo(3.45);
+    // Returning to walking clears flight height, including on a second visit.
+    stick.xAxis=0;stick.yAxis=0;fly.state='default';jump.state='default';tick();fly.state='pressed';
+    for(let i=0;i<180;i++)tick();expect(origin.position.y).toBe(0);
+    await act(async()=>root.render(createElement(VRRig,{position:[0,0,1],startYaw:Math.PI/2,resetKey:1,buildingMovement:true,roomBounds:[-2,2,-2,2],ceiling:2.1})));
+    fly.state='default';jump.state='pressed';tick();jump.state='default';tick();jump.state='pressed';
+    for(let i=0;i<20;i++){tick();expect(origin.position.y+camera.position.y).toBeLessThanOrEqual(1.95+.00001);}
+    expect(origin.rotation.y).toBeCloseTo(Math.PI/2);
+  });
   it('flies with B/A/X, keeps its height, and lands smoothly without held-button bouncing',()=>{
     stick.yAxis=0;fly.state='pressed';tick();jump.state='pressed';
     for(let i=0;i<60;i++)tick();expect(origin.position.y).toBeCloseTo(2);

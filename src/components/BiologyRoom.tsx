@@ -505,19 +505,30 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     <div className="bio-canvas" onClick={vrSession.active ? undefined : requestLock} style={detailId ? { display: 'none' } : undefined}>
       {!detailId && <Canvas shadows={ultra || vr} dpr={ultra || vr ? [1, 1.75] : 1} camera={{ fov: 65, near: .05, far: 30 }}>
         <XR store={store}>
-          <FixedTrayContext.Provider value={fixedTray}><MouthTeethContext.Provider value={showMouthTeeth}><BiologyScene state={state} detail={ultra || vr ? 'ultra' : 'normal'} pick={pick} changeLayer={changeLayer}
-            take={take} takeable={!!takeable} reset={reset} spin={spin} turn={turn} setSpin={setSpin}
+          <FixedTrayContext.Provider value={fixedTray}><MouthTeethContext.Provider value={showMouthTeeth}><BiologyScene state={state} detail={ultra || vr ? 'ultra' : 'normal'} pick={pick}
+            spin={spin} turn={turn}
             trayRotX={trayRotX} trayZoom={trayZoom} showPins={showPins} activePin={activePin} onActivePin={setActivePin}
             trayHitRef={trayHit}
             exploded={exploded} clipAxis={clipAxis} clipValue={clipValue} antMode={antMode} splitOpen={splitOpen} peelAmount={peelAmount}
             onVR={setVr} walkInput={walkInput} onHover={setHovered} /></MouthTeethContext.Provider></FixedTrayContext.Provider>
-          <LabVRRig start={[-.7, 0, 2.1]} bounds={[-3, 3, -2.5, 3.5]} />
+          <LabVRRig title="Biology & Anatomy" start={[-.7, 0, 2.1]} bounds={[-3, 3, -2.5, 3.5]} ceiling={3.2}
+            stations={[{id:'anatomy',label:'Anatomy study',at:[-.7,1.3,0],description:'Choose a layer and point at an organ to move it to the study tray.',
+              detail:part ? part.name + '. ' + part.blurb + '\n\nSimplified teaching models, not clinical reference.' : 'Choose Activities to select a layer or organ. You can also point at an organ on the model and press the trigger to take it to the study tray.'}]}
+            status={part?.name ?? 'Choose a layer or an organ.'}
+            actions={() => [
+              {id:'layer',label:'Layer: '+LAYERS.find(l=>l.id===state.layer)?.label+' · change',onSelect:()=>changeLayer(LAYERS[(LAYERS.findIndex(l=>l.id===state.layer)+1)%LAYERS.length].id)},
+              {id:'previous',label:'Previous organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+parts.length-1)%parts.length].id)},
+              {id:'next',label:'Next organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+1)%parts.length].id)},
+              {id:'take',label:state.taken?'Return to body':'Take to tray',disabled:!takeable,onSelect:take},
+              {id:'rotate',label:spin?'Pause rotation':'Rotate study organ',disabled:!state.taken,onSelect:()=>setSpin(v=>!v)},
+              {id:'reset',label:'Reset anatomy model',onSelect:reset},
+            ]}/>
         </XR>
       </Canvas>}
     </div>
 
     {/* Mobile walk joystick */}
-    {isTouchDevice && !detailId && <WalkControls input={walkInput} />}
+    {isTouchDevice && !detailId && !vrSession.active && <WalkControls input={walkInput} />}
 
     {/* Top bar */}
     {!detailId && <div className="bio-top bio-ui" onClick={e => e.stopPropagation()}>
@@ -527,7 +538,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
         {!vrSession.active && <button onClick={() => { setGuideStep(0); setShowHelp(false); setDockTab('view'); }} aria-label="Start guided heart study">Guide</button>}
         <button disabled={vrSession.active} onClick={() => setUltra(v => !v)}>{ultra || vr ? 'Ultra' : 'Normal'}</button>
         <button onClick={resetAll}>Reset</button>
-        <LabVRButton vr={vrSession} />
+        <LabVRButton vr={vrSession} title="Biology & Anatomy" />
       </div>
     </div>}
 
@@ -1121,9 +1132,8 @@ function AnnotationDot({ position, size, label, active, onClick }: { position: [
 }
 
 
-function BiologyScene({ state, detail, pick, changeLayer, take, takeable, reset, spin, setSpin, turn, trayRotX, trayZoom, showPins, activePin, onActivePin, trayHitRef, exploded, clipAxis, clipValue, antMode, splitOpen, peelAmount, onVR, walkInput, onHover }: {
-  state: BiologyState; detail: Detail; pick: (id: string) => void; changeLayer: (layer: BiologyLayer) => void;
-  take: () => void; takeable: boolean; reset: () => void; spin: boolean; setSpin: (value: boolean) => void;
+function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, showPins, activePin, onActivePin, trayHitRef, exploded, clipAxis, clipValue, antMode, splitOpen, peelAmount, onVR, walkInput, onHover }: {
+  state: BiologyState; detail: Detail; pick: (id: string) => void; spin: boolean;
   turn: number; trayRotX: number; trayZoom: number; showPins: boolean; activePin: number | null; onActivePin: (i: number | null) => void;
   trayHitRef: React.MutableRefObject<boolean>;
   exploded: boolean; clipAxis: 'off' | 'x' | 'y' | 'z'; clipValue: number; antMode: boolean; splitOpen: boolean; peelAmount: number;
@@ -1142,7 +1152,6 @@ function BiologyScene({ state, detail, pick, changeLayer, take, takeable, reset,
   const grouped = useMemo(() => Array.from(new Set(organs.map(o => o.id))).map(id => organs.filter(o => o.id === id)), [organs]);
   useEffect(() => { onVR(!!session); }, [session, onVR]);
   useEffect(() => () => { new Set(organs.map(o => o.geo)).forEach(geo => geo.dispose()); }, [organs]);
-  const part = parts.find(p => p.id === state.selected) ?? (state.layer === 'muscles' ? parts.find(p => p.id === 'muscles') : undefined);
   const solid = useRef<Group>(null);
   const organGroup = useRef<Group>(null);
   const surfaceGroup = useRef<Group>(null);
@@ -1258,16 +1267,6 @@ function BiologyScene({ state, detail, pick, changeLayer, take, takeable, reset,
     {/* ── Decorative lab props ── */}
     <LabProps detail={fidelity} />
 
-    {session && <group position={[.95, 1.9, -.2]}>
-      <WorldCard text={`${part?.name ?? 'BIOLOGY & ANATOMY'}\n\n${part?.blurb ?? 'Choose a layer. Click an organ to take it to the study tray.'}\n\nSimplified teaching models. Not clinical reference.`} width={.85} height={.72} />
-      {LAYERS.map((l, i) => <group key={l.id} position={[-1.8, -.15 - i * .16, 0]}><WorldCard text={l.label} width={.6} height={.13} action={() => changeLayer(l.id)} /></group>)}
-      {takeable && <group position={[0, -.6, 0]}><WorldCard text={state.taken ? 'Return to body' : 'Take to tray'} width={.85} height={.12} action={take} /></group>}
-      <group position={[0, -.75, 0]}><WorldCard text={spin ? 'Pause rotation' : 'Rotate study organ'} width={.85} height={.12} action={() => setSpin(!spin)} /></group>
-      <group position={[-.23, -.9, 0]}><WorldCard text="Previous part" width={.4} height={.12} action={() => pick(parts[(parts.findIndex(p => p.id === state.selected) + parts.length - 1) % parts.length].id)} /></group>
-      <group position={[.23, -.9, 0]}><WorldCard text="Next part" width={.4} height={.12} action={() => pick(parts[(parts.findIndex(p => p.id === state.selected) + 1) % parts.length].id)} /></group>
-      <group position={[-.23, -1.05, 0]}><WorldCard text="Reset body" width={.4} height={.12} action={reset} /></group>
-      <group position={[.23, -1.05, 0]}><WorldCard text="Exit VR" width={.4} height={.12} action={() => { void session.end(); }} /></group>
-    </group>}
   </>;
 }
 

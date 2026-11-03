@@ -341,7 +341,7 @@ export function EarthSkyRoom({
       >
         <XR store={vr.store}>
           <EarthSkyRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} />
-          <LabVRRig start={[0, 0, 3.5]} bounds={[-6.4, 6.4, -5.4, 5.4]} stations={STATIONS} />
+          <LabVRRig title="Earth & Sky" ceiling={4} start={[0, 0, 3.5]} bounds={[-6.4, 6.4, -5.4, 5.4]} stations={STATIONS} />
         </XR>
       </Canvas>
 
@@ -355,7 +355,7 @@ export function EarthSkyRoom({
         <button className="es-sound" onClick={() => { setSoundOn((s) => !s); setChemMuted(soundOn); }}>
           {soundOn ? "Sound on" : "Sound off"}
         </button>
-        <LabVRButton vr={vr} />
+        <LabVRButton vr={vr} title="Earth & Sky" />
         <button disabled={vr.active} className={`es-ultra${ultra ? " on" : ""}`} onClick={() => setUltra((u) => !u)}>
           {ultra ? "Ultra" : "Normal"}
         </button>

@@ -767,7 +767,7 @@ export function PhysicsRoom({
       >
         <XR store={vr.store}>
           <PhysicsRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} />
-          <LabVRRig start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS} />
+          <LabVRRig title="Physics & Machines" ceiling={3.6} start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS} />
         </XR>
       </Canvas>
 
@@ -781,7 +781,7 @@ export function PhysicsRoom({
         <button className={`phys-toggle${soundOn ? " on" : ""}`} onClick={() => { setSoundOn((s) => !s); setChemMuted(soundOn); }}>
           {soundOn ? "Sound on" : "Sound off"}
         </button>
-        <LabVRButton vr={vr} />
+        <LabVRButton vr={vr} title="Physics & Machines" />
         <button disabled={vr.active} className={`phys-toggle${ultra ? " on" : ""}`} onClick={() => setUltra((u) => !u)}>
           {ultra ? "Ultra" : "Normal"}
         </button>

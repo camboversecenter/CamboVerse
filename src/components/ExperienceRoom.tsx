@@ -637,7 +637,17 @@ export function ExperienceRoom({
               onPickReagent={pickReagent3D}
               visibleReagents={visibleReagents}
             />
-            <LabVRRig start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS} />
+            <LabVRRig title="Chemistry" start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS}
+              status={running?'Reaction in progress':result && result!=='none'?result.name:filledSlots.length?filledSlots.map(id=>reagentById(id)?.name??id).join(' + '):'Point at shelf bottles to choose reagents.'}
+              actions={station=>{
+                const preset=STATIONS.find(s=>s.id===station?.id)?.preset;
+                return [
+                  ...(preset?[{id:'preset',label:'Load this experiment',disabled:!!running,onSelect:()=>{clearBench();loadPreset(preset);}}]:[]),
+                  {id:'water',label:'Load hydrogen + oxygen',disabled:!!running,onSelect:()=>{clearBench();loadPreset(['h2','o2']);}},
+                  {id:'pour',label:running?'Reaction in progress':'Pour selected reagents',disabled:filledSlots.length<2||!!running,onSelect:pour},
+                  {id:'clear',label:'Clear the bench',disabled:!!running,onSelect:clearBench},
+                ];
+              }}/>
           </XR>
         </Canvas>
       </div>
@@ -677,7 +687,7 @@ export function ExperienceRoom({
               onClick={() => setControlMode('phone')}>📱 Phone</button>
             <button className={`xroom-mode-btn${controlMode === 'pc' ? ' active' : ''}`}
               onClick={() => setControlMode('pc')}>🖥️ PC</button>
-            <LabVRButton vr={vr} />
+            <LabVRButton vr={vr} title="Chemistry" />
           </div>
         </div>
       </div>

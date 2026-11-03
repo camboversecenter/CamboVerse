@@ -8,6 +8,7 @@ import { captureVRArrival, captureVRFloor, captureVRScale, captureVRInputStep, c
 import type {CaptureJumpState} from '../captureWalk';
 import {buildingVRJump,RUN_MULTIPLIER} from '../buildingMovement';
 import {advanceBuildingVRFlight,type BuildingVRFlightState} from '../buildingVRFlight';
+import type {LabBounds} from '../labVRNavigation';
 
 /**
  * The VR player. Places the visitor standing in the scene and drives them with
@@ -15,7 +16,7 @@ import {advanceBuildingVRFlight,type BuildingVRFlightState} from '../buildingVRF
  * Selecting a point of interest (with the controller ray) glides them there.
  * Harmless outside a VR session (the hooks simply do nothing).
  */
-export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, capture, resetKey=0,buildingMovement=false }: { position: [number, number, number]; startYaw?:number;poi?: Poi | null; elevatedStops?: boolean; area?:CaptureWalkArea;capture?:PoiCapture;resetKey?:number;buildingMovement?:boolean }) {
+export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, capture, resetKey=0,buildingMovement=false, roomBounds, ceiling, moveSpeed=2.6 }: { position: [number, number, number]; startYaw?:number;poi?: Poi | null; elevatedStops?: boolean; area?:CaptureWalkArea;capture?:PoiCapture;resetKey?:number;buildingMovement?:boolean;roomBounds?:LabBounds;ceiling?:number;moveSpeed?:number }) {
   const ref = useRef<Group>(null);
   // Captures handle their calibrated input below. A no-op target also avoids
   // the legacy hook applying a retained vector while its options are false.
@@ -63,7 +64,7 @@ export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, 
       const running=buildingMovement&&left?.type==='controller'&&left.gamepad['xr-standard-squeeze']?.state==='pressed';
       g.updateWorldMatrix(true,true);camera.getWorldDirection(direction);
       const yaw=Math.atan2(-direction.x,-direction.z);
-      const speed=capture?(capture.walk ? .45 : capture.walkAround?.speed??1.4):2.6;
+      const speed=capture?(capture.walk ? .45 : capture.walkAround?.speed??1.4):moveSpeed;
       const step=captureVRInputStep(move?.xAxis??0,-(move?.yAxis??0),turn?.xAxis??0,yaw,speed*(running?RUN_MULTIPLIER:1),delta,canTurn.current);
       canTurn.current=step.canTurn;
       if(step.angle){
@@ -75,10 +76,14 @@ export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, 
       g.position.x+=step.dx;g.position.z+=step.dz;
       // Include room-scale head offsets in the same boundary as thumbsticks.
       g.updateWorldMatrix(true,true);camera.getWorldPosition(head);
-      const [x,y,z]=capture?captureVRFloor(capture,head.x,head.z):[head.x,py,head.z];
+      const [x,y,z]=capture?captureVRFloor(capture,head.x,head.z):[
+        roomBounds?Math.max(roomBounds[0],Math.min(roomBounds[1],head.x)):head.x,py,
+        roomBounds?Math.max(roomBounds[2],Math.min(roomBounds[3],head.z)):head.z];
+      // Keep the tracked eyes below an indoor ceiling, including real height.
+      const maxY=ceiling===undefined?Infinity:Math.max(y,ceiling-.15-(head.y-g.position.y));
       if(buildingMovement){
         const previousMode=flight.current.mode;
-        flight.current=advanceBuildingVRFlight(flight.current,{toggle:!!flyDown,rise:!!jumpDown,descend:!!descend,currentY:g.position.y/scale,floorY:y/scale,running:!!running},delta);
+        flight.current=advanceBuildingVRFlight(flight.current,{toggle:!!flyDown,rise:!!jumpDown,descend:!!descend,currentY:g.position.y/scale,floorY:y/scale,running:!!running,maxY:ceiling===undefined?undefined:maxY/scale},delta);
         if(flight.current.mode!=='walking'||previousMode!=='walking'){
           jump.current={y:0,velocity:0,grounded:true};jumpsUsed.current=0;jumpHeld.current=!!jumpDown;
           g.position.x+=x-head.x;g.position.z+=z-head.z;g.position.y=flight.current.y*scale;return;
@@ -87,6 +92,7 @@ export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, 
       const nextJump=buildingMovement?buildingVRJump(jump.current,jumpHeld.current,!!jumpDown,delta,jumpsUsed.current):captureVRJump(jump.current,jumpHeld.current,!!jumpDown,delta);
       if('jumpsUsed' in nextJump)jumpsUsed.current=nextJump.jumpsUsed as number;
       jump.current=nextJump.state;jumpHeld.current=nextJump.held;
+      if(y+jump.current.y*scale>maxY){jump.current.y=(maxY-y)/scale;jump.current.velocity=Math.min(0,jump.current.velocity);}
       g.position.x+=x-head.x;g.position.z+=z-head.z;g.position.y=y+jump.current.y*scale;return;
     }
     if(presenting&&area&&g){
