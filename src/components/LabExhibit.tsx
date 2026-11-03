@@ -88,7 +88,7 @@ export function TheSpecimen(props: ExhibitProps) {
 }
 
 /** Measure the whole exhibit once; peeling layers or moving parts must not move the bench. */
-export function StagedExhibit({ specimen, ...props }: ExhibitProps & { specimen: Specimen }) {
+export function StagedExhibit({ specimen, stage = true, ...props }: ExhibitProps & { specimen: Specimen; stage?: boolean }) {
   const model = useRef<Group>(null);
   const [floor, setFloor] = useState<number | null>(null);
   useLayoutEffect(() => {
@@ -98,7 +98,7 @@ export function StagedExhibit({ specimen, ...props }: ExhibitProps & { specimen:
   }, []);
 
   return <>
-    {floor !== null && <LabStage size={specimen.sizeU} span={specimen.spanU}
+    {stage && floor !== null && <LabStage size={specimen.sizeU} span={specimen.spanU}
       centre={specimen.centreU ?? specimen.sizeU * 0.15} floor={floor} detail={props.detail} />}
     <group ref={model} name="lab-specimen"><TheSpecimen {...props} /></group>
   </>;

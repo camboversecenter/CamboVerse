@@ -2,13 +2,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { XR } from "@react-three/xr";
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
+import {LabInteractionProvider} from './LabInteraction';
+import {LabSlider3D} from './LabSlider3D';
+import {mixSelected} from '../labExperiments';
 import { ACESFilmicToneMapping } from "three";
 import { ExperienceRoomScene, STATIONS } from "./ExperienceRoomScene";
 import { WalkControls } from "./WalkControls";
 import type { WalkInput } from "./FirstPersonControls";
 import {
   REAGENTS, RECIPES, PRODUCT_IDS, findRecipe, partnersOf, recipesFor, reagentById, unitFor,
-  computeMix, type Recipe, type MixResult,
+  type Recipe, type MixResult,
   ACHIEVEMENTS, type AchievementCtx, type Achievement,
   SAFETY_QUIZ, type QuizQuestion,
   FLAME_TESTS, type FlameTestEntry,
@@ -311,6 +314,7 @@ export function ExperienceRoom({
   }, []);
 
   const pour = useCallback(() => {
+    if (filledSlots.length < 2 || running || mixCmd.current) return;
     const r = findRecipe(...filledSlots);
     const entry: LogEntry = {
       id: ++logIdRef.current,
@@ -318,13 +322,13 @@ export function ExperienceRoom({
       ...(slotC ? { c: slotC, amountC } : {}),
       ...(slotD ? { d: slotD, amountD } : {}),
       amountA, amountB,
-      recipe: r, mixResult: r ? computeMix(r, amountA, amountB, amountC, amountD) : null,
+      recipe: r, mixResult: r ? mixSelected(r, [slotA,slotB,slotC,slotD], [amountA,amountB,amountC,amountD]) : null,
       time: Date.now(),
     };
     setLog((prev) => [entry, ...prev].slice(0, 50));
     setPredictionRevealed(true);
     if (!r) { setResult("none"); setLastMix(null); playClink(); return; }
-    const mix = computeMix(r, amountA, amountB, amountC, amountD);
+    const mix = mixSelected(r, [slotA,slotB,slotC,slotD], [amountA,amountB,amountC,amountD]);
     setLastMix(mix);
     mixCmd.current = r;
     setResult(r);
@@ -354,11 +358,14 @@ export function ExperienceRoom({
     }
     setCaloData(pts);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slotA, slotB, slotC, slotD, amountA, amountB, amountC, amountD]);
+  }, [slotA, slotB, slotC, slotD, amountA, amountB, amountC, amountD, running]);
 
   const loadPreset = useCallback((p: [string, string]) => {
     setSlotA(p[0]);
     setSlotB(p[1]);
+    setSlotC(null); setSlotD(null);
+    setAmountA(10); setAmountB(10); setAmountC(10); setAmountD(10);
+    setLastMix(null);
     setResult(null);
     setBenchOpen(true);
   }, []);
@@ -607,20 +614,21 @@ export function ExperienceRoom({
       <div
         className="xroom-canvas"
         onClick={vr.active ? undefined : requestLock}
-        style={detailId ? { visibility: 'hidden', position: 'absolute', width: 0, height: 0, overflow: 'hidden' } : undefined}
+        style={detailId && !vr.active ? { visibility: 'hidden', position: 'absolute', width: 0, height: 0, overflow: 'hidden' } : undefined}
       >
         <Canvas
           dpr={ultra ? [1, 2] : [1, 1.5]}
           shadows={ultra}
           camera={{ fov: 65, near: 0.1, far: 50 }}
           gl={{ antialias: ultra, powerPreference: "high-performance" }}
-          frameloop={detailId ? 'never' : 'always'}
+          frameloop={detailId && !vr.active ? 'never' : 'always'}
           onCreated={({ gl }) => {
             gl.toneMapping = ACESFilmicToneMapping;
             gl.toneMappingExposure = 1.15;
           }}
         >
           <XR store={store}>
+            <LabInteractionProvider>
             <ExperienceRoomScene
               walkInput={walkInput}
               ultra={ultra}
@@ -636,24 +644,42 @@ export function ExperienceRoom({
               onStep={playFootstep}
               onPickReagent={pickReagent3D}
               visibleReagents={visibleReagents}
+              onDose={!running ? id => {
+                const index = [slotA,slotB,slotC,slotD].indexOf(id);
+                if (index >= 0) [setAmountA,setAmountB,setAmountC,setAmountD][index](v=>Math.min(100,v+1));
+                setResult(null); setLastMix(null);
+              } : undefined}
             />
+            {vr.active && !running && [slotA,slotB,slotC,slotD].map((id,i)=>id && <LabSlider3D key={id}
+              label={reagentById(id)!.name} unit={' '+unitFor(reagentById(id)!)} value={[amountA,amountB,amountC,amountD][i]}
+              min={1} max={100} step={1} onChange={v=>{[setAmountA,setAmountB,setAmountC,setAmountD][i](v);setResult(null);setLastMix(null);}}
+              position={[(i%2)*1.15-.575,1.65-Math.floor(i/2)*.3,-3.8]}/>)}
             <LabVRRig title="Chemistry" start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS}
+              activity={() => ({objective:'Choose reagents, adjust amounts, run the mix and compare its result.',result:[
+                [slotA,slotB,slotC,slotD].map((id,i)=>id ? `${reagentById(id)?.name}: ${[amountA,amountB,amountC,amountD][i]} ${unitFor(reagentById(id)!)}` : '').filter(Boolean).join('\n'),
+                result==='none' ? 'This combination has no modeled reaction. Try a different combination; this does not establish that the real substances are safe to mix.' : result ? `${result.name}\n${result.equation}\n${result.observation}\n\n${result.explain}\n\n${lastMix?.note??''}` : 'Close this board and select shelf bottles with the trigger. Grip a selected vial, tilt it above the beaker to add a dose, or drag the amount controls. Then use Run mix in Activities. This is a simplified virtual experiment.',
+              ].filter(Boolean).join('\n\n')})}
               status={running?'Reaction in progress':result && result!=='none'?result.name:filledSlots.length?filledSlots.map(id=>reagentById(id)?.name??id).join(' + '):'Point at shelf bottles to choose reagents.'}
               actions={station=>{
                 const preset=STATIONS.find(s=>s.id===station?.id)?.preset;
                 return [
                   ...(preset?[{id:'preset',label:'Load this experiment',disabled:!!running,onSelect:()=>{clearBench();loadPreset(preset);}}]:[]),
                   {id:'water',label:'Load hydrogen + oxygen',disabled:!!running,onSelect:()=>{clearBench();loadPreset(['h2','o2']);}},
-                  {id:'pour',label:running?'Reaction in progress':'Pour selected reagents',disabled:filledSlots.length<2||!!running,onSelect:pour},
+                  {id:'pour',label:running?'Reaction in progress':'Run mix',disabled:filledSlots.length<2||!!running,onSelect:pour,closeAfter:true},
                   {id:'clear',label:'Clear the bench',disabled:!!running,onSelect:clearBench},
+                  ...[slotA,slotB,slotC,slotD].flatMap((id,i)=>id ? [
+                    {id:`less-${i}`,label:`${reagentById(id)?.formula}: − 5 ${unitFor(reagentById(id)!)}`,disabled:!!running,onSelect:()=>{[setAmountA,setAmountB,setAmountC,setAmountD][i](v=>Math.max(1,v-5));setResult(null);setLastMix(null);}},
+                    {id:`more-${i}`,label:`${reagentById(id)?.formula}: + 5 ${unitFor(reagentById(id)!)}`,disabled:!!running,onSelect:()=>{[setAmountA,setAmountB,setAmountC,setAmountD][i](v=>Math.min(100,v+5));setResult(null);setLastMix(null);}},
+                  ] : []),
                 ];
               }}/>
+            </LabInteractionProvider>
           </XR>
         </Canvas>
       </div>
 
       {/* ── In-room detail overlay for chemistry specimens ── */}
-      {detailId && <InRoomDetail key={detailId} specimenId={detailId}
+      {detailId && !vr.active && <InRoomDetail key={detailId} specimenId={detailId}
         detail={(ultra ? 'ultra' : 'normal') as Detail}
         onClose={() => setDetailId(null)}
         onOpenSpecimen={onOpenSpecimen} />}

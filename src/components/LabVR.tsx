@@ -11,6 +11,7 @@ import {VRRig} from './VRRig';
 import {VRSurface} from './VRSurface';
 import {VRPanelFrame, VRPageControls} from './VRPanel';
 import './LabVR.css';
+import {useLabInteraction} from './LabInteraction';
 
 /** The same native session and visible controller rays as Buildings/Wat Phnom. */
 export function useLabVR() {
@@ -31,8 +32,9 @@ export function LabVRButton({vr, title = 'Learning Lab'}: {vr: ReturnType<typeof
 }
 
 export interface VRStation {id: string; label: string; description: string; detail?: string; at: [number, number, number]}
-export interface LabVRAction {id: string; label: string; onSelect: () => void; disabled?: boolean; active?: boolean}
-type LabTab = 'learn' | 'activities' | 'controls';
+export interface LabVRAction {id: string; label: string; onSelect: () => void; disabled?: boolean; active?: boolean; closeAfter?: boolean}
+type LabTab = 'learn' | 'activities' | 'results' | 'controls';
+export interface LabActivity {objective: string; result: string}
 
 /** A small anchored marker faces the visitor, but never travels with their head. */
 function LabStationMarker({station, onSelect}: {station: VRStation; onSelect: () => void}) {
@@ -51,9 +53,9 @@ function LabStationMarker({station, onSelect}: {station: VRStation; onSelect: ()
 }
 
 /** One world-anchored panel. It mounts on demand, never blocks locomotion. */
-export function LabVRPanel({title, station, index, count, tab, setTab, actions, status, onPrevious, onNext, onVisit, onEntrance, onClose, onExit}: {
+export function LabVRPanel({title, station, index, count, tab, setTab, actions, status, activity, onPrevious, onNext, onVisit, onEntrance, onClose, onExit}: {
   title: string; station?: VRStation; index: number; count: number; tab: LabTab; setTab: (tab: LabTab) => void;
-  actions: LabVRAction[]; status?: string; onPrevious: () => void; onNext: () => void;
+  actions: LabVRAction[]; status?: string; activity?: LabActivity; onPrevious: () => void; onNext: () => void;
   onVisit: () => void; onEntrance: () => void; onClose: () => void; onExit: () => void;
 }) {
   const panel = useRef<Group>(null), placed = useRef(false);
@@ -61,7 +63,8 @@ export function LabVRPanel({title, station, index, count, tab, setTab, actions, 
   const [page, setPage] = useState(0), [pages, setPages] = useState(1), [actionPage, setActionPage] = useState(0);
   const [speech, setSpeech] = useState<NarrationStatus>('idle');
   const narrator = useMemo(() => new GuideNarrator(setSpeech), []);
-  const text = station?.detail ?? station?.description ?? 'Select a station marker to explore its learning notes.';
+  const text = tab === 'results' ? activity?.result ?? 'Choose an activity to see its observations here.'
+    : station?.detail ?? station?.description ?? 'Select a station marker to explore its learning notes.';
   useEffect(() => {setPage(0); setActionPage(0); narrator.stop();}, [station?.id, text, tab, narrator]);
   useEffect(() => () => narrator.dispose(), [narrator]);
   useEffect(() => {setPage(p => Math.min(p, pages - 1));}, [pages]);
@@ -82,12 +85,12 @@ export function LabVRPanel({title, station, index, count, tab, setTab, actions, 
     <VRPanelFrame width={1.5} height={1.78}/>
     <group position={[-.16,.75,0]}><VRSurface variant="heading" title={title} width={1.03} height={.13}/></group>
     <group position={[.56,.75,0]}><VRSurface title="Close" width={.28} height={.13} onClick={onClose}/></group>
-    {(['learn', 'activities', 'controls'] as const).map((id, i) => <group key={id} position={[(i - 1) * .46,.57,0]}>
-      <VRSurface title={{learn:'Learn', activities:'Activities', controls:'Controls'}[id]} width={.43} height={.14} active={tab === id} onClick={() => setTab(id)}/>
+    {(['learn', 'activities', 'results', 'controls'] as const).map((id, i) => <group key={id} position={[(i - 1.5) * .35,.57,0]}>
+      <VRSurface title={{learn:'Learn', activities:'Activities', results:'Results', controls:'Controls'}[id]} width={.33} height={.14} active={tab === id} onClick={() => setTab(id)}/>
     </group>)}
-    {tab === 'learn' && <>
+    {(tab === 'learn' || tab === 'results') && <>
       <group position={[0,.04,0]}><VRSurface variant="board" eyebrow={`STATION ${count ? index + 1 : 0} / ${count}`} title={station?.label ?? 'Explore the room'}
-        body={text} footer="Close the panel to select a marker in the room." width={1.36} height={.86} page={page} onPages={setPages}/></group>
+        body={text} footer={tab === 'results' ? activity?.objective : 'Close the panel to select a marker in the room.'} width={1.36} height={.86} page={page} onPages={setPages}/></group>
       <group position={[0,-.47,0]}><VRPageControls page={page} pages={pages} onPage={setPage} km={false}/></group>
       <group position={[-.46,-.65,0]}><VRSurface title="Previous station" width={.43} height={.15} disabled={count < 2} onClick={onPrevious}/></group>
       <group position={[0,-.65,0]}><VRSurface title="Visit station" width={.43} height={.15} disabled={!station} onClick={onVisit}/></group>
@@ -97,11 +100,11 @@ export function LabVRPanel({title, station, index, count, tab, setTab, actions, 
     {tab === 'activities' && <>
       <group position={[0,.29,0]}><VRSurface variant="text" title={station?.label ?? 'Room activities'} width={1.36} height={.13}/></group>
       {actions.slice(actionPage * 4, actionPage * 4 + 4).map((action, i) => <group key={action.id} position={[0,.10 - i * .17,0]}>
-        <VRSurface title={action.label} width={1.36} height={.15} disabled={action.disabled} active={action.active} onClick={action.onSelect}/>
+        <VRSurface title={action.label} width={1.36} height={.15} disabled={action.disabled} active={action.active} onClick={()=>{action.onSelect();if(action.closeAfter)onClose();}}/>
       </group>)}
       {!actions.length && <group position={[0,-.05,0]}><VRSurface variant="board" title="Explore this exhibit" body="Walk around the model and use Learn to read or listen to its notes. Detailed experiment forms and quizzes are available outside VR." width={1.36} height={.66}/></group>}
       <group position={[0,-.54,0]}><VRPageControls page={actionPage} pages={actionPages} onPage={setActionPage} km={false}/></group>
-      <group position={[0,-.73,0]}><VRSurface variant="text" title={status ?? 'Point at a model or select a control above.'} width={1.36} height={.2}/></group>
+      <group position={[0,-.73,0]}><VRSurface variant="text" title={activity?.objective ?? status ?? 'Point at a model or select a control above.'} width={1.36} height={.2}/></group>
     </>}
     {tab === 'controls' && <>
       <group position={[0,.06,0]}><VRSurface variant="board" title="Explore at your pace" body={LAB_VR_HELP} footer="Flying stays inside the room. Listen uses the online voice service." width={1.36} height={.88} page={page} onPages={setPages}/></group>
@@ -113,12 +116,14 @@ export function LabVRPanel({title, station, index, count, tab, setTab, actions, 
   </group>;
 }
 
-export function LabVRRig({start, bounds, ceiling = 3.6, stations = [], title = 'Learning Lab', actions, status}: {
+export function LabVRRig({start, bounds, ceiling = 3.6, stations = [], title = 'Learning Lab', actions, status, activity}: {
   start: [number, number, number]; bounds: LabBounds; ceiling?: number; stations?: VRStation[]; title?: string;
-  actions?: (station: VRStation | undefined) => LabVRAction[]; status?: string;
+  actions?: (station: VRStation | undefined) => LabVRAction[]; status?: string; activity?: (station: VRStation | undefined) => LabActivity;
 }) {
   const store = useXRStore(), session = useXR(s => s.session);
   const [open, setOpen] = useState(false), [index, setIndex] = useState(0), [tab, setTab] = useState<LabTab>('controls');
+  const manipulation = useLabInteraction();
+  useEffect(() => {if (manipulation) manipulation.blocked = open; return () => {if (manipulation) manipulation.blocked = false;};}, [manipulation, open]);
   const [arrival, setArrival] = useState({position: start, yaw: 0}), [resetKey, setResetKey] = useState(0);
   const held = useRef(false);
   const [sx, sy, sz] = start;
@@ -139,7 +144,7 @@ export function LabVRRig({start, bounds, ceiling = 3.6, stations = [], title = '
   return <>
     <VRRig position={arrival.position} startYaw={arrival.yaw} resetKey={resetKey} buildingMovement roomBounds={bounds} ceiling={ceiling} moveSpeed={1.4}/>
     {session && !open && stations.map((s, i) => <LabStationMarker key={s.id} station={s} onSelect={() => {setIndex(i); setTab('learn'); setOpen(true);}}/>)}
-    {session && open && <LabVRPanel title={title} station={station} index={index} count={stations.length} tab={tab} setTab={setTab} actions={actions?.(station) ?? []} status={status}
+    {session && open && <LabVRPanel title={title} station={station} index={index} count={stations.length} tab={tab} setTab={setTab} actions={actions?.(station) ?? []} status={status} activity={activity?.(station)}
       onPrevious={() => setIndex(i => (i + stations.length - 1) % stations.length)} onNext={() => setIndex(i => (i + 1) % stations.length)}
       onVisit={() => {if (station) moveTo(labStationArrival(station.at, bounds, sy));}}
       onEntrance={() => moveTo({position: [sx, sy, sz], yaw: 0})} onClose={() => setOpen(false)} onExit={() => {void session.end().catch(() => {});}}/>}

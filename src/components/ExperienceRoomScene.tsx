@@ -1,4 +1,6 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {useLabGrabbable} from './LabInteraction';
+import {canDose} from '../labExperiments';
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import {
   MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, RepeatWrapping,
@@ -499,11 +501,11 @@ function RackBottle({
   const labelTex = useMemo(() => makeLabelTexture(reagent.name, chosen), [reagent.name, chosen]);
   const labelMat = useMemo(() => new SpriteMaterial({ map: labelTex, transparent: true, depthTest: false }), [labelTex]);
 
-  const _worldPos = useRef(new Vector3());
+  const _worldPos = useRef(new Vector3()), head = useRef(new Vector3());
   useFrame(() => {
     if (!groupRef.current || !labelRef.current) return;
     groupRef.current.getWorldPosition(_worldPos.current);
-    const dist = camera.position.distanceTo(_worldPos.current);
+    const dist = camera.getWorldPosition(head.current).distanceTo(_worldPos.current);
     const show = dist < 3.5;
     labelRef.current.visible = show;
     if (show) {
@@ -599,18 +601,39 @@ function ReagentRack({
 }
 
 /** One of the two vials the chosen reagents sit in before they are poured. */
-function SlotVial({ x, reagentId }: { x: number; reagentId: string | null }) {
+function SlotVial({ x, reagentId, onDose }: { x: number; reagentId: string | null; onDose?: (id: string) => void }) {
   const r = reagentById(reagentId);
+  const ref = useRef<Group>(null), stream = useRef<Group>(null), elapsed = useRef(0), dosed = useRef(0);
+  const vectors = useMemo(() => ({tip:new Vector3(),up:new Vector3(),target:new Vector3(0,1.3,-4.04),direction:new Vector3(),axis:new Vector3(0,1,0)}), []);
+  useLabGrabbable(ref, !!r && !!onDose, {
+    onMove: (object, dt) => {
+      vectors.tip.set(0,.06,0).applyMatrix4(object.matrixWorld);
+      vectors.up.set(0,1,0).transformDirection(object.matrixWorld);
+      const pouring = canDose(vectors.tip.x,vectors.tip.y,vectors.tip.z,vectors.up.y) && dosed.current < 25;
+      if (stream.current) {
+        stream.current.visible = pouring;
+        vectors.direction.subVectors(vectors.tip,vectors.target);
+        stream.current.position.copy(vectors.tip).add(vectors.target).multiplyScalar(.5);
+        stream.current.scale.y = vectors.direction.length();
+        stream.current.quaternion.setFromUnitVectors(vectors.axis,vectors.direction.normalize());
+      }
+      if (!pouring) {elapsed.current=0;return;}
+      elapsed.current += dt;
+      if (elapsed.current >= .15 && reagentId) {elapsed.current -= .15;dosed.current++;onDose?.(reagentId);}
+    },
+    onRelease: () => {elapsed.current=0;dosed.current=0;if(stream.current)stream.current.visible=false;},
+  }, reagentId);
   const mat = useMemo(
     () => new MeshStandardMaterial({ color: "#ffffff", roughness: 0.3, transparent: true, opacity: 0.9 }),
     []
   );
+  useEffect(() => () => mat.dispose(), [mat]);
   if (r) {
     mat.color.set(r.color);
     mat.opacity = r.phase === "gas" ? 0.3 : 0.88;
   }
   return (
-    <group position={[x, TOP_Y, BENCH_Z + 0.16]}>
+    <><group ref={ref} position={[x, TOP_Y+.12, BENCH_Z + 0.16]} scale={1.6}>
       <mesh><cylinderGeometry args={[0.035, 0.035, 0.12, 12, 1, true]} /><primitive object={mGlass} attach="material" /></mesh>
       <mesh position={[0, -0.058, 0]}><cylinderGeometry args={[0.035, 0.035, 0.005, 12]} /><primitive object={mGlass} attach="material" /></mesh>
       {r && (
@@ -619,7 +642,7 @@ function SlotVial({ x, reagentId }: { x: number; reagentId: string | null }) {
           <primitive object={mat} attach="material" />
         </mesh>
       )}
-    </group>
+    </group><group ref={stream} visible={false}><mesh><cylinderGeometry args={[.008,.012,1,6]}/><meshBasicMaterial color={r?.color??'#a5dbe9'}/></mesh></group></>
   );
 }
 
@@ -1038,7 +1061,7 @@ function ProximityTrigger({ onNear }: { onNear: (id: string | null) => void }) {
    ══════════════════════════════════════════════════════════════════ */
 export function ExperienceRoomScene({
   walkInput, ultra, onNear, mixCmd, onMixChange, slotA, slotB, slotC, slotD, views, discovered, onStep,
-  onPickReagent, visibleReagents,
+  onPickReagent, visibleReagents, onDose,
 }: {
   walkInput: MutableRefObject<WalkInput>;
   ultra: boolean;
@@ -1054,6 +1077,7 @@ export function ExperienceRoomScene({
   onStep?: () => void;
   onPickReagent?: (id: string) => void;
   visibleReagents?: Reagent[];
+  onDose?: (id: string) => void;
 }) {
   const [near, setNear] = useState<string | null>(null);
   const solid = useRef<Group>(null);
@@ -1130,11 +1154,12 @@ export function ExperienceRoomScene({
         slotD={slotD}
         visibleReagents={visibleReagents ?? REAGENTS}
       />
-      <SlotVial x={-0.55} reagentId={slotA} />
-      <SlotVial x={-0.18} reagentId={slotB} />
-      {slotC && <SlotVial x={0.18} reagentId={slotC} />}
-      {slotD && <SlotVial x={0.55} reagentId={slotD} />}
+      <SlotVial x={-0.65} reagentId={slotA} onDose={onDose}/>
+      <SlotVial x={-.3} reagentId={slotB} onDose={onDose}/>
+      {slotC && <SlotVial x={.3} reagentId={slotC} onDose={onDose}/>}
+      {slotD && <SlotVial x={.65} reagentId={slotD} onDose={onDose}/>}
       <MixingVessel state={mix} />
+      {onDose && <mesh position={[0,1.31,-4.04]} rotation-x={Math.PI/2} pointerEvents="none"><torusGeometry args={[.15,.007,6,24]}/><meshBasicMaterial color="#88e6b3"/></mesh>}
       <MixController cmd={mixCmd} state={mix} onChange={onMixChange} />
 
       {/* ── Exhibits standing on their tables, in the room ────────── */}

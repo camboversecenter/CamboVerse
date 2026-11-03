@@ -658,11 +658,12 @@ const bounds = { minX: -W / 2 + 0.6, maxX: W / 2 - 0.6, minZ: -D / 2 + 0.6, maxZ
 const start: [number, number, number] = [0, 1.55, 3.5];
 
 export function EarthSkyRoomScene({
-  walkInput, ultra, onNear,
+  walkInput, ultra, onNear, handsOn = false,
 }: {
   walkInput: MutableRefObject<WalkInput>;
   ultra: boolean;
   onNear: (id: string | null) => void;
+  handsOn?: boolean;
 }) {
   const solid = useRef<Group>(null);
   const near = useRef<string | null>(null);
@@ -703,12 +704,14 @@ export function EarthSkyRoomScene({
       </group>
 
       {/* 3D props on tables */}
+      {!handsOn && <>
       <EarthSkyBlenderProp kind="orrery" ultra={ultra} position={[0,TABLE_H+.43,-D/2+1.2]} fallback={<OrreryProp position={[0,TABLE_H+.1,-D/2+1.2]}/>}/>
       <EarthSkyBlenderProp kind="layers" ultra={ultra} position={[-4.5,TABLE_H+.43,-D/2+1.2]} fallback={<EarthCrossSectionProp position={[-4.5,TABLE_H+.25,-D/2+1.2]}/>}/>
       <EarthSkyBlenderProp kind="globe" ultra={ultra} position={[4.5,TABLE_H+.43,-D/2+1.2]} fallback={<GlobeProp position={[4.5,TABLE_H+.25,-D/2+1.2]}/>}/>
       <EarthSkyBlenderProp kind="moon" ultra={ultra} position={[-5.5,TABLE_H+.43,0]} fallback={<MoonModelProp position={[-5.5,TABLE_H+.2,0]}/>}/>
       <EarthSkyBlenderProp kind="seasons" ultra={ultra} position={[5.5,TABLE_H+.43,0]} fallback={<SaturnProp position={[5.5,TABLE_H+.25,0]}/>}/>
       <EarthSkyBlenderProp kind="tides" ultra={ultra} position={[0,TABLE_H+.43,D/2-1.2]} fallback={<TideProp position={[0,TABLE_H+.25,D/2-1.2]}/>}/>
+      </>}
 
       <StarField />
       <ConstellationProjection />

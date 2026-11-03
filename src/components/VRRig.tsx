@@ -9,6 +9,7 @@ import type {CaptureJumpState} from '../captureWalk';
 import {buildingVRJump,RUN_MULTIPLIER} from '../buildingMovement';
 import {advanceBuildingVRFlight,type BuildingVRFlightState} from '../buildingVRFlight';
 import type {LabBounds} from '../labVRNavigation';
+import {useLabInteraction} from './LabInteraction';
 
 /**
  * The VR player. Places the visitor standing in the scene and drives them with
@@ -18,6 +19,7 @@ import type {LabBounds} from '../labVRNavigation';
  */
 export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, capture, resetKey=0,buildingMovement=false, roomBounds, ceiling, moveSpeed=2.6 }: { position: [number, number, number]; startYaw?:number;poi?: Poi | null; elevatedStops?: boolean; area?:CaptureWalkArea;capture?:PoiCapture;resetKey?:number;buildingMovement?:boolean;roomBounds?:LabBounds;ceiling?:number;moveSpeed?:number }) {
   const ref = useRef<Group>(null);
+  const manipulation = useLabInteraction();
   // Captures handle their calibrated input below. A no-op target also avoids
   // the legacy hook applying a retained vector while its options are false.
   const manual=!!capture||buildingMovement;
@@ -61,7 +63,7 @@ export function VRRig({ position, startYaw=0, poi, elevatedStops = false, area, 
       const descend=left?.type==='controller'&&left.gamepad['x-button']?.state==='pressed';
       // Only headset focus pauses locomotion. Reading boards never disable it.
       if(store.getState().session?.visibilityState==='hidden'||store.getState().session?.visibilityState==='visible-blurred'){jumpHeld.current=!!jumpDown;flight.current.held=!!flyDown;return;}
-      const running=buildingMovement&&left?.type==='controller'&&left.gamepad['xr-standard-squeeze']?.state==='pressed';
+      const running=buildingMovement&&!manipulation?.ownsGrip('left')&&left?.type==='controller'&&left.gamepad['xr-standard-squeeze']?.state==='pressed';
       g.updateWorldMatrix(true,true);camera.getWorldDirection(direction);
       const yaw=Math.atan2(-direction.x,-direction.z);
       const speed=capture?(capture.walk ? .45 : capture.walkAround?.speed??1.4):moveSpeed;

@@ -2,6 +2,8 @@ import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { XR } from '@react-three/xr';
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
+import {LabInteractionProvider} from './LabInteraction';
+import {PhysicsHandsOn} from './PhysicsHandsOn';
 import { ACESFilmicToneMapping } from "three";
 import { PhysicsRoomScene, STATIONS } from "./PhysicsRoomScene";
 import { WalkControls } from "./WalkControls";
@@ -81,6 +83,8 @@ export function PhysicsRoom({
   const [projectileOpen, setProjectileOpen] = useState(false);
   const [projAngle, setProjAngle] = useState(45);
   const [projSpeed, setProjSpeed] = useState(15);
+  const [launchId, setLaunchId] = useState(0);
+  const circuitPresetIndex = useRef(0);
 
   const [circuitOpen, setCircuitOpen] = useState(false);
   const [circuitGrid, setCircuitGrid] = useState<CellType[][]>(() => presetToGrid(CIRCUIT_PRESETS[0]));
@@ -403,6 +407,7 @@ export function PhysicsRoom({
 
   // ── Animation: Projectile ball tracing arc ──
   const startProjAnim = useCallback(() => {
+    setLaunchId(n=>n+1);
     stopAnim("proj");
     projAnimRef.current = { running: true, startTime: performance.now() };
     setProjPlaying(true);
@@ -766,8 +771,31 @@ export function PhysicsRoom({
         tabIndex={0}
       >
         <XR store={vr.store}>
-          <PhysicsRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} />
-          <LabVRRig title="Physics & Machines" ceiling={3.6} start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS} />
+          <LabInteractionProvider>
+          <PhysicsRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} handsOn={vr.active}/>
+          {vr.active && <PhysicsHandsOn angle={projAngle} speed={projSpeed} launchId={launchId}
+            onAngle={setProjAngle} onSpeed={setProjSpeed} onLaunch={()=>{setLaunchId(n=>n+1);setTotalExperiments(n=>n+1);markVisited('projectile-bench');addLog('projectile-bench','🎯','Projectile',{angle:`${projAngle}°`,speed:`${projSpeed} m/s`},`Range ${projR.toFixed(1)} m`);}}
+            length={pendLength} amplitude={pendAngle} onLength={setPendLength} onAmplitude={setPendAngle}
+            circuit={circAnalysis} onCircuit={()=>{circuitPresetIndex.current=(circuitPresetIndex.current+1)%CIRCUIT_PRESETS.length;setCircuitGrid(presetToGrid(CIRCUIT_PRESETS[circuitPresetIndex.current]));markVisited('circuit-table');}}/>}
+          <LabVRRig title="Physics & Machines" ceiling={3.6} start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]}
+            stations={[STATIONS.find(s=>s.id==='projectile-bench')!,...STATIONS.filter(s=>s.id!=='projectile-bench')]}
+            activity={s=>s?.id==='projectile-bench' ? {objective:'Compare two launch angles at the same speed.',result:`Angle ${projAngle}° · speed ${projSpeed} m/s\nRange ${projR.toFixed(1)} m\nMaximum height ${projH.toFixed(1)} m\nFlight ${projT.toFixed(2)} s\n\nIdeal projectile model without air resistance. The tabletop path is scaled to fit; measurements use the same calculation as PC.`}
+              : s?.id==='pendulum-corner' ? {objective:'Change length and observe how the period changes.',result:`Length ${pendLength.toFixed(1)} m\nRelease angle ${pendAngle}°\nPeriod ${pPeriod.toFixed(2)} s\nFrequency ${pFreq.toFixed(2)} Hz\n\nGrip the bob and release it to set the swing. This is the existing ideal small-angle model; large swings are illustrative.`}
+              : s?.id==='circuit-table' ? {objective:'Compare a circuit preset and observe the bulb and current.',result:`Voltage ${circAnalysis.voltage} V\nResistance ${circAnalysis.totalResistance} Ω\nCurrent ${(circAnalysis.current*1000).toFixed(1)} mA\nPower ${circAnalysis.power.toFixed(2)} W\n\nThe same circuit calculation drives the PC results and this bulb.`}
+              : {objective:'Explore this station; use projectile, circuit or pendulum for hands-on VR.',result:s?.detail??s?.description??'Select a station.'}}
+            actions={s=>s?.id==='projectile-bench' ? [
+              {id:'launch',label:'Launch',closeAfter:true,onSelect:()=>{setLaunchId(n=>n+1);setTotalExperiments(n=>n+1);markVisited(s.id);addLog(s.id,'🎯','Projectile',{angle:`${projAngle}°`,speed:`${projSpeed} m/s`},`Range ${projR.toFixed(1)} m`);}},
+              {id:'angle-down',label:`Angle ${projAngle}° · decrease 5°`,onSelect:()=>setProjAngle(v=>Math.max(5,v-5))},
+              {id:'angle-up',label:`Angle ${projAngle}° · increase 5°`,onSelect:()=>setProjAngle(v=>Math.min(85,v+5))},
+              {id:'speed',label:`Speed ${projSpeed} m/s · next`,onSelect:()=>setProjSpeed(v=>v>=50?5:v+5)},
+              {id:'reset',label:'Reset launcher',onSelect:()=>{setProjAngle(45);setProjSpeed(15);setLaunchId(0);}},
+            ] : s?.id==='pendulum-corner' ? [
+              {id:'shorter',label:`Length ${pendLength.toFixed(1)} m · shorter`,onSelect:()=>setPendLength(v=>Math.max(.1,Math.round((v-.2)*10)/10))},
+              {id:'longer',label:`Length ${pendLength.toFixed(1)} m · longer`,onSelect:()=>setPendLength(v=>Math.min(5,Math.round((v+.2)*10)/10))},
+              {id:'swing',label:`Release angle ${pendAngle}° · next`,onSelect:()=>setPendAngle(v=>v>=80?5:Math.min(80,v+10))},
+              {id:'reset',label:'Reset pendulum',onSelect:()=>{setPendLength(1);setPendAngle(30);}},
+            ] : s?.id==='circuit-table' ? CIRCUIT_PRESETS.map((p,i)=>({id:`circuit-${i}`,label:p.name,onSelect:()=>{circuitPresetIndex.current=i;setCircuitGrid(presetToGrid(p));markVisited(s.id);markPreset(p.id);setTotalExperiments(n=>n+1);}})) : []}/>
+          </LabInteractionProvider>
         </XR>
       </Canvas>
 

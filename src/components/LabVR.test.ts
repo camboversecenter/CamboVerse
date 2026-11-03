@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {act, createElement, useEffect} from 'react';
+import {act, createElement, useEffect, useState} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
 import {Euler, Group, PerspectiveCamera, Vector3} from 'three';
 import {LabVRRig, useLabVR, type VRStation} from './LabVR';
@@ -100,5 +100,15 @@ describe('Learning Lab immersive interaction',()=>{
     await act(async()=>listener({session:{},mode:'inline'}));expect(host.textContent).toBe('Normal');
     await act(async()=>listener({session:{},mode:'immersive-vr'}));expect(host.textContent).toBe('Ultra');
     await act(async()=>listener({session:null,mode:null}));expect(host.textContent).toBe('Normal');
+  });
+  it('shows and narrates live experiment results inside the same world panel',async()=>{
+    function Experiment(){const [amount,setAmount]=useState(10);return createElement(LabVRRig,{title:'Chemistry',start:[0,0,2],bounds:[-3,3,-3,3],stations,
+      actions:()=>[{id:'dose',label:'Add dose',onSelect:()=>setAmount(n=>n+1)}],
+      activity:()=>({objective:'Change an amount and compare the result.',result:`Mixture contains ${amount} mL.`})});}
+    await act(async()=>root.render(createElement(Experiment)));
+    await act(async()=>button('Activities').click());await act(async()=>button('Add dose').click());
+    await act(async()=>button('Results').click());expect(host.textContent).toContain('Mixture contains 11 mL.');
+    await act(async()=>button('Listen to these notes').click());expect(mock.narrate).toHaveBeenCalledWith('Anatomy study. Mixture contains 11 mL.');
+    const z=origin.position.z;stick.yAxis=-1;await act(async()=>tick());expect(origin.position.z).toBeLessThan(z);
   });
 });

@@ -96,7 +96,9 @@ export function moonIllumination(angleDeg: number): number {
 
 export function tideHeight(moonAngleDeg: number, pointAngleDeg: number): number {
   const diff = ((moonAngleDeg - pointAngleDeg) * Math.PI) / 180;
-  return 0.5 + 0.5 * Math.cos(diff);
+  // Ideal two-bulge teaching model, not a coastal tide prediction.
+  // https://oceanservice.noaa.gov/education/tutorial_tides/tides03_gravity.html
+  return 0.5 + 0.5 * Math.cos(2 * diff);
 }
 
 export function dayNightBoundary(rotationDeg: number): number {

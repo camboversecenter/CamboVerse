@@ -1001,11 +1001,12 @@ const bounds = { minX: -W / 2 + 0.6, maxX: W / 2 - 0.6, minZ: -D / 2 + 0.6, maxZ
 const start: [number, number, number] = [0, 1.55, 2.5];
 
 export function PhysicsRoomScene({
-  walkInput, ultra, onNear,
+  walkInput, ultra, onNear, handsOn = false,
 }: {
   walkInput: MutableRefObject<WalkInput>;
   ultra: boolean;
   onNear: (id: string | null) => void;
+  handsOn?: boolean;
 }) {
   const solid = useRef<Group>(null);
   const near = useRef<string | null>(null);
@@ -1051,10 +1052,10 @@ export function PhysicsRoomScene({
       {/* Station props on back benches */}
       <GearProp position={[0, BENCH_H, BENCH_Z]} />
       <NewtonCradleProp position={[-3.2, BENCH_H, BENCH_Z]} />
-      <LauncherProp position={[3.2, BENCH_H, BENCH_Z]} />
+      {!handsOn && <LauncherProp position={[3.2, BENCH_H, BENCH_Z]} />}
 
       {/* Station props on side tables */}
-      <CircuitBoardProp position={[-4.2, BENCH_H, 0]} />
+      {!handsOn && <CircuitBoardProp position={[-4.2, BENCH_H, 0]} />}
       <EnergyRampProp position={[4.2, BENCH_H, 0]} />
 
       {/* Front-area props on small tables */}
@@ -1062,7 +1063,7 @@ export function PhysicsRoomScene({
       <CollisionTrackProp position={[2.0, 0, D / 2 - 1.2]} />
 
       {/* Floor-standing props */}
-      <PendulumStandProp position={[-4.2, 0, 3.0]} />
+      {!handsOn && <PendulumStandProp position={[-4.2, 0, 3.0]} />}
       <FrictionRampProp position={[4.2, 0, 3.0]} />
 
       {/* Measurement instruments scattered on benches */}

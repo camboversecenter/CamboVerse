@@ -2,7 +2,9 @@ import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, use
 import { Canvas, useThree } from "@react-three/fiber";
 import { ExploreControls as OrbitControls } from './ExploreControls';
 import { Html } from "@react-three/drei";
-import { createXRStore, XR, XROrigin, useXR } from "@react-three/xr";
+import { XR, useXR } from "@react-three/xr";
+import {useLabVR, LabVRButton, LabVRRig} from './LabVR';
+import {LabInteractionProvider, LabMovable} from './LabInteraction';
 import { ACESFilmicToneMapping } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Detail } from "./LabOrgans";
@@ -23,7 +25,7 @@ function FrameCamera({ dist, aim, size, span, reset, spin, view, onInteract }: {
   const inXR = useXR((s) => s.session != null);
   const controls = useRef<OrbitControlsImpl>(null);
   useLayoutEffect(() => {
-    if (inXR) return;
+    if (inXR) {camera.near = .02; camera.far = 100; camera.updateProjectionMatrix(); return;}
     controls.current?.reset();
     const position = view === "front" ? [0, aim + size * 0.08, dist]
       : view === "side" ? [dist, aim + size * 0.08, 0]
@@ -33,6 +35,7 @@ function FrameCamera({ dist, aim, size, span, reset, spin, view, onInteract }: {
     camera.lookAt(0, aim, 0);
     const persp = camera as typeof camera & { far: number; near: number };
     persp.far = Math.max(600, dist * 4);
+    persp.near = .4;
     camera.updateProjectionMatrix();
     controls.current?.target.set(0, aim, 0);
     controls.current?.update();
@@ -87,15 +90,15 @@ function detectViewMode(): Detail {
 
 type SpecimenViewProps = {
   specimen: Specimen; onBack: () => void;
-  onOpenSpecimen: (id: string) => void; backLabel?: string;
+  onOpenSpecimen: (id: string) => void; backLabel?: string; initialDetail?: Detail;
 };
 
 export function SpecimenView({
-  specimen, onBack, onOpenSpecimen, backLabel = "← Lab",
+  specimen, onBack, onOpenSpecimen, backLabel = "← Lab", initialDetail,
 }: SpecimenViewProps) {
-  const store = useMemo(() => createXRStore({ emulate: false }), []);
-  const [vrSupported, setVrSupported] = useState(false);
-  const [detail, setDetail] = useState<Detail>(detectViewMode);
+  const vr = useLabVR(), store = vr.store;
+  const [preferredDetail, setDetail] = useState<Detail>(() => initialDetail ?? detectViewMode());
+  const detail = vr.active ? 'ultra' : preferredDetail;
   const [layer, setLayer] = useState<LabLayer>("whole");
   const [nav, setNav] = useState<Nav>("explore");
   const [picked, setPicked] = useState<string | null>(null);
@@ -142,11 +145,6 @@ export function SpecimenView({
     setReadMore(false);
     if (extracted && extracted !== id) setExtracted(null);
   };
-
-  useEffect(() => {
-    const xr = (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr;
-    xr?.isSessionSupported("immersive-vr").then(setVrSupported).catch(() => setVrSupported(false));
-  }, []);
 
   const part = picked ? specimen.parts.find((p) => p.id === picked) ?? null : null;
   const subject = subjectById(specimen.subject);
@@ -200,6 +198,7 @@ export function SpecimenView({
         onPointerMissed={() => { setPicked(null); setExtracted(null); }}
       >
         <XR store={store}>
+          <LabInteractionProvider>
           <color attach="background" args={["#27353e"]} />
           <fog attach="fog" args={["#27353e", dist * 2, dist * 5]} />
           {detail === "ultra" && <StudioLight />}
@@ -209,8 +208,10 @@ export function SpecimenView({
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}
 
-          <group>
+          <LabMovable position={vr.active ? [0, 1.2 - centre * .85 / Math.max(specimen.sizeU, specimen.spanU), -1.2] : [0,0,0]}
+            scale={vr.active ? .85 / Math.max(specimen.sizeU, specimen.spanU) : 1} resetKey={`${specimen.id}:${vr.active}`}>
             {real ? <Suspense fallback={<StagedExhibit
+              stage={!vr.active}
               key={specimen.id}
               specimen={specimen}
               id={specimen.id}
@@ -226,6 +227,7 @@ export function SpecimenView({
               <RealSpecimen model={real} specimen={specimen} layer={layer}
                 onPick={pickPart} selected={picked} extracted={extracted} onAnchors={onAnchors} />
             </Suspense> : <StagedExhibit
+              stage={!vr.active}
               key={specimen.id} specimen={specimen} id={specimen.id}
               organOf={specimen.organOf} layer={layer} detail={detail}
               onPick={pickPart} selected={picked} extracted={extracted}
@@ -233,7 +235,7 @@ export function SpecimenView({
             />}
             {/* A pin on the selected part only. Every label at once is how an
                 anatomy diagram works on paper and how nothing works on a phone. */}
-            {part && extracted !== part.id && (
+            {!vr.active && part && extracted !== part.id && (
               <Html
                 position={anchors?.[part.id] ?? part.at}
                 center
@@ -248,10 +250,22 @@ export function SpecimenView({
                 </div>
               </Html>
             )}
-          </group>
-
-          <XROrigin position={[0, -specimen.sizeU * 0.2, dist * 0.75]} />
-          <VrImpliesUltra onEnter={() => setDetail("ultra")} />
+          </LabMovable>
+          {vr.active && <>
+            <hemisphereLight args={['#e9f5ff','#465d49',1.5]}/><directionalLight position={[2,4,2]} intensity={2}/>
+            <mesh position={[0,-.025,0]}><boxGeometry args={[6,.05,6]}/><meshStandardMaterial color="#263e3d"/></mesh>
+          </>}
+          <LabVRRig title={specimen.name} start={[0,0,.5]} bounds={[-2,2,-2,2]}
+            stations={[{id:specimen.id,label:specimen.name,at:[0,1.2,-1.2],description:part ? `${part.name}. ${part.blurb}` : specimen.name}]}
+            activity={() => ({objective:'Inspect a part, change its layer and compare what becomes visible.',result:part ? `${part.name}\n${part.blurb}` : 'Point at a part with the trigger. Hold grip on the exhibit to bring it closer and rotate your wrist. Release to return it.'})}
+            actions={() => [
+              ...specimen.layers.map(l => ({id:l.id,label:l.label,active:layer===l.id,onSelect:()=>setLayer(l.id)})),
+              {id:'next-part',label:'Next part',disabled:!specimen.parts.length,onSelect:()=>pickPart(specimen.parts[(specimen.parts.findIndex(p=>p.id===picked)+1)%specimen.parts.length].id)},
+              {id:'extract',label:extracted?'Return part':'Take part out',disabled:!picked||!specimen.extractable,onSelect:()=>setExtracted(extracted?null:picked)},
+              ...(specimen.animated ? [{id:'run',label:running?'Pause mechanism':'Run mechanism',onSelect:()=>setRunning(v=>!v)}] : []),
+              {id:'reset',label:'Reset exhibit',onSelect:()=>{setExtracted(null);setPicked(null);setLayer('whole');setReset(v=>v+1);}},
+            ]}/>
+          </LabInteractionProvider>
         </XR>
       </Canvas>
       </div>
@@ -266,11 +280,7 @@ export function SpecimenView({
         >
           {detail === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        {vrSupported && (
-          <button className="vr-btn cls-vr" onClick={() => { setDetail("ultra"); store.enterVR(); }}>
-            🥽 VR
-          </button>
-        )}
+        <LabVRButton vr={vr} title={specimen.name}/>
       </div>
 
       <div className="lab-tools">
@@ -517,11 +527,4 @@ function Quiz({ specimen }: { specimen: Specimen }) {
       )}
     </div>
   );
-}
-
-/** VR always presents the Ultra scene. */
-function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
-  const inXR = useXR((s) => s.session != null);
-  useEffect(() => { if (inXR) onEnter(); }, [inXR, onEnter]);
-  return null;
 }

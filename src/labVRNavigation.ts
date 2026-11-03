@@ -1,6 +1,6 @@
 export type LabBounds = [number, number, number, number];
 
-export const LAB_VR_HELP = 'Left stick: walk. Hold left grip to run. Right stick: turn. A: jump; press again for a second jump. B: fly / land. While flying, hold A to rise or X to descend. Y: show / hide the learning panel. Point and press a trigger to select. You can keep moving while the panel is open.';
+export const LAB_VR_HELP = 'Left stick: walk. Hold left grip away from a tool to run. Right stick: turn. A: jump; press again for a second jump. B: fly / land. While flying, hold A to rise or X to descend. Y: show / hide the learning panel. Trigger: select or drag a slider. Close the panel, point at a study object and hold grip to pick it up; turn your wrist to inspect it. Release to return it to its slot. Activities has button alternatives; Results explains what happened. You can keep moving while the panel is open.';
 
 /** Approach exhibits from the aisle, at floor level, looking at the exhibit. */
 export function labStationArrival(at: [number, number, number], bounds: LabBounds, floor = 0) {

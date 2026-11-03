@@ -1,45 +1,63 @@
 # Learning Lab VR
 
+For the Anatomy entry audit and the planned work to bring experiments into the
+headset, see the [interactive VR development plan](LEARNING-LAB-VR-DEVELOPMENT-PLAN.md).
+That plan distinguishes current behavior from proposed changes.
+
 All four rooms in Learning Lab use the same native WebXR entry, controller rays,
 locomotion and scene-text panels as Buildings and Wat Phnom. No headset is
 required for the existing PC/mobile learning experience.
 
 | Room | Immersive learning |
 | --- | --- |
-| Biology & Anatomy | Layer selection, previous/next organ, take/return to tray, rotation, reset, notes and narration |
-| Chemistry | Station notes, shelf-bottle selection, experiment presets, pour, clear bench, reaction status and narration |
-| Physics & Machines | Walk around animated exhibits, select station markers, read/listen to notes, visit stations |
-| Earth & Sky | Walk around models, select station markers, read/listen to notes, visit stations |
+| Biology & Anatomy | Select layers/organs, take to tray, grip and rotate, scale, slice, identify structures, read tissue/comparison notes, return and reset |
+| Chemistry | Select shelf bottles, grip selected vials, tilt over the beaker to add bounded doses, adjust amounts, run a mix and read its equation/explanation |
+| Physics & Machines | Drag launch angle/speed and launch a projectile; grip/release the pendulum bob, change length; switch circuit presets and observe current/bulb |
+| Earth & Sky | Pick up planet/layer samples; rotate Earth; move the Moon for phases/tides; change season and read the corresponding results |
 
 The inactive ChemistryRoom pilot is not mounted by the app; Chemistry uses
-ExperienceRoom. Detailed physics/astronomy experiment forms, quizzes and anatomy
-microscope controls remain PC/mobile interfaces. This change does not claim full
-VR parity for those forms or add an unrestricted scientific AI tutor.
+ExperienceRoom. Advanced physics/chemistry experiments, quizzes, history browsers
+and the anatomy microscope visual remain PC/mobile interfaces. VR tissue notes
+are text, not a working microscope. This change does not claim full PC/VR parity.
+The detailed/standalone specimen viewer now uses the shared native XR entry and
+can be held, rotated, layered and inspected inside the headset.
 
 ## Meta Quest controls
 
 Open https://preview.camboverse.world/ in Meta Quest Browser, open Learning Lab,
 choose a room, then Enter VR. Accept the headset session prompt.
 
-- Left thumbstick: walk at 1.4 m/s. Hold left grip to run at 3.5 m/s.
+- Left thumbstick: walk at 1.4 m/s. Hold left grip away from tools to run at 3.5 m/s.
 - Right thumbstick: snap-turn 30 degrees around the tracked head.
 - A: jump; release and press again for a second jump.
 - B: toggle flying / smooth landing. While flying, hold A to rise or X to descend.
 - Y: show/hide the learning panel. Close also dismisses it.
 - Point either controller and press its trigger to select markers or controls.
+- Point at a highlighted object and hold grip to grab it. Move/rotate the
+  controller; release to return it to its slot. Either controller works.
+- Drag the gold slider knob or its rail with the trigger. Grip also moves knobs;
+  plus/minus buttons and Activities provide selectable alternatives.
 
 The welcome panel shows Controls once on entry. Panels stay where opened;
 looking or walking does not drag them along. Movement continues while reading.
 Closing a panel reveals station markers. Learn has measured text pages,
 previous/next station, Visit station and Listen. Activities contains the room's
-supported controls. Controls includes return to the room entrance and Exit VR.
+supported controls. Results displays the current inputs, result and explanation,
+with pagination and narration. Controls includes room entrance and Exit VR.
 Reopening with Y brings the panel to the visitor's current position.
+
+Opening the panel releases held tools and cancels slider drags; it does not stop
+locomotion. A consumed grip cannot become a sprint until released. Tracking/focus
+loss and session exit return tools to their saved positions. Manipulation uses
+the native target ray for aiming and grip pose for wrist motion. This is
+controller ray-grabbing, not hand tracking, two-hand scaling or rigid-body physics.
 
 Visit station approaches from the centre aisle, faces the exhibit, clears jump
 and flight state and keeps the origin on the floor. Walking/running includes the
 tracked head offset in the room bounds; jumping/flying keeps the eyes below the
 ceiling. Furniture does not yet have VR collision shapes. These limits are not a
-substitute for the headset's real-world boundary.
+substitute for the headset's real-world boundary. Tool raycasts currently test
+registered tools within three metres; furniture occlusion/collision is pending.
 
 ## Rendering and speech
 
@@ -49,7 +67,7 @@ or draw the in-world panels and markers. The entry uses a real immersive-vr
 session with Three.js tracking and stereo rendering, without a DOM overlay.
 Unsupported devices receive connection guidance; denied sessions remain retryable.
 
-Listen reads the existing English station notes using the shared voice service,
+Listen reads the existing English station notes or activity results using the shared voice service,
 with browser speech as a fallback. It is an explicit action and stops when the
 panel closes, the selected text changes, or the session ends. Learning notes do
 not use Penh's persona. No new Khmer scientific translations were invented.
@@ -69,10 +87,10 @@ Otherwise use the HTTPS preview. A plain HTTP Wi-Fi address cannot start WebXR.
 ## Validation (2026-11-03)
 
 - TypeScript and production build pass.
-- 32 focused tests pass: native session checks, shared ray surfaces, menu Y/Close,
-  controller interaction, movement with a panel open, narration cleanup, station
-  visits/facing, entrance reset, rerender stability, sprint, double jump, flight,
-  tracked room boundaries and ceiling limits. Existing Buildings behavior passes.
+- Full suite: 438 tests across 88 files pass. New coverage includes native
+  target-ray/grip pose conversion, transformed parents, independent controllers,
+  cancellation and sprint ownership, slider bounds, reagent quantity ordering,
+  dose eligibility and live result panels. Existing Buildings checks pass.
 - The built-in browser reported disabled during this run; interactive browser
   and physical Quest 3 visual/performance review remain pending.
 
@@ -81,3 +99,22 @@ move/turn/jump/fly, select each station, listen, use supported activities, exit
 through both the scene menu and Quest system menu, then re-enter. Confirm the
 previous desktop quality and controls return. Measure the heaviest anatomy scene
 on Quest and preserve the existing low-end Android Normal baseline.
+
+### Activity trials
+
+1. Anatomy: select an organ, Take to tray, close the panel, grip/rotate/release;
+   change study scale and slice, read a structure in Results, return/reset.
+   Repeat entry from its Detail view and the standalone specimen route.
+2. Chemistry: choose a known pair of shelf reagents, move to the central bench,
+   grip a selected vial and tilt its mouth over the green beaker ring. Confirm
+   amounts increase only over the target (at most 25 units per grip). Use the
+   amount sliders, Run mix, read Results, clear and repeat with reversed inputs.
+3. Physics: compare two launcher angles at fixed speed and their ranges; change
+   pendulum length, grip/release the bob, compare periods; switch circuit presets.
+4. Earth & Sky: select a planet and layer sample, rotate Earth, move the Moon,
+   cycle all seasons and compare opposing tidal bulges. Read Results per station.
+
+All quantities/results use the existing PC state and science helpers. Tabletop
+dimensions are illustrative. The ideal tide function now has two opposing high
+tides, consistent with [NOAA's explanation](https://oceanservice.noaa.gov/education/tutorial_tides/tides03_gravity.html);
+it is not a local tide forecast. See the [implementation QA record](QA-LEARNING-VR-2026-11-03.md).

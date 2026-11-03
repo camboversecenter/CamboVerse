@@ -4,6 +4,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { XR, useXR } from '@react-three/xr';
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
+import {LabInteractionProvider, useLabGrabbable} from './LabInteraction';
+import {LabSlider3D} from './LabSlider3D';
 import { Box3, CanvasTexture, Group, Mesh, Plane as ThreePlane, Raycaster, Vector2, Vector3 } from 'three';
 import { ReviewedOrgan } from './ReviewedOrgan';
 import { AnatomyAssetBoundary } from './AnatomyAssetBoundary';
@@ -501,28 +503,50 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     onPointerUp={isTouchDevice ? onTouchUp : undefined}
     onPointerCancel={isTouchDevice ? onTouchUp : undefined}
   >
-    {/* Full-screen canvas - unmounted while detail overlay is open to free the WebGL context */}
-    <div className="bio-canvas" onClick={vrSession.active ? undefined : requestLock} style={detailId ? { display: 'none' } : undefined}>
-      {!detailId && <Canvas shadows={ultra || vr} dpr={ultra || vr ? [1, 1.75] : 1} camera={{ fov: 65, near: .05, far: 30 }}>
+    {/* A live immersive renderer must survive changes to the desktop detail state. */}
+    <div className="bio-canvas" onClick={vrSession.active ? undefined : requestLock} style={detailId && !vrSession.active ? { display: 'none' } : undefined}>
+      {(!detailId || vrSession.active) && <Canvas shadows={ultra || vr} dpr={ultra || vr ? [1, 1.75] : 1} camera={{ fov: 65, near: .05, far: 30 }}>
         <XR store={store}>
+          <LabInteractionProvider>
           <FixedTrayContext.Provider value={fixedTray}><MouthTeethContext.Provider value={showMouthTeeth}><BiologyScene state={state} detail={ultra || vr ? 'ultra' : 'normal'} pick={pick}
             spin={spin} turn={turn}
             trayRotX={trayRotX} trayZoom={trayZoom} showPins={showPins} activePin={activePin} onActivePin={setActivePin}
             trayHitRef={trayHit}
             exploded={exploded} clipAxis={clipAxis} clipValue={clipValue} antMode={antMode} splitOpen={splitOpen} peelAmount={peelAmount}
             onVR={setVr} walkInput={walkInput} onHover={setHovered} /></MouthTeethContext.Provider></FixedTrayContext.Provider>
+          {vrSession.active && state.taken && <>
+            <LabSlider3D label="Study scale" value={trayZoom} min={.5} max={2} step={.1} onChange={setTrayZoom} position={[.7,.8,1]}/>
+            <LabSlider3D label="Slice position" value={clipValue} min={-1} max={1} step={.1} onChange={setClipValue} position={[.7,.55,1]}/>
+          </>}
           <LabVRRig title="Biology & Anatomy" start={[-.7, 0, 2.1]} bounds={[-3, 3, -2.5, 3.5]} ceiling={3.2}
             stations={[{id:'anatomy',label:'Anatomy study',at:[-.7,1.3,0],description:'Choose a layer and point at an organ to move it to the study tray.',
               detail:part ? part.name + '. ' + part.blurb + '\n\nSimplified teaching models, not clinical reference.' : 'Choose Activities to select a layer or organ. You can also point at an organ on the model and press the trigger to take it to the study tray.'}]}
             status={part?.name ?? 'Choose a layer or an organ.'}
+            activity={() => {
+              const pin = activePin === null || !state.taken ? undefined : ORGAN_ANNOTATIONS[state.taken]?.[activePin];
+              const slide = state.taken && microscopeOpen ? MICROSCOPE_SLIDES[state.taken] : undefined;
+              const comparison = state.taken && compareMode ? DISEASE_DATA[state.taken] : undefined;
+              return {objective:'Select an organ, grip to inspect it, and identify one structure.', result:[
+                part ? `${part.name}\n${part.blurb}` : 'Select a layer and an organ in Activities.',
+                pin ? `${pin.label}\n${pin.info}` : '',
+                slide ? `${slide.title}\n${slide.description}\nStructures: ${slide.structures.map(s=>s.name).filter((s,i,a)=>a.indexOf(s)===i).join(', ')}` : '',
+                comparison ? `Healthy: ${comparison.healthyDesc}\n${comparison.disease}: ${comparison.diseasedDesc}\n${comparison.changes.join('\n')}` : '',
+                'Simplified teaching models; not a clinical reference.',
+              ].filter(Boolean).join('\n\n')};
+            }}
             actions={() => [
               {id:'layer',label:'Layer: '+LAYERS.find(l=>l.id===state.layer)?.label+' · change',onSelect:()=>changeLayer(LAYERS[(LAYERS.findIndex(l=>l.id===state.layer)+1)%LAYERS.length].id)},
               {id:'previous',label:'Previous organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+parts.length-1)%parts.length].id)},
               {id:'next',label:'Next organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+1)%parts.length].id)},
               {id:'take',label:state.taken?'Return to body':'Take to tray',disabled:!takeable,onSelect:take},
               {id:'rotate',label:spin?'Pause rotation':'Rotate study organ',disabled:!state.taken,onSelect:()=>setSpin(v=>!v)},
+              {id:'slice',label:'Slice: '+clipAxis+' · change',disabled:!state.taken,onSelect:()=>setClipAxis(v=>v==='off'?'x':v==='x'?'y':v==='y'?'z':'off')},
+              {id:'label',label:'Identify next structure · Results',disabled:!state.taken||!ORGAN_ANNOTATIONS[state.taken]?.length,onSelect:()=>setActivePin(v=>((v??-1)+1)%ORGAN_ANNOTATIONS[state.taken!].length)},
+              {id:'micro',label:'Tissue notes · Results',active:microscopeOpen,disabled:!state.taken||!MICROSCOPE_SLIDES[state.taken],onSelect:()=>setMicroscopeOpen(v=>!v)},
+              {id:'compare',label:'Healthy / disease comparison · Results',active:compareMode,disabled:!state.taken||!DISEASE_DATA[state.taken],onSelect:()=>setCompareMode(v=>!v)},
               {id:'reset',label:'Reset anatomy model',onSelect:reset},
             ]}/>
+          </LabInteractionProvider>
         </XR>
       </Canvas>}
     </div>
@@ -974,7 +998,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     )}
 
     {/* ── In-room detail viewer ── */}
-    {detailId && <InRoomDetail key={detailId} specimenId={detailId} detail={ultra ? 'ultra' : 'normal'} onClose={() => setDetailId(null)} onOpenSpecimen={setDetailId} />}
+    {detailId && !vrSession.active && <InRoomDetail key={detailId} specimenId={detailId} detail={ultra ? 'ultra' : 'normal'} onClose={() => setDetailId(null)} onOpenSpecimen={setDetailId} />}
 
   </div>;
 }
@@ -1010,6 +1034,7 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
   useEffect(() => { studyAnchor.current = null; }, [taken, xrSession, fixedTray]);
   const ref = useRef<Group>(null);
   const angle = useRef(0);
+  const isHeld = useLabGrabbable(ref, taken, {}, organId);
   const explodeProgress = useRef(0);
   const [approvedBounds, setApprovedBounds] = useState<{ centre: Vector3; diameter: number; scale: number } | null>(null);
   const receiveBounds = useCallback((centre: Vector3, diameter: number) => {
@@ -1027,6 +1052,8 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
 
   const clipPlane = useMemo(() => new ThreePlane(new Vector3(1, 0, 0), 0), []);
   const splitPlane = useMemo(() => new ThreePlane(new Vector3(0, 1, 0), 0), []);
+  const clipLocal = useMemo(() => new ThreePlane(), []);
+  const splitLocal = useMemo(() => new ThreePlane(), []);
 
   const initialized = useRef(false);
   useEffect(() => {
@@ -1043,23 +1070,29 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
 
   useEffect(() => {
     if (clipAxis === 'off' && !splitOpen) {
-      clipPlane.constant = 99999;
-      splitPlane.constant = 99999;
+      clipLocal.constant = 99999;
+      splitLocal.constant = 99999;
       return;
     }
     if (splitOpen) {
-      splitPlane.normal.set(0, 1, 0);
-      splitPlane.constant = clipValue * info.diameter * 0.5;
+      splitLocal.normal.set(0, 1, 0);
+      splitLocal.constant = clipValue * info.diameter * 0.5;
     }
     if (clipAxis !== 'off') {
       const normal = clipAxis === 'x' ? new Vector3(1, 0, 0) : clipAxis === 'y' ? new Vector3(0, 1, 0) : new Vector3(0, 0, 1);
-      clipPlane.normal.copy(normal);
-      clipPlane.constant = clipValue * info.diameter * 0.5;
+      clipLocal.normal.copy(normal);
+      clipLocal.constant = clipValue * info.diameter * 0.5;
     }
-  }, [clipAxis, clipValue, splitOpen, info.diameter, clipPlane, splitPlane]);
+  }, [clipAxis, clipValue, splitOpen, info.diameter, clipLocal, splitLocal]);
 
   useFrame((state3, dt) => {
     if (!ref.current) return;
+    const updateClip = () => {
+      ref.current!.updateWorldMatrix(true, false);
+      clipPlane.copy(clipLocal).applyMatrix4(ref.current!.matrixWorld);
+      splitPlane.copy(splitLocal).applyMatrix4(ref.current!.matrixWorld);
+    };
+    if (isHeld()) {updateClip();return;}
     const k = 1 - Math.exp(-dt * 9);
     const dest = taken ? new Vector3(.7, 1.12, .45) : info.centre.clone().multiplyScalar(.01).add(new Vector3(-.7, .99, 0));
     // Small screens place the organ in front once; its world anchor then stays
@@ -1080,7 +1113,7 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     ref.current.rotation.x += ((taken ? trayRotX : 0) - ref.current.rotation.x) * k;
     const targetExplode = exploded ? 1 : 0;
     explodeProgress.current += (targetExplode - explodeProgress.current) * Math.min(1, dt * 4);
-    state3.gl.localClippingEnabled = (clipAxis !== 'off' || splitOpen);
+    updateClip();
   });
 
   const activeClipPlanes = useMemo(() => {
@@ -1142,6 +1175,11 @@ function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, sho
 }) {
   const session = useXR(s => s.session);
   const camera = useThree(s => s.camera);
+  const renderer = useThree(s => s.gl);
+  useEffect(() => {
+    renderer.localClippingEnabled = clipAxis !== 'off' || splitOpen;
+    return () => {renderer.localClippingEnabled = false;};
+  }, [renderer, clipAxis, splitOpen]);
   const fidelity = session ? 'ultra' : detail;
   const bodyOrgans = useOrgans(fidelity);
   const airways = useMemo<OrganDef[]>(() => [
@@ -1151,6 +1189,9 @@ function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, sho
   const organs = useMemo(() => [...bodyOrgans, ...airways], [bodyOrgans, airways]);
   const grouped = useMemo(() => Array.from(new Set(organs.map(o => o.id))).map(id => organs.filter(o => o.id === id)), [organs]);
   useEffect(() => { onVR(!!session); }, [session, onVR]);
+  useEffect(() => {
+    if (session) {camera.near = .05; camera.far = 30; camera.updateProjectionMatrix();}
+  }, [session, camera]);
   useEffect(() => () => { new Set(organs.map(o => o.geo)).forEach(geo => geo.dispose()); }, [organs]);
   const solid = useRef<Group>(null);
   const organGroup = useRef<Group>(null);

@@ -111,9 +111,10 @@ describe('shared 3D exploration controls', () => {
       count++; expect(source,String(file)).toContain('ExploreControls as OrbitControls');
       expect(source,String(file)).not.toContain('enablePan={false}');
     }
-    // Current inventory: 19 views instantiate OrbitControls; wrapper-only
-    // views use Viewer and are covered through it rather than counted twice.
-    expect(count).toBe(19);
+    // Detail lessons now delegate to SpecimenView instead of owning a second
+    // camera. Wrapper-only views are covered through their shared viewer.
+    expect(count).toBe(18);
+    expect(readFileSync('src/components/InRoomDetail.tsx','utf8')).toContain('<SpecimenView');
     expect(readFileSync('src/splat-preview.tsx','utf8')).toContain('ExploreControls as OrbitControls');
     const shared=readFileSync('src/components/ExploreControls.tsx','utf8');
     expect(shared).toContain('sessionstart'); expect(shared).toContain('removeEventListener');

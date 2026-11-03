@@ -2,6 +2,8 @@ import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { XR } from '@react-three/xr';
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
+import {LabInteractionProvider} from './LabInteraction';
+import {EarthSkyHandsOn} from './EarthSkyHandsOn';
 import { ACESFilmicToneMapping } from "three";
 import { EarthSkyRoomScene, STATIONS } from "./EarthSkyRoomScene";
 import { WalkControls } from "./WalkControls";
@@ -340,8 +342,44 @@ export function EarthSkyRoom({
         tabIndex={0}
       >
         <XR store={vr.store}>
-          <EarthSkyRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} />
-          <LabVRRig title="Earth & Sky" ceiling={4} start={[0, 0, 3.5]} bounds={[-6.4, 6.4, -5.4, 5.4]} stations={STATIONS} />
+          <LabInteractionProvider>
+          <EarthSkyRoomScene walkInput={walkInput} ultra={ultra} onNear={setNearStation} handsOn={vr.active}/>
+          {vr.active && <EarthSkyHandsOn rotation={rotation} onRotation={n=>{setRotation(n);markVisited('day-night');}}
+            moonAngle={moonAngle} onMoon={n=>{setMoonAngle(n);markVisited('moon-phases');}}
+            tideAngle={tideAngle} onTide={n=>{setTideAngle(n);markVisited('tides');}}
+            seasonIndex={seasonIndex} onSeason={n=>{setSeasonIndex(n);markVisited('seasons');setTotalInteractions(v=>v+1);}}
+            onPlanet={p=>{setSelectedPlanet(p);markVisited('solar-system');setTotalInteractions(v=>v+1);addLog('solar-system','☀️',p.name,{distance:`${p.distanceAU} AU`},`${p.periodDays} day orbit`);}}
+            onLayer={l=>{setSelectedLayer(l);markVisited('earth-layers');setTotalInteractions(v=>v+1);}}/>}
+          <LabVRRig title="Earth & Sky" ceiling={4} start={[0, 0, 3.5]} bounds={[-6.4, 6.4, -5.4, 5.4]} stations={STATIONS}
+            activity={s=>{
+              switch(s?.id){
+                case 'solar-system': return {objective:'Pick up two planets and compare their properties.',result:selectedPlanet ? `${selectedPlanet.name}\n${selectedPlanet.facts}\nDistance ${selectedPlanet.distanceAU} AU\nOrbit ${selectedPlanet.periodDays} days\nRadius ${selectedPlanet.radiusKm} km\n\nDisplay sizes and spacing are illustrative.` : 'Grip and release a planet sample, or choose one in Activities. Its facts will appear here.'};
+                case 'earth-layers': return {objective:'Inspect Earth layer samples and compare composition and depth.',result:selectedLayer ? `${selectedLayer.name}\nDepth ${selectedLayer.depthKm} km\nThickness ${selectedLayer.thicknessKm} km\n${selectedLayer.composition}\n${selectedLayer.state}\nTemperature ${selectedLayer.tempC} °C` : 'Pick a layer sample or use Activities. The separated samples are not shown to scale.'};
+                case 'day-night': return {objective:'Rotate Earth and follow the gold surface marker.',result:`Rotation ${rotation}°\n${(rotation/15).toFixed(1)} hours through an illustrative 24-hour cycle.\n\nEarth rotates; a surface location alternately faces toward and away from the Sun.`};
+                case 'moon-phases': return {objective:'Move the Moon around Earth; compare new, quarter and full phases.',result:`${currentPhase.name}\n${currentIllumination}% illuminated\n${currentPhase.description}\n\nViewpoint for the phase is Earth. The tabletop sizes and distances are illustrative.`};
+                case 'seasons': return {objective:'Compare four positions in Earth’s orbit with a fixed tilted axis.',result:`${SEASONS[seasonIndex].name} · ${SEASONS[seasonIndex].month}\n${SEASONS[seasonIndex].description}\nNorthern Hemisphere: ${SEASONS[seasonIndex].nhSeason}\nCambodia: ${SEASONS[seasonIndex].cambodiaSeason}`};
+                default: return {objective:'Move the Moon and follow the two opposing tidal bulges.',result:`Moon direction ${tideAngle}°\nRelative height at 0°: ${(tideHeight(tideAngle,0)*100).toFixed(0)}%\nAt 180°: ${(tideHeight(tideAngle,180)*100).toFixed(0)}%\nAt 90°: ${(tideHeight(tideAngle,90)*100).toFixed(0)}%\n\nIdealized two-bulge model, not a coastal tide forecast. Actual tides also depend on the Sun, coastline and ocean basin.`};
+              }
+            }}
+            actions={s=>{
+              switch(s?.id){
+                case 'solar-system': return PLANETS.map(p=>({id:p.id,label:p.name,active:selectedPlanet?.id===p.id,onSelect:()=>{setSelectedPlanet(p);markVisited(s.id);setTotalInteractions(v=>v+1);}}));
+                case 'earth-layers': return EARTH_LAYERS.map(l=>({id:l.name,label:l.name,active:selectedLayer?.name===l.name,onSelect:()=>{setSelectedLayer(l);markVisited(s.id);setTotalInteractions(v=>v+1);}}));
+                case 'day-night': return [
+                  {id:'back',label:'Rotate backward 30°',onSelect:()=>setRotation(v=>(v+330)%360)},
+                  {id:'forward',label:'Rotate forward 30°',onSelect:()=>{setRotation(v=>(v+30)%360);markVisited(s.id);}},
+                  {id:'reset',label:'Reset rotation',onSelect:()=>setRotation(0)},
+                ];
+                case 'moon-phases': return MOON_PHASES.map(p=>({id:p.name,label:p.name,active:moonAngle===p.angle,onSelect:()=>{setMoonAngle(p.angle);markVisited(s.id);setTotalInteractions(v=>v+1);}}));
+                case 'seasons': return SEASONS.map((p,i)=>({id:p.name,label:p.name,active:seasonIndex===i,onSelect:()=>{setSeasonIndex(i);markVisited(s.id);setTotalInteractions(v=>v+1);}}));
+                default: return [
+                  {id:'back',label:'Moon backward 30°',onSelect:()=>setTideAngle(v=>(v+330)%360)},
+                  {id:'forward',label:'Moon forward 30°',onSelect:()=>{setTideAngle(v=>(v+30)%360);markVisited(s!.id);}},
+                  {id:'reset',label:'Reset Moon position',onSelect:()=>setTideAngle(0)},
+                ];
+              }
+            }}/>
+          </LabInteractionProvider>
         </XR>
       </Canvas>
 
