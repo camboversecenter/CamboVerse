@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef} from 'react';
 import {useFrame} from '@react-three/fiber';
 import {BufferGeometry, Group, Vector3} from 'three';
-import {projectileFlightTime, projectileRange, projectileTrajectory, pendulumPosition, type CircuitAnalysis} from '../physics';
+import {projectileFlightTime, projectileRange, projectileTrajectory, pendulumPosition, slopeForces, type CircuitAnalysis, type SimpleMachine, type EnergyScenario} from '../physics';
 import {LabSlider3D} from './LabSlider3D';
 import {useLabGrabbable} from './LabInteraction';
 import {VRSurface} from './VRSurface';
@@ -10,6 +10,34 @@ export interface PhysicsHandsOnProps {
   angle: number; speed: number; launchId: number; onAngle: (n:number)=>void; onSpeed: (n:number)=>void; onLaunch: ()=>void;
   length: number; amplitude: number; onLength: (n:number)=>void; onAmplitude: (n:number)=>void;
   circuit: CircuitAnalysis; onCircuit: ()=>void;
+  machine: SimpleMachine; effort: number; onEffort: (n:number)=>void; onNextMachine: ()=>void;
+  slopeMass: number; slopeAngle: number; slopeMu: number; onSlopeAngle: (n:number)=>void; onSlopeMu: (n:number)=>void;
+  releaseId: number; onReleaseSlope: ()=>void;
+  energy: EnergyScenario; energyHeight: number; onEnergyHeight: (n:number)=>void; onNextEnergy: ()=>void;
+}
+
+function Ramp({slopeMass,slopeAngle,slopeMu,onSlopeAngle,onSlopeMu,releaseId,onReleaseSlope}: Pick<PhysicsHandsOnProps,'slopeMass'|'slopeAngle'|'slopeMu'|'onSlopeAngle'|'onSlopeMu'|'releaseId'|'onReleaseSlope'>) {
+  const block=useRef<Group>(null), time=useRef(0), running=useRef(false);
+  const forces=slopeForces(slopeMass,slopeAngle,slopeMu);
+  useEffect(()=>{time.current=0;running.current=releaseId>0;},[releaseId]);
+  useEffect(()=>{time.current=0;running.current=false;},[slopeMass,slopeAngle,slopeMu]);
+  useFrame((_,dt)=>{
+    if(!block.current)return;
+    if(running.current && forces.slides) time.current=Math.min(3,time.current+Math.min(dt,.05));
+    // Motion is scaled for the tabletop; the result panel shows real model units.
+    const distance=Math.min(.9,.5*forces.accel*time.current*time.current*.12);
+    block.current.position.x=.45-distance;
+  });
+  return <group position={[4.2,1,3]}>
+    <group rotation-z={slopeAngle*Math.PI/180}>
+      <mesh><boxGeometry args={[1.1,.06,.45]}/><meshStandardMaterial color="#6d9d92"/></mesh>
+      <group ref={block} position={[.45,.1,0]}><mesh><boxGeometry args={[.16,.15,.16]}/><meshStandardMaterial color="#e1b46a"/></mesh></group>
+    </group>
+    <group position={[0,.85,0]}><VRSurface variant="heading" title={forces.slides?'Ramp · gravity wins':'Ramp · friction holds'} width={1.3} height={.14}/></group>
+    <LabSlider3D label="Slope angle" value={slopeAngle} min={5} max={80} step={1} onChange={onSlopeAngle} position={[0,.63,0]} unit="°"/>
+    <LabSlider3D label="Friction" value={slopeMu} min={0} max={1} step={.01} onChange={onSlopeMu} position={[0,.4,0]}/>
+    <group position={[0,.18,.05]}><VRSurface title="Release block" width={.8} height={.13} onClick={onReleaseSlope}/></group>
+  </group>;
 }
 
 function Projectile({angle,speed,launchId,onAngle,onSpeed,onLaunch}: Pick<PhysicsHandsOnProps,'angle'|'speed'|'launchId'|'onAngle'|'onSpeed'|'onLaunch'>) {
@@ -68,6 +96,18 @@ function Pendulum({length,amplitude,onLength,onAmplitude}: Pick<PhysicsHandsOnPr
 export function PhysicsHandsOn(props: PhysicsHandsOnProps) {
   return <>
     <Projectile {...props}/><Pendulum {...props}/>
+    <Ramp {...props}/>
+    <group position={[4.2,1.6,0]}>
+      <group position={[0,.48,0]}><VRSurface variant="heading" title={props.energy.name} width={1.2} height={.14}/></group>
+      <mesh position={[.55,props.energy.height ? (props.energyHeight/props.energy.height)*.5 : 0,0]}><sphereGeometry args={[.08,16,12]}/><meshStandardMaterial color="#f0bb68"/></mesh>
+      {props.energy.height>0 && <LabSlider3D label="Height" value={props.energyHeight} min={0} max={props.energy.height} step={.1} onChange={props.onEnergyHeight} position={[0,.22,0]} unit=" m"/>}
+      <group position={[0,0,0]}><VRSurface title="Next energy example" width={1} height={.13} onClick={props.onNextEnergy}/></group>
+    </group>
+    <group position={[0,1.7,-3.2]}>
+      <VRSurface variant="heading" title={`${props.machine.name} · ${props.machine.maRatio}×`} width={1.1} height={.14}/>
+      <LabSlider3D label="Effort" value={props.effort} min={10} max={500} step={10} onChange={props.onEffort} position={[0,-.24,0]} unit=" N"/>
+      <group position={[0,-.46,0]}><VRSurface title="Next machine" width={.8} height={.13} onClick={props.onNextMachine}/></group>
+    </group>
     <group position={[-4.2,1.15,0]}>
       <mesh position={[0,-.14,0]}><boxGeometry args={[.65,.04,.4]}/><meshStandardMaterial color="#235950"/></mesh>
       <mesh><sphereGeometry args={[.11,16,12]}/><meshStandardMaterial color="#fff3b0" emissive="#ffdf62" emissiveIntensity={props.circuit.bulbBrightness*2}/></mesh>

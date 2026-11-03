@@ -2,7 +2,7 @@ import {useEffect, useMemo, useRef} from 'react';
 import {useFrame, type ThreeEvent} from '@react-three/fiber';
 import {useXR} from '@react-three/xr';
 import {Group, Plane, Vector3} from 'three';
-import {sliderValue} from '../labManipulation';
+import {sliderDecimals, sliderValue} from '../labManipulation';
 import {useLabGrabbable, useLabInteraction} from './LabInteraction';
 import {VRSurface} from './VRSurface';
 
@@ -45,7 +45,7 @@ export function LabSlider3D({label, value, min, max, step, onChange, position, u
     if (e.ray.intersectPlane(math.plane, math.point)) commit(root.current.worldToLocal(math.point).x);
   };
   return <group ref={root} position={position}>
-    <group position={[0,.13,0]}><VRSurface variant="heading" title={`${label}: ${value.toFixed(step < 1 ? 1 : 0)}${unit}`} width={.95} height={.11}/></group>
+    <group position={[0,.13,0]}><VRSurface variant="heading" title={`${label}: ${value.toFixed(sliderDecimals(step))}${unit}`} width={.95} height={.11}/></group>
     <group onPointerDown={e => {
       e.stopPropagation();
       if (drag.current !== null || held() || interaction?.blocked) return;

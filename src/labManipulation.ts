@@ -1,4 +1,4 @@
-import {Matrix4, Object3D, Quaternion, Raycaster, Vector3} from 'three';
+import {Box3, Matrix4, Object3D, Quaternion, Raycaster, Vector3} from 'three';
 
 export interface LabHand {id: string; handedness: string; object?: Object3D; rayObject?: Object3D; pressed: boolean}
 export interface GrabOptions {
@@ -24,6 +24,8 @@ export class LabManipulation {
   private position = new Vector3();
   private quaternion = new Quaternion();
   private matrix = new Matrix4();
+  private bounds = new Box3();
+  private closest = new Vector3();
   blocked = false;
 
   register(object: Object3D, options: () => GrabOptions) {
@@ -70,6 +72,22 @@ export class LabManipulation {
     while (object && !this.objects.has(object)) object = object.parent;
     return object ?? undefined;
   }
+  /** On squeeze, also allow a controller held close to a tool to pick it up
+   * without requiring an exact ray hit. Keep this off the per-frame hover path. */
+  private nearCandidate(hand: Object3D) {
+    hand.getWorldPosition(this.position);
+    let nearest: Object3D | undefined, best = .12;
+    for (const object of this.objects.keys()) {
+      if (this.isHeld(object) || !visible(object)) continue;
+      object.updateWorldMatrix(true, true);
+      this.bounds.setFromObject(object);
+      if (this.bounds.isEmpty()) continue;
+      this.bounds.clampPoint(this.position, this.closest);
+      const distance = this.closest.distanceTo(this.position);
+      if (distance < best) {best = distance; nearest = object;}
+    }
+    return nearest;
+  }
   step(hands: LabHand[], dt: number, focused = true) {
     const ids = new Set(hands.map(h => h.id));
     for (const [id, held] of this.held) if (!ids.has(id) || !visible(held.object)) this.release(id, true);
@@ -84,7 +102,7 @@ export class LabManipulation {
       if (!focused || this.blocked || !hand.object) {this.release(hand.id, true); continue;}
       if (!hand.pressed) this.release(hand.id, false);
       let held = this.held.get(hand.id);
-      const candidate = held?.object ?? this.candidate(hand.rayObject ?? hand.object);
+      const candidate = held?.object ?? (rising ? this.nearCandidate(hand.object) : undefined) ?? this.candidate(hand.rayObject ?? hand.object);
       if (candidate) highlighted.add(candidate);
       if (rising && candidate && !held) {
         hand.object.updateWorldMatrix(true, false); candidate.updateWorldMatrix(true, false);
@@ -123,4 +141,9 @@ export class LabManipulation {
 
 export function sliderValue(fraction: number, min: number, max: number, step: number) {
   return Math.min(max, Math.max(min, min + Math.round(Math.max(0, Math.min(1, fraction)) * (max - min) / step) * step));
+}
+
+export function sliderDecimals(step: number) {
+  const [coefficient, exponent = '0'] = step.toString().toLowerCase().split('e');
+  return Math.min(20, Math.max(0, (coefficient.split('.')[1]?.length ?? 0) - Number(exponent)));
 }

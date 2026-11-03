@@ -14,7 +14,7 @@ import {
   PROJECTILE_PRESETS, projectileTrajectory, projectileRange, projectileMaxHeight, projectileFlightTime,
   CIRCUIT_PRESETS, type CellType, analyzeCircuitGrid, presetToGrid,
   PENDULUM_PRESETS, pendulumPeriod, pendulumFrequency,
-  ENERGY_SCENARIOS, type EnergyScenario, kineticEnergy, potentialEnergy, totalEnergy, fallSpeed,
+  ENERGY_SCENARIOS, type EnergyScenario, totalEnergy, energyAtHeight,
   WAVE_PRESETS, type WavePreset, waveSpeed,
   SLOPE_PRESETS, type SlopePreset, slopeForces,
   COLLISION_PRESETS, type CollisionPreset, elasticCollision, inelasticCollision, momentum,
@@ -109,6 +109,7 @@ export function PhysicsRoom({
   const [slopeMass, setSlopeMass] = useState(SLOPE_PRESETS[0].mass);
   const [slopeAngle, setSlopeAngle] = useState(SLOPE_PRESETS[0].angle);
   const [slopeMu, setSlopeMu] = useState(SLOPE_PRESETS[0].mu);
+  const [vrSlopeRelease, setVrSlopeRelease] = useState(0);
 
   const [badgesOpen, setBadgesOpen] = useState(false);
 
@@ -390,9 +391,8 @@ export function PhysicsRoom({
 
   const circAnalysis = useMemo(() => analyzeCircuitGrid(circuitGrid), [circuitGrid]);
 
-  const eKE = kineticEnergy(energyScenario.mass, fallSpeed(energyHeight));
-  const ePE = potentialEnergy(energyScenario.mass, energyHeight);
-  const eTotal = totalEnergy(energyScenario.mass, energyScenario.height, 0);
+  const energy = energyAtHeight(energyScenario, energyHeight);
+  const eKE = energy.kinetic, ePE = energy.potential, eTotal = energy.total;
 
   const wSpeed = waveSpeed(waveFreq, waveLambda);
   const pPeriod = pendulumPeriod(pendLength);
@@ -776,13 +776,21 @@ export function PhysicsRoom({
           {vr.active && <PhysicsHandsOn angle={projAngle} speed={projSpeed} launchId={launchId}
             onAngle={setProjAngle} onSpeed={setProjSpeed} onLaunch={()=>{setLaunchId(n=>n+1);setTotalExperiments(n=>n+1);markVisited('projectile-bench');addLog('projectile-bench','🎯','Projectile',{angle:`${projAngle}°`,speed:`${projSpeed} m/s`},`Range ${projR.toFixed(1)} m`);}}
             length={pendLength} amplitude={pendAngle} onLength={setPendLength} onAmplitude={setPendAngle}
+            machine={selectedMachine} effort={maEffort} onEffort={setMaEffort}
+            onNextMachine={()=>{const next=SIMPLE_MACHINES[(SIMPLE_MACHINES.findIndex(m=>m.id===selectedMachine.id)+1)%SIMPLE_MACHINES.length];setSelectedMachine(next);markVisited('machines-bench');markPreset(next.id);setTotalExperiments(n=>n+1);}}
+            slopeMass={slopeMass} slopeAngle={slopeAngle} slopeMu={slopeMu} onSlopeAngle={setSlopeAngle} onSlopeMu={setSlopeMu}
+            releaseId={vrSlopeRelease} onReleaseSlope={()=>{setVrSlopeRelease(n=>n+1);markVisited('slope-corner');setTotalExperiments(n=>n+1);}}
+            energy={energyScenario} energyHeight={energyHeight} onEnergyHeight={setEnergyHeight} onNextEnergy={()=>{const next=ENERGY_SCENARIOS[(ENERGY_SCENARIOS.findIndex(e=>e.id===energyScenario.id)+1)%ENERGY_SCENARIOS.length];setEnergyScenario(next);setEnergyHeight(next.height);markVisited('energy-table');markPreset(next.id);setTotalExperiments(n=>n+1);}}
             circuit={circAnalysis} onCircuit={()=>{circuitPresetIndex.current=(circuitPresetIndex.current+1)%CIRCUIT_PRESETS.length;setCircuitGrid(presetToGrid(CIRCUIT_PRESETS[circuitPresetIndex.current]));markVisited('circuit-table');}}/>}
           <LabVRRig title="Physics & Machines" ceiling={3.6} start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]}
             stations={[STATIONS.find(s=>s.id==='projectile-bench')!,...STATIONS.filter(s=>s.id!=='projectile-bench')]}
             activity={s=>s?.id==='projectile-bench' ? {objective:'Compare two launch angles at the same speed.',result:`Angle ${projAngle}° · speed ${projSpeed} m/s\nRange ${projR.toFixed(1)} m\nMaximum height ${projH.toFixed(1)} m\nFlight ${projT.toFixed(2)} s\n\nIdeal projectile model without air resistance. The tabletop path is scaled to fit; measurements use the same calculation as PC.`}
               : s?.id==='pendulum-corner' ? {objective:'Change length and observe how the period changes.',result:`Length ${pendLength.toFixed(1)} m\nRelease angle ${pendAngle}°\nPeriod ${pPeriod.toFixed(2)} s\nFrequency ${pFreq.toFixed(2)} Hz\n\nGrip the bob and release it to set the swing. This is the existing ideal small-angle model; large swings are illustrative.`}
               : s?.id==='circuit-table' ? {objective:'Compare a circuit preset and observe the bulb and current.',result:`Voltage ${circAnalysis.voltage} V\nResistance ${circAnalysis.totalResistance} Ω\nCurrent ${(circAnalysis.current*1000).toFixed(1)} mA\nPower ${circAnalysis.power.toFixed(2)} W\n\nThe same circuit calculation drives the PC results and this bulb.`}
-              : {objective:'Explore this station; use projectile, circuit or pendulum for hands-on VR.',result:s?.detail??s?.description??'Select a station.'}}
+              : s?.id==='machines-bench' ? {objective:'Compare machines and their force multiplication at the same effort.',result:`${selectedMachine.name}\n${selectedMachine.description}\n${selectedMachine.formula}\nInput ${maEffort} N · output ${(maEffort*selectedMachine.maRatio).toFixed(0)} N\nIdeal mechanical advantage ${selectedMachine.maRatio}×. Real friction reduces output.`}
+              : s?.id==='slope-corner' ? {objective:'Change angle and friction; predict whether the block slides before release.',result:`Mass ${slopeMass} kg · angle ${slopeAngle}° · friction ${slopeMu.toFixed(2)}\nGravity along slope ${sForces.parallel.toFixed(1)} N · friction ${sForces.friction.toFixed(1)} N\n${sForces.slides ? `Slides at ${sForces.accel.toFixed(2)} m/s²` : 'Friction holds the block.'}\nTabletop motion is scaled; results use the PC model.`}
+              : s?.id==='energy-table' ? {objective:'Change height and compare potential and kinetic energy.',result:`${energyScenario.name}\nHeight ${energyHeight.toFixed(1)} m · speed ${energy.speed.toFixed(1)} m/s\nPotential ${ePE.toFixed(1)} J · kinetic ${eKE.toFixed(1)} J · total ${eTotal.toFixed(1)} J\nIdeal model without energy loss.`}
+              : {objective:'Explore this station; use the hands-on experiment stations for interactive VR.',result:s?.detail??s?.description??'Select a station.'}}
             actions={s=>s?.id==='projectile-bench' ? [
               {id:'launch',label:'Launch',closeAfter:true,onSelect:()=>{setLaunchId(n=>n+1);setTotalExperiments(n=>n+1);markVisited(s.id);addLog(s.id,'🎯','Projectile',{angle:`${projAngle}°`,speed:`${projSpeed} m/s`},`Range ${projR.toFixed(1)} m`);}},
               {id:'angle-down',label:`Angle ${projAngle}° · decrease 5°`,onSelect:()=>setProjAngle(v=>Math.max(5,v-5))},
@@ -794,7 +802,20 @@ export function PhysicsRoom({
               {id:'longer',label:`Length ${pendLength.toFixed(1)} m · longer`,onSelect:()=>setPendLength(v=>Math.min(5,Math.round((v+.2)*10)/10))},
               {id:'swing',label:`Release angle ${pendAngle}° · next`,onSelect:()=>setPendAngle(v=>v>=80?5:Math.min(80,v+10))},
               {id:'reset',label:'Reset pendulum',onSelect:()=>{setPendLength(1);setPendAngle(30);}},
-            ] : s?.id==='circuit-table' ? CIRCUIT_PRESETS.map((p,i)=>({id:`circuit-${i}`,label:p.name,onSelect:()=>{circuitPresetIndex.current=i;setCircuitGrid(presetToGrid(p));markVisited(s.id);markPreset(p.id);setTotalExperiments(n=>n+1);}})) : []}/>
+            ] : s?.id==='circuit-table' ? CIRCUIT_PRESETS.map((p,i)=>({id:`circuit-${i}`,label:p.name,onSelect:()=>{circuitPresetIndex.current=i;setCircuitGrid(presetToGrid(p));markVisited(s.id);markPreset(p.id);setTotalExperiments(n=>n+1);}}))
+              : s?.id==='machines-bench' ? [
+                ...SIMPLE_MACHINES.map(m=>({id:m.id,label:m.name,active:selectedMachine.id===m.id,onSelect:()=>{setSelectedMachine(m);markVisited(s.id);markPreset(m.id);setTotalExperiments(n=>n+1);}})),
+                {id:'less',label:'Effort − 50 N',onSelect:()=>setMaEffort(v=>Math.max(10,v-50))},
+                {id:'more',label:'Effort + 50 N',onSelect:()=>setMaEffort(v=>Math.min(500,v+50))},
+              ] : s?.id==='slope-corner' ? [
+                ...SLOPE_PRESETS.map(p=>({id:p.id,label:p.name,onSelect:()=>{setSlopePreset(p);setSlopeMass(p.mass);setSlopeAngle(p.angle);setSlopeMu(p.mu);markVisited(s.id);markPreset(p.id);}})),
+                {id:'release',label:'Release block',closeAfter:true,onSelect:()=>{setVrSlopeRelease(n=>n+1);markVisited(s.id);setTotalExperiments(n=>n+1);}},
+                {id:'reset',label:'Reset ramp',onSelect:()=>{setSlopeMass(SLOPE_PRESETS[0].mass);setSlopeAngle(SLOPE_PRESETS[0].angle);setSlopeMu(SLOPE_PRESETS[0].mu);}},
+              ] : s?.id==='energy-table' ? [
+                ...ENERGY_SCENARIOS.map(e=>({id:e.id,label:e.name,active:energyScenario.id===e.id,onSelect:()=>{setEnergyScenario(e);setEnergyHeight(e.height);markVisited(s.id);markPreset(e.id);}})),
+                {id:'lower',label:'Lower object 1 m',disabled:energyScenario.height===0,onSelect:()=>setEnergyHeight(v=>Math.max(0,v-1))},
+                {id:'higher',label:'Raise object 1 m',disabled:energyScenario.height===0,onSelect:()=>setEnergyHeight(v=>Math.min(energyScenario.height,v+1))},
+              ] : []}/>
           </LabInteractionProvider>
         </XR>
       </Canvas>
@@ -1143,7 +1164,7 @@ export function PhysicsRoom({
             <div className="phys-graph">{energyBarSvg}</div>
             <p style={{ fontSize: 12, color: "#6080a0" }}>
               As the object falls from {energyScenario.height} m, potential energy converts to kinetic energy.
-              Speed at this height: {fallSpeed(energyScenario.height - energyHeight).toFixed(1)} m/s
+              Speed at this height: {energy.speed.toFixed(1)} m/s
             </p>
           </div>
           {renderQuiz("energy", ENERGY_QUIZ)}

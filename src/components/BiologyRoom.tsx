@@ -22,7 +22,7 @@ import { FirstPersonControls, type WalkInput } from './FirstPersonControls';
 import { WalkControls } from './WalkControls';
 import { InRoomDetail } from './InRoomDetail';
 import './BiologyRoom.css';
-import { biologyTransition, biologyParts, canTakeBiologyPart, initialBiologyState, isFittedHeadPart, showBiologyOrgan, type BiologyState, type BiologyLayer } from '../biologyRoomState';
+import { biologyTransition, biologyParts, canTakeBiologyPart, initialBiologyState, isFittedHeadPart, showBiologyOrgan, showProceduralBiologyOrgan, type BiologyState, type BiologyLayer } from '../biologyRoomState';
 export { initialBiologyState };
 const FixedTrayContext = createContext(false);
 
@@ -1123,7 +1123,7 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     return planes.length ? planes : undefined;
   }, [clipAxis, splitOpen, clipPlane, splitPlane]);
 
-  const fallback = isFittedHeadPart(organId) ? null : <>{defs.map((d, i) => {
+  const fallback = !showProceduralBiologyOrgan(organId, taken) ? null : <>{defs.map((d, i) => {
     const basePos = new Vector3(...d.at).sub(info.centre);
     const explodeDir = basePos.clone().normalize();
     const explodeOffset = explodeDir.multiplyScalar(explodeProgress.current * info.diameter * 0.4);
@@ -1134,7 +1134,7 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
   })}</>;
   const refined = import.meta.env.DEV;
   return <group ref={ref} onClick={e => { e.stopPropagation(); pick(defs[0].id); }}>
-    {refined ? <AnatomyAssetBoundary url={anatomyAssetUrl(isFittedHeadPart(organId) ? 'head' : 'organs', detail)}><ReviewedOrgan id={defs[0].id} detail={detail} diameter={info.diameter} selected={selected} showTeeth={taken && organId === 'mouth' && mouthTeeth} studySingleEar={taken && organId === 'ears'} onBounds={receiveBounds} clipPlanes={activeClipPlanes} peelAmount={peelAmount} /></AnatomyAssetBoundary> : fallback}
+    {refined ? <AnatomyAssetBoundary url={anatomyAssetUrl(isFittedHeadPart(organId) ? 'head' : 'organs', detail)} fallback={fallback ?? undefined}><ReviewedOrgan id={defs[0].id} detail={detail} diameter={info.diameter} selected={selected} showTeeth={taken && organId === 'mouth' && mouthTeeth} studySingleEar={taken && organId === 'ears'} onBounds={receiveBounds} clipPlanes={activeClipPlanes} peelAmount={peelAmount} /></AnatomyAssetBoundary> : fallback}
     {taken && showPins && !exploded && pins.map((pin, i) => showAnnotation(isFittedHeadPart(organId) && !xrSession, i, activePin, trayZoom) && (
       <AnnotationDot key={i} position={centeredAnchor((refined ? HEAD_ANCHORS[organId]?.[i] : undefined) ?? pin.pos, info.centre.toArray())} size={info.diameter / 40} label={pin.label} active={activePin === i} onClick={() => onActivePin(activePin === i ? null : i)} />
     ))}

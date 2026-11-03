@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { showBiologyOrgan, isFittedHeadPart } from './biologyRoomState';
+import { showBiologyOrgan, isFittedHeadPart, showProceduralBiologyOrgan } from './biologyRoomState';
 
 describe('fitted facial study visibility', () => {
   for (const id of ['eyes', 'ears', 'nose', 'mouth']) {
@@ -10,11 +10,14 @@ describe('fitted facial study visibility', () => {
       expect(showBiologyOrgan('combined', id, id)).toBe(true);
       expect(showBiologyOrgan('cutaway', id, null)).toBe(true);
       expect(showBiologyOrgan('frame', id, null)).toBe(false);
+      expect(showProceduralBiologyOrgan(id, false)).toBe(false);
+      expect(showProceduralBiologyOrgan(id, true)).toBe(true);
     });
   }
   it('keeps internal organs in the combined view', () => {
     for (const id of ['brain', 'heart', 'lungs', 'thyroid']) {
       expect(isFittedHeadPart(id)).toBe(false);
+      expect(showProceduralBiologyOrgan(id, false)).toBe(true);
       expect(showBiologyOrgan('combined', id, null)).toBe(true);
     }
   });

@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3} from 'three';
-import {LabManipulation, sliderValue, type LabHand} from './labManipulation';
+import {LabManipulation, sliderDecimals, sliderValue, type LabHand} from './labManipulation';
 
 function fixture() {
   const engine=new LabManipulation(), room=new Group(), hand=new Group(), object=new Group();
@@ -57,8 +57,21 @@ describe('hands-on lab controller interaction',()=>{
     expect(f.object.getWorldPosition(new Vector3()).distanceTo(f.hand.getWorldPosition(new Vector3()))).toBeCloseTo(.55);
     expect(f.move.mock.calls[0][1]).toBe(.05);
   });
+  it('grabs a nearby tool even when the controller ray points away, and ignores distant tools',()=>{
+    const f=fixture();f.hand.position.set(.19,0,-.6);f.hand.rotation.y=-Math.PI/2;
+    f.controller.pressed=true;f.engine.step([f.controller],1/60);
+    expect(f.engine.isHeld(f.object)).toBe(true);
+    f.controller.pressed=false;f.engine.step([f.controller],1/60);
+    f.hand.position.set(.5,0,-.6);f.controller.pressed=true;f.engine.step([f.controller],1/60);
+    expect(f.engine.isHeld(f.object)).toBe(false);
+  });
   it('clamps and quantizes slider input outside the rail',()=>{
     expect(sliderValue(-2,5,85,5)).toBe(5);expect(sliderValue(2,5,85,5)).toBe(85);
     expect(sliderValue(.51,5,85,5)).toBe(45);
+  });
+  it('keeps enough decimal places for precise experiment settings',()=>{
+    expect(sliderDecimals(1)).toBe(0);expect(sliderDecimals(.1)).toBe(1);
+    expect(sliderDecimals(.01)).toBe(2);expect(sliderDecimals(.25)).toBe(2);
+    expect(sliderDecimals(1e-7)).toBe(7);
   });
 });

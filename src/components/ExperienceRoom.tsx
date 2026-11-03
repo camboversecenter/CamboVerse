@@ -4,6 +4,7 @@ import { XR } from "@react-three/xr";
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
 import {LabInteractionProvider} from './LabInteraction';
 import {LabSlider3D} from './LabSlider3D';
+import {ExperienceRoomFlame, flameExplanation} from './ExperienceRoomFlame';
 import {mixSelected} from '../labExperiments';
 import { ACESFilmicToneMapping } from "three";
 import { ExperienceRoomScene, STATIONS } from "./ExperienceRoomScene";
@@ -286,7 +287,9 @@ export function ExperienceRoom({
   /** Put a reagent into the first free slot, or take it back out if it is
    *  already in one. */
   const pickReagent = useCallback((id: string) => {
+    if (running || mixCmd.current) return;
     setResult(null);
+    setLastMix(null);
     if (slotA === id) { setSlotA(null); return; }
     if (slotB === id) { setSlotB(null); return; }
     if (slotC === id) { setSlotC(null); return; }
@@ -296,7 +299,7 @@ export function ExperienceRoom({
     else if (slotC === null) setSlotC(id);
     else if (slotD === null) setSlotD(id);
     else { setSlotA(id); setSlotB(null); setSlotC(null); setSlotD(null); }
-  }, [slotA, slotB, slotC, slotD]);
+  }, [slotA, slotB, slotC, slotD, running]);
 
   const clearBench = useCallback(() => {
     setSlotA(null);
@@ -654,13 +657,20 @@ export function ExperienceRoom({
               label={reagentById(id)!.name} unit={' '+unitFor(reagentById(id)!)} value={[amountA,amountB,amountC,amountD][i]}
               min={1} max={100} step={1} onChange={v=>{[setAmountA,setAmountB,setAmountC,setAmountD][i](v);setResult(null);setLastMix(null);}}
               position={[(i%2)*1.15-.575,1.65-Math.floor(i/2)*.3,-3.8]}/>)}
+            {vr.active && <ExperienceRoomFlame selected={flameSelected} onSelect={entry=>{
+              setFlameSelected(entry);markVisited('flame');playFlame();
+            }}/>}
             <LabVRRig title="Chemistry" start={[0, 0, 2.5]} bounds={[-5.4, 5.4, -4.4, 4.4]} stations={STATIONS}
-              activity={() => ({objective:'Choose reagents, adjust amounts, run the mix and compare its result.',result:[
+              activity={station => station?.id==='flame-corner' ? ({objective:'Test two samples and compare their flame colours.',result:flameSelected ? `${flameSelected.name} (${flameSelected.ion})\n${flameSelected.color}\n\n${flameExplanation(flameSelected)}\n\nThis visualisation is illustrative, not a real flame test.` : 'Close the board, grip a labelled sample and move it into the ring above the flame. You can also select a sample with the trigger or in Activities.'}) : ({objective:'Choose reagents, adjust amounts, run the mix and compare its result.',result:[
                 [slotA,slotB,slotC,slotD].map((id,i)=>id ? `${reagentById(id)?.name}: ${[amountA,amountB,amountC,amountD][i]} ${unitFor(reagentById(id)!)}` : '').filter(Boolean).join('\n'),
                 result==='none' ? 'This combination has no modeled reaction. Try a different combination; this does not establish that the real substances are safe to mix.' : result ? `${result.name}\n${result.equation}\n${result.observation}\n\n${result.explain}\n\n${lastMix?.note??''}` : 'Close this board and select shelf bottles with the trigger. Grip a selected vial, tilt it above the beaker to add a dose, or drag the amount controls. Then use Run mix in Activities. This is a simplified virtual experiment.',
               ].filter(Boolean).join('\n\n')})}
               status={running?'Reaction in progress':result && result!=='none'?result.name:filledSlots.length?filledSlots.map(id=>reagentById(id)?.name??id).join(' + '):'Point at shelf bottles to choose reagents.'}
               actions={station=>{
+                if (station?.id==='flame-corner') return [
+                  ...FLAME_TESTS.map(entry=>({id:entry.ion,label:`Test ${entry.name}`,active:flameSelected?.ion===entry.ion,onSelect:()=>{setFlameSelected(entry);markVisited('flame');playFlame();}})),
+                  {id:'reset-flame',label:'Reset flame test',onSelect:()=>setFlameSelected(null)},
+                ];
                 const preset=STATIONS.find(s=>s.id===station?.id)?.preset;
                 return [
                   ...(preset?[{id:'preset',label:'Load this experiment',disabled:!!running,onSelect:()=>{clearBench();loadPreset(preset);}}]:[]),
@@ -1470,8 +1480,7 @@ export function ExperienceRoom({
             <div className="xroom-flame-result">
               <div className="xroom-flame-glow" style={{ background: flameSelected.hex, boxShadow: `0 0 40px ${flameSelected.hex}` }} />
               <b>{flameSelected.name} - {flameSelected.color}</b>
-              <span>Wavelength: {flameSelected.wavelength}</span>
-              <p>When {flameSelected.name.toLowerCase()} ions absorb heat energy, their electrons jump to a higher energy level. As they fall back, they emit light at {flameSelected.wavelength}, which your eyes see as {flameSelected.color.toLowerCase()}.</p>
+              <p>{flameExplanation(flameSelected)}</p>
             </div>
           )}
           {renderExpQuiz('flame', FLAME_QUIZ)}

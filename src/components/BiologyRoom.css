@@ -31,7 +31,9 @@
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px;
   pointer-events: none;
-  z-index: 10;
+  /* The touch walking layer covers the viewport at z-index 15. Keep entry
+     controls above it so Quest's pointer can reach Enter VR and other buttons. */
+  z-index: 30;
 }
 .bio-top > * { pointer-events: auto; }
 .bio-title {

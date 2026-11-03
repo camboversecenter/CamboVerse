@@ -11,8 +11,8 @@ required for the existing PC/mobile learning experience.
 | Room | Immersive learning |
 | --- | --- |
 | Biology & Anatomy | Select layers/organs, take to tray, grip and rotate, scale, slice, identify structures, read tissue/comparison notes, return and reset |
-| Chemistry | Select shelf bottles, grip selected vials, tilt over the beaker to add bounded doses, adjust amounts, run a mix and read its equation/explanation |
-| Physics & Machines | Drag launch angle/speed and launch a projectile; grip/release the pendulum bob, change length; switch circuit presets and observe current/bulb |
+| Chemistry | Select shelf bottles, grip selected vials, tilt over the beaker to add bounded doses, adjust amounts, run a mix and read its equation/explanation; move flame-test samples into the flame or select them by trigger |
+| Physics & Machines | Drag launch angle/speed and launch a projectile; grip/release the pendulum bob, change length; switch circuit presets; compare simple machines and test friction on a ramp |
 | Earth & Sky | Pick up planet/layer samples; rotate Earth; move the Moon for phases/tides; change season and read the corresponding results |
 
 The inactive ChemistryRoom pilot is not mounted by the app; Chemistry uses
@@ -33,7 +33,7 @@ choose a room, then Enter VR. Accept the headset session prompt.
 - B: toggle flying / smooth landing. While flying, hold A to rise or X to descend.
 - Y: show/hide the learning panel. Close also dismisses it.
 - Point either controller and press its trigger to select markers or controls.
-- Point at a highlighted object and hold grip to grab it. Move/rotate the
+- Point at an object, or bring a controller near it, and hold grip to grab it. Move/rotate the
   controller; release to return it to its slot. Either controller works.
 - Drag the gold slider knob or its rail with the trigger. Grip also moves knobs;
   plus/minus buttons and Activities provide selectable alternatives.

@@ -8,6 +8,9 @@ const parts = biologyParts;
 export const canTakeBiologyPart = (id: string | null) => parts.some(p => p.id === id && p.layer === 'cutaway');
 // Local Blender head pack shares the skeleton's centimetre frame.
 export const isFittedHeadPart = (id: string) => ['eyes', 'ears', 'nose', 'mouth'].includes(id);
+// Local fitted head assets are not published. Keep the lightweight study model
+// visible on the tray, but avoid duplicating face geometry on the assembled body.
+export const showProceduralBiologyOrgan = (id: string, taken: boolean) => !isFittedHeadPart(id) || taken;
 export function showBiologyOrgan(layer: BiologyLayer, id: string, taken: string | null) {
   if (taken === id) return true;
   return layer === 'cutaway' || layer === 'combined';

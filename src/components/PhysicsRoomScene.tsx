@@ -1064,7 +1064,7 @@ export function PhysicsRoomScene({
 
       {/* Floor-standing props */}
       {!handsOn && <PendulumStandProp position={[-4.2, 0, 3.0]} />}
-      <FrictionRampProp position={[4.2, 0, 3.0]} />
+      {!handsOn && <FrictionRampProp position={[4.2, 0, 3.0]} />}
 
       {/* Measurement instruments scattered on benches */}
       <Ruler position={[-2.6, BENCH_H + 0.03, BENCH_Z + 0.15]} rotation={[0, 0.3, 0]} />

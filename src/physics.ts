@@ -346,6 +346,15 @@ export function fallSpeed(height: number, g = 9.81): number {
   return Math.sqrt(2 * g * height);
 }
 
+/** Ideal energy at a selected height, including any initial velocity. */
+export function energyAtHeight(scenario: EnergyScenario, height: number) {
+  const currentHeight = Math.max(0, Math.min(scenario.height, height));
+  const speed = Math.sqrt(scenario.speed ** 2 + 2 * 9.81 * (scenario.height - currentHeight));
+  const potential = potentialEnergy(scenario.mass, currentHeight);
+  const kinetic = kineticEnergy(scenario.mass, speed);
+  return {speed, potential, kinetic, total: potential + kinetic};
+}
+
 /* ── Waves ────────────────────────────────────────────────────── */
 
 export interface WavePreset {
