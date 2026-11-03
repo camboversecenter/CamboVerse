@@ -85,7 +85,7 @@ export const SITES: Site[] = [
     english: "The National University of Management's new campus",
     blurb:
       "Walk in past the entrance monument, across the lawn to the teaching block, east to the " +
-      "car park and the Great Hall, then back to the shrine at the centre. Seven buildings.",
+      "car park and the Great Hall, then back to the shrine at the centre.",
     provenance:
       "Rebuilt from the CamboVerse Center's own photographs of the campus. The massing and the " +
       "walking route follow the photographs; distances between buildings are plausible rather " +

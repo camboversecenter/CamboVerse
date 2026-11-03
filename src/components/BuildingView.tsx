@@ -5,6 +5,7 @@ import { Sky } from "@react-three/drei";
 import { createXRStore, XR, useXR } from "@react-three/xr";
 import {ImmersiveVREntry} from './CaptureVR';
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
+import {useSceneQuality} from '../lib/useSceneQuality';
 import { ACESFilmicToneMapping } from "three";
 import { Vector3 } from "three";
 import {
@@ -246,7 +247,7 @@ export function BuildingView({
   const [immersive,setImmersive]=useState(false);
   const [guideOpen,setGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
-  const [mode, setMode] = useState<ViewMode>(detectViewMode);
+  const {mode, toggle:toggleQuality} = useSceneQuality(immersive, detectViewMode);
   // We initialize spin based on whether a room was pre-selected.
   const [spin, setSpin] = useState(!initialRoom);
   // The info sheet is most of a phone screen, and the building is the point of
@@ -345,7 +346,6 @@ export function BuildingView({
               Works on any WebXR device, optimised for Meta Quest 3. */}
           <VRRig position={[0, 0, dist * 0.8]} buildingMovement/>
           <VRBuildingGuide locationId={building.id}/>
-          <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {walking?<FirstPersonControls input={walkInput} allowDoubleJump enabled={!guideOpen} start={[0,1.6,Math.max(10,building.spanM*.6)]} eyeHeight={1.6}/>:<OrbitControls
             resetKey={`${building.id}:${room ?? 'overview'}`}
             makeDefault
@@ -373,12 +373,12 @@ export function BuildingView({
         <span className="cls-title">🏛️ {building.name}</span>
         <button
           className="grove-quality"
-          onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
+          disabled={immersive} onClick={toggleQuality}
           title="View mode Normal is the low-end baseline, Ultra is the full 3D scene"
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <ImmersiveVREntry store={store} title={building.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP} onBeforeEnter={()=>setMode('ultra')}/>
+        <ImmersiveVREntry store={store} title={building.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP}/>
       </div>
 
       <button className="building-walk-toggle campus-mode" aria-pressed={walking} onPointerDown={e=>e.preventDefault()} onClick={()=>{setWalking(v=>!v);setInfo(false);setSpin(false);setRoom(null);}}>{walking?'Overview':'Walk around'}</button>
@@ -452,10 +452,4 @@ function Ground() {
       </mesh>
     </>
   );
-}
-
-function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
-  const inXR = useXR((s) => s.session != null);
-  useEffect(() => { if (inXR) onEnter(); }, [inXR, onEnter]);
-  return null;
 }

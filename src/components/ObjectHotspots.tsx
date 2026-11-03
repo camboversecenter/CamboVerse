@@ -1,4 +1,7 @@
 import { Html } from '@react-three/drei';
+import {Vector3} from 'three';
+import type {CalculatePosition} from '@react-three/drei/web/Html';
+import {captureLabelPosition} from '../hotspotLayout';
 import { useXR } from '@react-three/xr';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { OBJECT_INFO, type ObjectAnchor, type ObjectInfo } from '../objectHotspots';
@@ -17,9 +20,16 @@ export function ObjectHotspotMarkers({anchors,onSelect,vrScale=1,vrPenhGuide=fal
   // cannot rise above the separate walking overlay. The capture fills the
   // viewport, so its projected labels can be placed directly in the body.
   const overlay=useMemo(()=>typeof document==='undefined'?undefined:{current:document.body},[]);
+  const placeLabel=useMemo<CalculatePosition>(()=>{
+    const projected=new Vector3();
+    return (object,camera,size)=>{
+      projected.setFromMatrixPosition(object.matrixWorld).project(camera);
+      return captureLabelPosition((projected.x+1)*size.width/2,(1-projected.y)*size.height/2,size.width,size.height);
+    };
+  },[]);
   if(immersive)return vrHidden?null:<VRObjectHotspots anchors={anchors} scale={vrScale} penhGuide={vrPenhGuide}/>;
-  return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]} portal={vrPenhGuide?overlay:undefined}>
-    <button className="object-hotspot-marker" aria-label={km?`ស្វែងយល់អំពី${khmerObjectTitle(anchor.id)}`:`Learn about ${OBJECT_INFO[anchor.id].title}`}
+  return <>{anchors.map(anchor=><Html key={anchor.id} position={anchor.position} center zIndexRange={[27,22]} portal={vrPenhGuide?overlay:undefined} calculatePosition={vrPenhGuide?placeLabel:undefined}>
+    <button className={`object-hotspot-marker${vrPenhGuide?' capture-object-marker':''}`} aria-label={km?`ស្វែងយល់អំពី${khmerObjectTitle(anchor.id)}`:`Learn about ${OBJECT_INFO[anchor.id].title}`}
       onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSelect(anchor.id);}}>
       <span className="object-marker-icon" aria-hidden="true">i</span><span className="object-marker-copy">{km?khmerObjectTitle(anchor.id):OBJECT_INFO[anchor.id].title}</span><span className="object-marker-arrow" aria-hidden="true">›</span>
     </button>

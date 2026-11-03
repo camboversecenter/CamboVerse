@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ExploreControls as OrbitControls } from './ExploreControls';
+import {CampusOverview, CAMPUS_OVERVIEW_POSITION} from './CampusOverview';
 import { Sky } from "@react-three/drei";
-import { createXRStore, XR, useXR } from "@react-three/xr";
+import { createXRStore, XR } from "@react-three/xr";
+import {useSceneQuality} from '../lib/useSceneQuality';
 import {
   ACESFilmicToneMapping, Path, Shape, ShapeGeometry,
   Float32BufferAttribute, type Texture,
@@ -31,6 +32,7 @@ import { MangoForest, type MangoDef } from "./MangoTree";
 import { BananaForest, type BananaDef } from "./BananaTree";
 import campusTreesData from "../data/campusTrees.json";
 import { Palm } from "./Palm";
+import './CampusNavigation.css';
 
 /**
  * A **walkable site** a group of buildings you can move between. Opened from
@@ -238,8 +240,9 @@ export function BuildingsView({
   const [immersive,setImmersive]=useState(false);
   const [guideOpen,setGuideOpen]=useState(false);
   useEffect(()=>store.subscribe(s=>setImmersive(s.session!=null)),[store]);
-  const [mode, setMode] = useState<ViewMode>(detectViewMode);
+  const {mode, toggle:toggleQuality} = useSceneQuality(immersive, detectViewMode);
   const [nav, setNav] = useState<Nav>("orbit");
+  const [overviewReset, setOverviewReset] = useState(0);
   const [place, setPlace] = useState<string | null>(null);
   const input = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const [start, setStart] = useState<[number, number, number]>(CAMPUS_ENTRY.eye);
@@ -260,7 +263,7 @@ export function BuildingsView({
     <div className="campus">
       <Canvas
         dpr={mode === "normal" ? [1, 1.5] : [1, 2]}
-        camera={{ position: [30, 120, 320], fov: 45, near: 0.5, far: 1600 }}
+        camera={{ position: CAMPUS_OVERVIEW_POSITION, fov: 45, near: 0.5, far: 1600 }}
         gl={{ antialias: mode === "ultra", powerPreference: "high-performance" }}
         shadows={mode === "ultra"}
         onCreated={({ gl }) => {
@@ -275,7 +278,6 @@ export function BuildingsView({
               WebXR device; optimised for Meta Quest 3. */}
           <VRRig position={CAMPUS_ENTRY.floor} startYaw={CAMPUS_ENTRY.yaw} buildingMovement/>
           <VRBuildingGuide locationId={selected?.id??site.id}/>
-          <VrImpliesUltra onEnter={() => setMode("ultra")} />
           {nav === "walk" ? (
             <FirstPersonControls 
               input={input} allowDoubleJump enabled={!guideOpen}
@@ -283,14 +285,7 @@ export function BuildingsView({
               startYaw={startYaw} 
             />
           ) : (
-            <OrbitControls
-              enablePan
-              minDistance={20}
-              maxDistance={420}
-              maxPolarAngle={Math.PI / 2.12}
-              enableDamping
-              target={[24, 6, 70]}
-            />
+            <CampusOverview resetKey={overviewReset}/>
           )}
         </XR>
       </Canvas>
@@ -300,17 +295,17 @@ export function BuildingsView({
         <span className="cls-title">🏛 {site.name}</span>
         <button
           className="grove-quality"
-          onClick={() => setMode((m) => (m === "ultra" ? "normal" : "ultra"))}
+          disabled={immersive} onClick={toggleQuality}
           title="View mode Normal is the low-end baseline, Ultra is the full 3D scene"
         >
           {mode === "ultra" ? "✨ Ultra" : "🍃 Normal"}
         </button>
-        <ImmersiveVREntry store={store} title={site.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP} onBeforeEnter={()=>setMode('ultra')}/>
+        <ImmersiveVREntry store={store} title={site.name} className="vr-btn cls-vr" movementHelp={BUILDING_VR_HELP}/>
       </div>
 
       {/* orbit ⇄ walk */}
       <div className="campus-nav">
-        <button className={nav === "orbit" ? "campus-mode on" : "campus-mode"} onClick={() => setNav("orbit")}>
+        <button className={nav === "orbit" ? "campus-mode on" : "campus-mode"} onClick={() => {setNav("orbit"); setPlace(null); setOverviewReset(n => n + 1);}}>
           🛰️ Overview
         </button>
         <button className={nav === "walk" ? "campus-mode on" : "campus-mode"} onPointerDown={e=>e.preventDefault()} onClick={() => setNav("walk")}>
@@ -319,7 +314,7 @@ export function BuildingsView({
       </div>
 
       {/* jump to a landmark */}
-      <div className="campus-places">
+      <div className="campus-places" role="navigation" aria-label="Campus locations">
         {SITE_BUILDINGS.map((p) => (
           <button
             key={p.id}
@@ -389,13 +384,6 @@ function Tappable({
       {children}
     </group>
   );
-}
-
-/** VR always presents the Ultra scene. */
-function VrImpliesUltra({ onEnter }: { onEnter: () => void }) {
-  const inXR = useXR((s) => s.session != null);
-  useEffect(() => { if (inXR) onEnter(); }, [inXR, onEnter]);
-  return null;
 }
 
 /* ---------------------------------------------------------------- world --- */
