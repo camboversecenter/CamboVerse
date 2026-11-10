@@ -2,15 +2,17 @@ import { useMemo, useRef } from "react";
 import { Bvh, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { Mesh, Group } from "three";
+import { MeshoptDecoder } from 'meshoptimizer';
 
 const MODEL_URL = "/models/heritage-sample.glb";
 
 export function HeritageModel({ url = MODEL_URL, float = false }: { url?: string; float?: boolean }) {
-  // These local review pairs use open meshopt compression. Drei bundles its
-  // decoder, so no third-party decoder download is needed; other assets keep
-  // their existing loading path.
-  const meshopt = ['/models/local/banteay-chhmar-refined-v4/', '/models/local/sambor-prei-kuk-refined-v2/', '/models/local/wat-phnom-refined-v4/', '/models/local/royal-palace-refined-v2/', '/models/local/oudong-refined-v2/', '/models/local/bayon-refined-v2/', '/models/local/angkor-wat-refined-v3/', '/models/local/ta-prohm-refined-v2/', '/models/local/banteay-srei-refined-v2/', '/models/local/preah-khan-refined-v2/', '/models/local/beng-mealea-refined-v2/', '/models/local/phnom-kulen-refined-v2/', '/models/local/phnom-kulen-region-v3/', '/models/local/phnom-kulen-waterfall-v3/', '/models/local/pre-rup-refined-v2/'].some(prefix => url.startsWith(prefix));
-  const { scene } = useGLTF(url, false, meshopt || url.startsWith('/models/heritage/'));
+  // Published heritage GLBs use open meshopt compression. The bundled
+  // meshoptimizer decoder handles both existing exports and the more compact
+  // lossless Sambor Ultra stream without a third-party network request.
+  const published = url.startsWith('/models/heritage/');
+  const { scene } = useGLTF(url, false, !published,
+    published ? loader => loader.setMeshoptDecoder(MeshoptDecoder) : undefined);
   const ref = useRef<Group>(null);
   // Enable shadows on the model's meshes (once per loaded scene).
   useMemo(() => {
@@ -36,7 +38,7 @@ export function HeritageModel({ url = MODEL_URL, float = false }: { url?: string
   );
   // Accelerate refined-temple collision queries without losing
   // later floor hits beneath a roof. Key by URL so switching tiers rebuilds it.
-  return ['/models/local/bayon-refined-v2/', '/models/local/angkor-wat-refined-v3/', '/models/local/ta-prohm-refined-v2/', '/models/local/banteay-srei-refined-v2/', '/models/local/preah-khan-refined-v2/', '/models/local/beng-mealea-refined-v2/', '/models/local/phnom-kulen-refined-v2/', '/models/local/phnom-kulen-region-v3/', '/models/local/phnom-kulen-waterfall-v3/', '/models/local/pre-rup-refined-v2/'].some(prefix => url.startsWith(prefix))
+  return ['/models/heritage/bayon-refined-v2/', '/models/heritage/angkor-wat-refined-v3/', '/models/heritage/ta-prohm-refined-v2/', '/models/heritage/banteay-srei-refined-v2/', '/models/heritage/preah-khan-refined-v2/', '/models/heritage/beng-mealea-refined-v2/', '/models/heritage/phnom-kulen-region-v3/', '/models/heritage/phnom-kulen-waterfall-v3/', '/models/heritage/pre-rup-refined-v2/'].some(prefix => url.startsWith(prefix))
     ? <Bvh key={url} firstHitOnly={false} indirect>{model}</Bvh>
     : model;
 }

@@ -1,6 +1,6 @@
 import type { Spot } from './spots';
 
-/** A separate local study, never the representation of the entire mountain. */
+/** A separate illustrative waterfall study, never the entire mountain. */
 export const KULEN_WATERFALL: Spot = {
     id: "phnom-kulen-waterfall",
     name: "Kulen Waterfall Study",
@@ -11,8 +11,8 @@ export const KULEN_WATERFALL: Spot = {
     lat: 13.566,
     lng: 104.116,
     nudge: [0.6, -1.0],
-    model: "/models/local/phnom-kulen-waterfall-v3/phnom-kulen-normal.glb",
-    heritageUltraModel: "/models/local/phnom-kulen-waterfall-v3/phnom-kulen-ultra.glb",
+    model: "/models/heritage/phnom-kulen-waterfall-v3/phnom-kulen-normal.glb",
+    heritageUltraModel: "/models/heritage/phnom-kulen-waterfall-v3/phnom-kulen-ultra.glb",
     overview: { id: 'overview', title: 'Kulen Waterfall Study', info: '', target: [0, 4, -2], camera: [27, 26, 33] },
     sceneryGroundY: -0.55,
     sceneryShadowNormalBias: 0.025,

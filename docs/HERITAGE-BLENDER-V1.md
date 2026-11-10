@@ -1,8 +1,9 @@
 # Heritage Blender model pass
 
-Local staging directory: `public/models/local/heritage-blender-v1/`.
-This directory is ignored by Git: model binaries must be packaged separately
-before a deployment. Do not remove or overwrite unrelated local models.
+The reviewed runtime GLBs for all 15 map destinations and the separate Kulen
+waterfall scene are published under `public/models/heritage/`. The original
+editable scenes, reference photos, reports and staging exports stay local.
+The initial Blender staging directory was `public/models/local/heritage-blender-v1/`.
 
 ## Scope
 
@@ -88,5 +89,8 @@ Review status is recorded in `scripts/heritage-blender-worklist.json`.
 - VR asset selection was checked in source (`immersive || detail === "ultra"`).
   Normal disables the shadow pass and reflection material. No physical headset
   or low-end Android performance certification is claimed.
-- These are local review artifacts. The ignored Blender/GLB binaries are not
-  published by a Git push; deployment packaging remains a separate operation.
+- The original local review artifacts remain ignored. `scripts/publish-heritage-assets.mjs`
+  promotes only reviewed Normal/Ultra GLBs, records their hashes and losslessly
+  repacks the oversized Sambor Prei Kuk Ultra export. Both local development
+  and production use the published URLs. Physical low-end Android and Quest
+  performance remain to be verified.

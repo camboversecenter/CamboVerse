@@ -12,8 +12,8 @@ describe('Approved Banteay Chhmar local import', () => {
     const hash = createHash('sha256').update(readFileSync(resolve('output/banteay-chhmar-review-v4/banteay-chhmar-review-v4.blend'))).digest('hex');
     expect(reports.every((r: { source_sha256: string }) => r.source_sha256 === hash)).toBe(true);
     const site = SPOTS.find(s => s.id === 'banteay-chhmar')!;
-    expect(site.model).toBe('/models/local/banteay-chhmar-refined-v4/banteay-chhmar-normal.glb');
-    expect(site.heritageUltraModel).toBe('/models/local/banteay-chhmar-refined-v4/banteay-chhmar-ultra.glb');
+    expect(site.model).toBe('/models/heritage/banteay-chhmar-refined-v4/banteay-chhmar-normal.glb');
+    expect(site.heritageUltraModel).toBe('/models/heritage/banteay-chhmar-refined-v4/banteay-chhmar-ultra.glb');
     expect(site.overview?.camera).toEqual([1.8, 1.56, 2.76]);
     expect(site.aerial).toBe(true);
     expect(site.sceneryShadowNormalBias).toBe(0.04);

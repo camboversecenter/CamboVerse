@@ -21,7 +21,7 @@ const DEFAULTS: Required<Pick<AssetLike, "license">> & {
 } = {
   license: "CC-BY-4.0",
   contributor: "CamboVerse Center / NUM",
-  steward: "APSARA / Ministry of Culture and Fine Arts",
+  steward: "Steward consent is not documented in this viewer",
 };
 
 const LICENSE_URL: Record<string, string> = {
@@ -30,11 +30,11 @@ const LICENSE_URL: Record<string, string> = {
   "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
 };
 
-export function Credits({ spotId, onClose }: { spotId: string; onClose: () => void }) {
+export function Credits({ spotId, captureView = false, onClose }: { spotId: string; captureView?: boolean; onClose: () => void }) {
   const [asset, setAsset] = useState<AssetLike | null>(null);
   const localKulen = spotId === 'phnom-kulen' || spotId === 'phnom-kulen-waterfall';
   const localPreRup = spotId === 'pre-rup';
-  const illustrative = localKulen || localPreRup;
+  const illustrative = !captureView;
 
   useEffect(() => {
     if (illustrative) { setAsset(null); return; }
@@ -88,7 +88,7 @@ export function Credits({ spotId, onClose }: { spotId: string; onClose: () => vo
           <dd>{illustrative ? 'Original illustrative Blender study. Not a capture, surveyed reconstruction or authority-endorsed model.' : steward}</dd>
         </dl>
         <p className="credits-foot">
-          {localPreRup ? 'Reference photographs are not embedded. Dimensions, masonry damage and guardian forms are simplified. Sacred figures and inscriptions are not reproduced. This virtual route is not real-world visitor-access guidance.' : localKulen ? 'Reference photographs are not embedded. Relief and locator symbols are illustrative; approximate published map pins are not navigation guidance. Detailed sacred-site models need further reference and cultural review.' : 'Heritage data on CamboVerse is an open commons shared with provenance and the consent of its custodians.'}
+          {illustrative ? localPreRup ? 'Reference photographs are not embedded. Dimensions, masonry damage and guardian forms are simplified. Sacred figures and inscriptions are not reproduced. This virtual route is not real-world visitor-access guidance.' : localKulen ? 'Reference photographs are not embedded. Relief and locator symbols are illustrative; approximate published map pins are not navigation guidance. Detailed sacred-site models need further reference and cultural review.' : 'This original Blender illustration simplifies layout and ornament. Reference photographs are not embedded. It is not a surveyed reconstruction or authority-endorsed model.' : 'This capture is a separate asset. Its provenance and permissions must be checked in the asset record.'}
         </p>
         {localKulen && <p><a href="https://www.adfkulen.org/phnom-kulen/" target="_blank" rel="noreferrer">ADF: Phnom Kulen</a>{' · '}<a href="https://helloangkor.com/phnom-kulen-guide/" target="_blank" rel="noreferrer">Landmark references</a></p>}
         {localPreRup && <p><a href="https://www.theangkorguide.com/text/part-two/large-circuit/prerup.htm" target="_blank" rel="noreferrer">Pre Rup architectural reference</a></p>}

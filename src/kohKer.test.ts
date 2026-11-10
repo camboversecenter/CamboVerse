@@ -7,8 +7,8 @@ describe('Koh Ker reference-guided refinement', () => {
   const site = SPOTS.find(s => s.id === 'koh-ker')!;
   const reports = JSON.parse(readFileSync(resolve('output/koh-ker-refined-v2/build-report.json'), 'utf8'));
   it('opens the refined pair with cameras above the monument', () => {
-    expect(site.model).toBe('/models/local/koh-ker-refined-v2/koh-ker-normal.glb');
-    expect(site.heritageUltraModel).toBe('/models/local/koh-ker-refined-v2/koh-ker-ultra.glb');
+    expect(site.model).toBe('/models/heritage/koh-ker-refined-v2/koh-ker-normal.glb');
+    expect(site.heritageUltraModel).toBe('/models/heritage/koh-ker-refined-v2/koh-ker-ultra.glb');
     expect(site.overview?.camera).toEqual([9, 8, 12]);
     expect(site.aerial).toBe(true);
     for (const poi of site.pois!) expect(poi.camera[1]).toBeGreaterThan(poi.target[1]);

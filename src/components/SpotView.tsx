@@ -242,7 +242,7 @@ export function SpotView({ spot, onBack, backLabel = '← Map', enterPlace, init
       {!walking && pastOpen && <TimeTravel spot={spot} onClose={() => setPastOpen(false)} />}
 
       {/* Attribution & provenance for this site's heritage data (CC-BY commons). */}
-      {creditsOpen && <Credits spotId={spot.id} onClose={() => setCreditsOpen(false)} />}
+      {creditsOpen && <Credits spotId={spot.id} captureView={!!capture} onClose={() => setCreditsOpen(false)} />}
 
       {!walking &&
         !guideOpen &&

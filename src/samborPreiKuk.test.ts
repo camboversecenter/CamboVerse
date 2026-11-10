@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { MeshoptDecoder } from 'three-stdlib';
+import { MeshoptDecoder } from 'meshoptimizer';
 import { SPOTS } from './spots';
 
 describe('Approved Sambor Prei Kuk import', () => {
@@ -27,10 +27,12 @@ describe('Approved Sambor Prei Kuk import', () => {
       expect(report.draws).toBeLessThanOrEqual(11);
       const url = tier === 'normal' ? site.model : site.heritageUltraModel!;
       const file = readFileSync(`public${url}`);
-      expect(file.equals(readFileSync(`${folder}/sambor-prei-kuk-${tier}.glb`))).toBe(true);
+      if (tier === 'normal') expect(file.equals(readFileSync(`${folder}/sambor-prei-kuk-${tier}.glb`))).toBe(true);
+      // Ultra is losslessly repacked for the static host; decoded byte parity is
+      // checked in publishedHeritageAssets.test.ts.
       expect(file.readUInt32LE(0)).toBe(0x46546c67);
       expect(file.readUInt32LE(8)).toBe(file.length);
-      expect(file.length).toBeLessThan((tier === 'normal' ? 11 : 27) * 1024 * 1024);
+      expect(file.length).toBeLessThan((tier === 'normal' ? 11 : 25) * 1024 * 1024);
       const length = file.readUInt32LE(12);
       const doc = JSON.parse(file.toString('utf8', 20, 20 + length));
       const bin = file.subarray(28 + length);

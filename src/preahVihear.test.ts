@@ -6,8 +6,8 @@ import { SPOTS } from './spots';
 describe('Preah Vihear reference-guided import', () => {
   const site = SPOTS.find(s => s.id === 'preah-vihear')!;
   it('uses the new pair and a whole-ridge overview', () => {
-    expect(site.model).toBe('/models/local/preah-vihear-green-v4/preah-vihear-normal.glb');
-    expect(site.heritageUltraModel).toBe('/models/local/preah-vihear-green-v4/preah-vihear-ultra.glb');
+    expect(site.model).toBe('/models/heritage/preah-vihear-green-v4/preah-vihear-normal.glb');
+    expect(site.heritageUltraModel).toBe('/models/heritage/preah-vihear-green-v4/preah-vihear-ultra.glb');
     expect(site.overview?.camera).toEqual([14, 17, 20]);
     expect(site.aerial).toBe(true);
     expect(site.pois?.find(p => p.id === 'long-ascent')?.target[2]).toBe(4.5);

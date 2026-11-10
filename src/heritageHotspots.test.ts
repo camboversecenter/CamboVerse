@@ -22,8 +22,8 @@ describe("Blender heritage catalog", () => {
   it("uses matching Normal and Ultra filenames for each imported site", () => {
     for (const site of SPOTS) {
       const folder = site.id === 'pre-rup' ? 'pre-rup-refined-v2' : site.id === 'phnom-kulen' ? 'phnom-kulen-region-v3' : site.id === 'beng-mealea' ? 'beng-mealea-refined-v2' : site.id === 'preah-khan' ? 'preah-khan-refined-v2' : site.id === 'banteay-srei' ? 'banteay-srei-refined-v2' : site.id === 'ta-prohm' ? 'ta-prohm-refined-v2' : site.id === 'angkor-wat' ? 'angkor-wat-refined-v3' : site.id === 'bayon' ? 'bayon-refined-v2' : site.id === 'oudong' ? 'oudong-refined-v2' : site.id === 'royal-palace' ? 'royal-palace-refined-v2' : site.id === 'wat-phnom' ? 'wat-phnom-refined-v4' : site.id === 'preah-vihear' ? 'preah-vihear-green-v4' : site.id === 'koh-ker' ? 'koh-ker-refined-v2' : site.id === 'banteay-chhmar' ? 'banteay-chhmar-refined-v4' : site.id === 'sambor-prei-kuk' ? 'sambor-prei-kuk-refined-v2' : 'heritage-blender-v1';
-      expect(site.model).toBe(`/models/local/${folder}/${site.id}-normal.glb`);
-      expect(site.heritageUltraModel).toBe(`/models/local/${folder}/${site.id}-ultra.glb`);
+      expect(site.model).toBe(site.id === 'wat-phnom' ? '/models/heritage/wat-phnom-v4/normal.glb' : `/models/heritage/${folder}/${site.id}-normal.glb`);
+      expect(site.heritageUltraModel).toBe(site.id === 'wat-phnom' ? '/models/heritage/wat-phnom-v4/ultra.glb' : `/models/heritage/${folder}/${site.id}-ultra.glb`);
       expect(site.pois?.length).toBeGreaterThan(0);
     }
   });

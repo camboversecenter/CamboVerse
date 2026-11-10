@@ -79,8 +79,8 @@ function triangles(d: Document) {
 describe('Wat Phnom Blender staircase revision', () => {
   it('uses the revised model in both tiers without changing the captured staircase', () => {
     const spot = SPOTS.find(s => s.id === 'wat-phnom')!;
-    expect(spot.model).toBe('/models/local/wat-phnom-refined-v4/wat-phnom-normal.glb');
-    expect(spot.heritageUltraModel).toBe('/models/local/wat-phnom-refined-v4/wat-phnom-ultra.glb');
+    expect(spot.model).toBe('/models/heritage/wat-phnom-v4/normal.glb');
+    expect(spot.heritageUltraModel).toBe('/models/heritage/wat-phnom-v4/ultra.glb');
     expect(spot.pois!.find(p => p.capture)!.capture!.normal).toBe('/models/wat-phnom-staircase.splat');
   });
 

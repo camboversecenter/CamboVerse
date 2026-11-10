@@ -17,9 +17,12 @@ it('publishes the finished Wat Phnom previews without depending on private origi
   expect(local.pois!.find(p=>p.id==='flower-clock')!.capture!.normal).toContain('/local/');
 });
 
-it('retains working public models for other sites while their local studies stay private',()=>{
+it('uses the same reviewed Blender models in development and production',()=>{
   for(const site of SPOTS){
     const result=publishedHeritage(site);
+    expect(result.model).toBe(site.model);
+    expect(result.heritageUltraModel).toBe(site.heritageUltraModel);
+    expect(result.model).toContain('/models/heritage/');
     expect(existsSync(`public${result.model}`),site.id).toBe(true);
     if(result.heritageUltraModel)expect(existsSync(`public${result.heritageUltraModel}`),site.id).toBe(true);
   }

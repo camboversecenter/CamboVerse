@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "file": "angkor-wat-refined-v3/angkor-wat-normal.glb",
+      "bytes": 1521084,
+      "sha256": "4ec1d7149358e9c6dd73c2ef09e120f1711ef0817975637df8b08bfc44259a9e",
+      "sourceSha256": "4ec1d7149358e9c6dd73c2ef09e120f1711ef0817975637df8b08bfc44259a9e"
+    },
+    {
+      "file": "angkor-wat-refined-v3/angkor-wat-ultra.glb",
+      "bytes": 4094088,
+      "sha256": "c28aa43c9c777facb46e854a0e2ae9317369e535ec3a05e8a1545083149e695a",
+      "sourceSha256": "c28aa43c9c777facb46e854a0e2ae9317369e535ec3a05e8a1545083149e695a"
+    },
+    {
+      "file": "bayon-refined-v2/bayon-normal.glb",
+      "bytes": 3919624,
+      "sha256": "81bb6e5cf62012b63c2e7bf87586ab025db01a87a2d79bac34dc32650cf046ce",
+      "sourceSha256": "81bb6e5cf62012b63c2e7bf87586ab025db01a87a2d79bac34dc32650cf046ce"
+    },
+    {
+      "file": "bayon-refined-v2/bayon-ultra.glb",
+      "bytes": 10375360,
+      "sha256": "ba9e0fa6313b49b2b8eae6411d43ec7390befd6df8f3b06caa431f9d248765f4",
+      "sourceSha256": "ba9e0fa6313b49b2b8eae6411d43ec7390befd6df8f3b06caa431f9d248765f4"
+    },
+    {
+      "file": "ta-prohm-refined-v2/ta-prohm-normal.glb",
+      "bytes": 1457080,
+      "sha256": "efc416b90659a5f5c9b1ee80de520eca02c04eeebd8b16633e7b6e9f58e4782b",
+      "sourceSha256": "efc416b90659a5f5c9b1ee80de520eca02c04eeebd8b16633e7b6e9f58e4782b"
+    },
+    {
+      "file": "ta-prohm-refined-v2/ta-prohm-ultra.glb",
+      "bytes": 3566884,
+      "sha256": "8dc437dff1b574003ded1c6fe582d6ab4f29b84a1587c8e326e24daeb4b45b22",
+      "sourceSha256": "8dc437dff1b574003ded1c6fe582d6ab4f29b84a1587c8e326e24daeb4b45b22"
+    },
+    {
+      "file": "banteay-srei-refined-v2/banteay-srei-normal.glb",
+      "bytes": 1172420,
+      "sha256": "6943869ec5ed9fe56a120726bf557608a364d59ce865f54a05d30ada0cfb5bb2",
+      "sourceSha256": "6943869ec5ed9fe56a120726bf557608a364d59ce865f54a05d30ada0cfb5bb2"
+    },
+    {
+      "file": "banteay-srei-refined-v2/banteay-srei-ultra.glb",
+      "bytes": 2220820,
+      "sha256": "c91c1af1c4d71311d77aaf9cd54bb810dc4f037bf857d603c4d4b4098ab57799",
+      "sourceSha256": "c91c1af1c4d71311d77aaf9cd54bb810dc4f037bf857d603c4d4b4098ab57799"
+    },
+    {
+      "file": "preah-vihear-green-v4/preah-vihear-normal.glb",
+      "bytes": 4120128,
+      "sha256": "427d5c5f3946e2dc24c7f8193a20c5af874e7467cd69691cefa3d79613024dfe",
+      "sourceSha256": "427d5c5f3946e2dc24c7f8193a20c5af874e7467cd69691cefa3d79613024dfe"
+    },
+    {
+      "file": "preah-vihear-green-v4/preah-vihear-ultra.glb",
+      "bytes": 11505812,
+      "sha256": "f9e000baf656de1f89ca41e2b83f7ecb1822d71dc07c7f6cabb7d74c62533ad2",
+      "sourceSha256": "f9e000baf656de1f89ca41e2b83f7ecb1822d71dc07c7f6cabb7d74c62533ad2"
+    },
+    {
+      "file": "royal-palace-refined-v2/royal-palace-normal.glb",
+      "bytes": 467352,
+      "sha256": "66ab337870aba8a63fa30b27b810ebe321274b91da9e367efc81f87ae19ffdb9",
+      "sourceSha256": "66ab337870aba8a63fa30b27b810ebe321274b91da9e367efc81f87ae19ffdb9"
+    },
+    {
+      "file": "royal-palace-refined-v2/royal-palace-ultra.glb",
+      "bytes": 857352,
+      "sha256": "4fe1601c938f96fd764284c08021b0e2d88ac1bae79792ffabf87fccbbd01a87",
+      "sourceSha256": "4fe1601c938f96fd764284c08021b0e2d88ac1bae79792ffabf87fccbbd01a87"
+    },
+    {
+      "file": "sambor-prei-kuk-refined-v2/sambor-prei-kuk-normal.glb",
+      "bytes": 10680360,
+      "sha256": "14f234112f298298996968f942c3f4f5e1567f7960436b122fcda6e5a965c81a",
+      "sourceSha256": "14f234112f298298996968f942c3f4f5e1567f7960436b122fcda6e5a965c81a"
+    },
+    {
+      "file": "sambor-prei-kuk-refined-v2/sambor-prei-kuk-ultra.glb",
+      "bytes": 23833472,
+      "sha256": "f93668324d129e0c6019ca58f84e2a580415c4ad5b45618bf3d3046ca7b43c0d",
+      "sourceSha256": "4f17484d8f9950e4ad23a299a2be7e6586440075c1c13e67879a107234303a50"
+    },
+    {
+      "file": "koh-ker-refined-v2/koh-ker-normal.glb",
+      "bytes": 1706892,
+      "sha256": "06315af6ae8db2e45ba6324d2c6bac21d755160089d061316d147b902817e9b1",
+      "sourceSha256": "06315af6ae8db2e45ba6324d2c6bac21d755160089d061316d147b902817e9b1"
+    },
+    {
+      "file": "koh-ker-refined-v2/koh-ker-ultra.glb",
+      "bytes": 4027516,
+      "sha256": "76fa52019c812908a7fea104a1704f4724ac345b672cbe4e7a9a15f4612ac44e",
+      "sourceSha256": "76fa52019c812908a7fea104a1704f4724ac345b672cbe4e7a9a15f4612ac44e"
+    },
+    {
+      "file": "banteay-chhmar-refined-v4/banteay-chhmar-normal.glb",
+      "bytes": 11643812,
+      "sha256": "60a0058639b3b9bffa809f263c0529fda3da609242871f05f856cedc7d9266e3",
+      "sourceSha256": "60a0058639b3b9bffa809f263c0529fda3da609242871f05f856cedc7d9266e3"
+    },
+    {
+      "file": "banteay-chhmar-refined-v4/banteay-chhmar-ultra.glb",
+      "bytes": 14798256,
+      "sha256": "061897fc78459e4e35dcb568aba43fdd8a9d55135a34ebdc5b25aba432fc0195",
+      "sourceSha256": "061897fc78459e4e35dcb568aba43fdd8a9d55135a34ebdc5b25aba432fc0195"
+    },
+    {
+      "file": "preah-khan-refined-v2/preah-khan-normal.glb",
+      "bytes": 1466756,
+      "sha256": "e61b563f80451141d8add8e1917ed7eede2dd95d4c0cd52597ec06bd01409273",
+      "sourceSha256": "e61b563f80451141d8add8e1917ed7eede2dd95d4c0cd52597ec06bd01409273"
+    },
+    {
+      "file": "preah-khan-refined-v2/preah-khan-ultra.glb",
+      "bytes": 3785448,
+      "sha256": "b2fbff675e73f25484141b86549202f35c52ef4fb9f213890e423c77b82246bc",
+      "sourceSha256": "b2fbff675e73f25484141b86549202f35c52ef4fb9f213890e423c77b82246bc"
+    },
+    {
+      "file": "beng-mealea-refined-v2/beng-mealea-normal.glb",
+      "bytes": 1504456,
+      "sha256": "a24f5438f6544f597f68002c8e4d84741e238a177bf80703bec89f17a703fd53",
+      "sourceSha256": "a24f5438f6544f597f68002c8e4d84741e238a177bf80703bec89f17a703fd53"
+    },
+    {
+      "file": "beng-mealea-refined-v2/beng-mealea-ultra.glb",
+      "bytes": 2631236,
+      "sha256": "e2db70d2d72bf2bcf7baaf737f2ba87dee61aa2f042c236235f61cb8571f06fe",
+      "sourceSha256": "e2db70d2d72bf2bcf7baaf737f2ba87dee61aa2f042c236235f61cb8571f06fe"
+    },
+    {
+      "file": "phnom-kulen-region-v3/phnom-kulen-normal.glb",
+      "bytes": 1204364,
+      "sha256": "84b6833bc9a0c0a8616c2a9d48ed2f6ffc178cb4df7a24299817770038ae6727",
+      "sourceSha256": "84b6833bc9a0c0a8616c2a9d48ed2f6ffc178cb4df7a24299817770038ae6727"
+    },
+    {
+      "file": "phnom-kulen-region-v3/phnom-kulen-ultra.glb",
+      "bytes": 3967400,
+      "sha256": "b71a100bde4cbfa14b085782ab339ca2049144bcf2a833ec8fa35168edd5bede",
+      "sourceSha256": "b71a100bde4cbfa14b085782ab339ca2049144bcf2a833ec8fa35168edd5bede"
+    },
+    {
+      "file": "pre-rup-refined-v2/pre-rup-normal.glb",
+      "bytes": 1846736,
+      "sha256": "21aec5c15ebb8d84ca30a6095f9c2efd97c1f060a9d856a9337d97424912a9d4",
+      "sourceSha256": "21aec5c15ebb8d84ca30a6095f9c2efd97c1f060a9d856a9337d97424912a9d4"
+    },
+    {
+      "file": "pre-rup-refined-v2/pre-rup-ultra.glb",
+      "bytes": 5235876,
+      "sha256": "630fd4ce00944c9a389571fa93e40e0c9b7c595352bf0b643abcaf168f440d5d",
+      "sourceSha256": "630fd4ce00944c9a389571fa93e40e0c9b7c595352bf0b643abcaf168f440d5d"
+    },
+    {
+      "file": "oudong-refined-v2/oudong-normal.glb",
+      "bytes": 707164,
+      "sha256": "8a93b10077e7a540bb8f7150e950e18054afac2465d2bda379027f5a7daf0444",
+      "sourceSha256": "8a93b10077e7a540bb8f7150e950e18054afac2465d2bda379027f5a7daf0444"
+    },
+    {
+      "file": "oudong-refined-v2/oudong-ultra.glb",
+      "bytes": 2452948,
+      "sha256": "6b7dfa207880be7c739343aee557a6175c98cfb54c268a8a65bea0f10b390fb6",
+      "sourceSha256": "6b7dfa207880be7c739343aee557a6175c98cfb54c268a8a65bea0f10b390fb6"
+    },
+    {
+      "file": "phnom-kulen-waterfall-v3/phnom-kulen-normal.glb",
+      "bytes": 562088,
+      "sha256": "8d1bb5ee5a734a47f1f9d4c49d6da2a0d99053a9ec2694b1b8b2f5046dd6c338",
+      "sourceSha256": "8d1bb5ee5a734a47f1f9d4c49d6da2a0d99053a9ec2694b1b8b2f5046dd6c338"
+    },
+    {
+      "file": "phnom-kulen-waterfall-v3/phnom-kulen-ultra.glb",
+      "bytes": 1750208,
+      "sha256": "76b9962372cd053f26da8ab272cfb23c99ad80df8fef2631ddf4e29403bd4877",
+      "sourceSha256": "76b9962372cd053f26da8ab272cfb23c99ad80df8fef2631ddf4e29403bd4877"
+    }
+  ]
+}

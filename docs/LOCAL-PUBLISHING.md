@@ -70,6 +70,12 @@ Both local development and production use those public paths. The local Blender
 sources and all real captures remain excluded. `npm run deploy` still prunes any
 untracked files copied from `public/` before uploading its build output.
 
+The reviewed illustrative Blender tourism models are published separately in
+`public/models/heritage/` with a hash manifest and CC BY attribution. This
+includes the 15 map destinations and the Kulen waterfall scene. The real 3DGS
+capture sources, raw media, reference photos, and Blender source files remain
+local. The existing approved Wat Phnom capture previews are unchanged.
+
 Also review hosting separately: Vite can copy files from `public/` into a local
 build even when Git ignores them. Do not upload a locally built `dist/` containing
 unreviewed private media. No push, deployment, commit, staging, branch change or
