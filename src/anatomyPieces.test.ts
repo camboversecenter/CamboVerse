@@ -6,7 +6,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {anatomyAssetUrl} from './anatomyAssets';
 
 describe('floating anatomy pieces',()=>{
-  it.each(['normal','ultra'] as const)('separates every organ in both local %s Blender packs',async tier=>{
+  it.each(['normal','ultra'] as const)('separates every organ in both published %s Blender packs',async tier=>{
     const seen=new Set<string>();
     for (const kind of ['organs','head'] as const) {
       const bytes=readFileSync('public'+anatomyAssetUrl(kind,tier));

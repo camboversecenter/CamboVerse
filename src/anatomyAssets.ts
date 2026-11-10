@@ -6,5 +6,5 @@ export const ANATOMY_ASSETS = {
   muscles: 'lab-muscles-v4',
 } as const;
 export function anatomyAssetUrl(kind: keyof typeof ANATOMY_ASSETS, detail: 'normal' | 'ultra') {
-  return `/models/local/${ANATOMY_ASSETS[kind]}-${detail}.glb`;
+  return `/models/learning-lab/${ANATOMY_ASSETS[kind]}-${detail}.glb`;
 }

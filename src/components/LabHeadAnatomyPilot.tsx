@@ -11,11 +11,11 @@ const lessonId = (id?: string) => id === "ear" ? "skin" : id === "iris" || id ==
 type Props = { detail: Detail; layer: LabLayer; selected: string | null;
   onPick: (id: string) => void; fallback: ReactNode };
 
-/** Local Blender head pilot: exterior, muscle and skull/brain learning layers. */
+/** Blender head model: exterior, muscle and skull/brain learning layers. */
 export function LabHeadAnatomyPilot(props: Props) {
   const asset = props.layer === 'whole' ? 'lab-head-reviewed'
     : props.layer === 'cutaway' ? 'lab-head-muscles-v2' : 'lab-head-internal-v2';
-  const url = `/models/local/${asset}-${props.detail}.glb?revision=anatomy-2c`;
+  const url = `/models/learning-lab/${asset}-${props.detail}.glb?revision=anatomy-2c`;
   return <ModelErrorBoundary key={url} fallback={props.fallback}>
     <Suspense fallback={props.fallback}><LoadedHead key={url} {...props} url={url} /></Suspense>
   </ModelErrorBoundary>;

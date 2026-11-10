@@ -13,9 +13,10 @@ arguments after `--` select kinds (for example `-- seasons`). Outputs are under
 studio-rendered PNG previews and a JSON geometry/size report. These local assets
 are ignored by Git. They are original authored teaching props, not downloaded scans.
 
-`EarthSkyBlenderProp.tsx` loads the selected tier only in development. Production,
-loading and error states retain the previous procedural props. Publishing these
-assets is a separate review step; no deployment was performed.
+The original local pilot loaded only in development. The reviewed Normal/Ultra
+GLBs are now copied into `public/models/learning-lab/`, and both development and
+production select the same tier. Loading and error states retain the previous
+procedural props.
 
 ## Fidelity and limitations
 

@@ -1,4 +1,11 @@
-# Biology & Anatomy room - local prototype
+# Biology & Anatomy room
+
+The reviewed web exports are now staged in `public/models/learning-lab/` for
+both local development and production. Editable Blender files, original inputs
+and review renders outside the five selected catalog previews remain local.
+This changes asset availability, not the models' illustrative accuracy or the
+pending low-end-phone and physical headset performance checks. The notes below
+record the earlier local pilot and may describe its former tray workflow.
 
 ## Current review status
 

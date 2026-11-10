@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "file": "biology-room-v1.glb",
+      "bytes": 400332,
+      "sha256": "f460ab27135ef9df4886c6aef8f27661a4022adf1c5a3c93e91ad90a31255fed"
+    },
+    {
+      "file": "lab-skeleton-v11-normal.glb",
+      "bytes": 1069328,
+      "sha256": "c1903675e8863319a3a0f27e9421eb0551fd97606f5c38fb9e5d7fdddc7b1ddb"
+    },
+    {
+      "file": "lab-skeleton-v11-ultra.glb",
+      "bytes": 5082296,
+      "sha256": "9a2eb0e4c7e781e125b87fbfaa7aec410c427e8d6f49bd624ac8de2ef41696b0"
+    },
+    {
+      "file": "lab-head-fitted-v12-normal.glb",
+      "bytes": 1131992,
+      "sha256": "a73bb7dd89272759982767be4e397f48a8b1afaf4e18d1f758d7aba46aa924f1"
+    },
+    {
+      "file": "lab-head-fitted-v12-ultra.glb",
+      "bytes": 3981616,
+      "sha256": "ade1e32f8bb75d18cee70f4aa5f3f496ccdc11036ecac63207cb65448dea9ec4"
+    },
+    {
+      "file": "lab-organs-approved-v1-normal.glb",
+      "bytes": 760812,
+      "sha256": "16ca7cabd6073f0bf09ae5b8884b7e2978403335a1e411c69c89ced096594ae8"
+    },
+    {
+      "file": "lab-organs-approved-v1-ultra.glb",
+      "bytes": 4271920,
+      "sha256": "2000beaf753a15380ca341e549551436804f3f50bb5e89d80333aa6f329e4879"
+    },
+    {
+      "file": "lab-muscles-v4-normal.glb",
+      "bytes": 719252,
+      "sha256": "4a3332cf3a807af4a9e39f18fcfb4e6198099046bef47f8a6a9d6ccb0768d103"
+    },
+    {
+      "file": "lab-muscles-v4-ultra.glb",
+      "bytes": 7437908,
+      "sha256": "d34808811764a33fbcf4e809f564d08b05f61086572ac0d8b6289a477dcc3ce9"
+    },
+    {
+      "file": "lab-body-face-v2-normal.glb",
+      "bytes": 625536,
+      "sha256": "fff63e240dcea5704b435cf8ba8265ef7deb36449c0997d1366b09fdfd72c2c7"
+    },
+    {
+      "file": "lab-body-face-v2-ultra.glb",
+      "bytes": 1411716,
+      "sha256": "f8f54495f2f80c96a87654e13e732fdb34949daa2f5af77b1138048d0a956cb4"
+    },
+    {
+      "file": "lab-eye-normal.glb",
+      "bytes": 174612,
+      "sha256": "4c8a67287845b821f87c705d43fe03af7adaa7b381a696446e5b41e9546723ca"
+    },
+    {
+      "file": "lab-eye-ultra.glb",
+      "bytes": 822828,
+      "sha256": "bc205babf385d7a1bb48da226ca8513bd3886ad7c7957b541794e213895ca71b"
+    },
+    {
+      "file": "lab-head-reviewed-normal.glb",
+      "bytes": 727604,
+      "sha256": "50b5d6c103665ccecde02b123be2565a365d510c16964d57fdc9b3f8ab5f76d9"
+    },
+    {
+      "file": "lab-head-reviewed-ultra.glb",
+      "bytes": 3272732,
+      "sha256": "f64212a390959a39eb51cb70bb61b304757ca3befb49282dca8579bb26bb64bd"
+    },
+    {
+      "file": "lab-head-muscles-v2-normal.glb",
+      "bytes": 1063768,
+      "sha256": "9282bd2ca9069e8a368a55fda8dcbe75a2400f6ec2f13562cbca6df41f0f2b1d"
+    },
+    {
+      "file": "lab-head-muscles-v2-ultra.glb",
+      "bytes": 3916008,
+      "sha256": "d4c921e2bdd1082adb0284e7f1d7e6f8b75e32f6432ebe4acd4eb0e7b969292c"
+    },
+    {
+      "file": "lab-head-internal-v2-normal.glb",
+      "bytes": 486472,
+      "sha256": "ceb0d10110b04dc13ba8c6948c01f99b64154adbf25a5bf12a987942a92f0cb8"
+    },
+    {
+      "file": "lab-head-internal-v2-ultra.glb",
+      "bytes": 1631920,
+      "sha256": "c18b202127de32842ccbdd663c670041399c13a4f69c551e30b31fae9bc4b21f"
+    },
+    {
+      "file": "lab-heart-normal.glb",
+      "bytes": 75748,
+      "sha256": "e9ead70abb62237ebb4e3e890206518a582cce75fc173d09d4682126d27bf7f0"
+    },
+    {
+      "file": "lab-heart-ultra.glb",
+      "bytes": 209616,
+      "sha256": "83053d222a9b0a0eeb4d064e7644fdd5c93144c1202ce0dd1c66ea99e4bc04c9"
+    },
+    {
+      "file": "lab-lungs-normal.glb",
+      "bytes": 354992,
+      "sha256": "5ca3549676bcaca655922cab4e1fb86568a15c1fb7d4eab5b410264e81fa4894"
+    },
+    {
+      "file": "lab-lungs-ultra.glb",
+      "bytes": 1548752,
+      "sha256": "be35d9b93f2a1690ad000dabcc7826e61b0d37c5d7055715f7029c967ae6c220"
+    },
+    {
+      "file": "humerus-study-v2-macro-normal.glb",
+      "bytes": 163316,
+      "sha256": "9aecc3bdf420afa8c8926b24bcc634b54125f97d79b74bfaa283e644c815d672"
+    },
+    {
+      "file": "humerus-study-v2-macro-ultra.glb",
+      "bytes": 811324,
+      "sha256": "e548823224e3c8bff4641212f266d38c4c6daded40b9ec8cf883c4d194854962"
+    },
+    {
+      "file": "humerus-study-v1-cutaway-normal.glb",
+      "bytes": 363664,
+      "sha256": "a94f1221573cee0f4d6085fd86e108a7b2a1cd57ad544af07528e14984f9f6e7"
+    },
+    {
+      "file": "humerus-study-v1-cutaway-ultra.glb",
+      "bytes": 923396,
+      "sha256": "2b8b505a4dc91cbf3e29ea61748fbd66530dc56f126b65423568edc49cfdbdb4"
+    },
+    {
+      "file": "humerus-study-v1-micro-normal.glb",
+      "bytes": 684264,
+      "sha256": "cc9d28c1fa42741d04b87da5ca339e6e2519bb8ced4538ee211f32d05a40152b"
+    },
+    {
+      "file": "humerus-study-v1-micro-ultra.glb",
+      "bytes": 4927612,
+      "sha256": "63ee3aa74b0b3c63696f57ec76daf823281523cc1608788290e1a9401854864e"
+    },
+    {
+      "file": "earthsky-orrery-v1-normal.glb",
+      "bytes": 124460,
+      "sha256": "3351c17720e5efbed4dff74d8f2adff2110e6b81c74ee01f53b43462bd3f13b0"
+    },
+    {
+      "file": "earthsky-orrery-v1-ultra.glb",
+      "bytes": 593328,
+      "sha256": "e62d8dbbcedff3fe4e468b5f6221b9ebe5598aa36b4e56f4068e10a2cc783012"
+    },
+    {
+      "file": "earthsky-layers-v1-normal.glb",
+      "bytes": 58408,
+      "sha256": "c163ef9280defc51268afd24fec0843ee889736fdacf3ca87ad5a18d300ab125"
+    },
+    {
+      "file": "earthsky-layers-v1-ultra.glb",
+      "bytes": 278672,
+      "sha256": "845141a47006f299735fbd4f366e374b2fce1c27f40fa4bb0139c3be30023989"
+    },
+    {
+      "file": "earthsky-globe-v1-normal.glb",
+      "bytes": 138780,
+      "sha256": "ee3ec7190c30dd3869972fbfb33dbeef55f98b10f8e99c885c04bc75390f3801"
+    },
+    {
+      "file": "earthsky-globe-v1-ultra.glb",
+      "bytes": 399632,
+      "sha256": "35f5dc833c88393786d67111d3377809e49949c148322ff7c8e78ce2c8af6be3"
+    },
+    {
+      "file": "earthsky-moon-v1-normal.glb",
+      "bytes": 144304,
+      "sha256": "9a76b46c117a5b5b533a76c88650627f015efee6fae914974567e54dacae61f3"
+    },
+    {
+      "file": "earthsky-moon-v1-ultra.glb",
+      "bytes": 470600,
+      "sha256": "6b13bf1ebad89eaf4f5c459e4d93669fb8e40f041ad5511a373d41fdbd2aac02"
+    },
+    {
+      "file": "earthsky-seasons-v1-normal.glb",
+      "bytes": 153360,
+      "sha256": "6215ab86aa1dc6e504d773211d632adc0d9d73ad6c005e336620983ade90a827"
+    },
+    {
+      "file": "earthsky-seasons-v1-ultra.glb",
+      "bytes": 493096,
+      "sha256": "6a0efb3682026d58ee819381a9e5dbf3646b712f33852163c5844f2796bc1375"
+    },
+    {
+      "file": "earthsky-tides-v1-normal.glb",
+      "bytes": 153512,
+      "sha256": "4ea93f07d1bec7d9017998e48c6a295837a5aeab3199770d38664e40aebdde68"
+    },
+    {
+      "file": "earthsky-tides-v1-ultra.glb",
+      "bytes": 493248,
+      "sha256": "768317cab999c35f5711d0ae8a9435d92f8b53a049ed02093fa15d1ff6ac32ca"
+    },
+    {
+      "file": "lab-head-enhanced-three-quarter.png",
+      "bytes": 567910,
+      "sha256": "4352caa4688e9fc178c43d7e60f5cb5b191a2bfa064e5bc67ebafc2c56a72dcf"
+    },
+    {
+      "file": "humerus-study-v2-macro-preview.png",
+      "bytes": 546646,
+      "sha256": "881023432a302d8d1f8b12e9f33b1657c55aecf4b1a23a22c951a0c2f73efe6b"
+    },
+    {
+      "file": "humerus-study-v1-cutaway-preview.png",
+      "bytes": 561418,
+      "sha256": "a12ea63f00c991bb2817c2ed9e82a6908ea4383323fc7f24e4fe8d365b5f057f"
+    },
+    {
+      "file": "humerus-study-v1-micro-preview.png",
+      "bytes": 641386,
+      "sha256": "9b71543af1738ccad565a5c78a0ec6bc5ee51d3aa137d661c18f4da72eff2518"
+    },
+    {
+      "file": "earthsky-seasons-v1-preview.png",
+      "bytes": 417377,
+      "sha256": "2c6f0645f1407ee30859fe1ae5e5a33c04c15ba59f8596b3db93939847e260aa"
+    }
+  ]
+}

@@ -19,4 +19,7 @@ Verification: skeleton/organ overlay visually checked in the browser, heart
 selection/take/detail/return tested in Normal, stomach take/detail tested in Ultra.
 Eight biology state tests pass. This is a coarse placement check, not a complete
 skin-containment or anatomical collision validation. Low-end-device and headset
-performance remain unmeasured. Assets remain local-development-only, not deployed.
+performance remain unmeasured. At the time of this import, assets were local only.
+The reviewed Normal/Ultra runtime exports were later copied into
+`public/models/learning-lab/` for the combined Learning Lab release; the Blender
+source and review intermediates remain local.

@@ -63,6 +63,13 @@ assets. Model downloads must pass privacy/licensing/provenance review before
 being promoted to published asset paths. A successful code build alone does not
 establish that those private previews are ready for a public deployment.
 
+The reviewed Learning Lab web exports are an explicit exception to the earlier
+local-only pilot stage: 46 GLB/PNG runtime files are copied to the tracked
+`public/models/learning-lab/` directory with a hash manifest and content license.
+Both local development and production use those public paths. The local Blender
+sources and all real captures remain excluded. `npm run deploy` still prunes any
+untracked files copied from `public/` before uploading its build output.
+
 Also review hosting separately: Vite can copy files from `public/` into a local
 build even when Git ignores them. Do not upload a locally built `dist/` containing
 unreviewed private media. No push, deployment, commit, staging, branch change or

@@ -32,7 +32,7 @@ function BonePreview({ mode }: { mode: 'macro' | 'cutaway' | 'micro' }) {
 }
 function Loaded({detail,mode}: {detail:Detail;mode:'macro'|'cutaway'|'micro'}) {
   const version=mode==='macro'?'v2':'v1';
-  const {scene}=useGLTF(`/models/local/humerus-study-${version}-${mode}-${detail}.glb`);
+  const {scene}=useGLTF(`/models/learning-lab/humerus-study-${version}-${mode}-${detail}.glb`);
   const model=useMemo(()=>{
     const copy=scene.clone(true);
     copy.traverse(o=>{if(o instanceof Mesh){

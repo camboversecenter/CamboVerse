@@ -13,7 +13,7 @@ type Props = { detail: Detail; layer: LabLayer; selected: string | null;
   onPick: (id: string) => void; fallback: ReactNode };
 
 export function LabLungsPilot(props: Props) {
-  const url = `/models/local/lab-lungs-${props.detail}.glb?v=6`;
+  const url = `/models/learning-lab/lab-lungs-${props.detail}.glb?v=6`;
   return <ModelErrorBoundary key={url} fallback={props.fallback}>
     <Suspense fallback={props.fallback}><LoadedLungs key={url} {...props} url={url} /></Suspense>
   </ModelErrorBoundary>;

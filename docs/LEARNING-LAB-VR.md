@@ -8,6 +8,20 @@ All four rooms in Learning Lab use the same native WebXR entry, controller rays,
 locomotion and scene-text panels as Buildings and Wat Phnom. No headset is
 required for the existing PC/mobile learning experience.
 
+## Shared runtime models
+
+The published Learning Lab Blender exports now live under
+`public/models/learning-lab/`. Development and production load those same GLBs:
+the Anatomy room shell, skeleton, organs, head and muscle illustration; standalone
+body, eye, head, heart, lungs and bone studies; and the six Earth & Sky tabletop
+props. The catalog uses the corresponding reviewed renders. `manifest.json`
+pins the 46 files and their hashes. Normal and Ultra have paired models; VR uses
+Ultra. These remain illustrative teaching models, not medically validated assets.
+
+The original Blender sources and MakeHuman input remain local. Captured 3DGS
+models, camera photos, training files and the campus shrine scan are outside this
+Learning Lab release. `docs/LOCAL-PUBLISHING.md` describes the release boundary.
+
 | Room | Immersive learning |
 | --- | --- |
 | Biology & Anatomy | Extract floating organs, grip to position, use both grips to resize, separate and reassemble pieces, slice, identify structures, return and reset |

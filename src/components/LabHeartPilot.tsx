@@ -6,8 +6,8 @@ import type { Detail } from "./LabOrgans";
 import { ModelErrorBoundary } from "./ModelErrorBoundary";
 
 const LOCAL_HEART = {
-  normal: "/models/local/lab-heart-normal.glb",
-  ultra: "/models/local/lab-heart-ultra.glb",
+  normal: "/models/learning-lab/lab-heart-normal.glb",
+  ultra: "/models/learning-lab/lab-heart-ultra.glb",
 } as const;
 
 const PART_IDS = [

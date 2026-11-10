@@ -5,11 +5,11 @@ import type { Detail } from './LabOrgans';
 import { AnatomyAssetBoundary } from './AnatomyAssetBoundary';
 import { anatomyAssetUrl } from '../anatomyAssets';
 
-/** Local-only Blender illustration; no change to the approved skin asset. */
-export function LabMusclesPilot({ detail, onPick }: {
+/** Published Blender teaching illustration; the underlying skin model is unchanged. */
+export function LabMusclesPilot({ detail, onPick, fallback }: {
   detail: Detail; onPick: (id: string) => void; fallback: ReactNode;
 }) {
-  return <AnatomyAssetBoundary url={anatomyAssetUrl('muscles', detail)}><Loaded detail={detail} onPick={onPick} /></AnatomyAssetBoundary>;
+  return <AnatomyAssetBoundary url={anatomyAssetUrl('muscles', detail)} fallback={fallback}><Loaded detail={detail} onPick={onPick} /></AnatomyAssetBoundary>;
 }
 function Loaded({ detail, onPick }: { detail: Detail; onPick: (id: string) => void }) {
   const { scene } = useGLTF(anatomyAssetUrl('muscles', detail));

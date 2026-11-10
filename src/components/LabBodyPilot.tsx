@@ -5,11 +5,11 @@ import type { Detail } from "./LabOrgans";
 import { ModelErrorBoundary } from "./ModelErrorBoundary";
 
 const LOCAL_BODY = {
-  normal: "/models/local/lab-body-face-v2-normal.glb",
-  ultra: "/models/local/lab-body-face-v2-ultra.glb",
+  normal: "/models/learning-lab/lab-body-face-v2-normal.glb",
+  ultra: "/models/learning-lab/lab-body-face-v2-ultra.glb",
 } as const;
 
-/** Development-only Blender external-body pilot; cutaways stay procedural. */
+/** Blender external-body model; cutaways stay procedural. */
 export function LabBodyPilot({ detail, onPick, fallback, selected }: {
   detail: Detail; onPick: (id: string) => void; fallback: ReactNode; selected: string | null;
 }) {

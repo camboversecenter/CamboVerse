@@ -1032,7 +1032,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
    ═══════════════════════════════════════════════════════════════════ */
 
 function RoomAsset({ detail }: { detail: Detail }) {
-  const { scene } = useGLTF('/models/local/biology-room-v1.glb');
+  const { scene } = useGLTF('/models/learning-lab/biology-room-v1.glb');
   const copy = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse(o => { if ((o as Mesh).isMesh) { o.castShadow = detail === 'ultra'; o.receiveShadow = detail === 'ultra'; } });
@@ -1170,7 +1170,7 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
       <meshStandardMaterial color={d.color} roughness={.56} emissive={selected ? '#573322' : '#000000'} emissiveIntensity={.24} clippingPlanes={activeClipPlanes} clipShadows transparent={peelAmount > 0} opacity={peelOpacity} />
     </mesh>;
   })}</>;
-  const refined = import.meta.env.DEV;
+  const refined = import.meta.env.MODE !== 'test';
   return <group ref={ref} {...drag} onClick={e => {
     e.stopPropagation();
     if (e.delta > 4) return;
@@ -1333,18 +1333,18 @@ function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, sho
     {!session && <FirstPersonControls input={walkInput} start={[-.7, 1.55, 3.2]} startPitch={-.04} startYaw={0} speed={2.4} eyeHeight={1.55} collision={solid} bounds={bounds} headBob />}
 
     <group ref={solid} name="solid">
-      {import.meta.env.DEV ? <ModelErrorBoundary fallback={fallback}><Suspense fallback={fallback}><RoomAsset detail={fidelity} /></Suspense></ModelErrorBoundary> : fallback}
+      {import.meta.env.MODE !== 'test' ? <ModelErrorBoundary fallback={fallback}><Suspense fallback={fallback}><RoomAsset detail={fidelity} /></Suspense></ModelErrorBoundary> : fallback}
     </group>
 
     <group ref={surfaceGroup} position={[-.7, .99, 0]} scale={.01}
       onPointerOver={e=>{let o=e.object;while(o){if(o.userData.organId===state.taken && state.taken){trayHitRef.current=true;break;}o=o.parent!;}}}
       onPointerOut={()=>{trayHitRef.current=false;}}>
-      {(state.layer === 'frame' || state.layer === 'combined') && (import.meta.env.DEV
+      {(state.layer === 'frame' || state.layer === 'combined') && (import.meta.env.MODE !== 'test'
         ? <LabSkeletonPilot detail={fidelity} onPick={pick} fallback={<Body layer="frame" detail={fidelity} onPick={pick} showOutline={false} />} />
         : <Body layer="frame" detail={fidelity} onPick={pick} selected={state.selected === 'skeleton' ? 'skeleton' : null} extracted={null} showOutline={false} />)}
-      {state.layer === 'muscles' && import.meta.env.DEV && <LabMusclesPilot detail={fidelity} onPick={pick} fallback={<group position={[0,35,10]}><WorldCard text="Muscle illustration unavailable.\nPlease reload the local preview." width={90} height={60} /></group>} />}
+      {state.layer === 'muscles' && import.meta.env.MODE !== 'test' && <LabMusclesPilot detail={fidelity} onPick={pick} fallback={<group position={[0,35,10]}><WorldCard text="Muscle illustration unavailable.\nPlease reload the room." width={90} height={60} /></group>} />}
     </group>
-    {state.layer === 'muscles' && !import.meta.env.DEV && <group position={[-.7,1.35,.1]}><WorldCard text="Muscle illustration is a local pilot.\nIt has not been published yet." width={.9} height={.6} /></group>}
+    {state.layer === 'muscles' && import.meta.env.MODE === 'test' && <group position={[-.7,1.35,.1]}><WorldCard text="Muscle illustration unavailable in test mode." width={.9} height={.6} /></group>}
 
     <group ref={organGroup}
       onPointerOver={e => { let o = e.object; while (o) { if (o.userData.organId && o.userData.organId === state.taken) { trayHitRef.current = true; return; } o = o.parent!; } }}

@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { SUBJECTS, SPECIMENS, specimensOfSubject, topicsOfSubject } from "../lab";
 
-// Locally authored Blender pilots can show their actual review render in the
-// developer catalog. A generated, lightweight PNG remains the portable fallback.
+// Reviewed Blender renders shared by local development and the public catalog.
 const LOCAL_PREVIEWS: Record<string, string> = {
-  "head-anatomy": "/models/local/lab-head-enhanced-three-quarter.png",
-  "humerus-study": "/models/local/humerus-study-v2-macro-preview.png",
-  "bone-cutaway-study": "/models/local/humerus-study-v1-cutaway-preview.png",
-  "osteon-study": "/models/local/humerus-study-v1-micro-preview.png",
-  seasons: "/models/local/earthsky-seasons-v1-preview.png",
+  "head-anatomy": "/models/learning-lab/lab-head-enhanced-three-quarter.png",
+  "humerus-study": "/models/learning-lab/humerus-study-v2-macro-preview.png",
+  "bone-cutaway-study": "/models/learning-lab/humerus-study-v1-cutaway-preview.png",
+  "osteon-study": "/models/learning-lab/humerus-study-v1-micro-preview.png",
+  seasons: "/models/learning-lab/earthsky-seasons-v1-preview.png",
 };
 
 /**
@@ -106,7 +105,7 @@ export function LabView({
                       <li key={s.id}>
                         <button onClick={() => onOpenSpecimen(s.id)}>
                           <span className="lab-preview">
-                            <img src={import.meta.env.DEV && LOCAL_PREVIEWS[s.id] || `/lab/previews/${s.id}.png`}
+                            <img src={LOCAL_PREVIEWS[s.id] || `/lab/previews/${s.id}.png`}
                               onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = `/lab/previews/${s.id}.png`; }}
                               alt="" width={360} height={240} loading="lazy" decoding="async" />
                             <span className="lab-preview-action">Explore in 3D ↗</span>

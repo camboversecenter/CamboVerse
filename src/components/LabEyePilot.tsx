@@ -11,9 +11,9 @@ const partId = (name: string) => IDS.find((id) => name === `part-${id}` || name.
 type Props = { detail: Detail; layer: LabLayer; selected: string | null;
   onPick: (id: string) => void; knob: number; running: boolean; fallback: ReactNode };
 
-/** Original Blender asset, local-only until educator/device review. */
+/** Original Blender teaching asset; educator/device validation remains pending. */
 export function LabEyePilot(props: Props) {
-  const url = `/models/local/lab-eye-${props.detail}.glb`;
+  const url = `/models/learning-lab/lab-eye-${props.detail}.glb`;
   return <ModelErrorBoundary key={url} fallback={props.fallback}>
     <Suspense fallback={props.fallback}><LoadedEye key={url} {...props} url={url} /></Suspense>
   </ModelErrorBoundary>;

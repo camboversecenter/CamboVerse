@@ -31,7 +31,7 @@ export function TheSpecimen(props: ExhibitProps) {
   const { id, organOf, layer, detail, onPick, selected, extracted } = props;
   if (organOf) {
     const fallback = <SingleOrgan organId={organOf} detail={detail} onPick={onPick} selected={selected} />;
-    if (!import.meta.env.DEV || import.meta.env.MODE === 'test') return fallback;
+    if (import.meta.env.MODE === 'test') return fallback;
     if (organOf === 'skeleton') return <LabSkeletonPilot detail={detail} onPick={onPick} fallback={fallback} />;
     const specimen = specimenById(id);
     return <ReviewedOrganDetail id={organOf} detail={detail} diameter={Math.max(specimen?.sizeU ?? 20, specimen?.spanU ?? 20)} selected={selected === organOf} onPick={onPick} fallback={fallback} />;
@@ -55,32 +55,31 @@ export function TheSpecimen(props: ExhibitProps) {
     case "seasons": return <Seasons {...props} />;
     case "eye": {
       const procedural = <Eye {...props} />;
-      return import.meta.env.DEV && import.meta.env.MODE !== "test"
+      return import.meta.env.MODE !== "test"
         ? <LabEyePilot {...props} fallback={procedural} /> : procedural;
     }
     case "head-anatomy": {
       const procedural = <HeadAnatomyFallback layer={layer} onPick={onPick} />;
-      return import.meta.env.DEV && import.meta.env.MODE !== "test"
+      return import.meta.env.MODE !== "test"
         ? <LabHeadAnatomyPilot {...props} fallback={procedural} /> : procedural;
     }
     case "human-body": {
       const procedural = <Body layer={layer} detail={detail} onPick={onPick} selected={selected} extracted={extracted} />;
-      if (import.meta.env.DEV && import.meta.env.MODE !== 'test' && layer === 'frame') return <LabSkeletonPilot detail={detail} onPick={onPick} fallback={procedural} />;
-      return import.meta.env.DEV && import.meta.env.MODE !== "test" && layer === "whole"
+      if (import.meta.env.MODE !== 'test' && layer === 'frame') return <LabSkeletonPilot detail={detail} onPick={onPick} fallback={procedural} />;
+      return import.meta.env.MODE !== "test" && layer === "whole"
         ? <LabBodyPilot detail={detail} onPick={onPick} selected={selected} fallback={procedural} />
         : procedural;
     }
     case "heart": {
       const procedural = <Heart layer={layer} detail={detail} onPick={onPick} selected={selected} />;
-      // Local Blender assets are git-ignored. Never request them in a deployed
-      // build, and retain procedural cutaways while the pilot is assembled-only.
-      return import.meta.env.DEV && import.meta.env.MODE !== "test" && layer === "whole"
+      // The published Blender model covers the assembled view; cutaways remain procedural.
+      return import.meta.env.MODE !== "test" && layer === "whole"
         ? <LabHeartPilot detail={detail} onPick={onPick} fallback={procedural} />
         : procedural;
     }
     case "lungs": {
       const procedural = <Lungs layer={layer} detail={detail} onPick={onPick} selected={selected} />;
-      return import.meta.env.DEV && import.meta.env.MODE !== "test"
+      return import.meta.env.MODE !== "test"
         ? <LabLungsPilot {...props} fallback={procedural} /> : procedural;
     }
     default: return null;

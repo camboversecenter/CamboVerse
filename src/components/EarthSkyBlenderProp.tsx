@@ -7,13 +7,12 @@ import { ModelErrorBoundary } from './ModelErrorBoundary';
 export function EarthSkyBlenderProp({kind,position,ultra,fallback}: {
   kind:string;position:[number,number,number];ultra:boolean;fallback:ReactNode;
 }) {
-  if (!import.meta.env.DEV) return fallback;
   return <ModelErrorBoundary key={`${kind}-${ultra}`} fallback={fallback}>
     <Suspense fallback={fallback}><Loaded kind={kind} position={position} ultra={ultra}/></Suspense>
   </ModelErrorBoundary>;
 }
 function Loaded({kind,position,ultra}:{kind:string;position:[number,number,number];ultra:boolean}) {
-  const {scene}=useGLTF(`/models/local/earthsky-${kind}-v1-${ultra?'ultra':'normal'}.glb`);
+  const {scene}=useGLTF(`/models/learning-lab/earthsky-${kind}-v1-${ultra?'ultra':'normal'}.glb`);
   const copy=useMemo(()=>{
     const model=scene.clone(true);
     const earth=new Group();earth.name='animated-earth';
