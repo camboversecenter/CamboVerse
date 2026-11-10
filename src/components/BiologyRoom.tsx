@@ -1,4 +1,4 @@
-import { Suspense, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { MouthTeethContext } from '../mouthStudy';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
@@ -6,13 +6,17 @@ import { XR, useXR } from '@react-three/xr';
 import { useLabVR, LabVRButton, LabVRRig } from './LabVR';
 import {LabInteractionProvider, useLabGrabbable} from './LabInteraction';
 import {LabSlider3D} from './LabSlider3D';
+import {HeartStudyPanel, type HeartStudyAction} from './HeartStudyPanel';
+import {newHeartStudy, observeHeartStudy, answerHeartStudy, HEART_PROMPTS, type HeartStudy} from '../heartStudy';
+import {AirStudyContext, ProceduralPieces, useAirDrag} from './FloatingAnatomy';
+import {heartLandmarkIndex} from '../heartLandmarks';
 import { Box3, CanvasTexture, Group, Mesh, Plane as ThreePlane, Raycaster, Vector2, Vector3 } from 'three';
 import { ReviewedOrgan } from './ReviewedOrgan';
 import { AnatomyAssetBoundary } from './AnatomyAssetBoundary';
 import { anatomyAssetUrl } from '../anatomyAssets';
 import { HEAD_LEARNING } from '../headLearning';
 import { HeadLearnMore } from './HeadLearnMore';
-import { HEAD_ANCHORS, centeredAnchor, studyDistance, showAnnotation, anchoredStudyPosition } from '../anatomyPresentation';
+import { HEAD_ANCHORS, centeredAnchor, studyDistance, showAnnotation } from '../anatomyPresentation';
 import { Body, useOrgans, type OrganDef } from './LabBody';
 import { LabMusclesPilot } from './LabMusclesPilot';
 import { LabSkeletonPilot } from './LabSkeletonPilot';
@@ -24,8 +28,6 @@ import { InRoomDetail } from './InRoomDetail';
 import './BiologyRoom.css';
 import { biologyTransition, biologyParts, canTakeBiologyPart, initialBiologyState, isFittedHeadPart, showBiologyOrgan, showProceduralBiologyOrgan, type BiologyState, type BiologyLayer } from '../biologyRoomState';
 export { initialBiologyState };
-const FixedTrayContext = createContext(false);
-
 const parts = [...biologyParts, { id: 'muscles', name: 'Superficial muscles', layer: 'muscles' as const, detail: undefined,
   blurb: 'Blender-authored superficial-muscle illustration with continuous body proportions and directional fibre detail. This is a visual teaching prototype: muscle boundaries and tendons are illustrative, not a medically validated atlas. Individual muscles are not yet separately selectable.' }];
 type Props = {
@@ -319,7 +321,9 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [dockTab, setDockTab] = useState<'view' | 'organs' | 'tools'>('view');
   const [moreTools, setMoreTools] = useState(false);
-  const [guideStep, setGuideStep] = useState<number | null>(null);
+  const [heartStudy, setHeartStudy] = useState<HeartStudy | null>(null);
+  const [recall, setRecall] = useState(0);
+  const [pieceName, setPieceName] = useState('');
   const [hovered, setHovered] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [trayRotX, setTrayRotX] = useState(0);
@@ -327,7 +331,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
   const [showPins, setShowPins] = useState(true);
   const [showMouthTeeth, setShowMouthTeeth] = useState(true);
   const [activePin, setActivePin] = useState<number | null>(null);
-  const [fixedTray, setFixedTray] = useState(false);
+
   const [microscopeOpen, setMicroscopeOpen] = useState(false);
   const [quizMode, setQuizMode] = useState(false);
   const [quizPlacements, setQuizPlacements] = useState<(number | null)[]>([]);
@@ -343,30 +347,25 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
   const [peelAmount, setPeelAmount] = useState(0);
 
   useEffect(() => {
-    if (guideStep === 0 && state.layer === 'cutaway') setGuideStep(1);
-    else if (guideStep === 1 && state.taken === 'heart') setGuideStep(2);
-    else if (guideStep === 2 && state.taken === 'heart' && fixedTray) setGuideStep(3);
-    else if (guideStep === 3 && state.taken === 'heart' && activePin !== null) setGuideStep(4);
-    else if (guideStep === 4 && state.taken === null) setGuideStep(5);
-  }, [guideStep, state.layer, state.taken, fixedTray, activePin]);
+    setHeartStudy(s => s && observeHeartStudy(s, {...state, separated:exploded, section: clipAxis !== 'off' || splitOpen, pin: activePin}));
+  }, [heartStudy?.step, state.layer, state.selected, state.taken, exploded, activePin, clipAxis, splitOpen]);
 
   const walkInput = useRef<WalkInput>({ move: { x: 0, y: 0 }, look: { dx: 0, dy: 0 } });
   const roomRef = useRef<HTMLDivElement>(null);
   const pointerLockSupported = useRef(true);
   const dragging = useRef(false);
-  const trayDragging = useRef(false);
   const trayHit = useRef(false);
   const rotatePointer = useRef<{ id: number; x: number; y: number } | null>(null);
 
   const part = parts.find(p => p.id === state.selected) ?? (state.layer === 'muscles' ? parts.find(p => p.id === 'muscles') : undefined);
   const hoveredPart = parts.find(p => p.id === hovered);
   const clearTrayControls = () => {
-    setFixedTray(false);
+    setPieceName('');
     setMoreTools(false);
     setSpin(false); setTurn(0); setTrayRotX(0); setTrayZoom(1); setActivePin(null);
     setMicroscopeOpen(false); setQuizMode(false); setQuizScore(null); setCompareMode(false); setSoundOn(false);
     setExploded(false); setClipAxis('off'); setClipValue(0); setAntMode(false); setSplitOpen(false); setPeelAmount(0);
-    trayHit.current = false; trayDragging.current = false;
+    trayHit.current = false;
     rotatePointer.current = null;
   };
   const pick = (id: string) => {
@@ -379,10 +378,48 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     }
   };
   const changeLayer = (layer: BiologyLayer) => { onChange(biologyTransition(state, { type: 'layer', layer })); clearTrayControls(); };
-  const reset = () => { onChange(initialBiologyState); clearTrayControls(); setQuery(''); setSearchOpen(false); };
+  const reset = () => { onChange(initialBiologyState); clearTrayControls(); setQuery(''); setSearchOpen(false); setHeartStudy(null); };
   const takeable = canTakeBiologyPart(state.selected);
-  const take = () => { onChange(biologyTransition(state, { type: 'take' })); clearTrayControls(); };
+  const take = () => {
+    onChange(biologyTransition(state, { type: 'take' }));
+    clearTrayControls();
+
+  };
   const resetAll = reset;
+  const airControls = useMemo(() => ({zoom:setTrayZoom, describe:setPieceName, recall}), [recall]);
+  const startHeartStudy = () => {
+    reset(); setHeartStudy(newHeartStudy()); setShowHelp(false); setDockTab('view'); setShowPins(true);
+    if (document.pointerLockElement) document.exitPointerLock?.();
+  };
+  const heartNote = state.taken === 'heart' && activePin !== null ? ORGAN_ANNOTATIONS.heart[activePin] : undefined;
+  const heartActions: HeartStudyAction[] = !heartStudy ? [] : heartStudy.step === 0 ? [
+    {id:'reveal', label:'Show organs only', run:() => changeLayer('cutaway')},
+  ] : heartStudy.step === 1 ? [
+    {id:'heart', label:'Take heart', run:() => pick('heart')},
+  ] : heartStudy.step === 2 ? [
+    {id:'separate', label:'Separate pieces', run:() => setExploded(true)},
+  ] : heartStudy.step === 3 ? [
+    {id:'left', label:'Rotate left', run:() => setTurn(v => v - Math.PI / 6)},
+    {id:'right', label:'Rotate right', run:() => setTurn(v => v + Math.PI / 6)},
+    {id:'larger', label:'Zoom in', run:() => setTrayZoom(v=>Math.min(3,v+.25))},
+    {id:'smaller', label:'Zoom out', run:() => setTrayZoom(v=>Math.max(.5,v-.25))},
+    {id:'recall', label:'Bring organ here', run:() => setRecall(v=>v+1)},
+    {id:'section', label:'Open section', run:() => {setExploded(false); setClipAxis('x'); setClipValue(0);}},
+  ] : heartStudy.step === 4 ? [
+    ...ORGAN_ANNOTATIONS.heart.map((p, i) => ({id:`pin-${i}`, label:p.label, active:activePin === i, run:() => {setActivePin(i); setShowPins(true);}})),
+    {id:'rotate', label:'Rotate heart', run:() => setTurn(v => v + Math.PI / 6)},
+    {id:'section', label:clipAxis === 'off' ? 'Open section' : 'Close section', run:() => setClipAxis(v => v === 'off' ? 'x' : 'off')},
+  ] : heartStudy.step === 5 ? [
+    {id:'answer-ra', label:'Right atrium', run:() => setHeartStudy(s => s && answerHeartStudy(s, 'right-atrium'))},
+    {id:'answer-lv', label:'Left ventricle', run:() => setHeartStudy(s => s && answerHeartStudy(s, 'left-ventricle'))},
+  ] : heartStudy.step === 6 ? [
+    {id:'return', label:'Return to body', run:take},
+  ] : [{id:'repeat', label:'Study again', run:startHeartStudy}];
+  const heartPanel = heartStudy ? {
+    study:heartStudy, actions:heartActions,
+    note:exploded && pieceName ? pieceName : heartNote ? `${heartNote.label}: ${heartNote.info}.` : '',
+    onClose:() => setHeartStudy(null), onRestart:startHeartStudy,
+  } : null;
 
   // Organ ambient sound via Web Audio API
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -438,11 +475,6 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     if (isTouchDevice) return;
     const onChange = () => setLocked(!!document.pointerLockElement);
     const onMove = (e: MouseEvent) => {
-      if (trayDragging.current) {
-        setTurn(v => v + e.movementX * 0.008);
-        setTrayRotX(v => Math.max(-1.2, Math.min(1.2, v + e.movementY * 0.008)));
-        return;
-      }
       if (document.pointerLockElement) {
         walkInput.current.look.dx += e.movementX;
         walkInput.current.look.dy += e.movementY;
@@ -453,10 +485,10 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     };
     const onDown = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('.bio-ui')) return;
-      if (trayHit.current) { trayDragging.current = true; return; }
+      if (trayHit.current) return;
       if (!document.pointerLockElement) dragging.current = true;
     };
-    const onUp = () => { dragging.current = false; trayDragging.current = false; };
+    const onUp = () => { dragging.current = false; };
     const onWheel = (e: WheelEvent) => {
       if (!trayHit.current) return;
       e.preventDefault();
@@ -466,12 +498,14 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mousedown', onDown);
     document.addEventListener('mouseup', onUp);
+    window.addEventListener('blur', onUp);
     document.addEventListener('wheel', onWheel, { passive: false });
     return () => {
       document.removeEventListener('pointerlockchange', onChange);
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mousedown', onDown);
       document.removeEventListener('mouseup', onUp);
+      window.removeEventListener('blur', onUp);
       document.removeEventListener('wheel', onWheel);
     };
   }, []);
@@ -485,7 +519,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
   const lookLast = useRef({ x: 0, y: 0 });
   const lookId = useRef<number | null>(null);
   const onTouchDown = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest('.bio-ui')) return;
+    if ((e.target as HTMLElement).closest('.bio-ui, .walk-layer')) return;
     if (lookId.current === null) { lookId.current = e.pointerId; lookLast.current = { x: e.clientX, y: e.clientY }; }
   };
   const onTouchMove = (e: React.PointerEvent) => {
@@ -497,37 +531,39 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
   };
   const onTouchUp = (e: React.PointerEvent) => { if (e.pointerId === lookId.current) lookId.current = null; };
 
-  return <div className={`bio-room${part && !searchOpen && !detailId && !vr ? ' bio-room--studying' : ''}`} ref={roomRef}
+  return <div className={`bio-room${heartStudy && !vrSession.active ? ' bio-room--guided' : part && !searchOpen && !detailId && !vr ? ' bio-room--studying' : ''}`} ref={roomRef}
     onPointerDown={isTouchDevice ? onTouchDown : undefined}
     onPointerMove={isTouchDevice ? onTouchMove : undefined}
     onPointerUp={isTouchDevice ? onTouchUp : undefined}
     onPointerCancel={isTouchDevice ? onTouchUp : undefined}
   >
     {/* A live immersive renderer must survive changes to the desktop detail state. */}
-    <div className="bio-canvas" onClick={vrSession.active ? undefined : requestLock} style={detailId && !vrSession.active ? { display: 'none' } : undefined}>
+    <div className="bio-canvas" onDoubleClick={vrSession.active || heartStudy || state.taken ? undefined : requestLock} style={detailId && !vrSession.active ? { display: 'none' } : undefined}>
       {(!detailId || vrSession.active) && <Canvas shadows={ultra || vr} dpr={ultra || vr ? [1, 1.75] : 1} camera={{ fov: 65, near: .05, far: 30 }}>
         <XR store={store}>
           <LabInteractionProvider>
-          <FixedTrayContext.Provider value={fixedTray}><MouthTeethContext.Provider value={showMouthTeeth}><BiologyScene state={state} detail={ultra || vr ? 'ultra' : 'normal'} pick={pick}
+          <AirStudyContext.Provider value={airControls}><MouthTeethContext.Provider value={showMouthTeeth}><BiologyScene state={state} detail={ultra || vr ? 'ultra' : 'normal'} pick={pick}
             spin={spin} turn={turn}
             trayRotX={trayRotX} trayZoom={trayZoom} showPins={showPins} activePin={activePin} onActivePin={setActivePin}
             trayHitRef={trayHit}
             exploded={exploded} clipAxis={clipAxis} clipValue={clipValue} antMode={antMode} splitOpen={splitOpen} peelAmount={peelAmount}
-            onVR={setVr} walkInput={walkInput} onHover={setHovered} /></MouthTeethContext.Provider></FixedTrayContext.Provider>
+            onVR={setVr} walkInput={walkInput} onHover={setHovered} /></MouthTeethContext.Provider></AirStudyContext.Provider>
           {vrSession.active && state.taken && <>
-            <LabSlider3D label="Study scale" value={trayZoom} min={.5} max={2} step={.1} onChange={setTrayZoom} position={[.7,.8,1]}/>
+            <LabSlider3D label="Study scale" value={trayZoom} min={.5} max={3} step={.1} onChange={setTrayZoom} position={[.7,.8,1]}/>
             <LabSlider3D label="Slice position" value={clipValue} min={-1} max={1} step={.1} onChange={setClipValue} position={[.7,.55,1]}/>
           </>}
+          {vrSession.active && heartPanel && <HeartStudyPanel {...heartPanel} immersive/>}
           <LabVRRig title="Biology & Anatomy" start={[-.7, 0, 2.1]} bounds={[-3, 3, -2.5, 3.5]} ceiling={3.2}
-            stations={[{id:'anatomy',label:'Anatomy study',at:[-.7,1.3,0],description:'Choose a layer and point at an organ to move it to the study tray.',
-              detail:part ? part.name + '. ' + part.blurb + '\n\nSimplified teaching models, not clinical reference.' : 'Choose Activities to select a layer or organ. You can also point at an organ on the model and press the trigger to take it to the study tray.'}]}
+            stations={[{id:'anatomy',label:'Anatomy study',at:[-.7,1.3,0],description:'Select an organ to float it in front of you.',
+              detail:part ? part.name + '. ' + part.blurb + '\n\nSimplified teaching models, not clinical reference.' : 'Choose Activities to select a layer or organ. You can also point at an organ on the model and press the trigger to take it out. Hold one grip to move it. Hold both grips and spread your hands to enlarge it.'}]}
             status={part?.name ?? 'Choose a layer or an organ.'}
             activity={() => {
               const pin = activePin === null || !state.taken ? undefined : ORGAN_ANNOTATIONS[state.taken]?.[activePin];
               const slide = state.taken && microscopeOpen ? MICROSCOPE_SLIDES[state.taken] : undefined;
               const comparison = state.taken && compareMode ? DISEASE_DATA[state.taken] : undefined;
-              return {objective:'Select an organ, grip to inspect it, and identify one structure.', result:[
+              return {objective:heartStudy ? HEART_PROMPTS[heartStudy.step] : 'Select an organ, grip to inspect it, and identify one structure.', result:[
                 part ? `${part.name}\n${part.blurb}` : 'Select a layer and an organ in Activities.',
+                exploded && pieceName ? pieceName : '',
                 pin ? `${pin.label}\n${pin.info}` : '',
                 slide ? `${slide.title}\n${slide.description}\nStructures: ${slide.structures.map(s=>s.name).filter((s,i,a)=>a.indexOf(s)===i).join(', ')}` : '',
                 comparison ? `Healthy: ${comparison.healthyDesc}\n${comparison.disease}: ${comparison.diseasedDesc}\n${comparison.changes.join('\n')}` : '',
@@ -535,10 +571,15 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
               ].filter(Boolean).join('\n\n')};
             }}
             actions={() => [
+              {id:'heart-study',label:heartStudy?'Restart guided heart study':'Start guided heart study',onSelect:startHeartStudy,closeAfter:true},
               {id:'layer',label:'Layer: '+LAYERS.find(l=>l.id===state.layer)?.label+' · change',onSelect:()=>changeLayer(LAYERS[(LAYERS.findIndex(l=>l.id===state.layer)+1)%LAYERS.length].id)},
               {id:'previous',label:'Previous organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+parts.length-1)%parts.length].id)},
               {id:'next',label:'Next organ',onSelect:()=>pick(parts[(parts.findIndex(p=>p.id===state.selected)+1)%parts.length].id)},
-              {id:'take',label:state.taken?'Return to body':'Take to tray',disabled:!takeable,onSelect:take},
+              {id:'take',label:state.taken?'Return to body':'Take out',disabled:!takeable,onSelect:take},
+              {id:'separate',label:exploded?'Reassemble pieces':'Separate pieces',disabled:!state.taken,onSelect:()=>{setPieceName('');setExploded(v=>!v);}},
+              {id:'recall',label:'Bring organ here',disabled:!state.taken,onSelect:()=>setRecall(v=>v+1)},
+              {id:'zoom-in',label:'Enlarge organ',disabled:!state.taken,onSelect:()=>setTrayZoom(v=>Math.min(3,v+.25))},
+              {id:'zoom-out',label:'Reduce organ',disabled:!state.taken,onSelect:()=>setTrayZoom(v=>Math.max(.5,v-.25))},
               {id:'rotate',label:spin?'Pause rotation':'Rotate study organ',disabled:!state.taken,onSelect:()=>setSpin(v=>!v)},
               {id:'slice',label:'Slice: '+clipAxis+' · change',disabled:!state.taken,onSelect:()=>setClipAxis(v=>v==='off'?'x':v==='x'?'y':v==='y'?'z':'off')},
               {id:'label',label:'Identify next structure · Results',disabled:!state.taken||!ORGAN_ANNOTATIONS[state.taken]?.length,onSelect:()=>setActivePin(v=>((v??-1)+1)%ORGAN_ANNOTATIONS[state.taken!].length)},
@@ -559,7 +600,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
       <button className="backbtn" onClick={() => { if (document.pointerLockElement) document.exitPointerLock?.(); onBack(); }}>← Lab</button>
       <span className="bio-title">🫀 Biology & Anatomy</span>
       <div className="bio-top-right">
-        {!vrSession.active && <button onClick={() => { setGuideStep(0); setShowHelp(false); setDockTab('view'); }} aria-label="Start guided heart study">Guide</button>}
+        {!vrSession.active && <button onClick={startHeartStudy} aria-label="Start guided heart study">Heart study</button>}
         <button disabled={vrSession.active} onClick={() => setUltra(v => !v)}>{ultra || vr ? 'Ultra' : 'Normal'}</button>
         <button onClick={resetAll}>Reset</button>
         <LabVRButton vr={vrSession} title="Biology & Anatomy" />
@@ -577,49 +618,30 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
           <span><kbd>Shift</kbd> Sprint</span>
           <span><kbd>Space</kbd> Jump</span>
         </div>
-        <p>Look at a body part to see its name and info. Click an organ to take it directly to the study tray.</p>
+        <p>Look at a body part to see its name and info. Select an organ to inspect it in the air. Drag it to move and scroll to resize.</p>
         <button onClick={() => setShowHelp(false)}>Got it</button>
       </div>
     )}
 
-    {guideStep !== null && !detailId && !vrSession.active && (
-      <section className="bio-guide bio-ui" aria-label="Guided heart study" onClick={e => e.stopPropagation()}>
-        <div className="bio-guide-head">
-          <b>Heart study</b>
-          <button aria-label="Close guide" onClick={() => setGuideStep(null)}>✕</button>
-        </div>
-        <small>{guideStep === 5 ? 'Complete' : `Step ${guideStep + 1} of 5`}</small>
-        <p aria-live="polite">{[
-          'Choose Organs only to see inside the body.',
-          'Select the heart in the room or Organs dock to take it out.',
-          'Place the heart on the room tray so it stays put as you move.',
-          'Choose a heart structure label and read what it does.',
-          'Return the heart to the body.',
-          'Well done. You can explore another organ or repeat this study.',
-        ][guideStep]}</p>
-        {guideStep === 0 && <button className="bio-guide-action" onClick={() => setDockTab('view')}>Show view controls</button>}
-        {guideStep === 1 && <button className="bio-guide-action" onClick={() => setDockTab('organs')}>Show organs</button>}
-        {guideStep === 5 && <button className="bio-guide-action" onClick={() => { reset(); setDockTab('view'); setGuideStep(0); }}>Try again</button>}
-      </section>
-    )}
+    {heartPanel && !detailId && !vrSession.active && <HeartStudyPanel {...heartPanel}/>}
 
     {/* Crosshair */}
     {locked && !detailId && <div className="bio-crosshair" />}
 
     {/* ── Hover info card: appears on the right when looking at a part ── */}
-    {hoveredPart && !part && !searchOpen && !detailId && (
+    {hoveredPart && !part && !searchOpen && !detailId && !heartStudy && (
       <div className="bio-hover-card bio-ui" key={hoveredPart.id}>
         <div className="bio-hover-label">{hoveredPart.name}</div>
         {LATIN_NAMES[hoveredPart.id] && <div className="bio-hover-latin">{LATIN_NAMES[hoveredPart.id]}</div>}
         <p className="bio-hover-blurb">{HEAD_LEARNING[hoveredPart.id]?.summary ?? hoveredPart.blurb}</p>
-        <span className="bio-hover-hint">Click to take to study tray</span>
+        <span className="bio-hover-hint">Select to inspect in the air</span>
       </div>
     )}
 
     {/* ── Selected part card: persists when an organ is selected/taken ── */}
-    {part && !searchOpen && !detailId && (
+    {part && !searchOpen && !detailId && !heartStudy && (
       <div className="bio-selected-card bio-ui" onClick={e => e.stopPropagation()}>
-        <small className="bio-selected-status">{state.taken ? (fixedTray ? 'ON ROOM TRAY' : 'IN ROOM STUDY') : 'SELECTED'}</small>
+        <small className="bio-selected-status">{state.taken ? 'FLOATING SPECIMEN' : 'SELECTED'}</small>
         <div className="bio-selected-name">{part.name}</div>
         {LATIN_NAMES[part.id] && <div className="bio-hover-latin">{LATIN_NAMES[part.id]}</div>}
         <p className="bio-hover-blurb">{HEAD_LEARNING[part.id]?.summary ?? part.blurb}</p>
@@ -628,8 +650,10 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
         {state.taken === 'ears' && <p className="bio-hover-blurb">Studying the right ear. Return restores both ears to the body.</p>}
         {takeable && <button className="bio-selected-action" onClick={take}>{state.taken ? '↩️ Return' : '🫳 Take out'}</button>}
         {state.taken && <>
-          <button className="bio-selected-action" onClick={() => setFixedTray(true)} disabled={fixedTray}>Place on room tray</button>
-          <p className="bio-hover-blurb">The object stays in the room when you move. Return it to the body to take it again from a new position.</p>
+          <button className="bio-selected-action" onClick={() => setRecall(v=>v+1)}>Bring organ here</button>
+          <button className="bio-selected-action" onClick={() => {setPieceName('');setExploded(v=>!v);}}>{exploded ? 'Reassemble pieces' : 'Separate pieces'}</button>
+          {exploded && <p aria-live="polite">{pieceName || 'Select a piece for its name. Drag it to inspect it separately.'}</p>}
+          <p className="bio-hover-blurb">Drag to move the floating organ. Scroll or use Zoom to resize it.</p>
         </>}
         {state.taken && (
           <>
@@ -667,7 +691,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
                 <span className="bio-zoom-val">{Math.round(trayZoom * 100)}%</span>
               </div>
               <div className="bio-tray-hints">
-                <small>Drag organ to rotate · Scroll to zoom</small>
+                <small>Drag organ to move · Scroll to zoom</small>
               </div>
               {(clipAxis !== 'off' || splitOpen) && (
                 <div className="bio-zoom-row">
@@ -692,7 +716,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
               )}
             </div>
             {showPins && ORGAN_ANNOTATIONS[state.taken] && (
-              <div className="bio-head-landmarks" role="group" aria-label="Head structure labels">
+              <div className="bio-head-landmarks" role="group" aria-label="Organ structure labels">
                 <p>Choose a structure to highlight. Rotate or use the study tools to inspect hidden landmarks.</p>
                 {ORGAN_ANNOTATIONS[state.taken].map((pin, i) => <button key={pin.label} aria-pressed={activePin === i}
                   onClick={() => setActivePin(activePin === i ? null : i)}>{i + 1}. {pin.label}</button>)}
@@ -889,7 +913,7 @@ export function BiologyRoom({ state, onChange, onBack }: Props) {
           {dockTab === 'tools' && (<>
             {takeable && (
               <button className="bio-station primary" onClick={take}>
-                <span>{state.taken ? '↩️' : '🫳'}</span><span>{state.taken ? 'Return to body' : 'Take to tray'}</span>
+                <span>{state.taken ? '↩️' : '🫳'}</span><span>{state.taken ? 'Return to body' : 'Take out'}</span>
               </button>
             )}
             {state.taken && (<>
@@ -1029,14 +1053,17 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
 }) {
   const xrSession = useXR(s => s.session);
   const mouthTeeth = useContext(MouthTeethContext);
-  const fixedTray = useContext(FixedTrayContext);
+  const {zoom, recall} = useContext(AirStudyContext);
   const studyAnchor = useRef<Vector3 | null>(null);
-  useEffect(() => { studyAnchor.current = null; }, [taken, xrSession, fixedTray]);
+  const releasedRotation = useRef({x:0,y:0,z:0});
+  useEffect(() => {
+    studyAnchor.current = null;
+    releasedRotation.current = {x:0,y:0,z:0};
+  }, [taken, xrSession, recall]);
   const ref = useRef<Group>(null);
   const angle = useRef(0);
-  const isHeld = useLabGrabbable(ref, taken, {}, organId);
-  const explodeProgress = useRef(0);
   const [approvedBounds, setApprovedBounds] = useState<{ centre: Vector3; diameter: number; scale: number } | null>(null);
+  const [landmarks, setLandmarks] = useState<(Vector3 | undefined)[]>([]);
   const receiveBounds = useCallback((centre: Vector3, diameter: number) => {
     setApprovedBounds({ centre: centre.clone(), diameter, scale: .48 / diameter });
   }, []);
@@ -1048,6 +1075,16 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     return { centre, diameter: Math.max(size.x, size.y, size.z), scale: .48 / Math.max(size.x, size.y, size.z) };
   }, [defs]);
   const info = approvedBounds ?? fallbackInfo;
+  const isHeld = useLabGrabbable(ref, taken, {
+    floating:true, scaleRange:[info.scale*.5,info.scale*3],
+    onRelease:(object,cancelled)=>{
+      if (cancelled) return;
+      studyAnchor.current = object.position.clone();
+      releasedRotation.current = {x:object.rotation.x-trayRotX, y:object.rotation.y-turn-angle.current-(organId==='ears'?Math.PI/2:0), z:object.rotation.z};
+      zoom(Math.max(.5,Math.min(3,object.scale.x/info.scale)));
+    },
+  }, organId);
+  const drag = useAirDrag(ref,taken && !exploded,position=>{studyAnchor.current=position.clone();});
   const pins = ORGAN_ANNOTATIONS[organId] ?? [];
 
   const clipPlane = useMemo(() => new ThreePlane(new Vector3(1, 0, 0), 0), []);
@@ -1094,14 +1131,18 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     };
     if (isHeld()) {updateClip();return;}
     const k = 1 - Math.exp(-dt * 9);
-    const dest = taken ? new Vector3(.7, 1.12, .45) : info.centre.clone().multiplyScalar(.01).add(new Vector3(-.7, .99, 0));
-    // Small screens place the organ in front once; its world anchor then stays
-    // fixed through walking, looking, resizing and quality changes.
+    const dest = info.centre.clone().multiplyScalar(.01).add(new Vector3(-.7, .99, 0));
     if (taken) {
-      if (!studyAnchor.current && !fixedTray && !xrSession && state3.size.width <= 760) {
-        dest.set(0, 0, -studyDistance(state3.size.width, state3.size.height)).applyQuaternion(state3.camera.quaternion).add(state3.camera.position);
+      if (!studyAnchor.current) {
+        const eye = xrSession ? state3.gl.xr.getCamera() : state3.camera;
+        const distance = xrSession ? .72 : Math.max(.85,studyDistance(state3.size.width,state3.size.height));
+        if (!xrSession) eye.updateWorldMatrix(true,false);
+        dest.set(0,0,-1).transformDirection(eye.matrixWorld).multiplyScalar(distance)
+          .add(new Vector3().setFromMatrixPosition(eye.matrixWorld));
+        dest.y -= xrSession ? .12 : 0;
+        ref.current.parent?.worldToLocal(dest);
+        studyAnchor.current = dest.clone();
       }
-      studyAnchor.current = anchoredStudyPosition(studyAnchor.current, dest);
       dest.copy(studyAnchor.current);
     }
     ref.current.position.lerp(dest, k);
@@ -1109,10 +1150,9 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     ref.current.scale.lerp(new Vector3(zoomedScale, zoomedScale, zoomedScale), k);
     if (taken && spin) angle.current += dt * .35;
     if (!taken) angle.current = 0;
-    ref.current.rotation.y += ((taken ? turn + angle.current + (organId === 'ears' ? Math.PI / 2 : 0) : 0) - ref.current.rotation.y) * k;
-    ref.current.rotation.x += ((taken ? trayRotX : 0) - ref.current.rotation.x) * k;
-    const targetExplode = exploded ? 1 : 0;
-    explodeProgress.current += (targetExplode - explodeProgress.current) * Math.min(1, dt * 4);
+    ref.current.rotation.y += ((taken ? releasedRotation.current.y + turn + angle.current + (organId === 'ears' ? Math.PI / 2 : 0) : 0) - ref.current.rotation.y) * k;
+    ref.current.rotation.x += ((taken ? releasedRotation.current.x + trayRotX : 0) - ref.current.rotation.x) * k;
+    ref.current.rotation.z += ((taken ? releasedRotation.current.z : 0) - ref.current.rotation.z) * k;
     updateClip();
   });
 
@@ -1123,20 +1163,31 @@ function Organ({ defs, taken, selected, turn, spin, pick, detail, organId, trayR
     return planes.length ? planes : undefined;
   }, [clipAxis, splitOpen, clipPlane, splitPlane]);
 
-  const fallback = !showProceduralBiologyOrgan(organId, taken) ? null : <>{defs.map((d, i) => {
+  const fallback = !showProceduralBiologyOrgan(organId, taken) ? null : exploded ? <group position={info.centre.clone().negate()}><ProceduralPieces defs={defs}/></group> : <>{defs.map((d, i) => {
     const basePos = new Vector3(...d.at).sub(info.centre);
-    const explodeDir = basePos.clone().normalize();
-    const explodeOffset = explodeDir.multiplyScalar(explodeProgress.current * info.diameter * 0.4);
     const peelOpacity = peelAmount > 0 ? Math.max(0, 1 - peelAmount * (1 + i * 0.3)) : 1;
-    return <mesh key={i} geometry={d.geo} position={basePos.clone().add(explodeOffset)}>
+    return <mesh key={i} geometry={d.geo} position={basePos}>
       <meshStandardMaterial color={d.color} roughness={.56} emissive={selected ? '#573322' : '#000000'} emissiveIntensity={.24} clippingPlanes={activeClipPlanes} clipShadows transparent={peelAmount > 0} opacity={peelOpacity} />
     </mesh>;
   })}</>;
   const refined = import.meta.env.DEV;
-  return <group ref={ref} onClick={e => { e.stopPropagation(); pick(defs[0].id); }}>
-    {refined ? <AnatomyAssetBoundary url={anatomyAssetUrl(isFittedHeadPart(organId) ? 'head' : 'organs', detail)} fallback={fallback ?? undefined}><ReviewedOrgan id={defs[0].id} detail={detail} diameter={info.diameter} selected={selected} showTeeth={taken && organId === 'mouth' && mouthTeeth} studySingleEar={taken && organId === 'ears'} onBounds={receiveBounds} clipPlanes={activeClipPlanes} peelAmount={peelAmount} /></AnatomyAssetBoundary> : fallback}
-    {taken && showPins && !exploded && pins.map((pin, i) => showAnnotation(isFittedHeadPart(organId) && !xrSession, i, activePin, trayZoom) && (
-      <AnnotationDot key={i} position={centeredAnchor((refined ? HEAD_ANCHORS[organId]?.[i] : undefined) ?? pin.pos, info.centre.toArray())} size={info.diameter / 40} label={pin.label} active={activePin === i} onClick={() => onActivePin(activePin === i ? null : i)} />
+  return <group ref={ref} {...drag} onClick={e => {
+    e.stopPropagation();
+    if (e.delta > 4) return;
+    if (taken && organId === 'heart') {
+      let node = e.object;
+      while (node !== ref.current) {
+        const index = heartLandmarkIndex(node.name);
+        if (index !== undefined) {onActivePin(index); return;}
+        if (!node.parent) break;
+        node = node.parent;
+      }
+    }
+    pick(defs[0].id);
+  }}>
+    {refined ? <AnatomyAssetBoundary url={anatomyAssetUrl(isFittedHeadPart(organId) ? 'head' : 'organs', detail)} fallback={fallback ?? undefined}><ReviewedOrgan id={defs[0].id} detail={detail} diameter={info.diameter} selected={selected} showTeeth={taken && organId === 'mouth' && mouthTeeth} studySingleEar={taken && organId === 'ears'} onBounds={receiveBounds} onLandmarks={setLandmarks} separated={taken && exploded} activeStructure={taken ? activePin : null} clipPlanes={activeClipPlanes} peelAmount={peelAmount} /></AnatomyAssetBoundary> : fallback}
+    {taken && showPins && !exploded && pins.map((pin, i) => (activePin === i || showAnnotation(isFittedHeadPart(organId) && !xrSession, i, activePin, trayZoom)) && (
+      <AnnotationDot key={i} position={centeredAnchor((refined ? landmarks[i]?.toArray() ?? HEAD_ANCHORS[organId]?.[i] : undefined) ?? pin.pos, info.centre.toArray())} size={info.diameter / 40} label={pin.label} active={activePin === i} onClick={() => onActivePin(activePin === i ? null : i)} />
     ))}
   </group>;
 }
@@ -1212,7 +1263,8 @@ function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, sho
         antEntering.current = true;
       }
       antProgress.current = Math.min(1, antProgress.current + dt * 1.5);
-      const trayPos = new Vector3(.7, 1.12, .45);
+      const floating = organGroup.current?.children.find(o=>o.userData.organId===state.taken);
+      const trayPos = floating?.getWorldPosition(new Vector3()) ?? camera.position;
       const k = antProgress.current;
       camera.position.lerp(trayPos, k * 0.05);
       camera.near = 0.001;
@@ -1278,7 +1330,7 @@ function BiologyScene({ state, detail, pick, spin, turn, trayRotX, trayZoom, sho
     <directionalLight position={[2, 5, 4]} intensity={2.3} castShadow={fidelity === 'ultra'} shadow-mapSize={[1024, 1024]} shadow-normalBias={.035} shadow-bias={-.0002} />
     <pointLight position={[0, 3, 0]} intensity={2} distance={10} decay={2} color="#fff5e0" />
 
-    {!session && <FirstPersonControls input={walkInput} start={[-.7, 1.55, 3.2]} startYaw={0} speed={2.4} eyeHeight={1.55} collision={solid} bounds={bounds} headBob />}
+    {!session && <FirstPersonControls input={walkInput} start={[-.7, 1.55, 3.2]} startPitch={-.04} startYaw={0} speed={2.4} eyeHeight={1.55} collision={solid} bounds={bounds} headBob />}
 
     <group ref={solid} name="solid">
       {import.meta.env.DEV ? <ModelErrorBoundary fallback={fallback}><Suspense fallback={fallback}><RoomAsset detail={fidelity} /></Suspense></ModelErrorBoundary> : fallback}

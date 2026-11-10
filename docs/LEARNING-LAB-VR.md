@@ -10,7 +10,7 @@ required for the existing PC/mobile learning experience.
 
 | Room | Immersive learning |
 | --- | --- |
-| Biology & Anatomy | Select layers/organs, take to tray, grip and rotate, scale, slice, identify structures, read tissue/comparison notes, return and reset |
+| Biology & Anatomy | Extract floating organs, grip to position, use both grips to resize, separate and reassemble pieces, slice, identify structures, return and reset |
 | Chemistry | Select shelf bottles, grip selected vials, tilt over the beaker to add bounded doses, adjust amounts, run a mix and read its equation/explanation; move flame-test samples into the flame or select them by trigger |
 | Physics & Machines | Drag launch angle/speed and launch a projectile; grip/release the pendulum bob, change length; switch circuit presets; compare simple machines and test friction on a ramp |
 | Earth & Sky | Pick up planet/layer samples; rotate Earth; move the Moon for phases/tides; change season and read the corresponding results |
@@ -34,7 +34,7 @@ choose a room, then Enter VR. Accept the headset session prompt.
 - Y: show/hide the learning panel. Close also dismisses it.
 - Point either controller and press its trigger to select markers or controls.
 - Point at an object, or bring a controller near it, and hold grip to grab it. Move/rotate the
-  controller; release to return it to its slot. Either controller works.
+  controller. Anatomy specimens float where released. Other lab tools return to their slots.
 - Drag the gold slider knob or its rail with the trigger. Grip also moves knobs;
   plus/minus buttons and Activities provide selectable alternatives.
 
@@ -50,7 +50,7 @@ Opening the panel releases held tools and cancels slider drags; it does not stop
 locomotion. A consumed grip cannot become a sprint until released. Tracking/focus
 loss and session exit return tools to their saved positions. Manipulation uses
 the native target ray for aiming and grip pose for wrist motion. This is
-controller ray-grabbing, not hand tracking, two-hand scaling or rigid-body physics.
+controller ray-grabbing. Anatomy supports two-grip scaling and floating release.
 
 Visit station approaches from the centre aisle, faces the exhibit, clears jump
 and flight state and keeps the origin on the floor. Walking/running includes the
@@ -74,8 +74,23 @@ not use Penh's persona. No new Khmer scientific translations were invented.
 
 ## Local testing
 
+For the Anatomy pilot, open **Heart study** on the toolbar or **Activities →
+Start guided heart study** in VR. Select the heart to bring it into the air.
+On desktop or touch, drag it to move and use Zoom to resize. In VR, grip with
+either controller, then hold the other grip and spread or close your hands.
+Release to leave the specimen in place. **Bring organ here** recalls it.
+**Separate pieces** exposes individually movable model parts. A continuous mesh
+opens into three illustrative surface sections. **Reassemble pieces** restores
+the assembled specimen. The lesson continues with section inspection, two
+observations, a question, optional narration and return.
+
 Run npm run dev, open http://127.0.0.1:5173/?vr-sim=1, then choose a Learning Lab
 room. Enter VR uses the existing Meta Quest 3 emulator when no headset is present.
+The **PC VR test** panel shows whether the simulator is ready and gives mouse or
+keyboard (Space/Enter) controls for both controller triggers, grips, sticks and
+buttons. Hold a control to press it; release it to stop. Use the emulator's
+headset/controller tools to move your view and aim the ray. The panel is local
+development-only and can be collapsed with its title button.
 This switch only works on localhost in a development build; it cannot create a
 fake headset session on the deployed preview. A simulator cannot validate headset
 comfort, physical tracking, hardware permissions or actual Quest frame rate.
@@ -103,7 +118,7 @@ on Quest and preserve the existing low-end Android Normal baseline.
 
 ### Activity trials
 
-1. Anatomy: select an organ, Take to tray, close the panel, grip/rotate/release;
+1. Anatomy: select an organ, take it out, close the panel, grip/rotate/release;
    change study scale and slice, read a structure in Results, return/reset.
    Repeat entry from its Detail view and the standalone specimen route.
 2. Chemistry: choose a known pair of shelf reagents, move to the central bench,

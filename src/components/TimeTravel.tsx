@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ERAS } from "../history";
 import { GuideMascot, type MascotState } from "./GuideMascot";
 import { askGuide } from "../lib/guide";
-import { LANGS, type LangCode, speak, stopSpeaking, ttsSupported } from "../lib/voice";
+import { LANGS, type LangCode } from "../lib/voice";
+import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import { getIdentity, earnedAchievements, claimCredential } from "../lib/identity";
 import type { Spot } from "../spots";
 
@@ -15,7 +16,10 @@ import type { Spot } from "../spots";
 export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const [i, setI] = useState(2); // start at the Angkor golden age
   const [lang, setLang] = useState<LangCode>("en");
-  const [speaking, setSpeaking] = useState(false);
+  const [speech,setSpeech]=useState<NarrationStatus>('idle');
+  const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
+  const speaking=speech==='speaking';
+  const [replyLang,setReplyLang]=useState<LangCode>('en');
   const [loading, setLoading] = useState(false);
   const [earned, setEarned] = useState<Set<string>>(new Set());
   const era = ERAS[i];
@@ -41,38 +45,32 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
 
   // Stop any narration when the era changes or the panel closes.
   useEffect(() => {
-    stopSpeaking();
-    setSpeaking(false);
-  }, [i, lang]);
-  useEffect(() => () => stopSpeaking(), []);
+    narrator.stop();
+  }, [i, lang, spot.id, narrator]);
+  useEffect(() => () => narrator.dispose(), [narrator]);
 
   const [translatedText, setTranslatedText] = useState("");
 
   useEffect(() => {
-    if (lang === "en") {
-      setTranslatedText("");
-      return;
-    }
     const ctrl = new AbortController();
+    setTranslatedText('');setReplyLang('en');
     setLoading(true);
     askGuide({ spotId: spot.id, eraId: era.id, lang }, ctrl.signal).then((reply) => {
-      if (!ctrl.signal.aborted && reply?.text) {
-        setTranslatedText(reply.text.trim());
-      }
+      if(ctrl.signal.aborted)return;
+      if(reply?.text){setTranslatedText(reply.text.trim());setReplyLang(reply.lang??lang);}
       setLoading(false);
     });
     return () => ctrl.abort();
   }, [spot.id, era.id, lang]);
 
   const narrate = async () => {
-    if (speaking) {
-      stopSpeaking();
-      setSpeaking(false);
+    if (speech==='speaking'||speech==='loading') {
+      narrator.stop();
       return;
     }
     const text = translatedText || [era.story, siteNote].filter(Boolean).join(" ");
-    const bcp = LANGS.find((l) => l.code === lang)!.bcp;
-    speak(text, bcp, { onStart: () => setSpeaking(true), onEnd: () => setSpeaking(false) });
+    const bcp = LANGS.find((l) => l.code === replyLang)!.bcp;
+    await narrator.start(text,bcp);
   };
 
   const mascotState: MascotState = speaking || loading ? "talking" : "idle";
@@ -178,12 +176,11 @@ export function TimeTravel({ spot, onClose }: { spot: Spot; onClose: () => void 
               </button>
             ))}
           </div>
-          {ttsSupported() && (
-            <button className="tt-narrate" onClick={narrate}>
-              {speaking ? "⏸ Stop" : loading ? "…" : "🔊 Kiri narrates"}
+            <button className="tt-narrate" onClick={narrate} disabled={loading}>
+              {speech==='loading'?'Loading voice…':speaking ? "⏸ Stop" : loading ? "…" : "🔊 Kiri narrates"}
             </button>
-          )}
         </div>
+        {speech==='unavailable'&&<p role="status">Narration is unavailable. You can still read the story.</p>}
 
         <div className="tt-nav">
           <button onClick={() => go(-1)} disabled={i === 0}>

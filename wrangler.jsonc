@@ -9,6 +9,14 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  // Private, versioned AI guide answers and speech. Local development uses an
+  // on-disk R2 simulation; the real bucket is connected on deployment.
+  "r2_buckets": [
+    {
+      "binding": "GUIDE_STORAGE",
+      "bucket_name": "camboverse"
+    }
+  ],
   // Digital-economy order store (see DIGITAL_ECONOMY.md). The Worker creates the
   // `orders` table on first use, so no manual migration step is required; the
   // migrations/ folder is kept for explicit/versioned schema changes.

@@ -42,7 +42,7 @@ export function LabView({
   const ready = SUBJECTS.filter((s) => specimensOfSubject(s.id).length > 0);
   const planned = SUBJECTS.filter((s) => specimensOfSubject(s.id).length === 0);
   const rooms = [
-    { name: "Biology & Anatomy", icon: "🫀", hint: "Study the body and take organs to the tray", open: onOpenBiology },
+    { name: "Biology & Anatomy", icon: "🫀", hint: "Take organs out and explore their pieces", open: onOpenBiology },
     { name: "Chemistry", icon: "🧪", hint: "Combine reagents and observe reactions", open: onOpenChemistry },
     { name: "Physics", icon: "⚙️", hint: "Test machines, motion and energy", open: onOpenPhysics },
     { name: "Earth & Sky", icon: "🌏", hint: "Explore planets and Earth systems", open: onOpenEarthSky },

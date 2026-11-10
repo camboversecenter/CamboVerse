@@ -1,0 +1,10 @@
+.lab-vr-simulator { position:fixed; z-index:2147483000; right:12px; bottom:12px; width:min(380px,calc(100vw - 24px)); color:#e9f6ed; font:13px system-ui,sans-serif; }
+.lab-vr-simulator button { cursor:pointer; border:1px solid #689e8d; border-radius:8px; background:#244a40; color:#fff; padding:7px 9px; touch-action:none; }
+.lab-vr-simulator button:disabled { opacity:.45; cursor:not-allowed; }
+.lab-vr-simulator button:active { background:#a1d5b8; color:#10291e; }
+.lab-vr-simulator-toggle { float:right; }
+.lab-vr-simulator-body { clear:both; padding:12px; border:1px solid #79a992; border-radius:12px; background:#112c27f5; box-shadow:0 6px 30px #0008; }
+.lab-vr-simulator-body p { margin:7px 0; line-height:1.35; }
+.lab-vr-simulator-hands { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.lab-vr-simulator-hands section div { display:flex; flex-wrap:wrap; gap:4px; margin:5px 0; }
+.lab-vr-simulator small { display:block; color:#b2d0bd; margin-top:8px; }

@@ -6,17 +6,19 @@ import {Euler, Group, PerspectiveCamera, Vector3} from 'three';
 import {LabVRRig, useLabVR, type VRStation} from './LabVR';
 import {IMMERSIVE_XR_OPTIONS} from '../immersiveVR';
 import {labStationArrival} from '../labVRNavigation';
+import {prepareLabSimulation} from '../labVRSimulation';
+vi.mock('../labVRSimulation', () => ({prepareLabSimulation:vi.fn()}));
 
 const mock = vi.hoisted(() => ({frames:new Set<(state:unknown,dt:number)=>void>(), origin:null as unknown,
   session:{visibilityState:'visible',end:vi.fn(async()=>{})}, sources:[] as unknown[], subscribe:vi.fn(), create:vi.fn(),
-  stop:vi.fn(), dispose:vi.fn(), narrate:vi.fn()}));
+  stop:vi.fn(), dispose:vi.fn(), narrate:vi.fn(), setState:vi.fn()}));
 vi.mock('@react-three/fiber', async () => {
   const React = await import('react');
   return {useFrame:(frame:(state:unknown,dt:number)=>void) => React.useEffect(() => {mock.frames.add(frame); return () => {mock.frames.delete(frame);};}, [frame])};
 });
 vi.mock('@react-three/xr', async () => {
   const React = await import('react');
-  return {createXRStore:(options:unknown)=>{mock.create(options);return {subscribe:mock.subscribe,getState:()=>({session:mock.session})};},
+  return {createXRStore:(options:unknown)=>{mock.create(options);return {subscribe:mock.subscribe,setState:mock.setState,getState:()=>({session:mock.session})};},
     useXR:(select:(s:unknown)=>unknown)=>select({session:mock.session}),
     useXRStore:()=>({getState:()=>({session:mock.session,inputSourceStates:mock.sources})}), useXRControllerLocomotion:()=>{},
     XROrigin:React.forwardRef((_,ref)=>{React.useImperativeHandle(ref,()=>mock.origin);return null;})};
@@ -100,6 +102,21 @@ describe('Learning Lab immersive interaction',()=>{
     await act(async()=>listener({session:{},mode:'inline'}));expect(host.textContent).toBe('Normal');
     await act(async()=>listener({session:{},mode:'immersive-vr'}));expect(host.textContent).toBe('Ultra');
     await act(async()=>listener({session:null,mode:null}));expect(host.textContent).toBe('Normal');
+  });
+  it('reuses the local virtual controllers after switching between rooms',async()=>{
+    const original=window.location.href;
+    window.history.replaceState({},'', '?vr-sim=1');
+    const device={controllers:{left:{},right:{}}};
+    vi.mocked(prepareLabSimulation).mockResolvedValue(device as never);
+    function Probe(){useLabVR();return createElement('p',null,'Room');}
+    try {
+      await act(async()=>root.render(createElement(Probe,{key:'first'})));
+      expect(mock.create).toHaveBeenLastCalledWith(expect.objectContaining({emulate:false}));
+      expect(mock.setState).toHaveBeenCalledWith({emulator:device});
+      await act(async()=>root.render(createElement(Probe,{key:'second'})));
+      expect(mock.create).toHaveBeenLastCalledWith(expect.objectContaining({emulate:false}));
+      expect(mock.setState).toHaveBeenCalledWith({emulator:device});
+    } finally {window.history.replaceState({},'',original);}
   });
   it('shows and narrates live experiment results inside the same world panel',async()=>{
     function Experiment(){const [amount,setAmount]=useState(10);return createElement(LabVRRig,{title:'Chemistry',start:[0,0,2],bounds:[-3,3,-3,3],stations,

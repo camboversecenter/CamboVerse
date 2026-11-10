@@ -71,4 +71,28 @@ describe('VR entry over the walk view',()=>{
     await act(async()=>button.click());
     expect(enter).toHaveBeenCalledOnce();
   });
+  it('lets the visitor recheck a simulator or headset that becomes available after opening the dialog',async()=>{
+    vi.mocked(navigator.xr!.isSessionSupported).mockResolvedValue(false);
+    const {store,button}=await renderEntry();
+    await act(async()=>button.click());
+    const retry=Array.from(document.querySelectorAll('dialog button')).find(b=>b.textContent==='Check again')!;
+    expect(retry.disabled).toBe(false);
+    vi.mocked(navigator.xr!.isSessionSupported).mockResolvedValue(true);
+    await act(async()=>retry.click());
+    expect(document.querySelector('[role="status"]')?.textContent).toContain('ready');
+    const enter=vi.spyOn(store,'enterVR').mockRejectedValue(new Error('test session failure'));
+    const enterButton=Array.from(document.querySelectorAll('dialog button')).find(b=>b.textContent==='Enter VR')!;
+    await act(async()=>enterButton.click());
+    expect(enter).toHaveBeenCalledOnce();
+  });
+  it('allows a software emulator to run even if real spatial tracking is blocked',async()=>{
+    Object.defineProperty(document,'permissionsPolicy',{configurable:true,value:{allowsFeature:()=>false}});
+    try{
+      const {store,button}=await renderEntry();
+      await act(async()=>button.click());
+      expect(document.querySelector('[role="status"]')?.textContent).toContain('blocked');
+      await act(async()=>store.setState({emulator:{} as never}));
+      expect(document.querySelector('[role="status"]')?.textContent).toContain('ready');
+    }finally{Reflect.deleteProperty(document,'permissionsPolicy');}
+  });
 });

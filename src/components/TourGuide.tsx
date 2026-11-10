@@ -1,21 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GuideMascot, type MascotState } from "./GuideMascot";
 import { askGuide } from "../lib/guide";
 import {
   LANGS,
   type LangCode,
-  speak,
-  stopSpeaking,
-  ttsSupported,
-  voiceFor,
   sttSupported,
   listenOnce,
 } from "../lib/voice";
+import {GuideNarrator,type NarrationStatus} from '../lib/guideNarrator';
 import type { Spot, Poi } from "../spots";
 
 /**
  * Kiri the monkey's guide panel: he narrates the current place (or answers a
- * typed/spoken question) in the chosen language, reads it aloud on-device, and
+ * typed/spoken question) in the chosen language, replays saved narration, and
  * lets the visitor step through the site's points of interest with him.
  */
 export function TourGuide({
@@ -38,71 +35,61 @@ export function TourGuide({
   const [lang, setLang] = useState<LangCode>("en");
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
-  const [speaking, setSpeaking] = useState(false);
+  const [speech,setSpeech]=useState<NarrationStatus>('idle');
+  const narrator=useMemo(()=>new GuideNarrator(setSpeech),[]);
+  const [replyLang,setReplyLang]=useState<LangCode>('en');
   const [listening, setListening] = useState(false);
   const [question, setQuestion] = useState("");
-  const [sound, setSound] = useState(ttsSupported());
-  const soundRef = useRef(sound);
-  soundRef.current = sound;
+  const pending=useRef<AbortController|null>(null);
+  const stopListen=useRef<null|(()=>void)>(null);
 
   const bcp = LANGS.find((l) => l.code === lang)!.bcp;
-  const hasVoice = ttsSupported() && !!voiceFor(bcp);
-
-  const say = (t: string) => {
-    if (!soundRef.current) return;
-    speak(t, bcp, { onStart: () => setSpeaking(true), onEnd: () => setSpeaking(false) });
-  };
+  const speaking=speech==='speaking';
 
   // Fetch narration whenever the place, POI, or language changes.
   useEffect(() => {
     const ctrl = new AbortController();
+    pending.current?.abort();pending.current=ctrl;
     setLoading(true);
-    stopSpeaking();
-    setSpeaking(false);
+    narrator.stop();stopListen.current?.();setListening(false);
     askGuide({ spotId: spot.id, poiId: activePoi?.id ?? null, lang }, ctrl.signal).then((reply) => {
       if (ctrl.signal.aborted) return;
       const t = reply?.text?.trim() || activePoi?.info || spot.blurb;
       setText(t);
+      setReplyLang(reply?.lang??(reply?.text?lang:'en'));
       setLoading(false);
-      say(t);
     });
     return () => ctrl.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spot.id, activePoi?.id, lang]);
+  }, [spot.id, spot.blurb, activePoi?.id, activePoi?.info, lang, narrator]);
 
   // Stop any speech when the panel unmounts.
-  useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => () => {pending.current?.abort();stopListen.current?.();narrator.dispose();}, [narrator]);
 
   const ask = (q: string) => {
     const query = q.trim();
-    if (!query) return;
+    if (!query||loading) return;
     setQuestion("");
     setLoading(true);
-    stopSpeaking();
-    setSpeaking(false);
-    askGuide({ spotId: spot.id, poiId: activePoi?.id ?? null, lang, question: query }).then((reply) => {
+    narrator.stop();
+    pending.current?.abort();const ctrl=new AbortController();pending.current=ctrl;
+    askGuide({ spotId: spot.id, poiId: activePoi?.id ?? null, lang, question: query },ctrl.signal).then((reply) => {
+      if(ctrl.signal.aborted||pending.current!==ctrl)return;
       const t = reply?.text?.trim() || "Sorry, I could not answer that just now.";
       setText(t);
+      setReplyLang(reply?.lang??(reply?.text?lang:'en'));
       setLoading(false);
-      say(t);
     });
   };
 
   const toggleSound = () => {
-    if (sound) {
-      stopSpeaking();
-      setSpeaking(false);
-      setSound(false);
-    } else {
-      setSound(true);
-      if (text) speak(text, bcp, { onStart: () => setSpeaking(true), onEnd: () => setSpeaking(false) });
-    }
+    if(speech==='speaking'||speech==='loading'){narrator.stop();return;}
+    if(text&&!loading)void narrator.start(text,LANGS.find(l=>l.code===replyLang)!.bcp);
   };
 
   const mic = () => {
     if (listening) return;
     setListening(true);
-    listenOnce(
+    stopListen.current=listenOnce(
       bcp,
       (t) => {
         setListening(false);
@@ -150,14 +137,13 @@ export function TourGuide({
             {l.name}
           </button>
         ))}
-        {ttsSupported() && (
-          <button className="guide-sound" onClick={toggleSound} aria-label="Toggle voice">
-            {sound ? "🔊" : "🔇"}
-          </button>
-        )}
+        <button className="guide-sound" onClick={toggleSound} disabled={loading} aria-label={speech==='speaking'||speech==='loading'?'Stop narration':'Listen to Kiri'}>
+          {speech==='loading'?'Loading voice…':speech==='speaking'?'■ Stop':'🔊 Listen'}
+        </button>
       </div>
 
-      {sound && !hasVoice && <p className="guide-note">No {LANGS.find((l) => l.code === lang)!.name} voice on this device showing text.</p>}
+      {replyLang!==lang&&!loading&&<p className="guide-note">Translation unavailable; showing English location notes.</p>}
+      {speech==='unavailable'&&<p className="guide-note" role="status">Narration is unavailable. You can still read the answer.</p>}
 
       <form
         className="guide-ask"
@@ -171,13 +157,15 @@ export function TourGuide({
           onChange={(e) => setQuestion(e.target.value)}
           placeholder={listening ? "Listening…" : "Ask Kiri a question…"}
           aria-label="Ask a question"
+          maxLength={500}
+          disabled={loading}
         />
         {sttSupported() && (
           <button type="button" className={listening ? "guide-mic on" : "guide-mic"} onClick={mic} aria-label="Ask by voice">
             🎤
           </button>
         )}
-        <button type="submit" className="guide-send">
+        <button type="submit" className="guide-send" disabled={loading||!question.trim()}>
           Ask
         </button>
       </form>

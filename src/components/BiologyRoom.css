@@ -24,6 +24,8 @@
   width: 100% !important;
   height: 100% !important;
 }
+.bio-room .walk-layer { pointer-events: none; }
+.bio-room .walk-layer .joystick { pointer-events: auto; }
 
 /* ── Top bar ─────────────────────────────────────────────── */
 .bio-top {
@@ -70,6 +72,17 @@
 .bio-guide small { display: block; margin-top: 4px; color: #9bc7bd; }
 .bio-guide p { margin: 8px 0 10px; color: #edf5f6; font-size: 13px; line-height: 1.45; }
 .bio-guide .bio-guide-action { background: #266b61; border-color: #75c6b1; width: 100%; }
+.bio-guide { max-height: calc(100dvh - 190px); overflow-y: auto; width: min(320px, calc(100vw - 32px)); }
+.bio-guide h2 { font-size: 18px; margin: 10px 0 4px; }
+.bio-guide progress { width: 100%; height: 6px; accent-color: #7fdfc3; }
+.bio-guide-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 12px; }
+.bio-guide-actions button { font-size: 12px; min-height: 44px; }
+.bio-guide-actions button:only-child { grid-column: 1 / -1; background: #266b61; }
+.bio-guide-actions button[aria-pressed="true"] { background: #377a66; border-color: #bcebdc; }
+.bio-guide .bio-guide-note { padding: 10px; border-left: 3px solid #7fdfc3; background: #172f37; }
+.bio-guide-footer { display: flex; flex-wrap: wrap; gap: 5px; border-top: 1px solid #36575a; padding-top: 10px; margin-top: 12px; }
+.bio-guide-footer button { font-size: 11px; padding: 7px 9px; }
+.bio-guide--collapsed { width: 190px; }
 
 /* ── Crosshair ───────────────────────────────────────────── */
 .bio-crosshair {
@@ -672,6 +685,10 @@
   .bio-dock-tab { font-size: 11px; padding: 7px 10px; min-height: 42px; }
   .bio-station { font-size: 11px; padding: 8px 10px; min-height: 44px; }
   .bio-guide { top: 58px; left: 8px; width: min(280px, calc(100vw - 16px)); }
+  .bio-room--guided .bio-guide { top: auto; bottom: 124px; width: calc(100vw - 16px); max-height: 38dvh; }
+  .bio-room--guided .bio-guide-head { position: sticky; top: -12px; background: #0a1820; z-index: 1; padding-block: 6px; }
+  .bio-room--guided .bio-canvas { top: 56px; bottom: calc(38dvh + 132px); }
+  .bio-room--guided:has(.bio-guide--collapsed) .bio-canvas { bottom: 170px; }
   .bio-help { padding: 20px 22px; }
   .bio-help b { font-size: 16px; }
   .bio-panel { max-width: 95vw; }

@@ -209,7 +209,7 @@ export function SpecimenView({
               a cool fill from behind so the silhouette separates from the dark
               background, and enough ambient that a cavity is never pure black. */}
 
-          <LabMovable position={vr.active ? [0, 1.2 - centre * .85 / Math.max(specimen.sizeU, specimen.spanU), -1.2] : [0,0,0]}
+          <LabMovable key={`${specimen.id}:${vr.active}:${reset}`} floating={vr.active && specimen.subject==='biology'} position={vr.active ? [0, 1.2 - centre * .85 / Math.max(specimen.sizeU, specimen.spanU), -1.2] : [0,0,0]}
             scale={vr.active ? .85 / Math.max(specimen.sizeU, specimen.spanU) : 1} resetKey={`${specimen.id}:${vr.active}`}>
             {real ? <AnatomyAssetBoundary url={real.url} fallback={<StagedExhibit
               stage={!vr.active}
@@ -258,7 +258,7 @@ export function SpecimenView({
           </>}
           <LabVRRig title={specimen.name} start={[0,0,.5]} bounds={[-2,2,-2,2]}
             stations={[{id:specimen.id,label:specimen.name,at:[0,1.2,-1.2],description:part ? `${part.name}. ${part.blurb}` : specimen.name}]}
-            activity={() => ({objective:'Inspect a part, change its layer and compare what becomes visible.',result:part ? `${part.name}\n${part.blurb}` : 'Point at a part with the trigger. Hold grip on the exhibit to bring it closer and rotate your wrist. Release to return it.'})}
+            activity={() => ({objective:'Inspect a part, change its layer and compare what becomes visible.',result:part ? `${part.name}\n${part.blurb}` : specimen.subject==='biology' ? 'Grip the specimen to move it. Add the other grip and spread or close your hands to resize. Release to leave it floating.' : 'Point at a part with the trigger. Hold grip on the exhibit to bring it closer and rotate your wrist. Release to return it.'})}
             actions={() => [
               ...specimen.layers.map(l => ({id:l.id,label:l.label,active:layer===l.id,onSelect:()=>setLayer(l.id)})),
               {id:'next-part',label:'Next part',disabled:!specimen.parts.length,onSelect:()=>pickPart(specimen.parts[(specimen.parts.findIndex(p=>p.id===picked)+1)%specimen.parts.length].id)},

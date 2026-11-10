@@ -14,6 +14,40 @@ function fixture() {
 }
 
 describe('hands-on lab controller interaction',()=>{
+  it.each(['left','right'])('resizes a floating organ and keeps its pose when %s releases first', first=>{
+    const f=fixture();
+    f.unregister(); f.engine.register(f.object,()=>({floating:true,scaleRange:[.5,3],onRelease:f.release}));
+    const right=new Group(); f.room.add(right); right.position.x=.2;
+    const helper:LabHand={id:'right',handedness:'right',object:right,pressed:false};
+    const tick=()=>f.engine.step([f.controller,helper],1/60);
+    f.controller.pressed=true; tick(); helper.pressed=true; tick();
+    right.position.x=.4; tick(); expect(f.object.scale.x).toBeCloseTo(2);
+    right.position.x=2; tick(); expect(f.object.scale.x).toBeCloseTo(3);
+    right.position.x=.02; tick(); expect(f.object.scale.x).toBeCloseTo(.5);
+    right.position.x=.3; tick(); expect(f.engine.ownsGrip('right')).toBe(true);
+    const released=first==='left'?f.controller:helper;
+    const remaining=first==='left'?helper:f.controller;
+    released.pressed=false; tick(); expect(f.object.scale.x).toBeCloseTo(1.5);
+    const position=f.object.position.clone();
+    remaining.object!.position.y+=.3; tick();
+    expect(f.object.position.y-position.y).toBeCloseTo(.3);
+    remaining.pressed=false; tick();
+    expect(f.object.position.y-position.y).toBeCloseTo(.3);
+    expect(f.object.scale.x).toBeCloseTo(1.5);
+    expect(f.release).toHaveBeenCalledTimes(1);
+  });
+  it('restores the last floating pose when a controller loses tracking during scaling',()=>{
+    const f=fixture(), home=f.object.position.clone();
+    f.unregister(); f.engine.register(f.object,()=>({floating:true,scaleRange:[.5,3]}));
+    const right=new Group(); f.room.add(right);right.position.x=.2;
+    const helper:LabHand={id:'right',handedness:'right',object:right,pressed:true};
+    f.controller.pressed=true; f.engine.step([f.controller,helper],1/60);
+    right.position.x=.4; f.engine.step([f.controller,helper],1/60);
+    f.engine.step([f.controller],1/60);
+    expect(f.engine.isHeld(f.object)).toBe(false);
+    expect(f.object.position.distanceTo(home)).toBeLessThan(1e-8);
+    expect(f.object.scale.x).toBeCloseTo(1);
+  });
   it('moves and rotates a grabbed object through transformed parents, then returns it',()=>{
     const f=fixture();const home=f.object.position.clone();
     f.engine.step([f.controller],1/60);f.controller.pressed=true;f.engine.step([f.controller],1/60);

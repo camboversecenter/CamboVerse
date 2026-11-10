@@ -12,23 +12,30 @@ import {VRSurface} from './VRSurface';
 import {VRPanelFrame, VRPageControls} from './VRPanel';
 import './LabVR.css';
 import {useLabInteraction} from './LabInteraction';
+import {LabVRSimulator} from './LabVRSimulator';
+import {prepareLabSimulation} from '../labVRSimulation';
 
 /** The same native session and visible controller rays as Buildings/Wat Phnom. */
 export function useLabVR() {
-  const [store] = useState(() => createXRStore({...IMMERSIVE_XR_OPTIONS,
-    emulate: vrSimulationEnabled(import.meta.env.DEV, window.location.hostname, window.location.search)
-      ? {type:'metaQuest3', inject:true, syntheticEnvironment:false} : false}));
+  const [store] = useState(() => createXRStore(IMMERSIVE_XR_OPTIONS));
   const [active, setActive] = useState(false);
+  const [simulatorError, setSimulatorError] = useState('');
   useEffect(() => {
-    const unsubscribe = store.subscribe(s => setActive(s.session != null && s.mode === 'immersive-vr'));
-    return () => { unsubscribe(); void store.getState().session?.end().catch(() => {}); };
+    let cancelled = false;
+    const unsubscribe = store.subscribe(s => {setActive(s.session != null && s.mode === 'immersive-vr');});
+    if (vrSimulationEnabled(import.meta.env.DEV, window.location.hostname, window.location.search)) {
+      void prepareLabSimulation().then(device => {if (device && !cancelled) store.setState({emulator:device});})
+        .catch(error => {if (!cancelled) setSimulatorError(error instanceof Error ? error.message : 'Initialization failed');});
+    }
+    return () => { cancelled = true; unsubscribe(); void store.getState().session?.end().catch(() => {}); };
   }, [store]);
-  return {store, active};
+  return {store, active, simulatorError};
 }
 
 export function LabVRButton({vr, title = 'Learning Lab'}: {vr: ReturnType<typeof useLabVR>; title?: string}) {
-  return <ImmersiveVREntry store={vr.store} title={title} className="lab-vr-entry-button"
-    movementHelp={LAB_VR_HELP} onBeforeEnter={() => document.exitPointerLock?.()}/>;
+  return <><ImmersiveVREntry store={vr.store} title={title} className="lab-vr-entry-button"
+    movementHelp={LAB_VR_HELP} onBeforeEnter={() => document.exitPointerLock?.()}/>
+    {vrSimulationEnabled(import.meta.env.DEV,window.location.hostname,window.location.search)&&<LabVRSimulator store={vr.store} error={vr.simulatorError}/>}</>;
 }
 
 export interface VRStation {id: string; label: string; description: string; detail?: string; at: [number, number, number]}

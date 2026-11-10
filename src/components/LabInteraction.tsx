@@ -50,8 +50,8 @@ export function useLabGrabbable(ref: RefObject<Object3D>, enabled = true, option
   return () => engine?.isHeld(ref.current) ?? false;
 }
 
-export function LabMovable({children, position, scale = 1, resetKey}: {children: ReactNode; position: [number, number, number]; scale?: number; resetKey?: unknown}) {
+export function LabMovable({children, position, scale = 1, resetKey, floating=false}: {children: ReactNode; position: [number, number, number]; scale?: number; resetKey?: unknown; floating?:boolean}) {
   const ref = useRef<Group>(null);
-  useLabGrabbable(ref, true, {}, resetKey);
+  useLabGrabbable(ref, true, floating ? {floating:true,scaleRange:[scale*.5,scale*3]} : {}, resetKey);
   return <group ref={ref} position={position} scale={scale}>{children}</group>;
 }

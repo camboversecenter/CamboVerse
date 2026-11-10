@@ -6,7 +6,7 @@ import { Group, REVISION, Vector3 } from 'three';
 import type { Poi } from '../spots';
 import { captureVRScale } from '../captureVR';
 import './CaptureVR.css';
-import {checkImmersiveVR,immersiveVRError,immersiveVRFailure,startImmersiveVR} from '../immersiveVR';
+import {checkImmersiveVR,immersiveVRError,immersiveVRFailure,startImmersiveVR,vrSimulationEnabled} from '../immersiveVR';
 import {worldPanelPose} from '../vrPresentation';
 import {VRSurface} from './VRSurface';
 import {VRPanelFrame} from './VRPanel';
@@ -36,15 +36,18 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
   const [active,setActive]=useState(false),[pending,setPending]=useState(false);
   const [message,setMessage]=useState('Checking headset support…');
   const [checkCode,setCheckCode]=useState('checking'),[failure,setFailure]=useState('');
+  const simulation=vrSimulationEnabled(import.meta.env.DEV,window.location.hostname,window.location.search);
   const titleId=useId();
   const dialog=useRef<HTMLDialogElement>(null),entry=useRef<HTMLButtonElement>(null);
   const requesting=useRef(false);
   const check=useCallback(async()=>{
     const policy=(document as Document & {permissionsPolicy?:{allowsFeature:(feature:string)=>boolean};featurePolicy?:{allowsFeature:(feature:string)=>boolean}});
     const result=await checkImmersiveVR({secure:window.isSecureContext,xr:navigator.xr,
-      spatialTrackingAllowed:(policy.permissionsPolicy??policy.featurePolicy)?.allowsFeature('xr-spatial-tracking')});
+      // The local software emulator does not access real headset tracking.
+      // Keep the browser policy check for every native session.
+      spatialTrackingAllowed:store.getState().emulator ? undefined : (policy.permissionsPolicy??policy.featurePolicy)?.allowsFeature('xr-spatial-tracking')});
     setSupported(result.ready);setMessage(result.message);setCheckCode(result.code);
-  },[]);
+  },[store]);
   useEffect(()=>{
     const refresh=()=>{if(document.visibilityState==='visible')void check();};
     void check();navigator.xr?.addEventListener('devicechange',check);
@@ -87,6 +90,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
     </div>,document.body):entryButton}
     {createPortal(<dialog ref={dialog} className="capture-vr-dialog" aria-labelledby={titleId} onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);entry.current?.focus();}}>
       <h2 id={titleId}>{title} in VR</h2>
+      {simulation&&<p>PC simulator mode: checking the virtual Quest. No headset is required for this local test.</p>}
       <p>Enter the scene with headset tracking and separate views for both eyes. VR uses Ultra detail.</p>
       {tour&&<div className="capture-vr-stops" role="group" aria-label="VR capture">
         {tour.stops.map(stop=><button key={stop.id} aria-pressed={tour.activeId===stop.id} onClick={()=>tour.onSelect(stop.id)}>{stop.title}</button>)}
@@ -100,7 +104,7 @@ export function ImmersiveVREntry({store,title,tour,onBeforeEnter,onSessionReques
       </details>
       <div className="capture-vr-actions">
         <button onClick={()=>void check()}>Check headset</button>
-        <button disabled={!supported||pending} onClick={()=>void enter()}>{pending?'Starting VR…':'Enter VR'}</button>
+        <button disabled={pending} onClick={()=>{if(supported)void enter();else void check();}}>{pending?'Starting VR…':supported?'Enter VR':'Check again'}</button>
         <button onClick={()=>setOpen(false)}>Close</button>
       </div>
     </dialog>,document.body)}

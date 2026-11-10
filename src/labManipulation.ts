@@ -2,6 +2,9 @@ import {Box3, Matrix4, Object3D, Quaternion, Raycaster, Vector3} from 'three';
 
 export interface LabHand {id: string; handedness: string; object?: Object3D; rayObject?: Object3D; pressed: boolean}
 export interface GrabOptions {
+  /** Floating specimens opt in; other tools return to their original slot. */
+  floating?: boolean;
+  scaleRange?: readonly [number, number];
   onMove?: (object: Object3D, dt: number) => void;
   onRelease?: (object: Object3D, cancelled: boolean) => void;
   onHighlight?: (highlighted: boolean) => void;
@@ -10,6 +13,10 @@ type Held = {object: Object3D; offset: Matrix4; home: Matrix4};
 function visible(object: Object3D) {
   for (let p: Object3D | null = object; p; p = p.parent) if (!p.visible) return false;
   return true;
+}
+function inside(object:Object3D, ancestor:Object3D) {
+  for (let p=object.parent;p;p=p.parent) if (p===ancestor) return true;
+  return false;
 }
 
 /** Pose math and gesture ownership are independent of React and scientific state. */
@@ -26,6 +33,9 @@ export class LabManipulation {
   private matrix = new Matrix4();
   private bounds = new Box3();
   private closest = new Vector3();
+  private second?: {owner:string; helper:string; distance:number; startScale:number; range:readonly [number, number]};
+  private handA = new Vector3();
+  private handB = new Vector3();
   blocked = false;
 
   register(object: Object3D, options: () => GrabOptions) {
@@ -44,12 +54,14 @@ export class LabManipulation {
     const held = this.held.get(id);
     if (!held) return;
     this.held.delete(id);
-    this.objects.get(held.object)?.().onRelease?.(held.object, cancelled);
-    // Lab tools return to their slots; losing tracking never strands an object.
-    held.home.decompose(held.object.position, held.object.quaternion, held.object.scale);
+    if (this.second?.owner === id) this.second = undefined;
+    const options = this.objects.get(held.object)?.();
+    options?.onRelease?.(held.object, cancelled);
+    if (!options?.floating || cancelled) held.home.decompose(held.object.position, held.object.quaternion, held.object.scale);
     held.object.updateMatrixWorld(true);
   }
   cancel() {
+    this.second = undefined;
     for (const id of this.held.keys()) this.release(id, true);
     for (const object of this.highlighted) this.objects.get(object)?.().onHighlight?.(false);
     this.highlighted.clear(); this.consumed.clear();
@@ -84,11 +96,33 @@ export class LabManipulation {
       if (this.bounds.isEmpty()) continue;
       this.bounds.clampPoint(this.position, this.closest);
       const distance = this.closest.distanceTo(this.position);
-      if (distance < best) {best = distance; nearest = object;}
+      if (distance >= .12 || (nearest && inside(nearest,object))) continue;
+      if (distance < best || (nearest && inside(object,nearest))) {best = distance; nearest = object;}
     }
     return nearest;
   }
   step(hands: LabHand[], dt: number, focused = true) {
+    // When one grip opens, rebase the remaining hand at the current pose.
+    // Preserve the original home for tracking-loss cancellation.
+    if (this.second) {
+      const {owner, helper} = this.second;
+      const a = hands.find(h => h.id === owner), b = hands.find(h => h.id === helper);
+      const held = this.held.get(owner);
+      if (!focused || this.blocked || !a?.object || !b?.object || !held || !visible(held.object)) {
+        this.release(owner, true);
+        this.second = undefined;
+      } else if (!a.pressed || !b.pressed) {
+        const remaining = a.pressed ? a : b.pressed ? b : undefined;
+        if (remaining?.object) {
+          remaining.object.updateWorldMatrix(true, false);
+          held.object.updateWorldMatrix(true, false);
+          held.offset.copy(remaining.object.matrixWorld).invert().multiply(held.object.matrixWorld);
+          this.held.delete(owner);
+          this.held.set(remaining.id, held);
+        }
+        this.second = undefined;
+      }
+    }
     const ids = new Set(hands.map(h => h.id));
     for (const [id, held] of this.held) if (!ids.has(id) || !visible(held.object)) this.release(id, true);
     for (const id of this.pressed.keys()) if (!ids.has(id)) this.pressed.delete(id);
@@ -102,6 +136,19 @@ export class LabManipulation {
       if (!focused || this.blocked || !hand.object) {this.release(hand.id, true); continue;}
       if (!hand.pressed) this.release(hand.id, false);
       let held = this.held.get(hand.id);
+      if (this.second?.helper === hand.id) {this.consumed.add(hand.handedness); continue;}
+      if (rising && !held && !this.second) {
+        for (const [owner, target] of this.held) {
+          const range = this.objects.get(target.object)?.().scaleRange;
+          const first = hands.find(h => h.id === owner && h.pressed);
+          if (!first?.object || !range || first.handedness === hand.handedness) continue;
+          const distance = first.object.getWorldPosition(this.handA).distanceTo(hand.object.getWorldPosition(this.handB));
+          this.second = {owner, helper:hand.id, distance:Math.max(.05,distance), startScale:target.object.scale.x, range};
+          this.latchedOwners.set(hand.id, hand.handedness);
+          break;
+        }
+        if (this.second) {this.consumed.add(hand.handedness); continue;}
+      }
       const candidate = held?.object ?? (rising ? this.nearCandidate(hand.object) : undefined) ?? this.candidate(hand.rayObject ?? hand.object);
       if (candidate) highlighted.add(candidate);
       if (rising && candidate && !held) {
@@ -131,6 +178,16 @@ export class LabManipulation {
           .decompose(held.object.position, held.object.quaternion, held.object.scale);
         held.object.updateMatrixWorld(true);
         this.objects.get(held.object)?.().onMove?.(held.object, Math.min(.05, Math.max(0, dt)));
+      }
+    }
+    if (this.second) {
+      const {owner, helper, range, startScale, distance} = this.second;
+      const a = hands.find(h => h.id === owner)?.object, b = hands.find(h => h.id === helper)?.object;
+      const held = this.held.get(owner);
+      if (held && a && b) {
+        const gap = a.getWorldPosition(this.handA).distanceTo(b.getWorldPosition(this.handB));
+        held.object.scale.setScalar(Math.max(range[0], Math.min(range[1], startScale * gap / distance)));
+        held.object.updateMatrixWorld(true);
       }
     }
     for (const object of this.highlighted) if (!highlighted.has(object)) this.objects.get(object)?.().onHighlight?.(false);
