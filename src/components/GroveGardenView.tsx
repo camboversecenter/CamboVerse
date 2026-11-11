@@ -9,6 +9,7 @@ import { GroveClient, DEFAULT_NODE, type VerifiedRecord } from "../grove/client"
 import {
   buildPlots, gardenTotals, growthAt, measuredHeightM, trustOpacity, type GrovePlot,
 } from "../grove/garden";
+import { chainGpsPositions } from "../grove/garden";
 import {
   CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
   anchorCall, anchorLink, TIER_COLOR, TIER_ICON, riel, type CsbPlotStatus,
@@ -109,16 +110,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const plotGpsPositions = useMemo(() => {
     const result = new Map<string, Map<number, { lat: number; lng: number }>>();
     for (const plot of plots) {
-      const chainGps = new Map<number, { lat: number; lng: number }>();
-      plot.chains.forEach((chain, ci) => {
-        for (let i = chain.length - 1; i >= 0; i--) {
-          const g = chain[i].observation.gps;
-          if (g && g.lat && g.lng) {
-            chainGps.set(ci, { lat: g.lat, lng: g.lng });
-            break;
-          }
-        }
-      });
+      const chainGps = chainGpsPositions(plot.chains);
       if (chainGps.size > 0) result.set(plot.id, chainGps);
     }
     return result;
@@ -382,6 +374,11 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               <button className="grove-x" onClick={() => setSelected(null)}>✕</button>
             </div>
             <div className="grove-row"><span>Species</span><b>{sel.speciesCounts.map((sc) => `${sc.count}× ${sc.species}`).join(", ")}</b></div>
+            {sel.chains.filter((c) => c[0].rowId !== null).map((c) => (
+              <div className="grove-row" key={c[0].observation.id}>
+                <span>Row {c[0].rowId}</span><b>Tree {c[0].treeNumber}</b>
+              </div>
+            ))}
             <div className="grove-row"><span>Est. CO₂</span><b>≈ {fmt(sel.totalCo2Kg)} kg</b></div>
             <div className="grove-row">
               <span>Trust</span>
@@ -791,6 +788,7 @@ function PlotParcel({
       return {
         ci,
         species: obs.species,
+        treeNumber: g.record.treeNumber,
         count: obs.count,
         shown: Math.min(6, obs.count),
         heightM: measuredHeightM(obs),
@@ -872,7 +870,7 @@ function PlotParcel({
         return (
           <Billboard key={p.ci} position={[cx, p.heightM + 1, cz]}>
             <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
-              <b>{p.species}{p.count > 1 ? `·${p.count}` : ""}</b>
+              <b>{p.species}{p.treeNumber !== null ? ` · tree ${p.treeNumber}` : ""}{p.count > 1 ? `·${p.count}` : ""}</b>
               <span>≈{fmt(p.co2Kg)}kg</span>
               {tier !== "unanchored" && (
                 <span className="grove-tag-tier" style={{ color: TIER_COLOR[tier] }} title={tierTitle}>
