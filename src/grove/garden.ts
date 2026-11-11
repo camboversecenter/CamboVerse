@@ -16,7 +16,34 @@ import type { GardenObservation } from "./grove";
 import type { VerifiedRecord } from "./client";
 
 /** One chain of observations of the same plant(s) over time, oldest→newest. */
-export type Chain = VerifiedRecord[];
+export interface GardenRecord extends VerifiedRecord {
+  rowId: string | null;
+  treeNumber: number | null;
+}
+export type Chain = GardenRecord[];
+
+/** Parse display metadata without changing any signed observation bytes. */
+export function parseRowIdentity(note: string): { rowId: string; treeNumber: number } | null {
+  const match = /^row ([^·]+?)\s*·\s*tree ([1-9]\d*)(?=\s*(?:·|$))/.exec(note);
+  if (!match) return null;
+  const treeNumber = Number(match[2]);
+  return Number.isSafeInteger(treeNumber) ? { rowId: match[1].trim(), treeNumber } : null;
+}
+
+/** Position used by the renderer for each individual plant identity. */
+export function chainGpsPositions(chains: Chain[]): Map<number, { lat: number; lng: number }> {
+  const result = new Map<number, { lat: number; lng: number }>();
+  chains.forEach((chain, ci) => {
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const gps = chain[i].observation.gps;
+      if (gps && Number.isFinite(gps.lat) && Number.isFinite(gps.lng)) {
+        result.set(ci, { lat: gps.lat, lng: gps.lng });
+        break;
+      }
+    }
+  });
+  return result;
+}
 
 export interface GrovePlot {
   id: string;
@@ -49,7 +76,7 @@ const ms = (iso: string) => {
 };
 
 /** Split a plot's records into growth chains by following the `prev` hash-links. */
-function toChains(records: VerifiedRecord[]): Chain[] {
+function toChains(records: GardenRecord[]): Chain[] {
   const byId = new Map(records.map((r) => [r.observation.id, r]));
   const referenced = new Set<string>();
   for (const r of records) if (r.observation.prev) referenced.add(r.observation.prev);
@@ -110,7 +137,20 @@ export function buildPlots(
   const plots: GrovePlot[] = [];
   for (const [id, recs] of byPlot) {
     const timeline = [...recs].sort((a, b) => ms(a.observation.observedAt) - ms(b.observation.observedAt));
-    const chains = toChains(recs);
+    const adapted = timeline.map((r): GardenRecord => ({
+      ...r, rowId: null, treeNumber: null, ...parseRowIdentity(r.observation.note),
+    }));
+    const rows = new Map<string, Chain>();
+    for (const r of adapted) {
+      if (r.rowId === null) continue;
+      const key = JSON.stringify([r.rowId, r.treeNumber]); // plot is already partitioned
+      const chain = rows.get(key) ?? [];
+      chain.push(r);
+      rows.set(key, chain);
+    }
+    // Row links encode recording order, not plant identity. Legacy records
+    // retain their existing species/prev interpretation.
+    const chains = [...toChains(adapted.filter((r) => r.rowId === null)), ...rows.values()];
     const latestPerChain = chains.map((c) => c[c.length - 1]).filter(Boolean);
     const latest = timeline[timeline.length - 1];
     const totalCo2Kg = round(latestPerChain.reduce((s, r) => s + r.observation.co2Kg, 0), 2);
@@ -145,8 +185,8 @@ export function buildPlots(
  * or before `t`. Height drives it (falling back to DBH), normalized to a mature
  * reference so the rendered model grows as the real tree grew.
  */
-export function growthAt(chain: Chain, t: number): { record: VerifiedRecord | null; stage: number } {
-  let record: VerifiedRecord | null = null;
+export function growthAt(chain: Chain, t: number): { record: GardenRecord | null; stage: number } {
+  let record: GardenRecord | null = null;
   for (const r of chain) {
     if (ms(r.observation.observedAt) <= t) record = r;
   }
