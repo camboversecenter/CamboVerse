@@ -9,6 +9,7 @@ import { GroveClient, DEFAULT_NODE, type VerifiedRecord } from "../grove/client"
 import {
   buildPlots, gardenTotals, growthAt, measuredHeightM, trustOpacity, type GrovePlot,
 } from "../grove/garden";
+import { GroveTreeDetails } from "./GroveTreeDetails";
 import { chainGpsPositions } from "../grove/garden";
 import {
   CsbClient, DEFAULT_CSB_BASE, provenanceLabel, provenanceTier, paidOut, committed,
@@ -98,6 +99,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   const [nodeUrl, setNodeUrl] = useState(DEFAULT_NODE);
   const [coarseGps, setCoarseGps] = useState<Map<string, { lat: number; lng: number }>>(new Map());
   const [selected, setSelected] = useState<string | null>(null);
+  const [selectedChain, setSelectedChain] = useState<number | null>(null);
   const [t, setT] = useState(1); // timeline position 0..1
   const [playing, setPlaying] = useState(false);
   const [mode, setMode] = useState<ViewMode>(detectViewMode);
@@ -233,6 +235,8 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
   }, [plots, csbBase]);
 
   const sel = plots.find((p) => p.id === selected) ?? null;
+  const treeChain = selectedChain !== null ? sel?.chains[selectedChain] : undefined;
+  const treeRecord = treeChain ? growthAt(treeChain, now).record : null;
   const selCsb = sel ? csb.get(sel.id) : undefined;
   /** Riel released, and riel still escrowed, across every plot on screen. */
   const funding = useMemo(() => {
@@ -271,7 +275,8 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               now={now}
               mode={mode}
               selected={p.id === selected}
-              onSelect={() => setSelected(p.id === selected ? null : p.id)}
+              onSelect={() => { setSelected(p.id); setSelectedChain(null); }}
+              onSelectTree={(ci) => { setSelected(p.id); setSelectedChain(ci); }}
               csb={csb.get(p.id)}
               chainGps={plotGpsPositions.get(p.id)}
             />
@@ -370,15 +375,21 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
         <div className="grove-detail" onClick={() => setSelected(null)}>
           <div className="grove-card" onClick={(e) => e.stopPropagation()}>
             <div className="grove-card-head">
-              <b>{sel.id}</b>
+              <b>{treeRecord ? `${sel.id} · ${treeRecord.treeNumber !== null ? `Tree ${treeRecord.treeNumber}` : treeRecord.observation.species}` : sel.id}</b>
               <button className="grove-x" onClick={() => setSelected(null)}>✕</button>
             </div>
+            {treeChain ? <>
+              <button className="grove-tree-choice" onClick={() => setSelectedChain(null)}>← Plot summary</button>
+              {treeRecord ? <GroveTreeDetails record={treeRecord} chain={treeChain} /> : <p>No observation for this tree at the selected date.</p>}
+            </> : <>
             <div className="grove-row"><span>Species</span><b>{sel.speciesCounts.map((sc) => `${sc.count}× ${sc.species}`).join(", ")}</b></div>
-            {sel.chains.filter((c) => c[0].rowId !== null).map((c) => (
-              <div className="grove-row" key={c[0].observation.id}>
-                <span>Row {c[0].rowId}</span><b>Tree {c[0].treeNumber}</b>
-              </div>
-            ))}
+            <div className="grove-tree-list" aria-label="Individual trees">
+              {sel.chains.map((c, ci) => (
+                <button className="grove-tree-choice" key={c[0].observation.id} onClick={() => setSelectedChain(ci)}>
+                  {c[0].treeNumber !== null ? `Tree ${c[0].treeNumber}` : `Plant ${ci + 1}`} · {c[c.length - 1].observation.species} →
+                </button>
+              ))}
+            </div>
             <div className="grove-row"><span>Est. CO₂</span><b>≈ {fmt(sel.totalCo2Kg)} kg</b></div>
             <div className="grove-row">
               <span>Trust</span>
@@ -398,6 +409,7 @@ export function GroveGardenView({ onBackToMap }: { onBackToMap: () => void }) {
               {sel.latest.attestations.length === 1 ? "" : "s"} checked.
             </p>
             <CsbPanel status={selCsb} plot={sel} csbBase={csbBase} />
+            </>}
           </div>
         </div>
       )}
@@ -746,7 +758,7 @@ function gpsToLocal(
 }
 
 function PlotParcel({
-  plot, index, total, now, mode, selected, onSelect, csb, chainGps,
+  plot, index, total, now, mode, selected, onSelect, onSelectTree, csb, chainGps,
 }: {
   plot: GrovePlot;
   index: number;
@@ -755,6 +767,7 @@ function PlotParcel({
   mode: ViewMode;
   selected: boolean;
   onSelect: () => void;
+  onSelectTree: (ci: number) => void;
   csb?: CsbPlotStatus;
   chainGps?: Map<number, { lat: number; lng: number }>;
 }) {
@@ -851,7 +864,7 @@ function PlotParcel({
       {mode === "ultra" && <GrassTufts count={Math.min(800, Math.round(260 * (padRadius / 2.4)))} radius={padRadius} seed={index * 31 + 5} />}
 
       {treePositions.map((t, i) => (
-        <group key={`${t.ci}:${i}`} position={[t.pos[0], 0.08, t.pos[1]]}>
+        <group onClick={(e) => { e.stopPropagation(); onSelectTree(t.ci); }} key={`${t.ci}:${i}`} position={[t.pos[0], 0.08, t.pos[1]]}>
           <Plant
             species={plantings[t.pi].species}
             heightM={plantings[t.pi].heightM}
@@ -869,7 +882,7 @@ function PlotParcel({
         const cz = mine.reduce((s, t) => s + t.pos[1], 0) / mine.length;
         return (
           <Billboard key={p.ci} position={[cx, p.heightM + 1, cz]}>
-            <div className={selected ? "grove-tag on" : "grove-tag"} onClick={onSelect}>
+            <button type="button" className={selected ? "grove-tag on" : "grove-tag"} onClick={() => onSelectTree(p.ci)}>
               <b>{p.species}{p.treeNumber !== null ? ` · tree ${p.treeNumber}` : ""}{p.count > 1 ? `·${p.count}` : ""}</b>
               <span>≈{fmt(p.co2Kg)}kg</span>
               {tier !== "unanchored" && (
@@ -877,7 +890,7 @@ function PlotParcel({
                   {TIER_ICON[tier]}
                 </span>
               )}
-            </div>
+            </button>
           </Billboard>
         );
       })}

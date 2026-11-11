@@ -4335,3 +4335,13 @@ select.farm-modal-note { appearance: none; }
 .capture-action:hover { background: #356452; }
 .capture-action:focus-visible { outline: 3px solid #ebd694; outline-offset: 3px; }
 .hud .region-note, .poi-panel .region-note { margin-top: 8px; font-size: .75rem; line-height: 1.4; opacity: .9; }
+
+.grove-card { max-height: 88dvh; overflow-y: auto; }
+.grove-tree-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
+.grove-tree-choice { min-height: 44px; padding: 8px 12px; border: 1px solid #bdd5c5; border-radius: 9px; background: #e8f3eb; color: #234; text-align: left; font: 600 .85rem system-ui, sans-serif; cursor: pointer; }
+.grove-tree-choice:hover { background: #d8eade; }
+.grove-tree-choice:focus-visible, .grove-tag:focus-visible { outline: 3px solid #2f7d4a; outline-offset: 3px; }
+.grove-card .grove-row b { text-align: right; overflow-wrap: anywhere; min-width: 0; }
+.grove-tree-history { margin-top: 12px; font: .85rem system-ui, sans-serif; }
+.grove-tree-history summary { cursor: pointer; padding: 10px 0; }
+button.grove-tag { font-family: inherit; cursor: pointer; }
